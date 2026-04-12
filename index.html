@@ -1,0 +1,1488 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>대한민국행정사사무소 | 부산 금정 · 출입국·법인·행정심판</title>
+  <meta name="description" content="대한민국행정사사무소 — 비영리법인설립, 출입국민원, 기업투자·법인설립, 국가유공자보훈. 부산 금정 부산대역 인근. 공식 블로그 blog.naver.com/visainasia" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700&family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --ink: #12161c;
+      --ink-soft: #2a3038;
+      --paper: #f8f6f2;
+      --paper-dark: #ebe6dc;
+      --navy: #0a0e14;
+      --navy-mid: #121a24;
+      --maroon: #5a3540;
+      --maroon-dark: #3f242e;
+      --gold: #9d8a6f;
+      --gold-light: #c4b59a;
+      --champagne: #dccfb8;
+      --muted: #565d68;
+      --line: rgba(20, 24, 32, 0.09);
+      --max: 1180px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: "Noto Sans KR", system-ui, sans-serif;
+      background: var(--paper);
+      color: var(--ink);
+      font-size: 16px;
+      line-height: 1.65;
+    }
+
+    main {
+      display: block;
+      width: 100%;
+      max-width: none;
+      margin: 0;
+    }
+
+    .serif {
+      font-family: "Noto Serif KR", Georgia, serif;
+    }
+
+    a {
+      color: var(--maroon);
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(250, 249, 246, 0.94);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .nav-inner {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 0.85rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .brand {
+      font-family: "Noto Serif KR", serif;
+      font-weight: 700;
+      font-size: 0.98rem;
+      letter-spacing: -0.02em;
+      color: var(--ink);
+      line-height: 1.3;
+    }
+
+    .brand span {
+      display: block;
+      font-size: 0.65rem;
+      font-weight: 500;
+      color: var(--muted);
+      letter-spacing: 0.03em;
+      margin-top: 0.2rem;
+    }
+
+    nav ul {
+      list-style: none;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.1rem;
+      font-size: 0.84rem;
+      font-weight: 500;
+    }
+
+    nav a {
+      color: var(--ink-soft);
+      text-decoration: none;
+    }
+
+    nav a:hover {
+      color: var(--maroon);
+      text-decoration: none;
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 1rem 1.35rem;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .btn-nav-tel {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.48rem 1rem;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: #fff;
+      background: linear-gradient(180deg, var(--maroon) 0%, var(--maroon-dark) 100%);
+      border-radius: 2px;
+      text-decoration: none;
+      white-space: nowrap;
+      border: 1px solid rgba(0, 0, 0, 0.06);
+    }
+
+    .btn-nav-tel:hover {
+      opacity: 0.93;
+      text-decoration: none;
+      color: #fff;
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      border-bottom: 1px solid rgba(180, 155, 125, 0.14);
+      min-height: min(62vw, 360px);
+      background: linear-gradient(168deg, #06080d 0%, #0b1018 38%, #090c12 100%);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    @media (min-width: 900px) {
+      .hero {
+        min-height: min(32vh, 320px);
+      }
+    }
+
+    .hero-vignette {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      background: radial-gradient(
+        ellipse 88% 68% at 76% 12%,
+        rgba(165, 140, 110, 0.09) 0%,
+        transparent 56%
+      );
+    }
+
+    .hero-pattern {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      opacity: 0.32;
+      background-color: transparent;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='44' height='44' viewBox='0 0 44 44'%3E%3Cpath fill='none' stroke='%23e8dcc8' stroke-opacity='0.11' stroke-width='1' d='M22 8v6M22 30v6M8 22h6M30 22h6'/%3E%3C/svg%3E");
+      pointer-events: none;
+    }
+
+    .hero-inner {
+      position: relative;
+      z-index: 3;
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 1rem 1.25rem 1.1rem;
+      color: #f2ebe2;
+      display: grid;
+      grid-template-columns: 1fr;
+      align-content: center;
+      gap: 1.1rem;
+      min-height: inherit;
+    }
+
+    @media (min-width: 768px) {
+      .hero-inner {
+        padding: 1.15rem 1.5rem 1.25rem;
+        grid-template-columns: minmax(0, 1.12fr) minmax(0, 0.88fr);
+        gap: 1.35rem;
+        align-items: center;
+      }
+    }
+
+    .hero-copy {
+      max-width: 38rem;
+    }
+
+    .hero-aside {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      justify-content: center;
+      gap: 0.85rem;
+      padding: 1rem 1.05rem;
+      width: 100%;
+      max-width: 320px;
+      margin: 0 auto;
+      background: linear-gradient(
+        152deg,
+        rgba(22, 26, 36, 0.9) 0%,
+        rgba(10, 12, 20, 0.94) 100%
+      );
+      border: 1px solid rgba(200, 178, 145, 0.24);
+      border-radius: 4px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(14px);
+    }
+
+    @media (min-width: 768px) {
+      .hero-aside {
+        align-items: flex-end;
+        text-align: right;
+        margin: 0 0 0 auto;
+        padding: 1.1rem 1.15rem;
+      }
+    }
+
+    .hero-tagline {
+      font-family: "Noto Serif KR", Georgia, serif;
+      font-size: clamp(0.78rem, 1.6vw, 0.88rem);
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      color: rgba(242, 232, 218, 0.94);
+      line-height: 1.5;
+      margin: 0;
+      text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+      align-self: flex-end;
+    }
+
+    .hero-mini {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.5rem;
+      width: 100%;
+    }
+
+    .hero-mini span {
+      background: rgba(6, 8, 14, 0.52);
+      border: 1px solid rgba(205, 185, 155, 0.26);
+      padding: 0.55rem 0.4rem;
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: #faf6ef;
+      text-align: center;
+      border-radius: 2px;
+      letter-spacing: -0.02em;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+    }
+
+    @media (max-width: 767px) {
+      .hero {
+        min-height: unset;
+      }
+    }
+
+    .visually-hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    .pillars {
+      background: linear-gradient(180deg, #ebe6dc 0%, var(--paper) 55%);
+      padding: 1.75rem 1.25rem 2rem;
+      border-bottom: 1px solid var(--line);
+    }
+
+    @media (min-width: 768px) {
+      .pillars {
+        padding: 2rem 1.5rem 2.35rem;
+      }
+    }
+
+    .pillars-inner {
+      max-width: var(--max);
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 1rem 1.15rem;
+    }
+
+    .pillar {
+      display: flex;
+      gap: 0.85rem;
+      align-items: flex-start;
+      padding: 1.1rem 1rem;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 3px;
+      box-shadow: 0 3px 14px rgba(20, 24, 32, 0.06);
+    }
+
+    .pillar-icon {
+      flex-shrink: 0;
+      width: 42px;
+      height: 42px;
+      color: var(--maroon);
+    }
+
+    .pillar-icon svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    .pillar-text h3 {
+      font-family: "Noto Serif KR", serif;
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--ink);
+      margin: 0 0 0.3rem;
+    }
+
+    .pillar-text p {
+      margin: 0;
+      font-size: 0.78rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .hero-badge {
+      display: inline-block;
+      font-family: "Noto Sans KR", sans-serif;
+      font-size: 0.62rem;
+      letter-spacing: 0.1em;
+      color: #ebe2d4;
+      border: 1px solid rgba(175, 155, 125, 0.48);
+      background: rgba(0, 0, 0, 0.32);
+      padding: 0.32rem 0.7rem;
+      margin-bottom: 0.55rem;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+    }
+
+    .hero h1 {
+      font-family: "Noto Sans KR", system-ui, sans-serif;
+      font-size: clamp(1.5rem, 3.8vw, 2.05rem);
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 0.4rem;
+      max-width: 22ch;
+      color: #faf6f0;
+      text-shadow: 0 2px 22px rgba(0, 0, 0, 0.45);
+    }
+
+    .hero-sub {
+      font-family: "Noto Sans KR", sans-serif;
+      font-size: 0.93rem;
+      color: rgba(235, 226, 214, 0.95);
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+      text-shadow: 0 1px 8px rgba(0, 0, 0, 0.38);
+    }
+
+    .hero-lead {
+      font-size: 0.9rem;
+      line-height: 1.55;
+      color: rgba(238, 230, 220, 0.93);
+      max-width: 36rem;
+      margin-bottom: 0.75rem;
+      text-shadow: 0 1px 10px rgba(0, 0, 0, 0.42);
+    }
+
+    .hero-cta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.55rem;
+      align-items: center;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 0.5rem 1.05rem;
+      font-size: 0.84rem;
+      font-weight: 600;
+      border-radius: 2px;
+      text-decoration: none;
+      transition: background 0.22s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.22s ease;
+    }
+
+    .btn-primary {
+      background: linear-gradient(
+        165deg,
+        #eee4d6 0%,
+        #d2bc9a 38%,
+        #a68968 100%
+      );
+      color: #14110e;
+      border: 1px solid rgba(60, 48, 38, 0.28);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.42);
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(165deg, #f5ebe0 0%, #dcc9ae 40%, #b89b78 100%);
+      text-decoration: none;
+      color: #0f0d0b;
+    }해줘줘
+
+    .btn-ghost {
+      border: 1px solid rgba(215, 198, 172, 0.42);
+      color: #f5efe6;
+      background: rgba(255, 255, 255, 0.04);
+      text-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
+    }
+
+    .btn-ghost:hover {
+      background: rgba(200, 175, 145, 0.12);
+      border-color: rgba(230, 210, 180, 0.45);
+      text-decoration: none;
+      color: #fff;
+    }
+
+    .trust-strip {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 0 1.25rem 1.35rem;
+    }
+
+    @media (min-width: 768px) {
+      .trust-strip {
+        padding: 0 1.5rem 1.5rem;
+      }
+    }
+
+    .trust-inner {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.75rem 1.25rem;
+      padding: 1rem 1.15rem;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 2px;
+      font-size: 0.78rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .trust-inner strong {
+      color: var(--ink);
+      font-weight: 600;
+    }
+
+    .trust-dot {
+      color: var(--line);
+      user-select: none;
+    }
+
+    section {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 3.5rem 1.5rem;
+    }
+
+    section + section {
+      border-top: 1px solid var(--line);
+    }
+
+    .about-bleed-wrap + section {
+      border-top: 1px solid var(--line);
+    }
+
+    section#services + .about-bleed-wrap {
+      border-top: 1px solid var(--line);
+    }
+
+    .section-head {
+      margin-bottom: 2rem;
+    }
+
+    .section-label {
+      font-size: 0.7rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--maroon);
+      font-weight: 600;
+      margin-bottom: 0.45rem;
+    }
+
+    .section-head h2 {
+      font-family: "Noto Serif KR", serif;
+      font-size: clamp(1.4rem, 3vw, 1.75rem);
+      font-weight: 700;
+      color: var(--ink);
+    }
+
+    .section-head p {
+      margin-top: 0.65rem;
+      color: var(--muted);
+      max-width: 40rem;
+      font-size: 0.94rem;
+    }
+
+    #contact {
+      padding: 1.2rem 1.25rem 2.1rem;
+    }
+
+    @media (min-width: 768px) {
+      #contact {
+        padding: 1.35rem 1.5rem 2.35rem;
+      }
+    }
+
+    #contact .section-head {
+      margin-bottom: 0.55rem;
+    }
+
+    #contact .section-label {
+      margin-bottom: 0.28rem;
+    }
+
+    #contact .section-head p {
+      margin-top: 0.3rem;
+      margin-bottom: 0;
+      font-size: 0.88rem;
+      line-height: 1.5;
+    }
+
+    .contact-divider {
+      height: 2px;
+      margin: 0 0 0.65rem;
+      border: none;
+      background: linear-gradient(
+        90deg,
+        var(--maroon) 0%,
+        rgba(180, 160, 135, 0.5) 45%,
+        transparent 100%
+      );
+      border-radius: 1px;
+    }
+
+    #contact .contact-layout {
+      gap: 1.1rem;
+      align-items: start;
+    }
+
+    @media (min-width: 900px) {
+      #contact .contact-layout {
+        gap: 1.35rem;
+      }
+    }
+
+    #contact .contact-grid {
+      gap: 1rem;
+    }
+
+    @media (min-width: 640px) {
+      #contact .contact-grid {
+        gap: 0.85rem 1.25rem;
+      }
+    }
+
+    #contact .search-mock {
+      margin-top: 1.1rem;
+    }
+
+    #contact .contact-note {
+      margin-top: 1.1rem;
+    }
+
+    #contact .consult-form-wrap {
+      padding: 1.1rem 1.15rem 1.35rem;
+    }
+
+    #services {
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(180deg, #f9f7f4 0%, #ffffff 42%);
+      box-shadow: inset 0 1px 0 rgba(20, 24, 32, 0.06);
+    }
+
+    .services-bg {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      background: url("images/services-head-bg.png") no-repeat top center;
+      background-size: cover;
+      opacity: 0.16;
+      pointer-events: none;
+    }
+
+    #services > *:not(.services-bg) {
+      position: relative;
+      z-index: 1;
+    }
+
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 1.15rem;
+    }
+
+    @media (min-width: 900px) {
+      .services-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    .service-card {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 2px;
+      overflow: hidden;
+      box-shadow: 0 1px 0 rgba(20, 24, 32, 0.04);
+    }
+
+    .service-card h3 {
+      font-family: "Noto Serif KR", serif;
+      font-size: 0.95rem;
+      font-weight: 700;
+      background: linear-gradient(180deg, var(--maroon) 0%, var(--maroon-dark) 100%);
+      color: #fff;
+      padding: 0.7rem 1rem;
+      letter-spacing: -0.02em;
+    }
+
+    .service-card ul {
+      list-style: none;
+      padding: 1rem 1rem 1.1rem;
+    }
+
+    .service-card li {
+      position: relative;
+      padding-left: 0.85rem;
+      margin-bottom: 0.45rem;
+      font-size: 0.82rem;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .service-card li::before {
+      content: "·";
+      position: absolute;
+      left: 0;
+      color: var(--maroon);
+      font-weight: 700;
+    }
+
+    .service-card li.one-line {
+      white-space: nowrap;
+    }
+
+    @media (max-width: 380px) {
+      .service-card li.one-line {
+        white-space: normal;
+        font-size: 0.78rem;
+      }
+    }
+
+    #services .services-footer-row {
+      margin-top: 1.75rem;
+    }
+
+    #services .services-footer-row .blog-cta {
+      margin-top: 0;
+    }
+
+    .blog-cta {
+      margin-top: 1.75rem;
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+
+    .blog-cta a {
+      display: inline-block;
+      padding: 0.55rem 1.15rem;
+      font-weight: 700;
+      font-size: 0.92rem;
+      color: #fff;
+      background: #03c75a;
+      border-radius: 4px;
+      text-decoration: none;
+      box-shadow: 0 2px 8px rgba(3, 199, 90, 0.35);
+      transition: background 0.15s, box-shadow 0.15s, transform 0.1s;
+    }
+
+    .blog-cta a:hover {
+      color: #fff;
+      background: #02a94a;
+      text-decoration: none;
+      box-shadow: 0 3px 12px rgba(3, 199, 90, 0.45);
+      transform: translateY(-1px);
+    }
+
+    .section-head a {
+      color: var(--maroon);
+      font-weight: 500;
+    }
+
+    .about-bleed-wrap {
+      width: 100%;
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 0;
+      box-sizing: border-box;
+      position: relative;
+    }
+
+    section#about.about-section {
+      position: relative;
+      width: 100%;
+      max-width: none;
+      margin: 0;
+      padding: 3.25rem 1.5rem 3.5rem;
+      overflow: hidden;
+      box-sizing: border-box;
+    }
+
+    .about-bg {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      background: #2a2420 url("images/about-office-bg.png") no-repeat center;
+      background-size: cover;
+      background-position: 48% 36%;
+      filter: saturate(1.06);
+    }
+
+    .about-scrim {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      background: linear-gradient(
+        105deg,
+        rgba(38, 32, 28, 0.9) 0%,
+        rgba(22, 18, 16, 0.78) 40%,
+        rgba(14, 12, 10, 0.45) 74%,
+        rgba(10, 9, 8, 0.2) 100%
+      );
+    }
+
+    .about-inner {
+      position: relative;
+      z-index: 2;
+      max-width: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    #about.about-section .section-label {
+      color: var(--gold-light);
+    }
+
+    #about.about-section .section-head h2 {
+      color: #f7f2ea;
+      text-shadow: 0 2px 16px rgba(0, 0, 0, 0.35);
+    }
+
+    #about.about-section .section-head > p {
+      color: rgba(238, 232, 222, 0.95);
+      text-shadow: 0 1px 8px rgba(0, 0, 0, 0.25);
+    }
+
+    .about-wrap {
+      display: grid;
+      gap: 1.75rem;
+      align-items: start;
+    }
+
+    @media (min-width: 768px) {
+      .about-wrap {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .about-box {
+      background: var(--paper-dark);
+      border-left: 3px solid var(--maroon);
+      padding: 1.35rem 1.2rem;
+    }
+
+    #about.about-section .about-box {
+      background: rgba(248, 246, 242, 0.94);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-left-color: var(--maroon);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.22);
+    }
+
+    .about-box p {
+      font-size: 0.9rem;
+      color: var(--ink-soft);
+    }
+
+    #about.about-section .about-firm-name {
+      color: var(--ink);
+    }
+
+    .credentials {
+      font-size: 0.88rem;
+      color: var(--muted);
+      margin-top: 0.75rem;
+      line-height: 1.65;
+    }
+
+    .credentials strong {
+      color: var(--ink);
+    }
+
+    #about.about-section .about-note {
+      color: rgba(232, 226, 218, 0.94);
+      font-size: 0.9rem;
+      text-shadow: 0 1px 6px rgba(0, 0, 0, 0.2);
+    }
+
+    .contact-layout {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 2rem;
+      align-items: end;
+    }
+
+    @media (min-width: 900px) {
+      .contact-layout {
+        grid-template-columns: minmax(0, 1fr) minmax(280px, 380px);
+        gap: 2.5rem;
+      }
+    }
+
+    .contact-main {
+      min-width: 0;
+    }
+
+    .contact-grid {
+      display: grid;
+      gap: 1.5rem;
+    }
+
+    @media (min-width: 640px) {
+      .contact-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .title-map-link {
+      color: inherit;
+      text-decoration: none;
+      border-bottom: 1px solid rgba(92, 31, 40, 0.35);
+      transition: color 0.15s, border-color 0.15s;
+    }
+
+    .title-map-link:hover {
+      color: var(--maroon);
+      border-bottom-color: var(--maroon);
+      text-decoration: none;
+    }
+
+    .contact-title-sep {
+      font-weight: 700;
+    }
+
+    .consult-form-wrap {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 2px;
+      padding: 1.35rem 1.25rem 1.5rem;
+      box-shadow: 0 1px 0 rgba(20, 24, 32, 0.04);
+    }
+
+    .consult-form-wrap h3 {
+      font-family: "Noto Serif KR", serif;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--ink);
+      margin-bottom: 1rem;
+      padding-bottom: 0.65rem;
+      border-bottom: 2px solid var(--maroon);
+    }
+
+    .consult-form label {
+      display: block;
+      font-size: 0.72rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.35rem;
+      font-weight: 500;
+    }
+
+    .consult-form input,
+    .consult-form textarea {
+      width: 100%;
+      padding: 0.55rem 0.65rem;
+      font-size: 0.9rem;
+      font-family: inherit;
+      border: 1px solid var(--line);
+      border-radius: 2px;
+      background: var(--paper);
+      color: var(--ink);
+      margin-bottom: 0.9rem;
+    }
+
+    .consult-form input:focus,
+    .consult-form textarea:focus {
+      outline: none;
+      border-color: rgba(92, 31, 40, 0.45);
+      box-shadow: 0 0 0 2px rgba(92, 31, 40, 0.08);
+    }
+
+    .consult-form textarea {
+      min-height: 6.5rem;
+      resize: vertical;
+      margin-bottom: 1rem;
+    }
+
+    .consult-form .btn-send {
+      width: 100%;
+      padding: 0.65rem 1rem;
+      font-size: 0.9rem;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      border: none;
+      border-radius: 2px;
+      background: linear-gradient(180deg, var(--maroon) 0%, var(--maroon-dark) 100%);
+      color: #fff;
+      transition: opacity 0.15s;
+    }
+
+    .consult-form .btn-send:hover:not(:disabled) {
+      opacity: 0.92;
+    }
+
+    .consult-form .btn-send:disabled {
+      opacity: 0.65;
+      cursor: not-allowed;
+    }
+
+    .consult-status-msg {
+      font-size: 0.82rem;
+      line-height: 1.5;
+      margin-bottom: 0.75rem;
+      min-height: 1.25em;
+    }
+
+    .consult-status-msg.ok {
+      color: #1a5c3a;
+    }
+
+    .consult-status-msg.err {
+      color: #8b2c2c;
+    }
+
+    .contact-block dt {
+      font-size: 0.68rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.3rem;
+    }
+
+    .contact-block dd {
+      font-size: 0.94rem;
+      color: var(--ink);
+    }
+
+    .search-mock {
+      margin-top: 2rem;
+      padding: 1.1rem 1.15rem;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 2px;
+    }
+
+    .search-mock p {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-bottom: 0.6rem;
+    }
+
+    .search-bar {
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+      padding: 0.65rem 0.9rem;
+      min-height: 2.75rem;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 2px;
+      font-size: 0.88rem;
+      color: var(--ink-soft);
+    }
+
+    .search-label {
+      color: var(--muted);
+      font-size: 0.72rem;
+      margin-right: 0.25rem;
+    }
+
+    .search-portals {
+      margin-left: auto;
+      font-size: 0.78rem;
+      color: var(--muted);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.2rem;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .search-portals a {
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    .search-portals a[href*="naver.com"] {
+      color: #e50020;
+    }
+
+    .search-portals a[href*="naver.com"]:hover {
+      color: #b80018;
+      text-decoration: underline;
+    }
+
+    .search-portals a[href*="daum.net"] {
+      color: #3182f6;
+    }
+
+    .search-portals a[href*="daum.net"]:hover {
+      color: #1a62d4;
+      text-decoration: underline;
+    }
+
+    .search-portals-sep {
+      color: var(--muted);
+      font-weight: 400;
+      user-select: none;
+    }
+
+    .contact-note {
+      margin-top: 1.5rem;
+      padding: 0.9rem 1rem;
+      background: transparent;
+      border: 1px dashed var(--line);
+      font-size: 0.78rem;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    footer {
+      background: var(--navy);
+      color: rgba(245, 242, 235, 0.65);
+      padding: 2.25rem 1.5rem;
+      font-size: 0.76rem;
+      line-height: 1.65;
+    }
+
+    .footer-inner {
+      max-width: var(--max);
+      margin: 0 auto;
+    }
+
+    footer .firm {
+      font-family: "Noto Serif KR", serif;
+      color: rgba(245, 242, 235, 0.92);
+      font-size: 0.92rem;
+      margin-bottom: 0.5rem;
+    }
+
+    @media (max-width: 640px) {
+      nav ul {
+        gap: 0.65rem;
+      }
+
+      .nav-inner {
+        flex-wrap: wrap;
+      }
+
+      .nav-right {
+        width: 100%;
+        justify-content: space-between;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="nav-inner">
+      <a href="#top" class="brand">대한민국행정사사무소<span>Republic of Korea Administrative Scrivener Office</span></a>
+      <div class="nav-right">
+        <nav aria-label="주요 메뉴">
+          <ul>
+            <li><a href="#trust">신뢰·등록</a></li>
+            <li><a href="#services">업무 분야</a></li>
+            <li><a href="#about">소개</a></li>
+            <li>
+              <a href="https://map.kakao.com/link/search/%EB%8C%80%ED%95%9C%EB%AF%BC%EA%B5%AD%ED%96%89%EC%A0%95%EC%82%AC%EC%82%AC%EB%AC%B4%EC%86%8C" target="_blank" rel="noopener noreferrer">오시는 길</a>
+            </li>
+          </ul>
+        </nav>
+        <a class="btn-nav-tel" href="tel:010-2634-5459" aria-label="업무전화 010-2634-5459로 전화상담">전화상담</a>
+      </div>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-pattern" aria-hidden="true"></div>
+      <div class="hero-vignette" aria-hidden="true"></div>
+      <div class="hero-inner">
+        <div class="hero-copy">
+          <p class="hero-badge">법무부 출입국민원대행기관 등록 · 정부행정전문가</p>
+          <h1 id="hero-title">대한민국행정사사무소</h1>
+          <p class="hero-sub">대표 · 행정사 이근철</p>
+          <p class="hero-lead">
+            법인 설립부터 출입국 · 행정심판 · 인허가까지, 행정 절차를 명확히 안내하고 민원을 대행합니다.
+            부산대역 4번 출구 인근에서 방문 상담을 받으실 수 있습니다.
+          </p>
+          <div class="hero-cta">
+            <a class="btn btn-primary" href="tel:051-515-5459">전화 상담</a>
+            <a class="btn btn-ghost" href="#services">업무 분야</a>
+          </div>
+        </div>
+        <div class="hero-aside">
+          <p class="hero-tagline">Administrative Law · People First</p>
+          <div class="hero-mini">
+            <span>행정심판</span>
+            <span>출입국</span>
+            <span>법인 · 투자</span>
+            <span>보훈</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="trust-strip" id="trust">
+      <div class="trust-inner" role="region" aria-label="등록 및 소속">
+        <strong>법무부</strong> 출입국민원대행기관 등록
+        <span class="trust-dot">|</span>
+        <strong>대한행정사회</strong> 소속
+        <span class="trust-dot">|</span>
+        정부행정전문가
+      </div>
+    </div>
+
+    <section class="pillars" aria-labelledby="pillars-title">
+      <h2 id="pillars-title" class="visually-hidden">핵심 가치</h2>
+      <div class="pillars-inner">
+        <article class="pillar">
+          <div class="pillar-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+              <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8" />
+            </svg>
+          </div>
+          <div class="pillar-text">
+            <h3>행정 전문</h3>
+            <p>출입국·법인·보훈·심판 등 행정사 업무를 체계적으로 안내합니다.</p>
+          </div>
+        </article>
+        <article class="pillar">
+          <div class="pillar-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+            </svg>
+          </div>
+          <div class="pillar-text">
+            <h3>신뢰·등록</h3>
+            <p>법무부 출입국민원 대행기관 등록, 대한행정사회 소속으로 절차의 투명성을 지킵니다.</p>
+          </div>
+        </article>
+        <article class="pillar">
+          <div class="pillar-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <circle cx="12" cy="12" r="10" />
+              <path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20" />
+            </svg>
+          </div>
+          <div class="pillar-text">
+            <h3>부산·전국 연계</h3>
+            <p>부산 사무실을 기점으로 방문·유선·온라인 상담에 대응합니다.</p>
+          </div>
+        </article>
+        <article class="pillar">
+          <div class="pillar-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+            </svg>
+          </div>
+          <div class="pillar-text">
+            <h3>실무·교육 경험</h3>
+            <p>대한행정사회 교수 등 교육·실무 경험을 바탕으로 사안별 대응을 돕습니다.</p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section id="services" aria-labelledby="services-title">
+      <div class="services-bg" aria-hidden="true"></div>
+      <div class="section-head">
+        <p class="section-label">Practice Areas</p>
+        <h2 id="services-title" class="serif">주요 업무 분야</h2>
+      </div>
+      <div class="services-grid">
+        <article class="service-card">
+          <h3>비영리법인설립 업무</h3>
+          <ul>
+            <li>비영리법인(사단·재단) 설립·정관 변경</li>
+            <li>협동조합설립</li>
+            <li>지정기부금단체·민간자격증 등록</li>
+            <li>설립 후 변경·해산 등 행정 절차</li>
+          </ul>
+        </article>
+        <article class="service-card">
+          <h3>출입국민원업무</h3>
+          <ul>
+            <li>재외동포(F-4) 등 체류자격 변경·영주(F-5·F-5-6)</li>
+            <li>외국인 투자(D-8)·전문인력(E-7) 등 비자·체류</li>
+            <li>비자 연장·체류, 귀화·국적·복수국적 관련 민원</li>
+            <li>법무부 등록 출입국민원 대행기관</li>
+          </ul>
+        </article>
+        <article class="service-card">
+          <h3>기업투자·법인설립</h3>
+          <ul>
+            <li>외국인투자기업(FDI) 설립·신고·변경</li>
+            <li>국내 법인·지점 등 기업 관련 설립·행정</li>
+            <li>국제물류주선, 건설폐기물 수집·운반 등 인·허가(사안별)</li>
+          </ul>
+        </article>
+        <article class="service-card">
+          <h3>국가유공자보훈업무</h3>
+          <ul>
+            <li>국가유공자·보훈 등록</li>
+            <li>국가장애인등록</li>
+            <li class="one-line">국가배상·불복심사 행정구제 절차</li>
+            <li>이의신청·행정심판 등 불복(사안별)</li>
+          </ul>
+        </article>
+      </div>
+      <div class="services-footer-row">
+        <p class="blog-cta">
+          <a href="https://blog.naver.com/visainasia" rel="noopener noreferrer">네이버 블로그에서 상세 글 보기(클릭) →</a>
+        </p>
+      </div>
+    </section>
+
+    <div class="about-bleed-wrap">
+    <section id="about" class="about-section" aria-labelledby="about-title">
+      <div class="about-bg" aria-hidden="true"></div>
+      <div class="about-scrim" aria-hidden="true"></div>
+      <div class="about-inner">
+        <div class="section-head">
+          <p class="section-label">About</p>
+          <h2 id="about-title" class="serif">사무소 소개</h2>
+          <p>행정 절차는 기관별 요건이 달라, 서류와 일정을 기준에 맞추어 관리하는 것이 중요합니다.</p>
+        </div>
+        <div class="about-wrap">
+          <div class="about-box">
+            <p>
+              <strong class="serif about-firm-name">대한민국행정사사무소</strong>는 개인·법인의 행정 신청·민원을 대리·지원합니다.
+              사안에 따라 변호사·세무사 등 유관 전문가와 협업이 필요할 경우 안내해 드립니다.
+            </p>
+            <p class="credentials">
+              <strong>전</strong> 대한행정사회 초대 교수<br />
+              <strong>현</strong> 대한행정사회 교수
+            </p>
+          </div>
+          <div>
+            <p class="about-note">
+              행정사법상 업무 범위를 준수하며, 소송대리 등 변호사 전속 업무는 변호사와 협력합니다.
+              상담 내용에 따라 수임 여부·비용이 달라질 수 있습니다.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+    </div>
+
+    <section id="contact" aria-labelledby="contact-title">
+      <div class="section-head">
+        <p class="section-label">Contact</p>
+        <h2 id="contact-title" class="serif">
+          <a
+            class="title-map-link"
+            href="https://map.kakao.com/link/search/%EB%8C%80%ED%95%9C%EB%AF%BC%EA%B5%AD%ED%96%89%EC%A0%95%EC%82%AC%EC%82%AC%EB%AC%B4%EC%86%8C"
+            target="_blank"
+            rel="noopener noreferrer"
+            title="카카오맵에서 대한민국행정사사무소 위치 열기"
+            >오시는 길</a
+          ><span class="contact-title-sep"> · </span><span>연락처</span>
+        </h2>
+        <p>방문 전 연락 주시면 상담 가능 시간을 안내해 드립니다.</p>
+      </div>
+      <hr class="contact-divider" />
+
+      <div class="contact-layout">
+        <div class="contact-main">
+          <div class="contact-grid">
+            <dl class="contact-block">
+              <dt>주소</dt>
+              <dd>
+                부산광역시 금정구 중앙대로1629번길 16<br />
+                삼한스퀘어(부산대역 4번 출구) 2층 223호
+              </dd>
+            </dl>
+            <dl class="contact-block">
+              <dt>대표전화</dt>
+              <dd><a href="tel:051-515-5459">051-515-5459</a></dd>
+            </dl>
+            <dl class="contact-block">
+              <dt>업무전화</dt>
+              <dd><a href="tel:010-2634-5459">010-2634-5459</a></dd>
+            </dl>
+            <dl class="contact-block">
+              <dt>팩스</dt>
+              <dd>051-516-5459</dd>
+            </dl>
+            <dl class="contact-block">
+              <dt>이메일</dt>
+              <dd><a href="mailto:lkc@daum.net">lkc@daum.net</a></dd>
+            </dl>
+          </div>
+
+          <div class="search-mock">
+            <p>아래와 같이 포털에서 사무소명으로 검색하실 수 있습니다.</p>
+            <div class="search-bar">
+              <span class="search-label">검색</span> 대한민국행정사사무소
+              <span class="search-portals">
+                <a
+                  href="https://search.naver.com/search.naver?query=%EB%8C%80%ED%95%9C%EB%AF%BC%EA%B5%AD%ED%96%89%EC%A0%95%EC%82%AC%EC%82%AC%EB%AC%B4%EC%86%8C"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  title="네이버에서 대한민국행정사사무소 검색"
+                  >네이버</a><span class="search-portals-sep" aria-hidden="true"> · </span><a
+                  href="https://search.daum.net/search?w=tot&q=%EB%8C%80%ED%95%9C%EB%AF%BC%EA%B5%AD%ED%96%89%EC%A0%95%EC%82%AC%EC%82%AC%EB%AC%B4%EC%86%8C"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  title="다음에서 대한민국행정사사무소 검색"
+                  >다음</a>
+              </span>
+            </div>
+          </div>
+
+          <p class="contact-note">
+            본 페이지는 홈페이지 표시 목적의 안내이며, 구체적 사안은 상담을 통해 확인합니다. 홈페이지만으로 법률 자문이 성립하지 않습니다.
+          </p>
+        </div>
+
+        <aside class="consult-form-wrap" aria-labelledby="consult-form-title">
+          <h3 id="consult-form-title">상담요청</h3>
+          <form class="consult-form" id="consult-form" action="#" method="post" novalidate>
+            <p id="consult-status" class="consult-status-msg" role="status" aria-live="polite"></p>
+            <label for="consult-name">성명</label>
+            <input type="text" id="consult-name" name="name" autocomplete="name" required placeholder="성함을 입력해 주세요" />
+
+            <label for="consult-phone">연락처</label>
+            <input type="tel" id="consult-phone" name="phone" autocomplete="tel" required placeholder="전화번호" />
+
+            <label for="consult-msg">메시지</label>
+            <textarea id="consult-msg" name="message" required placeholder="상담 내용을 간단히 적어 주세요"></textarea>
+
+            <button type="submit" class="btn-send">보내기</button>
+          </form>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+      <p class="firm">대한민국행정사사무소</p>
+      <p>대표·행정사 이근철 · 부산광역시 금정구 중앙대로1629번길 16, 삼한스퀘어 2층 223호</p>
+      <p style="margin-top: 0.5rem;">
+        <a href="https://blog.naver.com/visainasia" rel="noopener noreferrer" style="color: rgba(245, 242, 235, 0.85);">공식 블로그 (네이버)</a>
+      </p>
+      <p style="margin-top: 0.75rem;">© <span id="y"></span> 대한민국행정사사무소. All rights reserved.</p>
+    </div>
+  </footer>
+  <script>
+    document.getElementById("y").textContent = new Date().getFullYear();
+
+    (function () {
+      var form = document.getElementById("consult-form");
+      var statusEl = document.getElementById("consult-status");
+      if (!form || !statusEl) return;
+
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+        statusEl.textContent = "";
+        statusEl.classList.remove("ok", "err");
+
+        var name = (document.getElementById("consult-name").value || "").trim();
+        var phone = (document.getElementById("consult-phone").value || "").trim();
+        var msg = (document.getElementById("consult-msg").value || "").trim();
+        if (!name || !phone || !msg) {
+          statusEl.classList.add("err");
+          statusEl.textContent = "성명, 연락처, 메시지를 모두 입력해 주세요.";
+          return;
+        }
+
+        var btn = form.querySelector(".btn-send");
+        btn.disabled = true;
+
+        fetch("https://formsubmit.co/ajax/lkc@daum.net", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+          body: JSON.stringify({
+            name: name,
+            phone: phone,
+            message: msg,
+            _subject: "[상담요청] 대한민국행정사사무소 — " + name,
+            _captcha: false,
+          }),
+        })
+          .then(function (res) {
+            return res.json().then(function (data) {
+              return { res: res, data: data };
+            });
+          })
+          .then(function (o) {
+            var data = o.data;
+            if (
+              data &&
+              (data.success === false ||
+                data.success === "false" ||
+                data.error)
+            ) {
+              var detail =
+                (data.message && String(data.message)) ||
+                "FormSubmit이 요청을 거절했습니다.";
+              throw new Error(detail);
+            }
+            if (!o.res.ok) throw new Error("http");
+            statusEl.classList.add("ok");
+            statusEl.textContent =
+              "접수되었습니다. 확인 후 빠른 시일 내에 연락드리겠습니다.";
+            form.reset();
+          })
+          .catch(function (err) {
+            statusEl.classList.add("err");
+            var m = err && err.message ? String(err.message) : "";
+            var line =
+              "전송에 실패했습니다. ";
+            if (/web server|FormSubmit will not work|file/i.test(m)) {
+              line +=
+                "HTML을 탐색기에서만 연 경우 전송되지 않습니다. 호스팅에 올린 뒤 다시 시도해 주세요.";
+            } else if (m) {
+              line += m + " ";
+            }
+            line += "직접 lkc@daum.net 으로 메일을 보내셔도 됩니다.";
+            statusEl.textContent = line;
+          })
+          .finally(function () {
+            btn.disabled = false;
+          });
+      });
+    })();
+  </script>
+</body>
+</html>

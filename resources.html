@@ -260,9 +260,10 @@
 
     <section class="panel" aria-label="관리자 인증">
       <h2>관리자 인증</h2>
+      <p class="helper" style="margin-bottom:0.45rem;">초기 비밀번호는 <strong>admin1234</strong> 입니다.</p>
       <div class="row">
-        <input id="admin-email" type="text" value="lkc@daum.net" readonly />
-        <input id="admin-pass" type="password" placeholder="관리자 비밀번호" />
+        <input id="admin-email" type="text" placeholder="관리자 이메일" />
+        <input id="admin-pass" type="password" value="admin1234" placeholder="관리자 비밀번호" />
         <button id="btn-login" class="btn btn-primary" type="button">관리자 모드 켜기</button>
         <button id="btn-logout" class="btn btn-ghost" type="button">관리자 모드 끄기</button>
         <button id="btn-test-conn" class="btn btn-ghost" type="button">연결 테스트</button>

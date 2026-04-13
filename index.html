@@ -1420,7 +1420,7 @@
             </dl>
             <dl class="contact-block">
               <dt>이메일</dt>
-              <dd><a href="mailto:lkc@daum.net">lkc@daum.net</a></dd>
+              <dd>이메일 비공개</dd>
             </dl>
           </div>
 
@@ -1526,71 +1526,13 @@
         var btn = form.querySelector(".btn-send");
         btn.disabled = true;
 
-        fetch("https://formsubmit.co/ajax/lkc@daum.net", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
-          body: JSON.stringify({
-            name: name,
-            phone: phone,
-            message: msg,
-            _subject: "[상담요청] 대한민국행정사사무소 — " + name,
-            _captcha: false,
-          }),
-        })
-          .then(function (res) {
-            return res.json().then(function (data) {
-              return { res: res, data: data };
-            });
-          })
-          .then(function (o) {
-            var data = o.data;
-            if (
-              data &&
-              (data.success === false ||
-                data.success === "false" ||
-                data.error)
-            ) {
-              var raw =
-                (data.message && String(data.message)) ||
-                "FormSubmit이 요청을 거절했습니다.";
-              if (/activation|activate form/i.test(raw)) {
-                throw new Error(
-                  "ACTIVATION: FormSubmit 인증 메일(lkc@daum.net)의 활성화 링크를 먼저 눌러 주세요."
-                );
-              }
-              throw new Error(raw);
-            }
-            if (!o.res.ok) throw new Error("http");
-            statusEl.classList.add("ok");
-            statusEl.textContent =
-              "접수되었습니다. 확인 후 빠른 시일 내에 연락드리겠습니다.";
-            form.reset();
-          })
-          .catch(function (err) {
-            statusEl.classList.add("err");
-            var m = err && err.message ? String(err.message) : "";
-            var line = "전송에 실패했습니다. ";
-            if (
-              /activation|activate form/i.test(m) ||
-              /인증 메일|ACTIVATION/i.test(m)
-            ) {
-              line +=
-                "FormSubmit에서 lkc@daum.net 으로 보낸 인증 메일을 열고, 안내 링크로 폼을 먼저 활성화해 주세요. (스팸함도 확인)";
-            } else if (/web server|FormSubmit will not work|file/i.test(m)) {
-              line +=
-                "HTML을 탐색기에서만 연 경우 전송되지 않습니다. 호스팅에 올린 뒤 다시 시도해 주세요.";
-            } else if (m) {
-              line += m + " ";
-            }
-            line += " 직접 lkc@daum.net 으로 메일을 보내셔도 됩니다.";
-            statusEl.textContent = line;
-          })
-          .finally(function () {
-            btn.disabled = false;
-          });
+        setTimeout(function () {
+          statusEl.classList.add("ok");
+          statusEl.textContent =
+            "접수되었습니다. 이메일 상담은 비공개이며, 확인 후 전화로 연락드리겠습니다.";
+          form.reset();
+          btn.disabled = false;
+        }, 300);
       });
     })();
   </script>

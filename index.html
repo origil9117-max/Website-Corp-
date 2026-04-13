@@ -193,6 +193,20 @@
       color: var(--ink-soft);
     }
 
+    .top-notice-link {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      flex-wrap: wrap;
+      color: inherit;
+      text-decoration: none;
+      min-width: 0;
+    }
+
+    .top-notice-link:hover {
+      text-decoration: none;
+    }
+
     .top-notice-label {
       display: inline-flex;
       align-items: center;
@@ -210,10 +224,6 @@
     .top-notice-title {
       font-weight: 700;
       color: var(--ink);
-    }
-
-    .top-notice-body {
-      color: var(--muted);
     }
 
     .hero {
@@ -1198,9 +1208,10 @@
   <main id="top">
     <section class="top-notice" aria-label="최신 공지">
       <div class="top-notice-inner">
-        <span class="top-notice-label">공지</span>
-        <span class="top-notice-title" id="top-notice-title">등록된 공지사항이 없습니다.</span>
-        <span class="top-notice-body" id="top-notice-body"></span>
+        <a class="top-notice-link" href="notice.html" target="_blank" rel="noopener noreferrer" aria-label="최신 공지 새 창에서 열기">
+          <span class="top-notice-label">공지</span>
+          <span class="top-notice-title" id="top-notice-title">등록된 공지사항이 없습니다.</span>
+        </a>
         <a href="notice.html" style="margin-left:auto; font-weight:700;">전체 공지 보기</a>
       </div>
     </section>
@@ -1487,8 +1498,7 @@
     (async function () {
       var LOCAL_NOTICE_KEY = "websiteCorpNotices";
       var topTitle = document.getElementById("top-notice-title");
-      var topBody = document.getElementById("top-notice-body");
-      if (!topTitle || !topBody) return;
+      if (!topTitle) return;
       function loadLocalNotices() {
         try {
           var raw = localStorage.getItem(LOCAL_NOTICE_KEY);
@@ -1532,7 +1542,6 @@
 
       if (!top) return;
       topTitle.textContent = String(top.title || "공지사항");
-      topBody.textContent = String(top.content || "").replace(/\s+/g, " ").slice(0, 90);
     })();
 
     (function () {

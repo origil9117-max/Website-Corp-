@@ -252,6 +252,9 @@
 
           if (!res.error) {
             items = res.data || [];
+            if (items.length === 0) {
+              items = loadLocalNotices();
+            }
           } else {
             items = loadLocalNotices();
           }

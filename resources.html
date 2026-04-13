@@ -196,6 +196,46 @@
       border-color: var(--line);
     }
 
+    #auth-login-row .btn.btn-primary {
+      box-shadow: 0 2px 10px rgba(62, 36, 46, 0.38);
+      outline: 2px solid rgba(90, 53, 64, 0.35);
+      outline-offset: 1px;
+    }
+    #auth-login-row .btn.btn-ghost {
+      opacity: 0.78;
+      border-style: dashed;
+    }
+    #auth-login-row .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .auth-mode-indicator {
+      display: inline-block;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin: 0 0 0.55rem;
+      padding: 0.28rem 0.55rem;
+      border-radius: 3px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.85);
+    }
+    .auth-mode-indicator[data-mode="view"] {
+      color: var(--muted);
+      border-style: dashed;
+    }
+    .auth-mode-indicator[data-mode="login"] {
+      color: var(--maroon-dark);
+      border-color: rgba(90, 53, 64, 0.35);
+      background: rgba(90, 53, 64, 0.06);
+    }
+    .auth-mode-indicator[data-mode="admin"] {
+      color: var(--ok);
+      border-color: rgba(13, 122, 63, 0.35);
+      background: rgba(13, 122, 63, 0.08);
+    }
+
     .list {
       display: grid;
       gap: 0.7rem;
@@ -260,11 +300,12 @@
 
     <section class="panel" aria-label="관리자 인증">
       <h2>관리자 인증</h2>
-      <p class="helper" style="margin-bottom:0.45rem;">초기 비밀번호는 <strong>admin1234</strong> 입니다.</p>
-      <div class="row">
-        <input id="admin-pass" type="password" value="admin1234" placeholder="관리자 비밀번호" />
-        <button id="btn-login" class="btn btn-primary" type="button">관리자 모드 켜기</button>
-        <button id="btn-logout" class="btn btn-ghost" type="button">관리자 모드 끄기</button>
+      <p class="helper" style="margin-bottom:0.45rem;">관리자 계정으로 로그인한 경우에만 자료를 등록·수정·삭제할 수 있습니다.</p>
+      <p id="auth-mode-indicator" class="auth-mode-indicator" data-mode="view" role="status" aria-live="polite">현재: 일반 보기</p>
+      <div class="row" id="auth-login-row">
+        <input id="admin-pass" type="password" autocomplete="current-password" placeholder="관리자 비밀번호" />
+        <button id="btn-login" class="btn btn-ghost" type="button">관리자 모드 켜기</button>
+        <button id="btn-logout" class="btn btn-primary" type="button">관리자 모드 끄기</button>
         <button id="btn-test-conn" class="btn btn-ghost" type="button">연결 테스트</button>
       </div>
       <p id="auth-status" class="status" role="status" aria-live="polite"></p>
@@ -314,6 +355,7 @@
       var LOCAL_RESOURCE_KEY = "websiteCorpResources";
 
       var adminPassInput = document.getElementById("admin-pass");
+      var loginRow = document.getElementById("auth-login-row");
       var btnLogin = document.getElementById("btn-login");
       var btnLogout = document.getElementById("btn-logout");
       var btnTestConn = document.getElementById("btn-test-conn");
@@ -330,6 +372,7 @@
       var currentSession = null;
       var ADMIN_EMAIL = "lkc@daum.net";
       var localAdmin = false;
+      var showLoginForm = false;
 
       function isAdmin() {
         return !!(localAdmin || (currentSession && currentSession.user));
@@ -462,26 +505,77 @@
         }).join("");
       }
 
+      var authModeIndicator = document.getElementById("auth-mode-indicator");
+
+      function applyAuthButtonStyles() {
+        var on = isAdmin();
+        btnLogin.classList.remove("btn-primary", "btn-ghost");
+        btnLogout.classList.remove("btn-primary", "btn-ghost");
+        btnTestConn.classList.remove("btn-primary", "btn-ghost");
+        btnTestConn.classList.add("btn-ghost");
+        btnLogin.setAttribute("aria-pressed", "false");
+        btnLogout.setAttribute("aria-pressed", "false");
+        if (on) {
+          btnLogin.classList.add("btn-ghost");
+          btnLogout.classList.add("btn-primary");
+          btnLogout.setAttribute("aria-pressed", "true");
+        } else if (showLoginForm) {
+          btnLogin.classList.add("btn-primary");
+          btnLogout.classList.add("btn-ghost");
+          btnLogin.setAttribute("aria-pressed", "true");
+        } else {
+          btnLogin.classList.add("btn-ghost");
+          btnLogout.classList.add("btn-primary");
+          btnLogout.setAttribute("aria-pressed", "true");
+        }
+        if (authModeIndicator) {
+          if (on) {
+            authModeIndicator.setAttribute("data-mode", "admin");
+            authModeIndicator.textContent = "현재: 관리자 모드 (로그인됨)";
+          } else if (showLoginForm) {
+            authModeIndicator.setAttribute("data-mode", "login");
+            authModeIndicator.textContent = "현재: 로그인 입력 중 — 비밀번호 입력 후 「관리자 모드 켜기」";
+          } else {
+            authModeIndicator.setAttribute("data-mode", "view");
+            authModeIndicator.textContent = "현재: 일반 보기 — 「관리자 모드 켜기」로 로그인 화면 열기";
+          }
+        }
+      }
+
       function updateAdminUi() {
         var on = isAdmin();
         editor.style.display = on ? "block" : "none";
         adminPassInput.disabled = on;
-        btnLogin.disabled = false;
+        btnLogin.disabled = on;
         btnLogout.disabled = false;
+        btnLogin.textContent = "관리자 모드 켜기";
+        btnLogout.textContent = "관리자 모드 끄기";
+        loginRow.style.display = "flex";
+        if (!on && showLoginForm) {
+          adminPassInput.style.display = "";
+          btnTestConn.style.display = "";
+        } else if (on) {
+          adminPassInput.style.display = "none";
+          btnTestConn.style.display = "";
+        } else {
+          adminPassInput.style.display = "none";
+          btnTestConn.style.display = "none";
+        }
+        applyAuthButtonStyles();
 
         if (localAdmin) {
-          setStatus(authStatus, "ok", "로컬 비상 관리자 모드가 켜졌습니다. (admin1234)");
+          setStatus(authStatus, "ok", "로컬 비상 관리자 모드가 켜졌습니다.");
         } else if (on) {
           setStatus(authStatus, "ok", "관리자 모드가 켜졌습니다.");
-        } else {
-          setStatus(authStatus, "", "일반 보기 모드입니다.");
+        } else if (!showLoginForm) {
+          setStatus(authStatus, "", "관리자 모드가 꺼져 있습니다.");
           setStatus(formStatus, "", "");
           resetForm();
         }
       }
 
       if (!window.supabase || !window.SUPABASE_URL || !window.SUPABASE_ANON_KEY) {
-        setStatus(authStatus, "err", "Supabase 미설정 상태입니다. 비상모드(admin1234)로 이용 가능합니다.");
+        setStatus(authStatus, "err", "Supabase 미설정 시 로컬 비상 모드만 사용 가능합니다. 비상 암호는 SUPABASE_SETUP 안내를 참고하세요.");
       } else {
         client = window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY);
         var sessionRes = await client.auth.getSession();
@@ -491,6 +585,13 @@
       await renderList();
 
       btnLogin.addEventListener("click", async function () {
+        if (!isAdmin() && !showLoginForm) {
+          showLoginForm = true;
+          adminPassInput.value = "";
+          updateAdminUi();
+          setStatus(authStatus, "", "비밀번호를 입력한 뒤 `관리자 모드 켜기`를 눌러 로그인하세요.");
+          return;
+        }
         var email = ADMIN_EMAIL;
         var val = (adminPassInput.value || "").trim();
         if (!val) {
@@ -506,7 +607,7 @@
           return;
         }
         if (!client) {
-          setStatus(authStatus, "err", "현재는 Supabase 미설정 상태입니다. 비상모드 비밀번호(admin1234)로 로그인해 주세요.");
+          setStatus(authStatus, "err", "Supabase가 연결되지 않았습니다. 비상 모드 암호는 설정 안내(SUPABASE_SETUP)를 참고하세요.");
           return;
         }
         var loginRes;
@@ -516,7 +617,7 @@
           setStatus(
             authStatus,
             "err",
-            "로그인 연결 실패(Failed to fetch). 비상모드 비밀번호(admin1234)로 사용 가능합니다."
+            "로그인 연결 실패(Failed to fetch). 네트워크·URL 확인 또는 비상 모드(설정 안내 참고)로 시도하세요."
           );
           return;
         }
@@ -526,7 +627,7 @@
             setStatus(
               authStatus,
               "err",
-              "로그인 연결 실패(Failed to fetch). 비상모드 비밀번호(admin1234)로 사용 가능합니다."
+              "로그인 연결 실패(Failed to fetch). 배포 URL(https) 접속·supabase-config 확인 후 재시도하세요."
             );
             return;
           }
@@ -534,7 +635,7 @@
             setStatus(
               authStatus,
               "err",
-              "로그인 실패: 계정 또는 비밀번호가 다릅니다. 비상모드 비밀번호(admin1234)로도 사용 가능합니다."
+              "로그인 실패: 계정 또는 비밀번호가 다릅니다. Supabase에서 확인하거나 비상 모드(설정 안내)를 이용하세요."
             );
             return;
           }
@@ -549,18 +650,26 @@
       });
 
       btnLogout.addEventListener("click", async function () {
+        if (!isAdmin()) {
+          showLoginForm = false;
+          adminPassInput.value = "";
+          updateAdminUi();
+          setStatus(authStatus, "", "관리자 모드가 꺼져 있습니다.");
+          return;
+        }
         if (client && currentSession) {
           await client.auth.signOut();
         }
         currentSession = null;
         localAdmin = false;
+        showLoginForm = false;
         updateAdminUi();
         await renderList();
       });
 
       btnTestConn.addEventListener("click", async function () {
         if (!client) {
-          setStatus(authStatus, "err", "Supabase 미연결 상태입니다. 비상모드(admin1234)는 사용 가능합니다.");
+          setStatus(authStatus, "err", "Supabase 미연결입니다. 비상 모드는 설정 안내에 따라 사용할 수 있습니다.");
           return;
         }
         setStatus(authStatus, "", "연결 테스트 중...");

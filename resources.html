@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>자료실 | 대한민국행정사사무소</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700&family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --ink: #12161c;
+      --muted: #5a6270;
+      --line: rgba(20, 24, 32, 0.12);
+      --paper: #f8f6f2;
+      --maroon: #5a3540;
+      --maroon-dark: #3f242e;
+      --ok: #0d7a3f;
+      --err: #b02135;
+      --max: 1020px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Noto Sans KR", system-ui, sans-serif;
+      color: var(--ink);
+      background: var(--paper);
+      line-height: 1.6;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      background: rgba(250, 249, 246, 0.94);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .topbar-inner {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 0.78rem 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.7rem 1rem;
+      flex-wrap: wrap;
+    }
+
+    .brand {
+      font-family: "Noto Serif KR", serif;
+      font-weight: 700;
+      color: var(--ink);
+      text-decoration: none;
+      font-size: 0.95rem;
+    }
+
+    .brand span {
+      display: block;
+      font-size: 0.66rem;
+      color: var(--muted);
+      font-weight: 500;
+      margin-top: 0.18rem;
+    }
+
+    .top-links {
+      display: flex;
+      gap: 0.55rem;
+      flex-wrap: wrap;
+    }
+
+    .top-links a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--maroon-dark);
+      font-size: 0.82rem;
+      font-weight: 700;
+      text-decoration: none;
+      border: 1px solid rgba(90, 53, 64, 0.28);
+      border-radius: 2px;
+      background: #fff;
+      padding: 0.35rem 0.62rem;
+    }
+
+    .top-links a:hover {
+      background: #f7f1eb;
+      text-decoration: none;
+    }
+
+    .wrap {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 1.15rem 1rem 2.2rem;
+    }
+
+    .head {
+      margin-bottom: 1rem;
+    }
+
+    .section-label {
+      margin: 0 0 0.35rem;
+      font-size: 0.7rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--maroon);
+      font-weight: 700;
+    }
+
+    h1 {
+      margin: 0;
+      font-family: "Noto Serif KR", serif;
+      font-size: clamp(1.15rem, 2.8vw, 1.55rem);
+    }
+
+    .helper {
+      margin: 0.45rem 0 0;
+      color: var(--muted);
+      font-size: 0.88rem;
+    }
+
+    .status {
+      min-height: 1.2rem;
+      font-size: 0.82rem;
+      margin-top: 0.5rem;
+    }
+
+    .ok { color: var(--ok); }
+    .err { color: var(--err); }
+
+    .panel {
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      background: #fff;
+      padding: 0.9rem;
+      margin-bottom: 0.85rem;
+    }
+
+    .panel h2 {
+      margin: 0 0 0.75rem;
+      font-size: 0.98rem;
+    }
+
+    .row {
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+      flex-wrap: wrap;
+    }
+
+    label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 700;
+      margin: 0.7rem 0 0.3rem;
+      color: var(--muted);
+    }
+
+    input[type="text"],
+    input[type="password"],
+    textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 2px;
+      background: #fff;
+      color: var(--ink);
+      font: inherit;
+      padding: 0.58rem 0.63rem;
+    }
+
+    textarea {
+      min-height: 110px;
+      resize: vertical;
+    }
+
+    .btn {
+      border: 1px solid transparent;
+      border-radius: 2px;
+      padding: 0.48rem 0.85rem;
+      font-size: 0.84rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .btn-primary {
+      color: #fff;
+      background: linear-gradient(180deg, var(--maroon) 0%, var(--maroon-dark) 100%);
+    }
+
+    .btn-ghost {
+      background: #fff;
+      color: var(--ink);
+      border-color: var(--line);
+    }
+
+    .list {
+      display: grid;
+      gap: 0.7rem;
+    }
+
+    .item {
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      background: linear-gradient(180deg, #ffffff 0%, #fdfcfa 100%);
+      padding: 0.8rem 0.9rem;
+      box-shadow: 0 1px 0 rgba(20, 24, 32, 0.04);
+    }
+
+    .item h3 {
+      margin: 0;
+      font-size: 0.96rem;
+      line-height: 1.35;
+    }
+
+    .meta {
+      margin: 0.35rem 0 0;
+      color: var(--muted);
+      font-size: 0.79rem;
+    }
+
+    .body {
+      margin: 0.55rem 0 0;
+      white-space: pre-wrap;
+      font-size: 0.88rem;
+    }
+
+    .empty {
+      border: 1px dashed var(--line);
+      border-radius: 4px;
+      background: #fff;
+      color: var(--muted);
+      padding: 0.85rem;
+      font-size: 0.86rem;
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a href="index.html" class="brand">
+        대한민국행정사사무소
+        <span>Republic of Korea Administrative Scrivener Office</span>
+      </a>
+      <div class="top-links">
+        <a href="index.html">메인으로</a>
+        <a href="notice.html">공지사항</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <header class="head">
+      <p class="section-label">Resource Center</p>
+      <h1>자료실</h1>
+      <p class="helper">등록된 자료를 확인할 수 있습니다. 관리자 인증 후 등록/수정/삭제가 가능합니다.</p>
+    </header>
+
+    <section class="panel" aria-label="관리자 인증">
+      <h2>관리자 인증</h2>
+      <div class="row">
+        <input id="admin-email" type="text" placeholder="관리자 이메일" />
+        <input id="admin-pass" type="password" placeholder="관리자 비밀번호" />
+        <button id="btn-login" class="btn btn-primary" type="button">관리자 모드 켜기</button>
+        <button id="btn-logout" class="btn btn-ghost" type="button">관리자 모드 끄기</button>
+      </div>
+      <p id="auth-status" class="status" role="status" aria-live="polite"></p>
+    </section>
+
+    <section id="resource-editor" class="panel" aria-label="자료 등록 및 수정" style="display:none;">
+      <h2>자료 등록 / 수정 (관리자 전용)</h2>
+      <form id="resource-form" novalidate>
+        <input type="hidden" id="resource-id" value="" />
+
+        <label for="resource-title">제목</label>
+        <input id="resource-title" type="text" maxlength="120" required placeholder="예) 비영리법인 설립 준비 체크리스트" />
+
+        <label for="resource-url">자료 링크(URL, 선택)</label>
+        <input id="resource-url" type="text" placeholder="https://..." />
+
+        <label for="resource-content">내용</label>
+        <textarea id="resource-content" required placeholder="자료 설명 또는 본문을 입력해 주세요."></textarea>
+
+        <label for="resource-file">파일 첨부(선택)</label>
+        <input id="resource-file" type="file" />
+        <p id="resource-file-current" class="meta"></p>
+        <label class="row">
+          <input id="resource-file-remove" type="checkbox" />
+          <span>기존 첨부파일 삭제</span>
+        </label>
+
+        <div class="row" style="margin-top:0.8rem;">
+          <button type="submit" class="btn btn-primary">저장</button>
+          <button id="btn-reset" type="button" class="btn btn-ghost">입력 초기화</button>
+        </div>
+        <p id="form-status" class="status" role="status" aria-live="polite"></p>
+      </form>
+    </section>
+
+    <section class="panel" aria-label="자료 목록">
+      <h2>등록된 자료</h2>
+      <div id="resource-list" class="list"></div>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+  <script>
+    (async function () {
+      var STORAGE_BUCKET = "resource-files";
+
+      var adminEmailInput = document.getElementById("admin-email");
+      var adminPassInput = document.getElementById("admin-pass");
+      var btnLogin = document.getElementById("btn-login");
+      var btnLogout = document.getElementById("btn-logout");
+      var authStatus = document.getElementById("auth-status");
+
+      var editor = document.getElementById("resource-editor");
+      var form = document.getElementById("resource-form");
+      var formStatus = document.getElementById("form-status");
+      var list = document.getElementById("resource-list");
+      var fileInput = document.getElementById("resource-file");
+      var fileCurrent = document.getElementById("resource-file-current");
+      var fileRemove = document.getElementById("resource-file-remove");
+      var client = null;
+      var currentSession = null;
+
+      function isAdmin() {
+        return !!(currentSession && currentSession.user);
+      }
+
+      function setStatus(el, type, msg) {
+        el.classList.remove("ok", "err");
+        if (type) el.classList.add(type);
+        el.textContent = msg || "";
+      }
+
+      function escapeHtml(str) {
+        return String(str || "")
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll("\"", "&quot;")
+          .replaceAll("'", "&#39;");
+      }
+
+      function asSafeUrl(text) {
+        var val = String(text || "").trim();
+        if (!val) return "";
+        if (/^https?:\/\//i.test(val)) return val;
+        return "";
+      }
+
+      function resetForm() {
+        form.reset();
+        document.getElementById("resource-id").value = "";
+        fileCurrent.textContent = "첨부된 파일 없음";
+        fileRemove.checked = false;
+      }
+
+      function formatBytes(n) {
+        var size = Number(n || 0);
+        if (!size) return "";
+        if (size < 1024) return size + "B";
+        if (size < 1024 * 1024) return Math.round(size / 1024) + "KB";
+        return (size / (1024 * 1024)).toFixed(1) + "MB";
+      }
+
+      async function renderList() {
+        if (!client) {
+          list.innerHTML = '<p class="empty">`supabase-config.js`를 설정해 주세요.</p>';
+          return;
+        }
+        var res = await client
+          .from("resources")
+          .select("id, title, url, content, file_name, file_path, file_size, created_at")
+          .order("created_at", { ascending: false });
+        if (res.error) {
+          list.innerHTML = '<p class="empty">자료 목록을 불러오지 못했습니다.</p>';
+          return;
+        }
+        var items = res.data || [];
+        var adminOn = isAdmin();
+        if (items.length === 0) {
+          list.innerHTML = '<p class="empty">등록된 자료가 없습니다.</p>';
+          return;
+        }
+
+        list.innerHTML = items.map(function (item) {
+          var safeTitle = escapeHtml(item.title);
+          var safeBody = escapeHtml(item.content);
+          var safeDate = escapeHtml(String(item.created_at || "").slice(0, 10));
+          var safeUrl = asSafeUrl(item.url);
+          var link = safeUrl
+            ? '<p class="meta"><a href="' + safeUrl + '" target="_blank" rel="noopener noreferrer">자료 링크 열기</a></p>'
+            : "";
+          var fileLink = "";
+          if (item.file_path && item.file_name) {
+            var safeFileName = escapeHtml(item.file_name || "첨부파일");
+            var safeSize = escapeHtml(formatBytes(item.file_size));
+            var pub = client.storage.from(STORAGE_BUCKET).getPublicUrl(item.file_path);
+            var publicUrl = pub && pub.data ? pub.data.publicUrl : "";
+            if (publicUrl) {
+              fileLink = '<p class="meta"><a href="' + publicUrl + '" download="' + safeFileName + '">첨부파일 다운로드: ' + safeFileName + '</a>' + (safeSize ? " (" + safeSize + ")" : "") + "</p>";
+            }
+          }
+          var adminBtns = adminOn
+            ? '<div class="row" style="margin-top:0.55rem;">' +
+              '<button type="button" class="btn btn-ghost" data-act="edit" data-id="' + item.id + '">수정</button>' +
+              '<button type="button" class="btn btn-ghost" data-act="del" data-id="' + item.id + '">삭제</button>' +
+              "</div>"
+            : "";
+
+          return (
+            '<article class="item">' +
+            "<h3>" + safeTitle + "</h3>" +
+            '<p class="meta">등록일: ' + safeDate + "</p>" +
+            link +
+            fileLink +
+            '<p class="body">' + safeBody + "</p>" +
+            adminBtns +
+            "</article>"
+          );
+        }).join("");
+      }
+
+      function updateAdminUi() {
+        var on = isAdmin();
+        editor.style.display = on ? "block" : "none";
+        adminPassInput.disabled = on;
+        adminEmailInput.disabled = on;
+        btnLogin.disabled = false;
+        btnLogout.disabled = false;
+
+        if (on) {
+          setStatus(authStatus, "ok", "관리자 모드가 켜졌습니다.");
+        } else {
+          setStatus(authStatus, "", "일반 보기 모드입니다.");
+          setStatus(formStatus, "", "");
+          resetForm();
+        }
+      }
+
+      if (!window.supabase || !window.SUPABASE_URL || !window.SUPABASE_ANON_KEY) {
+        setStatus(authStatus, "err", "supabase-config.js 설정이 필요합니다.");
+        return;
+      }
+      client = window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY);
+      var sessionRes = await client.auth.getSession();
+      currentSession = sessionRes.data.session;
+      updateAdminUi();
+      await renderList();
+
+      btnLogin.addEventListener("click", async function () {
+        var email = (adminEmailInput.value || "").trim();
+        var val = (adminPassInput.value || "").trim();
+        if (!email || !val) {
+          setStatus(authStatus, "err", "이메일과 비밀번호를 입력해 주세요.");
+          return;
+        }
+        var loginRes = await client.auth.signInWithPassword({ email: email, password: val });
+        if (loginRes.error) {
+          setStatus(authStatus, "err", "로그인 실패: " + loginRes.error.message);
+          return;
+        }
+        currentSession = loginRes.data.session;
+        updateAdminUi();
+        adminPassInput.value = "";
+        await renderList();
+      });
+
+      btnLogout.addEventListener("click", async function () {
+        await client.auth.signOut();
+        currentSession = null;
+        updateAdminUi();
+        await renderList();
+      });
+
+      document.getElementById("btn-reset").addEventListener("click", function () {
+        resetForm();
+        setStatus(formStatus, "", "");
+      });
+
+      form.addEventListener("submit", async function (e) {
+        e.preventDefault();
+        if (!isAdmin()) {
+          setStatus(formStatus, "err", "관리자만 저장할 수 있습니다.");
+          return;
+        }
+
+        var id = document.getElementById("resource-id").value;
+        var title = (document.getElementById("resource-title").value || "").trim();
+        var url = (document.getElementById("resource-url").value || "").trim();
+        var content = (document.getElementById("resource-content").value || "").trim();
+        var pickedFile = fileInput.files && fileInput.files[0] ? fileInput.files[0] : null;
+
+        if (!title || !content) {
+          setStatus(formStatus, "err", "제목과 내용을 입력해 주세요.");
+          return;
+        }
+        if (url && !/^https?:\/\//i.test(url)) {
+          setStatus(formStatus, "err", "자료 링크는 http:// 또는 https:// 로 시작해야 합니다.");
+          return;
+        }
+        if (pickedFile && pickedFile.size > 5 * 1024 * 1024) {
+          setStatus(formStatus, "err", "첨부파일은 5MB 이하만 업로드할 수 있습니다.");
+          return;
+        }
+
+        var attachment = null;
+        if (pickedFile) {
+          var path = currentSession.user.id + "/" + Date.now() + "-" + pickedFile.name;
+          var up = await client.storage.from(STORAGE_BUCKET).upload(path, pickedFile, { upsert: true });
+          if (up.error) {
+            setStatus(formStatus, "err", "첨부파일 업로드 실패: " + up.error.message);
+            return;
+          }
+          attachment = {
+            file_name: pickedFile.name,
+            file_path: path,
+            file_size: pickedFile.size || 0
+          };
+        }
+
+        var res;
+        if (id) {
+          var one = await client.from("resources").select("file_path").eq("id", id).maybeSingle();
+          var payload = { title: title, url: url, content: content };
+          if (attachment) {
+            payload.file_name = attachment.file_name;
+            payload.file_path = attachment.file_path;
+            payload.file_size = attachment.file_size;
+            if (one.data && one.data.file_path) {
+              await client.storage.from(STORAGE_BUCKET).remove([one.data.file_path]);
+            }
+          } else if (fileRemove.checked) {
+            payload.file_name = null;
+            payload.file_path = null;
+            payload.file_size = null;
+            if (one.data && one.data.file_path) {
+              await client.storage.from(STORAGE_BUCKET).remove([one.data.file_path]);
+            }
+          }
+          res = await client.from("resources").update(payload).eq("id", id);
+          setStatus(formStatus, "ok", "자료를 수정했습니다.");
+        } else {
+          res = await client.from("resources").insert({
+            title: title,
+            url: url,
+            content: content,
+            file_name: attachment ? attachment.file_name : null,
+            file_path: attachment ? attachment.file_path : null,
+            file_size: attachment ? attachment.file_size : null
+          });
+          setStatus(formStatus, "ok", "자료를 등록했습니다.");
+        }
+        if (res.error) {
+          setStatus(formStatus, "err", "저장 실패: " + res.error.message);
+          return;
+        }
+
+        resetForm();
+        await renderList();
+      });
+
+      list.addEventListener("click", async function (e) {
+        var t = e.target;
+        if (!t || !t.dataset || !isAdmin()) return;
+
+        var act = t.dataset.act;
+        var id = t.dataset.id;
+        if (!act || !id) return;
+
+        if (act === "edit") {
+          var one = await client
+            .from("resources")
+            .select("id, title, url, content, file_name, file_size")
+            .eq("id", id)
+            .maybeSingle();
+          if (one.error || !one.data) return;
+          document.getElementById("resource-id").value = one.data.id;
+          document.getElementById("resource-title").value = one.data.title;
+          document.getElementById("resource-url").value = one.data.url || "";
+          document.getElementById("resource-content").value = one.data.content;
+          fileInput.value = "";
+          fileRemove.checked = false;
+          if (one.data.file_name) {
+            fileCurrent.textContent = "현재 첨부: " + one.data.file_name + (one.data.file_size ? " (" + formatBytes(one.data.file_size) + ")" : "");
+          } else {
+            fileCurrent.textContent = "첨부된 파일 없음";
+          }
+          setStatus(formStatus, "", "수정 모드입니다. 변경 후 저장해 주세요.");
+          return;
+        }
+
+        if (act === "del") {
+          if (!confirm("이 자료를 삭제하시겠습니까?")) return;
+          var oneDel = await client.from("resources").select("file_path").eq("id", id).maybeSingle();
+          if (oneDel.data && oneDel.data.file_path) {
+            await client.storage.from(STORAGE_BUCKET).remove([oneDel.data.file_path]);
+          }
+          var del = await client.from("resources").delete().eq("id", id);
+          if (del.error) {
+            setStatus(formStatus, "err", "삭제 실패: " + del.error.message);
+            return;
+          }
+          setStatus(formStatus, "ok", "자료를 삭제했습니다.");
+          await renderList();
+        }
+      });
+
+      resetForm();
+      updateAdminUi();
+    })();
+  </script>
+</body>
+</html>

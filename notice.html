@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>공지사항 | 대한민국행정사사무소</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700&family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --ink: #12161c;
+      --muted: #5a6270;
+      --line: rgba(20, 24, 32, 0.12);
+      --paper: #f8f6f2;
+      --maroon: #5a3540;
+      --maroon-dark: #3f242e;
+      --max: 980px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Noto Sans KR", system-ui, sans-serif;
+      color: var(--ink);
+      background: var(--paper);
+      line-height: 1.6;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      background: rgba(250, 249, 246, 0.94);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .topbar-inner {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 0.78rem 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.7rem 1rem;
+      flex-wrap: wrap;
+    }
+
+    .brand {
+      font-family: "Noto Serif KR", serif;
+      font-weight: 700;
+      color: var(--ink);
+      text-decoration: none;
+      font-size: 0.95rem;
+    }
+
+    .brand:hover {
+      text-decoration: none;
+    }
+
+    .brand span {
+      display: block;
+      font-family: "Noto Sans KR", system-ui, sans-serif;
+      font-size: 0.66rem;
+      color: var(--muted);
+      font-weight: 500;
+      margin-top: 0.18rem;
+    }
+
+    .wrap {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 1.15rem 1rem 2.2rem;
+    }
+
+    .head {
+      display: block;
+      margin-bottom: 1rem;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(1.15rem, 2.8vw, 1.55rem);
+      font-family: "Noto Serif KR", serif;
+    }
+
+    .links {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      flex-wrap: wrap;
+    }
+
+    .links a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--maroon-dark);
+      font-weight: 700;
+      text-decoration: none;
+      font-size: 0.82rem;
+      border: 1px solid rgba(90, 53, 64, 0.28);
+      border-radius: 2px;
+      background: #fff;
+      padding: 0.35rem 0.62rem;
+    }
+
+    .links a:hover {
+      text-decoration: none;
+      background: #f7f1eb;
+    }
+
+    .list {
+      display: grid;
+      gap: 0.75rem;
+    }
+
+    .item {
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      background: linear-gradient(180deg, #ffffff 0%, #fdfcfa 100%);
+      padding: 0.85rem 0.9rem;
+      box-shadow: 0 1px 0 rgba(20, 24, 32, 0.04);
+    }
+
+    .item h2 {
+      margin: 0;
+      font-size: 1rem;
+      line-height: 1.4;
+    }
+
+    .meta {
+      margin: 0.35rem 0 0;
+      color: var(--muted);
+      font-size: 0.8rem;
+    }
+
+    .body {
+      margin: 0.6rem 0 0;
+      white-space: pre-wrap;
+      font-size: 0.9rem;
+    }
+
+    .pin {
+      display: inline-block;
+      margin-right: 0.4rem;
+      font-size: 0.74rem;
+      font-weight: 700;
+      color: #fff;
+      background: linear-gradient(180deg, var(--maroon) 0%, var(--maroon-dark) 100%);
+      border-radius: 999px;
+      padding: 0.18rem 0.52rem;
+      vertical-align: middle;
+    }
+
+    .empty {
+      border: 1px dashed var(--line);
+      border-radius: 4px;
+      background: #fff;
+      padding: 0.9rem;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .section-label {
+      margin: 0 0 0.35rem;
+      font-size: 0.7rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--maroon);
+      font-weight: 700;
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a href="index.html" class="brand">
+        대한민국행정사사무소
+        <span>Republic of Korea Administrative Scrivener Office</span>
+      </a>
+      <div class="links">
+        <a href="index.html">메인으로</a>
+        <a href="admin.html">관리자 모드</a>
+      </div>
+    </div>
+  </header>
+
+  <div class="wrap">
+    <header class="head">
+      <p class="section-label">Notice</p>
+      <h1>공지사항</h1>
+    </header>
+
+    <section>
+      <div id="notice-list" class="list"></div>
+    </section>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+  <script>
+    (async function () {
+      var noticeList = document.getElementById("notice-list");
+      if (!noticeList) return;
+
+      function escapeHtml(str) {
+        return String(str)
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll("\"", "&quot;")
+          .replaceAll("'", "&#39;");
+      }
+
+      async function render() {
+        if (!window.supabase || !window.SUPABASE_URL || !window.SUPABASE_ANON_KEY) {
+          noticeList.innerHTML = '<p class="empty">`supabase-config.js`를 설정하면 공지사항이 표시됩니다.</p>';
+          return;
+        }
+        var client = window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY);
+        var res = await client
+          .from("notices")
+          .select("title, content, pinned, created_at")
+          .order("pinned", { ascending: false })
+          .order("created_at", { ascending: false });
+
+        if (res.error) {
+          noticeList.innerHTML = '<p class="empty">공지사항을 불러오지 못했습니다.</p>';
+          return;
+        }
+        var items = res.data || [];
+        if (items.length === 0) {
+          noticeList.innerHTML = '<p class="empty">등록된 공지사항이 없습니다.</p>';
+          return;
+        }
+
+        noticeList.innerHTML = items.map(function (item) {
+          var title = escapeHtml(item.title || "");
+          var content = escapeHtml(item.content || "");
+          var created = escapeHtml((item.created_at || "").slice(0, 10));
+          var pin = item.pinned ? '<span class="pin">고정</span>' : "";
+
+          return (
+            '<article class="item">' +
+            "<h2>" + pin + title + "</h2>" +
+            '<p class="meta">등록일: ' + created + "</p>" +
+            '<p class="body">' + content + "</p>" +
+            "</article>"
+          );
+        }).join("");
+      }
+
+      await render();
+    })();
+  </script>
+</body>
+</html>

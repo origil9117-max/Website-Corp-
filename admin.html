@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>공지사항 관리자 | 대한민국행정사사무소</title>
+  <style>
+    :root {
+      --ink: #12161c;
+      --muted: #5a6270;
+      --line: rgba(20, 24, 32, 0.12);
+      --paper: #f8f6f2;
+      --maroon: #5a3540;
+      --maroon-dark: #3f242e;
+      --ok: #0d7a3f;
+      --err: #b02135;
+      --max: 1020px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Noto Sans KR", system-ui, sans-serif;
+      color: var(--ink);
+      background: var(--paper);
+      line-height: 1.55;
+    }
+
+    .wrap {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 1.2rem 1rem 2rem;
+    }
+
+    .head {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.6rem 1rem;
+      margin-bottom: 1rem;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(1.15rem, 2.7vw, 1.5rem);
+    }
+
+    .head a {
+      color: var(--maroon);
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .head a:hover {
+      text-decoration: underline;
+    }
+
+    .grid {
+      display: grid;
+      gap: 0.9rem;
+    }
+
+    @media (min-width: 920px) {
+      .grid {
+        grid-template-columns: minmax(0, 380px) minmax(0, 1fr);
+        align-items: start;
+      }
+    }
+
+    .panel {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      padding: 1rem;
+    }
+
+    .panel h2 {
+      margin: 0 0 0.8rem;
+      font-size: 1rem;
+    }
+
+    label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 700;
+      margin: 0.75rem 0 0.35rem;
+      color: var(--muted);
+    }
+
+    input[type="text"],
+    textarea,
+    input[type="password"] {
+      width: 100%;
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: 2px;
+      padding: 0.6rem 0.65rem;
+      font: inherit;
+      color: var(--ink);
+    }
+
+    textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    .row {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+      margin-top: 0.85rem;
+    }
+
+    .btn {
+      border: 1px solid transparent;
+      border-radius: 2px;
+      padding: 0.5rem 0.85rem;
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .btn-primary {
+      color: #fff;
+      background: linear-gradient(180deg, var(--maroon) 0%, var(--maroon-dark) 100%);
+    }
+
+    .btn-ghost {
+      color: var(--ink);
+      background: #fff;
+      border-color: var(--line);
+    }
+
+    .status {
+      min-height: 1.2rem;
+      font-size: 0.82rem;
+      margin-top: 0.55rem;
+    }
+
+    .status.ok {
+      color: var(--ok);
+    }
+
+    .status.err {
+      color: var(--err);
+    }
+
+    .auth-box {
+      margin-bottom: 0.9rem;
+      background: #fff;
+      border: 1px dashed var(--line);
+      border-radius: 4px;
+      padding: 0.85rem;
+    }
+
+    .auth-box p {
+      margin: 0 0 0.45rem;
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+
+    .notice-list {
+      display: grid;
+      gap: 0.65rem;
+    }
+
+    .item {
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      padding: 0.75rem;
+      background: #fff;
+    }
+
+    .item h3 {
+      margin: 0;
+      font-size: 0.95rem;
+      line-height: 1.35;
+    }
+
+    .meta {
+      margin: 0.35rem 0 0;
+      color: var(--muted);
+      font-size: 0.78rem;
+    }
+
+    .body {
+      margin: 0.55rem 0 0;
+      white-space: pre-wrap;
+      font-size: 0.86rem;
+    }
+
+    .empty {
+      color: var(--muted);
+      font-size: 0.84rem;
+      border: 1px dashed var(--line);
+      background: #fff;
+      padding: 0.8rem;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="head">
+      <h1>공지사항 관리자 모드</h1>
+      <a href="index.html">메인으로 돌아가기</a>
+    </div>
+
+    <div class="auth-box">
+      <p>관리자 계정(이메일/비밀번호)으로 로그인하면 등록/수정/삭제가 활성화됩니다.</p>
+      <div class="row">
+        <input id="admin-email" type="text" placeholder="관리자 이메일" />
+        <input id="admin-pass" type="password" placeholder="관리자 비밀번호" />
+        <button id="btn-login" class="btn btn-primary" type="button">관리자 모드 켜기</button>
+        <button id="btn-logout" class="btn btn-ghost" type="button">관리자 모드 끄기</button>
+      </div>
+      <p id="auth-status" class="status" role="status" aria-live="polite"></p>
+      <hr style="margin: 0.8rem 0; border: 0; border-top: 1px solid var(--line);" />
+      <p>로그인 상태에서 계정 비밀번호를 변경할 수 있습니다.</p>
+      <div class="row">
+        <input id="current-pass" type="password" placeholder="현재 비밀번호(확인용)" />
+        <input id="next-pass" type="password" placeholder="새 비밀번호 (4자 이상)" />
+        <input id="next-pass-confirm" type="password" placeholder="새 비밀번호 확인" />
+        <button id="btn-change-pass" class="btn btn-ghost" type="button">비밀번호 변경</button>
+      </div>
+      <p id="pass-status" class="status" role="status" aria-live="polite"></p>
+    </div>
+
+    <div class="grid">
+      <section class="panel">
+        <h2>공지 등록 / 수정</h2>
+        <form id="notice-form" novalidate>
+          <input type="hidden" id="notice-id" value="" />
+
+          <label for="notice-title">제목</label>
+          <input id="notice-title" type="text" maxlength="120" required placeholder="예) 5월 휴무 안내" />
+
+          <label for="notice-content">내용</label>
+          <textarea id="notice-content" required placeholder="공지 내용을 입력해 주세요."></textarea>
+
+          <label class="row">
+            <input id="notice-pinned" type="checkbox" />
+            <span>상단 고정 공지</span>
+          </label>
+
+          <div class="row">
+            <button class="btn btn-primary" type="submit">저장</button>
+            <button id="btn-reset" class="btn btn-ghost" type="button">입력 초기화</button>
+          </div>
+          <p id="form-status" class="status" role="status" aria-live="polite"></p>
+        </form>
+      </section>
+
+      <section class="panel">
+        <h2>등록된 공지</h2>
+        <div id="notice-list" class="notice-list"></div>
+      </section>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+  <script>
+    (async function () {
+      var noticeForm = document.getElementById("notice-form");
+      var formStatus = document.getElementById("form-status");
+      var noticeList = document.getElementById("notice-list");
+      var authStatus = document.getElementById("auth-status");
+      var emailInput = document.getElementById("admin-email");
+      var passInput = document.getElementById("admin-pass");
+      var btnLogin = document.getElementById("btn-login");
+      var btnLogout = document.getElementById("btn-logout");
+      var currentPassInput = document.getElementById("current-pass");
+      var nextPassInput = document.getElementById("next-pass");
+      var nextPassConfirmInput = document.getElementById("next-pass-confirm");
+      var btnChangePass = document.getElementById("btn-change-pass");
+      var passStatus = document.getElementById("pass-status");
+      var client = null;
+      var currentSession = null;
+
+      function setStatus(el, type, msg) {
+        el.classList.remove("ok", "err");
+        if (type) el.classList.add(type);
+        el.textContent = msg || "";
+      }
+
+      function escapeHtml(str) {
+        return String(str || "")
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll("\"", "&quot;")
+          .replaceAll("'", "&#39;");
+      }
+
+      function resetForm() {
+        noticeForm.reset();
+        document.getElementById("notice-id").value = "";
+      }
+
+      function isAdmin() {
+        return !!(currentSession && currentSession.user);
+      }
+
+      async function renderList() {
+        if (!client) {
+          noticeList.innerHTML = '<p class="empty">`supabase-config.js`를 설정해 주세요.</p>';
+          return;
+        }
+        var res = await client
+          .from("notices")
+          .select("id, title, content, pinned, created_at")
+          .order("pinned", { ascending: false })
+          .order("created_at", { ascending: false });
+        if (res.error) {
+          noticeList.innerHTML = '<p class="empty">공지 목록을 불러오지 못했습니다.</p>';
+          return;
+        }
+        var items = res.data || [];
+        if (items.length === 0) {
+          noticeList.innerHTML = '<p class="empty">등록된 공지가 없습니다.</p>';
+          return;
+        }
+
+        var adminOn = isAdmin();
+        noticeList.innerHTML = items.map(function (item) {
+          var pinTag = item.pinned ? " · 상단고정" : "";
+          var created = String(item.created_at || "").slice(0, 16).replace("T", " ");
+          var control = adminOn
+            ? '<div class="row">' +
+              '<button class="btn btn-ghost" type="button" data-act="edit" data-id="' + item.id + '">수정</button>' +
+              '<button class="btn btn-ghost" type="button" data-act="del" data-id="' + item.id + '">삭제</button>' +
+              "</div>"
+            : "";
+
+          return (
+            '<article class="item">' +
+            "<h3>" + escapeHtml(item.title) + "</h3>" +
+            '<p class="meta">등록: ' + escapeHtml(created) + pinTag + "</p>" +
+            '<p class="body">' + escapeHtml(item.content) + "</p>" +
+            control +
+            "</article>"
+          );
+        }).join("");
+      }
+
+      function updateAdminUi() {
+        var on = isAdmin();
+        passInput.disabled = on;
+        emailInput.disabled = on;
+        btnLogin.disabled = false;
+        btnLogout.disabled = false;
+        if (on) {
+          setStatus(authStatus, "ok", "관리자 모드가 켜졌습니다.");
+        } else {
+          setStatus(authStatus, "", "관리자 모드가 꺼져 있습니다.");
+          setStatus(formStatus, "", "");
+          setStatus(passStatus, "", "");
+          currentPassInput.value = "";
+          nextPassInput.value = "";
+          nextPassConfirmInput.value = "";
+          resetForm();
+        }
+      }
+
+      if (!window.supabase || !window.SUPABASE_URL || !window.SUPABASE_ANON_KEY) {
+        setStatus(authStatus, "err", "supabase-config.js 설정이 필요합니다.");
+        return;
+      }
+      client = window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY);
+      var sessionRes = await client.auth.getSession();
+      currentSession = sessionRes.data.session;
+      updateAdminUi();
+      await renderList();
+
+      btnLogin.addEventListener("click", async function () {
+        var email = (emailInput.value || "").trim();
+        var password = (passInput.value || "").trim();
+        if (!email || !password) {
+          setStatus(authStatus, "err", "이메일과 비밀번호를 입력해 주세요.");
+          return;
+        }
+        var res = await client.auth.signInWithPassword({ email: email, password: password });
+        if (res.error) {
+          setStatus(authStatus, "err", "로그인 실패: " + res.error.message);
+          return;
+        }
+        currentSession = res.data.session;
+        passInput.value = "";
+        updateAdminUi();
+        await renderList();
+      });
+
+      btnLogout.addEventListener("click", async function () {
+        await client.auth.signOut();
+        currentSession = null;
+        updateAdminUi();
+        await renderList();
+      });
+
+      document.getElementById("btn-reset").addEventListener("click", function () {
+        resetForm();
+        setStatus(formStatus, "", "");
+      });
+
+      btnChangePass.addEventListener("click", async function () {
+        if (!isAdmin()) {
+          setStatus(passStatus, "err", "관리자 모드를 먼저 켜 주세요.");
+          return;
+        }
+        var current = (currentPassInput.value || "").trim();
+        var next = (nextPassInput.value || "").trim();
+        var confirm = (nextPassConfirmInput.value || "").trim();
+        var userEmail = currentSession.user.email;
+        if (!current || !next || !confirm) {
+          setStatus(passStatus, "err", "현재/새 비밀번호를 모두 입력해 주세요.");
+          return;
+        }
+        if (next.length < 4) {
+          setStatus(passStatus, "err", "새 비밀번호는 4자 이상이어야 합니다.");
+          return;
+        }
+        if (next !== confirm) {
+          setStatus(passStatus, "err", "새 비밀번호 확인이 일치하지 않습니다.");
+          return;
+        }
+
+        var check = await client.auth.signInWithPassword({ email: userEmail, password: current });
+        if (check.error) {
+          setStatus(passStatus, "err", "현재 비밀번호가 올바르지 않습니다.");
+          return;
+        }
+        var updateRes = await client.auth.updateUser({ password: next });
+        if (updateRes.error) {
+          setStatus(passStatus, "err", "비밀번호 변경 실패: " + updateRes.error.message);
+          return;
+        }
+        currentPassInput.value = "";
+        nextPassInput.value = "";
+        nextPassConfirmInput.value = "";
+        setStatus(passStatus, "ok", "비밀번호를 변경했습니다.");
+      });
+
+      noticeForm.addEventListener("submit", async function (e) {
+        e.preventDefault();
+        if (!isAdmin()) {
+          setStatus(formStatus, "err", "관리자만 저장할 수 있습니다.");
+          return;
+        }
+        var id = document.getElementById("notice-id").value;
+        var title = (document.getElementById("notice-title").value || "").trim();
+        var content = (document.getElementById("notice-content").value || "").trim();
+        var pinned = document.getElementById("notice-pinned").checked;
+        if (!title || !content) {
+          setStatus(formStatus, "err", "제목과 내용을 모두 입력해 주세요.");
+          return;
+        }
+
+        var res;
+        if (id) {
+          res = await client.from("notices").update({ title: title, content: content, pinned: pinned }).eq("id", id);
+        } else {
+          res = await client.from("notices").insert({ title: title, content: content, pinned: pinned });
+        }
+        if (res.error) {
+          setStatus(formStatus, "err", "저장 실패: " + res.error.message);
+          return;
+        }
+        setStatus(formStatus, "ok", id ? "공지를 수정했습니다." : "공지를 등록했습니다.");
+        resetForm();
+        await renderList();
+      });
+
+      noticeList.addEventListener("click", async function (e) {
+        var target = e.target;
+        if (!target || !target.dataset || !isAdmin()) return;
+        var act = target.dataset.act;
+        var id = target.dataset.id;
+        if (!act || !id) return;
+
+        if (act === "edit") {
+          var one = await client.from("notices").select("id, title, content, pinned").eq("id", id).maybeSingle();
+          if (one.error || !one.data) return;
+          document.getElementById("notice-id").value = one.data.id;
+          document.getElementById("notice-title").value = one.data.title;
+          document.getElementById("notice-content").value = one.data.content;
+          document.getElementById("notice-pinned").checked = !!one.data.pinned;
+          setStatus(formStatus, "", "수정 모드입니다. 내용을 변경 후 저장해 주세요.");
+          return;
+        }
+
+        if (act === "del") {
+          if (!confirm("이 공지를 삭제하시겠습니까?")) return;
+          var del = await client.from("notices").delete().eq("id", id);
+          if (del.error) {
+            setStatus(formStatus, "err", "삭제 실패: " + del.error.message);
+            return;
+          }
+          setStatus(formStatus, "ok", "공지를 삭제했습니다.");
+          await renderList();
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

@@ -34,6 +34,7 @@
 
     html {
       scroll-behavior: smooth;
+      font-size: 110%;
     }
 
     body {
@@ -143,24 +144,90 @@
       border: 1px solid rgba(0, 0, 0, 0.06);
     }
 
+    .btn-nav-notice {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.48rem 0.85rem;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #fff;
+      border: 1px solid rgba(10, 95, 165, 0.45);
+      background: linear-gradient(180deg, #1d8bf1 0%, #1267b8 100%);
+      border-radius: 2px;
+      text-decoration: none;
+      white-space: nowrap;
+      box-shadow: 0 2px 8px rgba(18, 103, 184, 0.28);
+    }
+
+    .btn-nav-notice:hover {
+      color: #fff;
+      border-color: rgba(9, 72, 126, 0.6);
+      text-decoration: none;
+      background: linear-gradient(180deg, #1579d8 0%, #0f5ca5 100%);
+    }
+
     .btn-nav-tel:hover {
       opacity: 0.93;
       text-decoration: none;
       color: #fff;
     }
 
+    .top-notice {
+      max-width: none;
+      margin: 0;
+      padding: 0;
+      border-bottom: 1px solid var(--line);
+      background: linear-gradient(180deg, #f8f3ec 0%, #fdfbf8 100%);
+    }
+
+    .top-notice-inner {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 0.6rem 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      flex-wrap: wrap;
+      font-size: 0.82rem;
+      color: var(--ink-soft);
+    }
+
+    .top-notice-label {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.14rem 0.46rem;
+      border-radius: 999px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: #fff;
+      background: linear-gradient(180deg, var(--maroon) 0%, var(--maroon-dark) 100%);
+      letter-spacing: 0.06em;
+      white-space: nowrap;
+    }
+
+    .top-notice-title {
+      font-weight: 700;
+      color: var(--ink);
+    }
+
+    .top-notice-body {
+      color: var(--muted);
+    }
+
     .hero {
       position: relative;
       overflow: hidden;
       border-bottom: 1px solid rgba(180, 155, 125, 0.14);
-      min-height: min(62vw, 360px);
+      min-height: min(56vw, 320px);
       background: linear-gradient(168deg, #06080d 0%, #0b1018 38%, #090c12 100%);
       -webkit-font-smoothing: antialiased;
     }
 
     @media (min-width: 900px) {
       .hero {
-        min-height: min(32vh, 320px);
+        min-height: min(28vh, 280px);
       }
     }
 
@@ -191,7 +258,7 @@
       z-index: 3;
       max-width: var(--max);
       margin: 0 auto;
-      padding: 1rem 1.25rem 1.1rem;
+      padding: 0.8rem 1.25rem 0.9rem;
       color: #f2ebe2;
       display: grid;
       grid-template-columns: 1fr;
@@ -202,7 +269,7 @@
 
     @media (min-width: 768px) {
       .hero-inner {
-        padding: 1.15rem 1.5rem 1.25rem;
+        padding: 0.9rem 1.5rem 1rem;
         grid-template-columns: minmax(0, 1.12fr) minmax(0, 0.88fr);
         gap: 1.35rem;
         align-items: center;
@@ -354,7 +421,7 @@
     .hero-badge {
       display: inline-block;
       font-family: "Noto Sans KR", sans-serif;
-      font-size: 0.62rem;
+      font-size: 0.71rem;
       letter-spacing: 0.1em;
       color: #ebe2d4;
       border: 1px solid rgba(175, 155, 125, 0.48);
@@ -1115,18 +1182,29 @@
           <ul>
             <li><a href="#trust">신뢰·등록</a></li>
             <li><a href="#services">업무 분야</a></li>
+            <li><a href="resources.html">자료실</a></li>
             <li><a href="#about">소개</a></li>
             <li>
               <a href="https://map.kakao.com/link/search/%EB%8C%80%ED%95%9C%EB%AF%BC%EA%B5%AD%ED%96%89%EC%A0%95%EC%82%AC%EC%82%AC%EB%AC%B4%EC%86%8C" target="_blank" rel="noopener noreferrer">오시는 길</a>
             </li>
           </ul>
         </nav>
+        <a class="btn-nav-notice" href="notice.html" aria-label="공지사항 페이지로 이동">공지사항</a>
         <a class="btn-nav-tel" href="tel:010-2634-5459" aria-label="업무전화 010-2634-5459로 전화상담">전화상담</a>
       </div>
     </div>
   </header>
 
   <main id="top">
+    <section class="top-notice" aria-label="최신 공지">
+      <div class="top-notice-inner">
+        <span class="top-notice-label">공지</span>
+        <span class="top-notice-title" id="top-notice-title">등록된 공지사항이 없습니다.</span>
+        <span class="top-notice-body" id="top-notice-body"></span>
+        <a href="notice.html" style="margin-left:auto; font-weight:700;">전체 공지 보기</a>
+      </div>
+    </section>
+
     <section class="hero" aria-labelledby="hero-title">
       <div class="hero-pattern" aria-hidden="true"></div>
       <div class="hero-vignette" aria-hidden="true"></div>
@@ -1282,8 +1360,8 @@
         <div class="about-wrap">
           <div class="about-box">
             <p>
-              <strong class="serif about-firm-name">대한민국행정사사무소</strong>는 개인·법인의 행정 신청·민원을 대리·지원합니다.
-              사안에 따라 변호사·세무사 등 유관 전문가와 협업이 필요할 경우 안내해 드립니다.
+              <strong class="serif about-firm-name">대한민국행정사사무소</strong>는 개인·법인의 행정 신청·민원을 대리·대행합니다.
+              사안에 따라 변호사·법무사·세무사 등 유관 전문가와 협업이 필요할 경우 안내해 드립니다.
             </p>
             <p class="credentials">
               <strong>전</strong> 대한행정사회 초대 교수<br />
@@ -1401,8 +1479,30 @@
       <p style="margin-top: 0.75rem;">© <span id="y"></span> 대한민국행정사사무소. All rights reserved.</p>
     </div>
   </footer>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
   <script>
     document.getElementById("y").textContent = new Date().getFullYear();
+
+    (async function () {
+      var topTitle = document.getElementById("top-notice-title");
+      var topBody = document.getElementById("top-notice-body");
+      if (!topTitle || !topBody) return;
+      if (!window.supabase || !window.SUPABASE_URL || !window.SUPABASE_ANON_KEY) return;
+
+      var client = window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY);
+      var res = await client
+        .from("notices")
+        .select("title, content, pinned, created_at")
+        .order("pinned", { ascending: false })
+        .order("created_at", { ascending: false })
+        .limit(1);
+
+      if (res.error || !res.data || res.data.length === 0) return;
+      var top = res.data[0];
+      topTitle.textContent = String(top.title || "공지사항");
+      topBody.textContent = String(top.content || "").replace(/\s+/g, " ").slice(0, 90);
+    })();
 
     (function () {
       var form = document.getElementById("consult-form");
@@ -1453,10 +1553,15 @@
                 data.success === "false" ||
                 data.error)
             ) {
-              var detail =
+              var raw =
                 (data.message && String(data.message)) ||
                 "FormSubmit이 요청을 거절했습니다.";
-              throw new Error(detail);
+              if (/activation|activate form/i.test(raw)) {
+                throw new Error(
+                  "ACTIVATION: FormSubmit 인증 메일(lkc@daum.net)의 활성화 링크를 먼저 눌러 주세요."
+                );
+              }
+              throw new Error(raw);
             }
             if (!o.res.ok) throw new Error("http");
             statusEl.classList.add("ok");
@@ -1467,15 +1572,20 @@
           .catch(function (err) {
             statusEl.classList.add("err");
             var m = err && err.message ? String(err.message) : "";
-            var line =
-              "전송에 실패했습니다. ";
-            if (/web server|FormSubmit will not work|file/i.test(m)) {
+            var line = "전송에 실패했습니다. ";
+            if (
+              /activation|activate form/i.test(m) ||
+              /인증 메일|ACTIVATION/i.test(m)
+            ) {
+              line +=
+                "FormSubmit에서 lkc@daum.net 으로 보낸 인증 메일을 열고, 안내 링크로 폼을 먼저 활성화해 주세요. (스팸함도 확인)";
+            } else if (/web server|FormSubmit will not work|file/i.test(m)) {
               line +=
                 "HTML을 탐색기에서만 연 경우 전송되지 않습니다. 호스팅에 올린 뒤 다시 시도해 주세요.";
             } else if (m) {
               line += m + " ";
             }
-            line += "직접 lkc@daum.net 으로 메일을 보내셔도 됩니다.";
+            line += " 직접 lkc@daum.net 으로 메일을 보내셔도 됩니다.";
             statusEl.textContent = line;
           })
           .finally(function () {

@@ -334,7 +334,7 @@
         </label>
 
         <div class="row" style="margin-top:0.8rem;">
-          <button type="submit" class="btn btn-primary">저장</button>
+          <button id="btn-save-resource" type="submit" class="btn btn-primary">저장</button>
           <button id="btn-reset" type="button" class="btn btn-ghost">입력 초기화</button>
         </div>
         <p id="form-status" class="status" role="status" aria-live="polite"></p>
@@ -364,6 +364,7 @@
       var editor = document.getElementById("resource-editor");
       var form = document.getElementById("resource-form");
       var formStatus = document.getElementById("form-status");
+      var btnSaveResource = document.getElementById("btn-save-resource");
       var list = document.getElementById("resource-list");
       var fileInput = document.getElementById("resource-file");
       var fileCurrent = document.getElementById("resource-file-current");
@@ -440,6 +441,14 @@
           };
           reader.readAsDataURL(file);
         });
+      }
+
+      function makeSafeStoragePath(userId, originalName) {
+        var name = String(originalName || "upload.bin");
+        var extIdx = name.lastIndexOf(".");
+        var ext = extIdx > -1 ? name.slice(extIdx).toLowerCase().replace(/[^.a-z0-9]/g, "") : "";
+        if (!ext) ext = ".bin";
+        return String(userId || "anon") + "/" + Date.now() + "-" + Math.random().toString(36).slice(2, 8) + ext;
       }
 
       async function renderList() {
@@ -696,135 +705,149 @@
           setStatus(formStatus, "err", "관리자만 저장할 수 있습니다.");
           return;
         }
-
-        var id = document.getElementById("resource-id").value;
-        var title = (document.getElementById("resource-title").value || "").trim();
-        var url = (document.getElementById("resource-url").value || "").trim();
-        var content = (document.getElementById("resource-content").value || "").trim();
-        var pickedFile = fileInput.files && fileInput.files[0] ? fileInput.files[0] : null;
-
-        if (!title || !content) {
-          setStatus(formStatus, "err", "제목과 내용을 입력해 주세요.");
-          return;
+        if (btnSaveResource) {
+          btnSaveResource.disabled = true;
+          btnSaveResource.textContent = "저장 중...";
         }
-        if (url && !/^https?:\/\//i.test(url)) {
-          setStatus(formStatus, "err", "자료 링크는 http:// 또는 https:// 로 시작해야 합니다.");
-          return;
-        }
-        if (pickedFile && pickedFile.size > 5 * 1024 * 1024) {
-          setStatus(formStatus, "err", "첨부파일은 5MB 이하만 업로드할 수 있습니다.");
-          return;
-        }
+        setStatus(formStatus, "", "저장 처리 중입니다...");
 
-        var attachment = null;
-        if (pickedFile) {
-          if (currentSession && client) {
-            var path = currentSession.user.id + "/" + Date.now() + "-" + pickedFile.name;
-            var up = await client.storage.from(STORAGE_BUCKET).upload(path, pickedFile, { upsert: true });
-            if (up.error) {
-              setStatus(formStatus, "err", "첨부파일 업로드 실패: " + up.error.message);
-              return;
-            }
-            attachment = {
-              file_name: pickedFile.name,
-              file_path: path,
-              file_size: pickedFile.size || 0
-            };
-          } else {
-            var dataUrl = "";
-            try {
-              dataUrl = await readFileAsDataUrl(pickedFile);
-            } catch (e) {
-              setStatus(formStatus, "err", "첨부파일 처리에 실패했습니다.");
-              return;
-            }
-            attachment = {
-              file_name: pickedFile.name,
-              file_size: pickedFile.size || 0,
-              file_data: dataUrl
-            };
+        try {
+          var id = document.getElementById("resource-id").value;
+          var title = (document.getElementById("resource-title").value || "").trim();
+          var url = (document.getElementById("resource-url").value || "").trim();
+          var content = (document.getElementById("resource-content").value || "").trim();
+          var pickedFile = fileInput.files && fileInput.files[0] ? fileInput.files[0] : null;
+
+          if (!title || !content) {
+            setStatus(formStatus, "err", "제목과 내용을 입력해 주세요.");
+            return;
           }
-        }
-
-        var res;
-        if (currentSession && client && id) {
-          var one = await client.from("resources").select("file_path").eq("id", id).maybeSingle();
-          var payload = { title: title, url: url, content: content };
-          if (attachment) {
-            payload.file_name = attachment.file_name;
-            payload.file_path = attachment.file_path;
-            payload.file_size = attachment.file_size;
-            if (one.data && one.data.file_path) {
-              await client.storage.from(STORAGE_BUCKET).remove([one.data.file_path]);
-            }
-          } else if (fileRemove.checked) {
-            payload.file_name = null;
-            payload.file_path = null;
-            payload.file_size = null;
-            if (one.data && one.data.file_path) {
-              await client.storage.from(STORAGE_BUCKET).remove([one.data.file_path]);
-            }
+          if (url && !/^https?:\/\//i.test(url)) {
+            setStatus(formStatus, "err", "자료 링크는 http:// 또는 https:// 로 시작해야 합니다.");
+            return;
           }
-          res = await client.from("resources").update(payload).eq("id", id);
-          setStatus(formStatus, "ok", "자료를 수정했습니다.");
-        } else if (currentSession && client) {
-          res = await client.from("resources").insert({
-            title: title,
-            url: url,
-            content: content,
-            file_name: attachment ? attachment.file_name : null,
-            file_path: attachment ? attachment.file_path : null,
-            file_size: attachment ? attachment.file_size : null
-          });
-          setStatus(formStatus, "ok", "자료를 등록했습니다.");
-        } else {
-          var localItems = loadLocalResources();
-          if (id) {
-            localItems = localItems.map(function (item) {
-              if (String(item.id) !== String(id)) return item;
-              item.title = title;
-              item.url = url;
-              item.content = content;
-              if (attachment) {
-                item.file_name = attachment.file_name || null;
-                item.file_size = attachment.file_size || null;
-                item.file_data = attachment.file_data || null;
-                item.file_path = null;
-              } else if (fileRemove.checked) {
-                item.file_name = null;
-                item.file_size = null;
-                item.file_data = null;
-                item.file_path = null;
+          if (pickedFile && pickedFile.size > 5 * 1024 * 1024) {
+            setStatus(formStatus, "err", "첨부파일은 5MB 이하만 업로드할 수 있습니다.");
+            return;
+          }
+
+          var attachment = null;
+          if (pickedFile) {
+            if (currentSession && client) {
+              var path = makeSafeStoragePath(currentSession.user.id, pickedFile.name);
+              var up = await client.storage.from(STORAGE_BUCKET).upload(path, pickedFile, { upsert: true });
+              if (up.error) {
+                setStatus(formStatus, "err", "첨부파일 업로드 실패: " + up.error.message);
+                return;
               }
-              return item;
-            });
-            saveLocalResources(localItems);
+              attachment = {
+                file_name: pickedFile.name,
+                file_path: path,
+                file_size: pickedFile.size || 0
+              };
+            } else {
+              var dataUrl = "";
+              try {
+                dataUrl = await readFileAsDataUrl(pickedFile);
+              } catch (e) {
+                setStatus(formStatus, "err", "첨부파일 처리에 실패했습니다.");
+                return;
+              }
+              attachment = {
+                file_name: pickedFile.name,
+                file_size: pickedFile.size || 0,
+                file_data: dataUrl
+              };
+            }
+          }
+
+          var res;
+          if (currentSession && client && id) {
+            var one = await client.from("resources").select("file_path").eq("id", id).maybeSingle();
+            var payload = { title: title, url: url, content: content };
+            if (attachment) {
+              payload.file_name = attachment.file_name;
+              payload.file_path = attachment.file_path;
+              payload.file_size = attachment.file_size;
+              if (one.data && one.data.file_path) {
+                await client.storage.from(STORAGE_BUCKET).remove([one.data.file_path]);
+              }
+            } else if (fileRemove.checked) {
+              payload.file_name = null;
+              payload.file_path = null;
+              payload.file_size = null;
+              if (one.data && one.data.file_path) {
+                await client.storage.from(STORAGE_BUCKET).remove([one.data.file_path]);
+              }
+            }
+            res = await client.from("resources").update(payload).eq("id", id);
             setStatus(formStatus, "ok", "자료를 수정했습니다.");
-            res = { error: null };
-          } else {
-            localItems.push({
-              id: String(Date.now()),
+          } else if (currentSession && client) {
+            res = await client.from("resources").insert({
               title: title,
               url: url,
               content: content,
-              file_name: attachment ? (attachment.file_name || null) : null,
-              file_size: attachment ? (attachment.file_size || null) : null,
-              file_data: attachment ? (attachment.file_data || null) : null,
-              file_path: null,
-              created_at: new Date().toISOString()
+              file_name: attachment ? attachment.file_name : null,
+              file_path: attachment ? attachment.file_path : null,
+              file_size: attachment ? attachment.file_size : null
             });
-            saveLocalResources(localItems);
             setStatus(formStatus, "ok", "자료를 등록했습니다.");
-            res = { error: null };
+          } else {
+            var localItems = loadLocalResources();
+            if (id) {
+              localItems = localItems.map(function (item) {
+                if (String(item.id) !== String(id)) return item;
+                item.title = title;
+                item.url = url;
+                item.content = content;
+                if (attachment) {
+                  item.file_name = attachment.file_name || null;
+                  item.file_size = attachment.file_size || null;
+                  item.file_data = attachment.file_data || null;
+                  item.file_path = null;
+                } else if (fileRemove.checked) {
+                  item.file_name = null;
+                  item.file_size = null;
+                  item.file_data = null;
+                  item.file_path = null;
+                }
+                return item;
+              });
+              saveLocalResources(localItems);
+              setStatus(formStatus, "ok", "자료를 수정했습니다.");
+              res = { error: null };
+            } else {
+              localItems.push({
+                id: String(Date.now()),
+                title: title,
+                url: url,
+                content: content,
+                file_name: attachment ? (attachment.file_name || null) : null,
+                file_size: attachment ? (attachment.file_size || null) : null,
+                file_data: attachment ? (attachment.file_data || null) : null,
+                file_path: null,
+                created_at: new Date().toISOString()
+              });
+              saveLocalResources(localItems);
+              setStatus(formStatus, "ok", "자료를 등록했습니다.");
+              res = { error: null };
+            }
+          }
+          if (res.error) {
+            setStatus(formStatus, "err", "저장 실패: " + res.error.message);
+            return;
+          }
+
+          resetForm();
+          await renderList();
+        } catch (err) {
+          setStatus(formStatus, "err", "저장 중 오류가 발생했습니다: " + (err && err.message ? err.message : "알 수 없는 오류"));
+        } finally {
+          if (btnSaveResource) {
+            btnSaveResource.disabled = false;
+            btnSaveResource.textContent = "저장";
           }
         }
-        if (res.error) {
-          setStatus(formStatus, "err", "저장 실패: " + res.error.message);
-          return;
-        }
-
-        resetForm();
-        await renderList();
       });
 
       list.addEventListener("click", async function (e) {

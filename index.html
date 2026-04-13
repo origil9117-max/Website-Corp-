@@ -194,10 +194,11 @@
       color: var(--ink);
       font-size: 0.78rem;
       font-weight: 500;
-      line-height: 1.4;
+      line-height: 1.35;
       text-align: center;
-      white-space: normal;
-      max-width: min(15rem, 86vw);
+      white-space: nowrap;
+      width: max-content;
+      max-width: min(92vw, 22rem);
       border-radius: 6px;
       border: 1px solid rgba(20, 24, 32, 0.12);
       box-shadow: 0 6px 22px rgba(0, 0, 0, 0.16);
@@ -400,16 +401,22 @@
 
     .hero-mini {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 0.5rem;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 0.4rem;
       width: 100%;
+    }
+
+    @media (max-width: 320px) {
+      .hero-mini {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
     }
 
     .hero-mini span {
       background: rgba(6, 8, 14, 0.52);
       border: 1px solid rgba(205, 185, 155, 0.26);
-      padding: 0.55rem 0.4rem;
-      font-size: 0.72rem;
+      padding: 0.5rem 0.28rem;
+      font-size: clamp(0.64rem, 2.1vw, 0.72rem);
       font-weight: 600;
       color: #faf6ef;
       text-align: center;
@@ -1270,8 +1277,7 @@
           class="btn-nav-tel tel-tooltip"
           href="tel:010-2634-5459"
           data-tooltip="모바일로 접속 시 통화로 연결됩니다."
-          title="모바일로 접속 시 통화로 연결됩니다."
-          aria-label="업무전화 010-2634-5459로 전화상담"
+          aria-label="업무전화 010-2634-5459. 모바일로 접속 시 통화로 연결됩니다."
           >전화상담</a>
       </div>
     </div>
@@ -1305,7 +1311,7 @@
               class="btn btn-primary tel-tooltip"
               href="tel:051-515-5459"
               data-tooltip="모바일로 접속 시 통화로 연결됩니다."
-              title="모바일로 접속 시 통화로 연결됩니다."
+              aria-label="대표전화 051-515-5459. 모바일로 접속 시 통화로 연결됩니다."
               >전화 상담</a>
             <a class="btn btn-ghost" href="#services">업무 분야</a>
           </div>

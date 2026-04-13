@@ -226,6 +226,16 @@
       color: var(--ink);
     }
 
+    /* 구버전 캐시에서 남아있는 본문 미리보기 강제 숨김 */
+    #top-notice-body,
+    .top-notice-body {
+      display: none !important;
+      visibility: hidden !important;
+      width: 0 !important;
+      height: 0 !important;
+      overflow: hidden !important;
+    }
+
     .hero {
       position: relative;
       overflow: hidden;
@@ -1498,7 +1508,12 @@
     (async function () {
       var LOCAL_NOTICE_KEY = "websiteCorpNotices";
       var topTitle = document.getElementById("top-notice-title");
+      var topBodyLegacy = document.getElementById("top-notice-body");
       if (!topTitle) return;
+      if (topBodyLegacy) {
+        topBodyLegacy.textContent = "";
+        topBodyLegacy.style.display = "none";
+      }
       function loadLocalNotices() {
         try {
           var raw = localStorage.getItem(LOCAL_NOTICE_KEY);

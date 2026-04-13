@@ -311,6 +311,7 @@
   <script>
     (async function () {
       var STORAGE_BUCKET = "resource-files";
+      var LOCAL_RESOURCE_KEY = "websiteCorpResources";
 
       var adminPassInput = document.getElementById("admin-pass");
       var btnLogin = document.getElementById("btn-login");
@@ -328,9 +329,24 @@
       var client = null;
       var currentSession = null;
       var ADMIN_EMAIL = "lkc@daum.net";
+      var localAdmin = false;
 
       function isAdmin() {
-        return !!(currentSession && currentSession.user);
+        return !!(localAdmin || (currentSession && currentSession.user));
+      }
+
+      function loadLocalResources() {
+        try {
+          var raw = localStorage.getItem(LOCAL_RESOURCE_KEY);
+          var parsed = raw ? JSON.parse(raw) : [];
+          return Array.isArray(parsed) ? parsed : [];
+        } catch (e) {
+          return [];
+        }
+      }
+
+      function saveLocalResources(items) {
+        localStorage.setItem(LOCAL_RESOURCE_KEY, JSON.stringify(items));
       }
 
       function setStatus(el, type, msg) {
@@ -370,20 +386,34 @@
         return (size / (1024 * 1024)).toFixed(1) + "MB";
       }
 
+      function readFileAsDataUrl(file) {
+        return new Promise(function (resolve, reject) {
+          var reader = new FileReader();
+          reader.onload = function () {
+            resolve(String(reader.result || ""));
+          };
+          reader.onerror = function () {
+            reject(new Error("file-read-failed"));
+          };
+          reader.readAsDataURL(file);
+        });
+      }
+
       async function renderList() {
-        if (!client) {
-          list.innerHTML = '<p class="empty">`supabase-config.js`를 설정해 주세요.</p>';
-          return;
+        var items = [];
+        if (client && currentSession) {
+          var res = await client
+            .from("resources")
+            .select("id, title, url, content, file_name, file_path, file_size, created_at")
+            .order("created_at", { ascending: false });
+          if (!res.error) {
+            items = res.data || [];
+          } else {
+            items = loadLocalResources();
+          }
+        } else {
+          items = loadLocalResources();
         }
-        var res = await client
-          .from("resources")
-          .select("id, title, url, content, file_name, file_path, file_size, created_at")
-          .order("created_at", { ascending: false });
-        if (res.error) {
-          list.innerHTML = '<p class="empty">자료 목록을 불러오지 못했습니다.</p>';
-          return;
-        }
-        var items = res.data || [];
         var adminOn = isAdmin();
         if (items.length === 0) {
           list.innerHTML = '<p class="empty">등록된 자료가 없습니다.</p>';
@@ -399,7 +429,11 @@
             ? '<p class="meta"><a href="' + safeUrl + '" target="_blank" rel="noopener noreferrer">자료 링크 열기</a></p>'
             : "";
           var fileLink = "";
-          if (item.file_path && item.file_name) {
+          if (item.file_data && item.file_name) {
+            var safeFileNameLocal = escapeHtml(item.file_name || "첨부파일");
+            var safeSizeLocal = escapeHtml(formatBytes(item.file_size));
+            fileLink = '<p class="meta"><a href="' + item.file_data + '" download="' + safeFileNameLocal + '">첨부파일 다운로드: ' + safeFileNameLocal + '</a>' + (safeSizeLocal ? " (" + safeSizeLocal + ")" : "") + "</p>";
+          } else if (item.file_path && item.file_name && client) {
             var safeFileName = escapeHtml(item.file_name || "첨부파일");
             var safeSize = escapeHtml(formatBytes(item.file_size));
             var pub = client.storage.from(STORAGE_BUCKET).getPublicUrl(item.file_path);
@@ -435,7 +469,9 @@
         btnLogin.disabled = false;
         btnLogout.disabled = false;
 
-        if (on) {
+        if (localAdmin) {
+          setStatus(authStatus, "ok", "로컬 비상 관리자 모드가 켜졌습니다. (admin1234)");
+        } else if (on) {
           setStatus(authStatus, "ok", "관리자 모드가 켜졌습니다.");
         } else {
           setStatus(authStatus, "", "일반 보기 모드입니다.");
@@ -445,12 +481,12 @@
       }
 
       if (!window.supabase || !window.SUPABASE_URL || !window.SUPABASE_ANON_KEY) {
-        setStatus(authStatus, "err", "supabase-config.js 설정이 필요합니다.");
-        return;
+        setStatus(authStatus, "err", "Supabase 미설정 상태입니다. 비상모드(admin1234)로 이용 가능합니다.");
+      } else {
+        client = window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY);
+        var sessionRes = await client.auth.getSession();
+        currentSession = sessionRes.data.session;
       }
-      client = window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY);
-      var sessionRes = await client.auth.getSession();
-      currentSession = sessionRes.data.session;
       updateAdminUi();
       await renderList();
 
@@ -461,6 +497,18 @@
           setStatus(authStatus, "err", "비밀번호를 입력해 주세요.");
           return;
         }
+        if (val === "admin1234") {
+          localAdmin = true;
+          currentSession = null;
+          adminPassInput.value = "";
+          updateAdminUi();
+          await renderList();
+          return;
+        }
+        if (!client) {
+          setStatus(authStatus, "err", "현재는 Supabase 미설정 상태입니다. 비상모드 비밀번호(admin1234)로 로그인해 주세요.");
+          return;
+        }
         var loginRes;
         try {
           loginRes = await client.auth.signInWithPassword({ email: email, password: val });
@@ -468,7 +516,7 @@
           setStatus(
             authStatus,
             "err",
-            "로그인 연결 실패(Failed to fetch). 1) file://가 아닌 배포 URL(https://...)로 접속 2) supabase-config.js 값 확인 3) Ctrl+F5 후 재시도"
+            "로그인 연결 실패(Failed to fetch). 비상모드 비밀번호(admin1234)로 사용 가능합니다."
           );
           return;
         }
@@ -478,7 +526,7 @@
             setStatus(
               authStatus,
               "err",
-              "로그인 연결 실패(Failed to fetch). 1) file://가 아닌 배포 URL(https://...)로 접속 2) supabase-config.js 값 확인 3) Ctrl+F5 후 재시도"
+              "로그인 연결 실패(Failed to fetch). 비상모드 비밀번호(admin1234)로 사용 가능합니다."
             );
             return;
           }
@@ -486,7 +534,7 @@
             setStatus(
               authStatus,
               "err",
-              "로그인 실패: 계정 또는 비밀번호가 다릅니다. Supabase > Authentication > Users에서 해당 계정 비밀번호를 재설정해 주세요."
+              "로그인 실패: 계정 또는 비밀번호가 다릅니다. 비상모드 비밀번호(admin1234)로도 사용 가능합니다."
             );
             return;
           }
@@ -494,21 +542,25 @@
           return;
         }
         currentSession = loginRes.data.session;
+        localAdmin = false;
         updateAdminUi();
         adminPassInput.value = "";
         await renderList();
       });
 
       btnLogout.addEventListener("click", async function () {
-        await client.auth.signOut();
+        if (client && currentSession) {
+          await client.auth.signOut();
+        }
         currentSession = null;
+        localAdmin = false;
         updateAdminUi();
         await renderList();
       });
 
       btnTestConn.addEventListener("click", async function () {
         if (!client) {
-          setStatus(authStatus, "err", "Supabase 클라이언트를 초기화하지 못했습니다.");
+          setStatus(authStatus, "err", "Supabase 미연결 상태입니다. 비상모드(admin1234)는 사용 가능합니다.");
           return;
         }
         setStatus(authStatus, "", "연결 테스트 중...");
@@ -557,21 +609,36 @@
 
         var attachment = null;
         if (pickedFile) {
-          var path = currentSession.user.id + "/" + Date.now() + "-" + pickedFile.name;
-          var up = await client.storage.from(STORAGE_BUCKET).upload(path, pickedFile, { upsert: true });
-          if (up.error) {
-            setStatus(formStatus, "err", "첨부파일 업로드 실패: " + up.error.message);
-            return;
+          if (currentSession && client) {
+            var path = currentSession.user.id + "/" + Date.now() + "-" + pickedFile.name;
+            var up = await client.storage.from(STORAGE_BUCKET).upload(path, pickedFile, { upsert: true });
+            if (up.error) {
+              setStatus(formStatus, "err", "첨부파일 업로드 실패: " + up.error.message);
+              return;
+            }
+            attachment = {
+              file_name: pickedFile.name,
+              file_path: path,
+              file_size: pickedFile.size || 0
+            };
+          } else {
+            var dataUrl = "";
+            try {
+              dataUrl = await readFileAsDataUrl(pickedFile);
+            } catch (e) {
+              setStatus(formStatus, "err", "첨부파일 처리에 실패했습니다.");
+              return;
+            }
+            attachment = {
+              file_name: pickedFile.name,
+              file_size: pickedFile.size || 0,
+              file_data: dataUrl
+            };
           }
-          attachment = {
-            file_name: pickedFile.name,
-            file_path: path,
-            file_size: pickedFile.size || 0
-          };
         }
 
         var res;
-        if (id) {
+        if (currentSession && client && id) {
           var one = await client.from("resources").select("file_path").eq("id", id).maybeSingle();
           var payload = { title: title, url: url, content: content };
           if (attachment) {
@@ -591,7 +658,7 @@
           }
           res = await client.from("resources").update(payload).eq("id", id);
           setStatus(formStatus, "ok", "자료를 수정했습니다.");
-        } else {
+        } else if (currentSession && client) {
           res = await client.from("resources").insert({
             title: title,
             url: url,
@@ -601,6 +668,46 @@
             file_size: attachment ? attachment.file_size : null
           });
           setStatus(formStatus, "ok", "자료를 등록했습니다.");
+        } else {
+          var localItems = loadLocalResources();
+          if (id) {
+            localItems = localItems.map(function (item) {
+              if (String(item.id) !== String(id)) return item;
+              item.title = title;
+              item.url = url;
+              item.content = content;
+              if (attachment) {
+                item.file_name = attachment.file_name || null;
+                item.file_size = attachment.file_size || null;
+                item.file_data = attachment.file_data || null;
+                item.file_path = null;
+              } else if (fileRemove.checked) {
+                item.file_name = null;
+                item.file_size = null;
+                item.file_data = null;
+                item.file_path = null;
+              }
+              return item;
+            });
+            saveLocalResources(localItems);
+            setStatus(formStatus, "ok", "자료를 수정했습니다.");
+            res = { error: null };
+          } else {
+            localItems.push({
+              id: String(Date.now()),
+              title: title,
+              url: url,
+              content: content,
+              file_name: attachment ? (attachment.file_name || null) : null,
+              file_size: attachment ? (attachment.file_size || null) : null,
+              file_data: attachment ? (attachment.file_data || null) : null,
+              file_path: null,
+              created_at: new Date().toISOString()
+            });
+            saveLocalResources(localItems);
+            setStatus(formStatus, "ok", "자료를 등록했습니다.");
+            res = { error: null };
+          }
         }
         if (res.error) {
           setStatus(formStatus, "err", "저장 실패: " + res.error.message);
@@ -620,37 +727,56 @@
         if (!act || !id) return;
 
         if (act === "edit") {
-          var one = await client
-            .from("resources")
-            .select("id, title, url, content, file_name, file_size")
-            .eq("id", id)
-            .maybeSingle();
-          if (one.error || !one.data) return;
-          document.getElementById("resource-id").value = one.data.id;
-          document.getElementById("resource-title").value = one.data.title;
-          document.getElementById("resource-url").value = one.data.url || "";
-          document.getElementById("resource-content").value = one.data.content;
+          if (currentSession && client) {
+            var one = await client
+              .from("resources")
+              .select("id, title, url, content, file_name, file_size")
+              .eq("id", id)
+              .maybeSingle();
+            if (one.error || !one.data) return;
+            document.getElementById("resource-id").value = one.data.id;
+            document.getElementById("resource-title").value = one.data.title;
+            document.getElementById("resource-url").value = one.data.url || "";
+            document.getElementById("resource-content").value = one.data.content;
+            if (one.data.file_name) {
+              fileCurrent.textContent = "현재 첨부: " + one.data.file_name + (one.data.file_size ? " (" + formatBytes(one.data.file_size) + ")" : "");
+            } else {
+              fileCurrent.textContent = "첨부된 파일 없음";
+            }
+          } else {
+            var oneLocal = loadLocalResources().find(function (x) { return String(x.id) === String(id); });
+            if (!oneLocal) return;
+            document.getElementById("resource-id").value = oneLocal.id;
+            document.getElementById("resource-title").value = oneLocal.title || "";
+            document.getElementById("resource-url").value = oneLocal.url || "";
+            document.getElementById("resource-content").value = oneLocal.content || "";
+            if (oneLocal.file_name) {
+              fileCurrent.textContent = "현재 첨부: " + oneLocal.file_name + (oneLocal.file_size ? " (" + formatBytes(oneLocal.file_size) + ")" : "");
+            } else {
+              fileCurrent.textContent = "첨부된 파일 없음";
+            }
+          }
           fileInput.value = "";
           fileRemove.checked = false;
-          if (one.data.file_name) {
-            fileCurrent.textContent = "현재 첨부: " + one.data.file_name + (one.data.file_size ? " (" + formatBytes(one.data.file_size) + ")" : "");
-          } else {
-            fileCurrent.textContent = "첨부된 파일 없음";
-          }
           setStatus(formStatus, "", "수정 모드입니다. 변경 후 저장해 주세요.");
           return;
         }
 
         if (act === "del") {
           if (!confirm("이 자료를 삭제하시겠습니까?")) return;
-          var oneDel = await client.from("resources").select("file_path").eq("id", id).maybeSingle();
-          if (oneDel.data && oneDel.data.file_path) {
-            await client.storage.from(STORAGE_BUCKET).remove([oneDel.data.file_path]);
-          }
-          var del = await client.from("resources").delete().eq("id", id);
-          if (del.error) {
-            setStatus(formStatus, "err", "삭제 실패: " + del.error.message);
-            return;
+          if (currentSession && client) {
+            var oneDel = await client.from("resources").select("file_path").eq("id", id).maybeSingle();
+            if (oneDel.data && oneDel.data.file_path) {
+              await client.storage.from(STORAGE_BUCKET).remove([oneDel.data.file_path]);
+            }
+            var del = await client.from("resources").delete().eq("id", id);
+            if (del.error) {
+              setStatus(formStatus, "err", "삭제 실패: " + del.error.message);
+              return;
+            }
+          } else {
+            var nextLocal = loadLocalResources().filter(function (x) { return String(x.id) !== String(id); });
+            saveLocalResources(nextLocal);
           }
           setStatus(formStatus, "ok", "자료를 삭제했습니다.");
           await renderList();

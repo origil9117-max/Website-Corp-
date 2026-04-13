@@ -205,8 +205,29 @@
   <script src="supabase-config.js"></script>
   <script>
     (async function () {
+      var LOCAL_NOTICE_KEY = "websiteCorpNotices";
       var noticeList = document.getElementById("notice-list");
       if (!noticeList) return;
+
+      function loadLocalNotices() {
+        try {
+          var raw = localStorage.getItem(LOCAL_NOTICE_KEY);
+          var parsed = raw ? JSON.parse(raw) : [];
+          return Array.isArray(parsed) ? parsed : [];
+        } catch (e) {
+          return [];
+        }
+      }
+
+      function sortNotices(items) {
+        return items.slice().sort(function (a, b) {
+          if (!!a.pinned !== !!b.pinned) return a.pinned ? -1 : 1;
+          var ad = String(a.created_at || a.createdText || "");
+          var bd = String(b.created_at || b.createdText || "");
+          if (ad === bd) return 0;
+          return ad > bd ? -1 : 1;
+        });
+      }
 
       function escapeHtml(str) {
         return String(str)
@@ -218,22 +239,24 @@
       }
 
       async function render() {
+        var items = [];
         if (!window.supabase || !window.SUPABASE_URL || !window.SUPABASE_ANON_KEY) {
-          noticeList.innerHTML = '<p class="empty">`supabase-config.js`를 설정하면 공지사항이 표시됩니다.</p>';
-          return;
-        }
-        var client = window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY);
-        var res = await client
-          .from("notices")
-          .select("title, content, pinned, created_at")
-          .order("pinned", { ascending: false })
-          .order("created_at", { ascending: false });
+          items = loadLocalNotices();
+        } else {
+          var client = window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY);
+          var res = await client
+            .from("notices")
+            .select("title, content, pinned, created_at")
+            .order("pinned", { ascending: false })
+            .order("created_at", { ascending: false });
 
-        if (res.error) {
-          noticeList.innerHTML = '<p class="empty">공지사항을 불러오지 못했습니다.</p>';
-          return;
+          if (!res.error) {
+            items = res.data || [];
+          } else {
+            items = loadLocalNotices();
+          }
         }
-        var items = res.data || [];
+        items = sortNotices(items);
         if (items.length === 0) {
           noticeList.innerHTML = '<p class="empty">등록된 공지사항이 없습니다.</p>';
           return;
@@ -242,7 +265,7 @@
         noticeList.innerHTML = items.map(function (item) {
           var title = escapeHtml(item.title || "");
           var content = escapeHtml(item.content || "");
-          var created = escapeHtml((item.created_at || "").slice(0, 10));
+          var created = escapeHtml(String(item.created_at || item.createdText || "").slice(0, 10));
           var pin = item.pinned ? '<span class="pin">고정</span>' : "";
 
           return (

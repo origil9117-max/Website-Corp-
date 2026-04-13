@@ -1485,21 +1485,52 @@
     document.getElementById("y").textContent = new Date().getFullYear();
 
     (async function () {
+      var LOCAL_NOTICE_KEY = "websiteCorpNotices";
       var topTitle = document.getElementById("top-notice-title");
       var topBody = document.getElementById("top-notice-body");
       if (!topTitle || !topBody) return;
-      if (!window.supabase || !window.SUPABASE_URL || !window.SUPABASE_ANON_KEY) return;
+      function loadLocalNotices() {
+        try {
+          var raw = localStorage.getItem(LOCAL_NOTICE_KEY);
+          var parsed = raw ? JSON.parse(raw) : [];
+          return Array.isArray(parsed) ? parsed : [];
+        } catch (e) {
+          return [];
+        }
+      }
 
-      var client = window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY);
-      var res = await client
-        .from("notices")
-        .select("title, content, pinned, created_at")
-        .order("pinned", { ascending: false })
-        .order("created_at", { ascending: false })
-        .limit(1);
+      function sortItems(items) {
+        return items.slice().sort(function (a, b) {
+          if (!!a.pinned !== !!b.pinned) return a.pinned ? -1 : 1;
+          var ad = String(a.created_at || a.createdText || "");
+          var bd = String(b.created_at || b.createdText || "");
+          if (ad === bd) return 0;
+          return ad > bd ? -1 : 1;
+        });
+      }
 
-      if (res.error || !res.data || res.data.length === 0) return;
-      var top = res.data[0];
+      var top = null;
+      if (!window.supabase || !window.SUPABASE_URL || !window.SUPABASE_ANON_KEY) {
+        var localOnly = sortItems(loadLocalNotices());
+        if (localOnly.length > 0) top = localOnly[0];
+      } else {
+        var client = window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY);
+        var res = await client
+          .from("notices")
+          .select("title, content, pinned, created_at")
+          .order("pinned", { ascending: false })
+          .order("created_at", { ascending: false })
+          .limit(1);
+
+        if (!res.error && res.data && res.data.length > 0) {
+          top = res.data[0];
+        } else {
+          var localFallback = sortItems(loadLocalNotices());
+          if (localFallback.length > 0) top = localFallback[0];
+        }
+      }
+
+      if (!top) return;
       topTitle.textContent = String(top.title || "공지사항");
       topBody.textContent = String(top.content || "").replace(/\s+/g, " ").slice(0, 90);
     })();

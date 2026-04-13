@@ -262,7 +262,6 @@
       <h2>관리자 인증</h2>
       <p class="helper" style="margin-bottom:0.45rem;">초기 비밀번호는 <strong>admin1234</strong> 입니다.</p>
       <div class="row">
-        <input id="admin-email" type="text" placeholder="관리자 이메일" />
         <input id="admin-pass" type="password" value="admin1234" placeholder="관리자 비밀번호" />
         <button id="btn-login" class="btn btn-primary" type="button">관리자 모드 켜기</button>
         <button id="btn-logout" class="btn btn-ghost" type="button">관리자 모드 끄기</button>
@@ -313,7 +312,6 @@
     (async function () {
       var STORAGE_BUCKET = "resource-files";
 
-      var adminEmailInput = document.getElementById("admin-email");
       var adminPassInput = document.getElementById("admin-pass");
       var btnLogin = document.getElementById("btn-login");
       var btnLogout = document.getElementById("btn-logout");
@@ -329,6 +327,7 @@
       var fileRemove = document.getElementById("resource-file-remove");
       var client = null;
       var currentSession = null;
+      var ADMIN_EMAIL = "lkc@daum.net";
 
       function isAdmin() {
         return !!(currentSession && currentSession.user);
@@ -433,7 +432,6 @@
         var on = isAdmin();
         editor.style.display = on ? "block" : "none";
         adminPassInput.disabled = on;
-        adminEmailInput.disabled = on;
         btnLogin.disabled = false;
         btnLogout.disabled = false;
 
@@ -457,10 +455,10 @@
       await renderList();
 
       btnLogin.addEventListener("click", async function () {
-        var email = (adminEmailInput.value || "").trim();
+        var email = ADMIN_EMAIL;
         var val = (adminPassInput.value || "").trim();
-        if (!email || !val) {
-          setStatus(authStatus, "err", "이메일과 비밀번호를 입력해 주세요.");
+        if (!val) {
+          setStatus(authStatus, "err", "비밀번호를 입력해 주세요.");
           return;
         }
         var loginRes;

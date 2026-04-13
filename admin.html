@@ -214,7 +214,6 @@
     <div class="auth-box">
       <p>관리자 계정(이메일/비밀번호)으로 로그인하면 등록/수정/삭제가 활성화됩니다. 초기 비밀번호는 <strong>admin1234</strong> 입니다.</p>
       <div class="row">
-        <input id="admin-email" type="text" placeholder="관리자 이메일" />
         <input id="admin-pass" type="password" value="admin1234" placeholder="관리자 비밀번호" />
         <button id="btn-login" class="btn btn-primary" type="button">관리자 모드 켜기</button>
         <button id="btn-logout" class="btn btn-ghost" type="button">관리자 모드 끄기</button>
@@ -273,7 +272,6 @@
       var formStatus = document.getElementById("form-status");
       var noticeList = document.getElementById("notice-list");
       var authStatus = document.getElementById("auth-status");
-      var emailInput = document.getElementById("admin-email");
       var passInput = document.getElementById("admin-pass");
       var btnLogin = document.getElementById("btn-login");
       var btnLogout = document.getElementById("btn-logout");
@@ -286,6 +284,7 @@
       var client = null;
       var currentSession = null;
       var localAdmin = false;
+      var ADMIN_EMAIL = "lkc@daum.net";
 
       function setStatus(el, type, msg) {
         el.classList.remove("ok", "err");
@@ -382,7 +381,6 @@
       function updateAdminUi() {
         var on = isAdmin();
         passInput.disabled = on;
-        emailInput.disabled = on && !localAdmin;
         btnLogin.disabled = false;
         btnLogout.disabled = false;
         if (localAdmin) {
@@ -411,10 +409,10 @@
       await renderList();
 
       btnLogin.addEventListener("click", async function () {
-        var email = (emailInput.value || "").trim();
+        var email = ADMIN_EMAIL;
         var password = (passInput.value || "").trim();
-        if (!email || !password) {
-          setStatus(authStatus, "err", "이메일과 비밀번호를 입력해 주세요.");
+        if (!password) {
+          setStatus(authStatus, "err", "비밀번호를 입력해 주세요.");
           return;
         }
         if (password === "admin1234") {

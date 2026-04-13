@@ -1660,16 +1660,26 @@
             "Content-Type": "application/json",
             Accept: "application/json",
           },
+          referrerPolicy: "unsafe-url",
           body: JSON.stringify({
             name: name,
             phone: phone,
             message: msg,
             _subject: "[상담요청] 대한민국행정사사무소 — " + name,
             _captcha: false,
+            _url: window.location.href,
           }),
         })
           .then(function (res) {
-            return res.json().then(function (data) {
+            return res.text().then(function (text) {
+              var data = null;
+              try {
+                data = text ? JSON.parse(text) : null;
+              } catch (parseErr) {
+                throw new Error(
+                  "서버 응답을 해석할 수 없습니다. 배포 URL(https)에서 다시 시도해 주세요."
+                );
+              }
               return { res: res, data: data };
             });
           })
@@ -1684,6 +1694,15 @@
               var detail =
                 (data.message && String(data.message)) ||
                 "FormSubmit이 요청을 거절했습니다.";
+              if (/activate|activation|활성/i.test(detail)) {
+                detail =
+                  "FormSubmit에서 lkc@daum.net 으로 보낸 '폼 활성화(Activate Form)' 메일의 링크를 먼저 눌러 주세요. " +
+                  "활성화 전에는 메일이 전달되지 않습니다.";
+              }
+              if (/web server|HTML files/i.test(detail)) {
+                detail =
+                  "이 페이지는 반드시 배포된 주소(https://…)로 열어야 합니다. 주소창이 file:// 이 아닌지 확인해 주세요.";
+              }
               throw new Error(detail);
             }
             if (!o.res.ok) throw new Error("http");

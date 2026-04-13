@@ -1654,13 +1654,60 @@
         var btn = form.querySelector(".btn-send");
         btn.disabled = true;
 
-        setTimeout(function () {
-          statusEl.classList.add("ok");
-          statusEl.textContent =
-            "접수되었습니다. 이메일 상담은 비공개이며, 확인 후 전화로 연락드리겠습니다.";
-          form.reset();
-          btn.disabled = false;
-        }, 300);
+        fetch("https://formsubmit.co/ajax/lkc@daum.net", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+          body: JSON.stringify({
+            name: name,
+            phone: phone,
+            message: msg,
+            _subject: "[상담요청] 대한민국행정사사무소 — " + name,
+            _captcha: false,
+          }),
+        })
+          .then(function (res) {
+            return res.json().then(function (data) {
+              return { res: res, data: data };
+            });
+          })
+          .then(function (o) {
+            var data = o.data;
+            if (
+              data &&
+              (data.success === false ||
+                data.success === "false" ||
+                data.error)
+            ) {
+              var detail =
+                (data.message && String(data.message)) ||
+                "FormSubmit이 요청을 거절했습니다.";
+              throw new Error(detail);
+            }
+            if (!o.res.ok) throw new Error("http");
+            statusEl.classList.add("ok");
+            statusEl.textContent =
+              "접수되었습니다. 이메일 상담은 비공개이며, 확인 후 전화로 연락드리겠습니다.";
+            form.reset();
+          })
+          .catch(function (err) {
+            statusEl.classList.add("err");
+            var m = err && err.message ? String(err.message) : "";
+            var line = "전송에 실패했습니다. ";
+            if (/web server|FormSubmit will not work|file/i.test(m)) {
+              line +=
+                "HTML을 탐색기에서만 연 경우 전송되지 않습니다. 호스팅에 올린 뒤 다시 시도해 주세요.";
+            } else if (m) {
+              line += m + " ";
+            }
+            line += "직접 lkc@daum.net 으로 메일을 보내셔도 됩니다.";
+            statusEl.textContent = line;
+          })
+          .finally(function () {
+            btn.disabled = false;
+          });
       });
     })();
   </script>

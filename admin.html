@@ -408,6 +408,14 @@
             );
             return;
           }
+          if (/Invalid login credentials/i.test(m)) {
+            setStatus(
+              authStatus,
+              "err",
+              "로그인 실패: 계정 또는 비밀번호가 다릅니다. Supabase > Authentication > Users에서 해당 계정 비밀번호를 재설정해 주세요."
+            );
+            return;
+          }
           setStatus(authStatus, "err", "로그인 실패: " + m);
           return;
         }

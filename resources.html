@@ -236,6 +236,53 @@
       background: rgba(13, 122, 63, 0.08);
     }
 
+    .auth-details {
+      margin: 0.5rem 0 0.75rem;
+      border: 1px dashed var(--line);
+      border-radius: 4px;
+      padding: 0.45rem 0.65rem 0.55rem;
+      background: rgba(250, 248, 244, 0.95);
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+    .auth-details summary {
+      cursor: pointer;
+      font-weight: 700;
+      color: var(--muted);
+      list-style: none;
+    }
+    .auth-details summary::-webkit-details-marker {
+      display: none;
+    }
+    .auth-details-body {
+      margin-top: 0.5rem;
+      padding-top: 0.45rem;
+      border-top: 1px dashed rgba(20, 24, 32, 0.1);
+      line-height: 1.5;
+    }
+    .auth-details-body p {
+      margin: 0.35rem 0 0;
+    }
+
+    .attachment-notice {
+      margin: 0 0 0.75rem;
+      padding: 0.75rem 0.85rem;
+      font-size: clamp(1rem, 2.4vw, 1.15rem);
+      font-weight: 700;
+      line-height: 1.45;
+      color: var(--maroon-dark);
+      background: linear-gradient(180deg, rgba(90, 53, 64, 0.12) 0%, rgba(90, 53, 64, 0.05) 100%);
+      border: 1px solid rgba(90, 53, 64, 0.3);
+      border-radius: 4px;
+    }
+    .attachment-notice span.sub {
+      display: block;
+      margin-top: 0.35rem;
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: var(--muted);
+    }
+
     .list {
       display: grid;
       gap: 0.7rem;
@@ -301,6 +348,13 @@
     <section class="panel" aria-label="관리자 인증">
       <h2>관리자 인증</h2>
       <p class="helper" style="margin-bottom:0.45rem;">관리자 계정으로 로그인한 경우에만 자료를 등록·수정·삭제할 수 있습니다.</p>
+      <details class="auth-details">
+        <summary>비상 모드(로컬 저장) 안내 — 펼치기</summary>
+        <div class="auth-details-body">
+          <p>Supabase에 연결되지 않을 때만 쓰는 임시 방식입니다. 첨부는 작은 용량만 가능하고 브라우저 저장 한도가 있습니다.</p>
+          <p>연결 설정·비상 암호는 사이트 프로젝트의 <strong>SUPABASE_SETUP</strong> 안내를 참고하세요.</p>
+        </div>
+      </details>
       <p id="auth-mode-indicator" class="auth-mode-indicator" data-mode="view" role="status" aria-live="polite">현재: 일반 보기</p>
       <div class="row" id="auth-login-row">
         <input id="admin-pass" type="password" autocomplete="current-password" placeholder="관리자 비밀번호" />
@@ -324,6 +378,11 @@
 
         <label for="resource-content">내용</label>
         <textarea id="resource-content" required placeholder="자료 설명 또는 본문을 입력해 주세요."></textarea>
+
+        <p class="attachment-notice" role="note">
+          큰 첨부는 Supabase 로그인 필요
+          <span class="sub">관리자로 로그인하면 파일이 클라우드(Storage)에 저장되어 용량 제한 없이 가깝게 이용할 수 있습니다.</span>
+        </p>
 
         <label for="resource-file">파일 첨부(선택)</label>
         <input id="resource-file" type="file" />
@@ -353,6 +412,8 @@
     (async function () {
       var STORAGE_BUCKET = "resource-files";
       var LOCAL_RESOURCE_KEY = "websiteCorpResources";
+      /** 로컬(비상) 모드: 첨부를 localStorage에 Base64로 넣으므로 브라우저 한도(약 5MB) 초과 방지 */
+      var LOCAL_ATTACHMENT_MAX_BYTES = 450 * 1024;
 
       var adminPassInput = document.getElementById("admin-pass");
       var loginRow = document.getElementById("auth-login-row");
@@ -390,7 +451,15 @@
       }
 
       function saveLocalResources(items) {
-        localStorage.setItem(LOCAL_RESOURCE_KEY, JSON.stringify(items));
+        try {
+          localStorage.setItem(LOCAL_RESOURCE_KEY, JSON.stringify(items));
+        } catch (e) {
+          var name = e && e.name ? String(e.name) : "";
+          if (name === "QuotaExceededError" || (e && e.code === 22)) {
+            throw new Error("LOCAL_STORAGE_QUOTA");
+          }
+          throw e;
+        }
       }
 
       function setStatus(el, type, msg) {
@@ -584,7 +653,7 @@
       }
 
       if (!window.supabase || !window.SUPABASE_URL || !window.SUPABASE_ANON_KEY) {
-        setStatus(authStatus, "err", "Supabase 미설정 시 로컬 비상 모드만 사용 가능합니다. 비상 암호는 SUPABASE_SETUP 안내를 참고하세요.");
+        setStatus(authStatus, "", "위의 「비상 모드 안내」를 펼치면 로컬 저장 시 유의사항이 나옵니다.");
       } else {
         client = window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY);
         var sessionRes = await client.auth.getSession();
@@ -699,6 +768,15 @@
         setStatus(formStatus, "", "");
       });
 
+      fileInput.addEventListener("change", function () {
+        var f = fileInput.files && fileInput.files[0];
+        if (f) {
+          fileCurrent.textContent = "선택한 파일: " + f.name + (f.size ? " (" + formatBytes(f.size) + ")" : "");
+        } else {
+          fileCurrent.textContent = "첨부된 파일 없음";
+        }
+      });
+
       form.addEventListener("submit", async function (e) {
         e.preventDefault();
         if (!isAdmin()) {
@@ -746,6 +824,16 @@
                 file_size: pickedFile.size || 0
               };
             } else {
+              if (pickedFile.size > LOCAL_ATTACHMENT_MAX_BYTES) {
+                setStatus(
+                  formStatus,
+                  "err",
+                  "로컬(비상) 모드에서는 첨부가 " +
+                    formatBytes(LOCAL_ATTACHMENT_MAX_BYTES) +
+                    " 이하인 파일만 저장할 수 있습니다. 큰 파일은 Supabase에 관리자로 로그인한 뒤 저장하세요."
+                );
+                return;
+              }
               var dataUrl = "";
               try {
                 dataUrl = await readFileAsDataUrl(pickedFile);
@@ -841,7 +929,16 @@
           resetForm();
           await renderList();
         } catch (err) {
-          setStatus(formStatus, "err", "저장 중 오류가 발생했습니다: " + (err && err.message ? err.message : "알 수 없는 오류"));
+          var em = err && err.message ? String(err.message) : "";
+          if (em === "LOCAL_STORAGE_QUOTA" || /quota|QuotaExceeded|setItem/i.test(em)) {
+            setStatus(
+              formStatus,
+              "err",
+              "브라우저 저장 한도를 초과했습니다. 로컬 모드에서는 작은 첨부만 가능합니다. Supabase 관리자 로그인 후 저장하거나, 기존 자료를 줄인 뒤 다시 시도하세요."
+            );
+          } else {
+            setStatus(formStatus, "err", "저장 중 오류가 발생했습니다: " + (em || "알 수 없는 오류"));
+          }
         } finally {
           if (btnSaveResource) {
             btnSaveResource.disabled = false;

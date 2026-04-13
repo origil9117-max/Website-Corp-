@@ -268,6 +268,7 @@
   <script src="supabase-config.js"></script>
   <script>
     (async function () {
+      var LOCAL_NOTICE_KEY = "websiteCorpNotices";
       var noticeForm = document.getElementById("notice-form");
       var formStatus = document.getElementById("form-status");
       var noticeList = document.getElementById("notice-list");
@@ -284,6 +285,7 @@
       var passStatus = document.getElementById("pass-status");
       var client = null;
       var currentSession = null;
+      var localAdmin = false;
 
       function setStatus(el, type, msg) {
         el.classList.remove("ok", "err");
@@ -305,25 +307,51 @@
         document.getElementById("notice-id").value = "";
       }
 
+      function loadLocalNotices() {
+        try {
+          var raw = localStorage.getItem(LOCAL_NOTICE_KEY);
+          var parsed = raw ? JSON.parse(raw) : [];
+          return Array.isArray(parsed) ? parsed : [];
+        } catch (e) {
+          return [];
+        }
+      }
+
+      function saveLocalNotices(items) {
+        localStorage.setItem(LOCAL_NOTICE_KEY, JSON.stringify(items));
+      }
+
+      function sortNoticeItems(items) {
+        return items.slice().sort(function (a, b) {
+          if (!!a.pinned !== !!b.pinned) return a.pinned ? -1 : 1;
+          var ad = String(a.created_at || a.createdText || "");
+          var bd = String(b.created_at || b.createdText || "");
+          if (ad === bd) return 0;
+          return ad > bd ? -1 : 1;
+        });
+      }
+
       function isAdmin() {
-        return !!(currentSession && currentSession.user);
+        return !!(localAdmin || (currentSession && currentSession.user));
       }
 
       async function renderList() {
-        if (!client) {
-          noticeList.innerHTML = '<p class="empty">`supabase-config.js`를 설정해 주세요.</p>';
-          return;
+        var items = [];
+        if (client && currentSession) {
+          var res = await client
+            .from("notices")
+            .select("id, title, content, pinned, created_at")
+            .order("pinned", { ascending: false })
+            .order("created_at", { ascending: false });
+          if (!res.error) {
+            items = res.data || [];
+          } else {
+            items = loadLocalNotices();
+          }
+        } else {
+          items = loadLocalNotices();
         }
-        var res = await client
-          .from("notices")
-          .select("id, title, content, pinned, created_at")
-          .order("pinned", { ascending: false })
-          .order("created_at", { ascending: false });
-        if (res.error) {
-          noticeList.innerHTML = '<p class="empty">공지 목록을 불러오지 못했습니다.</p>';
-          return;
-        }
-        var items = res.data || [];
+        items = sortNoticeItems(items);
         if (items.length === 0) {
           noticeList.innerHTML = '<p class="empty">등록된 공지가 없습니다.</p>';
           return;
@@ -332,7 +360,7 @@
         var adminOn = isAdmin();
         noticeList.innerHTML = items.map(function (item) {
           var pinTag = item.pinned ? " · 상단고정" : "";
-          var created = String(item.created_at || "").slice(0, 16).replace("T", " ");
+          var created = String(item.created_at || item.createdText || "").slice(0, 16).replace("T", " ");
           var control = adminOn
             ? '<div class="row">' +
               '<button class="btn btn-ghost" type="button" data-act="edit" data-id="' + item.id + '">수정</button>' +
@@ -354,10 +382,12 @@
       function updateAdminUi() {
         var on = isAdmin();
         passInput.disabled = on;
-        emailInput.disabled = on;
+        emailInput.disabled = on && !localAdmin;
         btnLogin.disabled = false;
         btnLogout.disabled = false;
-        if (on) {
+        if (localAdmin) {
+          setStatus(authStatus, "ok", "로컬 비상 관리자 모드가 켜졌습니다. (admin1234)");
+        } else if (on) {
           setStatus(authStatus, "ok", "관리자 모드가 켜졌습니다.");
         } else {
           setStatus(authStatus, "", "관리자 모드가 꺼져 있습니다.");
@@ -371,12 +401,12 @@
       }
 
       if (!window.supabase || !window.SUPABASE_URL || !window.SUPABASE_ANON_KEY) {
-        setStatus(authStatus, "err", "supabase-config.js 설정이 필요합니다.");
-        return;
+        setStatus(authStatus, "err", "Supabase 설정이 없어도 로컬 비상 모드(admin1234)로 사용 가능합니다.");
+      } else {
+        client = window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY);
+        var sessionRes = await client.auth.getSession();
+        currentSession = sessionRes.data.session;
       }
-      client = window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY);
-      var sessionRes = await client.auth.getSession();
-      currentSession = sessionRes.data.session;
       updateAdminUi();
       await renderList();
 
@@ -387,6 +417,18 @@
           setStatus(authStatus, "err", "이메일과 비밀번호를 입력해 주세요.");
           return;
         }
+        if (password === "admin1234") {
+          localAdmin = true;
+          currentSession = null;
+          passInput.value = "";
+          updateAdminUi();
+          await renderList();
+          return;
+        }
+        if (!client) {
+          setStatus(authStatus, "err", "현재는 Supabase 미설정 상태입니다. 비상모드 비밀번호(admin1234)로 로그인해 주세요.");
+          return;
+        }
         var res;
         try {
           res = await client.auth.signInWithPassword({ email: email, password: password });
@@ -394,7 +436,7 @@
           setStatus(
             authStatus,
             "err",
-            "로그인 연결 실패(Failed to fetch). 1) file://가 아닌 배포 URL(https://...)로 접속 2) supabase-config.js 값 확인 3) Ctrl+F5 후 재시도"
+            "로그인 연결 실패(Failed to fetch). 비상모드 비밀번호(admin1234)로 사용 가능"
           );
           return;
         }
@@ -412,7 +454,7 @@
             setStatus(
               authStatus,
               "err",
-              "로그인 실패: 계정 또는 비밀번호가 다릅니다. Supabase > Authentication > Users에서 해당 계정 비밀번호를 재설정해 주세요."
+              "로그인 실패: 계정 또는 비밀번호가 다릅니다. 즉시 사용하려면 비상모드 비밀번호(admin1234)로 로그인하세요."
             );
             return;
           }
@@ -420,21 +462,25 @@
           return;
         }
         currentSession = res.data.session;
+        localAdmin = false;
         passInput.value = "";
         updateAdminUi();
         await renderList();
       });
 
       btnLogout.addEventListener("click", async function () {
-        await client.auth.signOut();
+        if (client && currentSession) {
+          await client.auth.signOut();
+        }
         currentSession = null;
+        localAdmin = false;
         updateAdminUi();
         await renderList();
       });
 
       btnTestConn.addEventListener("click", async function () {
         if (!client) {
-          setStatus(authStatus, "err", "Supabase 클라이언트를 초기화하지 못했습니다.");
+          setStatus(authStatus, "err", "Supabase 미연결 상태입니다. 대신 비상모드(admin1234)는 사용 가능합니다.");
           return;
         }
         setStatus(authStatus, "", "연결 테스트 중...");
@@ -463,6 +509,10 @@
         var current = (currentPassInput.value || "").trim();
         var next = (nextPassInput.value || "").trim();
         var confirm = (nextPassConfirmInput.value || "").trim();
+        if (!currentSession || !currentSession.user) {
+          setStatus(passStatus, "err", "비상모드에서는 비밀번호 변경을 지원하지 않습니다. Supabase 로그인 후 변경해 주세요.");
+          return;
+        }
         var userEmail = currentSession.user.email;
         if (!current || !next || !confirm) {
           setStatus(passStatus, "err", "현재/새 비밀번호를 모두 입력해 주세요.");
@@ -509,14 +559,36 @@
         }
 
         var res;
-        if (id) {
-          res = await client.from("notices").update({ title: title, content: content, pinned: pinned }).eq("id", id);
+        if (currentSession && client) {
+          if (id) {
+            res = await client.from("notices").update({ title: title, content: content, pinned: pinned }).eq("id", id);
+          } else {
+            res = await client.from("notices").insert({ title: title, content: content, pinned: pinned });
+          }
+          if (res.error) {
+            setStatus(formStatus, "err", "저장 실패: " + res.error.message);
+            return;
+          }
         } else {
-          res = await client.from("notices").insert({ title: title, content: content, pinned: pinned });
-        }
-        if (res.error) {
-          setStatus(formStatus, "err", "저장 실패: " + res.error.message);
-          return;
+          var itemsLocal = loadLocalNotices();
+          if (id) {
+            itemsLocal = itemsLocal.map(function (n) {
+              if (String(n.id) !== String(id)) return n;
+              n.title = title;
+              n.content = content;
+              n.pinned = pinned;
+              return n;
+            });
+          } else {
+            itemsLocal.push({
+              id: String(Date.now()),
+              title: title,
+              content: content,
+              pinned: pinned,
+              createdText: new Date().toISOString().slice(0, 16).replace("T", " ")
+            });
+          }
+          saveLocalNotices(itemsLocal);
         }
         setStatus(formStatus, "ok", id ? "공지를 수정했습니다." : "공지를 등록했습니다.");
         resetForm();
@@ -531,22 +603,36 @@
         if (!act || !id) return;
 
         if (act === "edit") {
-          var one = await client.from("notices").select("id, title, content, pinned").eq("id", id).maybeSingle();
-          if (one.error || !one.data) return;
-          document.getElementById("notice-id").value = one.data.id;
-          document.getElementById("notice-title").value = one.data.title;
-          document.getElementById("notice-content").value = one.data.content;
-          document.getElementById("notice-pinned").checked = !!one.data.pinned;
+          if (currentSession && client) {
+            var one = await client.from("notices").select("id, title, content, pinned").eq("id", id).maybeSingle();
+            if (one.error || !one.data) return;
+            document.getElementById("notice-id").value = one.data.id;
+            document.getElementById("notice-title").value = one.data.title;
+            document.getElementById("notice-content").value = one.data.content;
+            document.getElementById("notice-pinned").checked = !!one.data.pinned;
+          } else {
+            var oneLocal = loadLocalNotices().find(function (x) { return String(x.id) === String(id); });
+            if (!oneLocal) return;
+            document.getElementById("notice-id").value = oneLocal.id;
+            document.getElementById("notice-title").value = oneLocal.title || "";
+            document.getElementById("notice-content").value = oneLocal.content || "";
+            document.getElementById("notice-pinned").checked = !!oneLocal.pinned;
+          }
           setStatus(formStatus, "", "수정 모드입니다. 내용을 변경 후 저장해 주세요.");
           return;
         }
 
         if (act === "del") {
           if (!confirm("이 공지를 삭제하시겠습니까?")) return;
-          var del = await client.from("notices").delete().eq("id", id);
-          if (del.error) {
-            setStatus(formStatus, "err", "삭제 실패: " + del.error.message);
-            return;
+          if (currentSession && client) {
+            var del = await client.from("notices").delete().eq("id", id);
+            if (del.error) {
+              setStatus(formStatus, "err", "삭제 실패: " + del.error.message);
+              return;
+            }
+          } else {
+            var nextLocal = loadLocalNotices().filter(function (x) { return String(x.id) !== String(id); });
+            saveLocalNotices(nextLocal);
           }
           setStatus(formStatus, "ok", "공지를 삭제했습니다.");
           await renderList();

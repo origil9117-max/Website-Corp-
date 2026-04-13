@@ -261,10 +261,11 @@
     <section class="panel" aria-label="관리자 인증">
       <h2>관리자 인증</h2>
       <div class="row">
-        <input id="admin-email" type="text" placeholder="관리자 이메일" />
+        <input id="admin-email" type="text" value="lkc@daum.net" readonly />
         <input id="admin-pass" type="password" placeholder="관리자 비밀번호" />
         <button id="btn-login" class="btn btn-primary" type="button">관리자 모드 켜기</button>
         <button id="btn-logout" class="btn btn-ghost" type="button">관리자 모드 끄기</button>
+        <button id="btn-test-conn" class="btn btn-ghost" type="button">연결 테스트</button>
       </div>
       <p id="auth-status" class="status" role="status" aria-live="polite"></p>
     </section>
@@ -315,6 +316,7 @@
       var adminPassInput = document.getElementById("admin-pass");
       var btnLogin = document.getElementById("btn-login");
       var btnLogout = document.getElementById("btn-logout");
+      var btnTestConn = document.getElementById("btn-test-conn");
       var authStatus = document.getElementById("auth-status");
 
       var editor = document.getElementById("resource-editor");
@@ -460,9 +462,28 @@
           setStatus(authStatus, "err", "이메일과 비밀번호를 입력해 주세요.");
           return;
         }
-        var loginRes = await client.auth.signInWithPassword({ email: email, password: val });
+        var loginRes;
+        try {
+          loginRes = await client.auth.signInWithPassword({ email: email, password: val });
+        } catch (err) {
+          setStatus(
+            authStatus,
+            "err",
+            "로그인 연결 실패(Failed to fetch). 1) file://가 아닌 배포 URL(https://...)로 접속 2) supabase-config.js 값 확인 3) Ctrl+F5 후 재시도"
+          );
+          return;
+        }
         if (loginRes.error) {
-          setStatus(authStatus, "err", "로그인 실패: " + loginRes.error.message);
+          var m = String(loginRes.error.message || "");
+          if (/Failed to fetch/i.test(m)) {
+            setStatus(
+              authStatus,
+              "err",
+              "로그인 연결 실패(Failed to fetch). 1) file://가 아닌 배포 URL(https://...)로 접속 2) supabase-config.js 값 확인 3) Ctrl+F5 후 재시도"
+            );
+            return;
+          }
+          setStatus(authStatus, "err", "로그인 실패: " + m);
           return;
         }
         currentSession = loginRes.data.session;
@@ -476,6 +497,24 @@
         currentSession = null;
         updateAdminUi();
         await renderList();
+      });
+
+      btnTestConn.addEventListener("click", async function () {
+        if (!client) {
+          setStatus(authStatus, "err", "Supabase 클라이언트를 초기화하지 못했습니다.");
+          return;
+        }
+        setStatus(authStatus, "", "연결 테스트 중...");
+        try {
+          var ping = await client.from("resources").select("id", { count: "exact", head: true });
+          if (ping.error) {
+            setStatus(authStatus, "err", "연결 실패: " + ping.error.message);
+            return;
+          }
+          setStatus(authStatus, "ok", "연결 성공: Supabase와 통신 가능합니다.");
+        } catch (err) {
+          setStatus(authStatus, "err", "연결 실패(Failed to fetch). 네트워크/키/도메인 설정을 확인해 주세요.");
+        }
       });
 
       document.getElementById("btn-reset").addEventListener("click", function () {

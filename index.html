@@ -1751,10 +1751,10 @@
       var cards = Array.prototype.slice.call(document.querySelectorAll(".service-card"));
       if (!cards.length) return;
 
-      function moveToResourcePage(serviceId) {
+      function moveToPublishPage(serviceId) {
         if (!serviceId) return;
         localStorage.setItem(SELECTED_SERVICE_KEY, serviceId);
-        window.location.href = "resources.html?service=" + encodeURIComponent(serviceId);
+        window.location.href = "service-post.html?service=" + encodeURIComponent(serviceId);
       }
 
       var remembered = localStorage.getItem(SELECTED_SERVICE_KEY);
@@ -1770,7 +1770,7 @@
         card.addEventListener("click", function () {
           cards.forEach(function (item) { item.classList.remove("selected"); });
           card.classList.add("selected");
-          moveToResourcePage(card.getAttribute("data-service"));
+          moveToPublishPage(card.getAttribute("data-service"));
         });
 
         card.addEventListener("keydown", function (evt) {

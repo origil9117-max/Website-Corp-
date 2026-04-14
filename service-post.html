@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>업무 게시</title>
+  <style>
+    :root {
+      --ink: #12161c;
+      --muted: #5a6270;
+      --line: rgba(20, 24, 32, 0.12);
+      --paper: #f8f6f2;
+      --maroon: #5a3540;
+      --maroon-dark: #3f242e;
+      --max: 980px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Noto Sans KR", system-ui, sans-serif;
+      color: var(--ink);
+      background: var(--paper);
+      line-height: 1.6;
+    }
+    .topbar {
+      position: sticky; top: 0; z-index: 30;
+      background: rgba(250, 249, 246, 0.94);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--line);
+    }
+    .topbar-inner {
+      max-width: var(--max); margin: 0 auto; padding: 0.8rem 1rem;
+      display: flex; align-items: center; justify-content: space-between; gap: 0.6rem;
+    }
+    .top-links { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+    .top-links a {
+      text-decoration: none; color: var(--maroon-dark); font-weight: 700; font-size: 0.82rem;
+      border: 1px solid rgba(90, 53, 64, 0.28); background: #fff; border-radius: 2px;
+      padding: 0.35rem 0.6rem;
+    }
+    .wrap { max-width: var(--max); margin: 0 auto; padding: 1.2rem 1rem 2rem; }
+    .label { font-size: 0.72rem; color: var(--maroon); letter-spacing: 0.14em; text-transform: uppercase; font-weight: 700; }
+    h1 { margin: 0.2rem 0 0.25rem; font-size: clamp(1.2rem, 2.7vw, 1.7rem); }
+    .helper { margin: 0 0 0.9rem; color: var(--muted); font-size: 0.9rem; }
+    .panel {
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      background: #fff;
+      padding: 0.9rem;
+      margin-bottom: 0.8rem;
+    }
+    .panel h2 { margin: 0 0 0.7rem; font-size: 1rem; }
+    .row { display: flex; gap: 0.55rem; flex-wrap: wrap; align-items: center; }
+    .status { min-height: 1.2rem; margin-top: 0.45rem; font-size: 0.83rem; color: var(--muted); }
+    input[type="password"], input[type="text"], textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 2px;
+      padding: 0.56rem 0.62rem;
+      font: inherit;
+    }
+    textarea { min-height: 150px; resize: vertical; }
+    .btn {
+      border: 1px solid transparent; border-radius: 2px; cursor: pointer;
+      padding: 0.48rem 0.86rem; font-size: 0.84rem; font-weight: 700;
+    }
+    .btn-primary { color: #fff; background: linear-gradient(180deg, var(--maroon) 0%, var(--maroon-dark) 100%); }
+    .btn-ghost { background: #fff; color: var(--ink); border-color: var(--line); }
+    .post-list { display: grid; gap: 0.7rem; }
+    .post-item {
+      border: 1px solid var(--line); border-radius: 4px;
+      background: linear-gradient(180deg, #ffffff 0%, #fdfcfa 100%);
+      padding: 0.8rem 0.9rem;
+    }
+    .post-item h3 { margin: 0; font-size: 0.98rem; line-height: 1.4; }
+    .meta { margin-top: 0.35rem; font-size: 0.79rem; color: var(--muted); }
+    .body { margin-top: 0.55rem; white-space: pre-wrap; font-size: 0.9rem; }
+    .empty {
+      border: 1px dashed var(--line);
+      border-radius: 4px;
+      background: #fff;
+      color: var(--muted);
+      padding: 0.85rem;
+      font-size: 0.86rem;
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <strong>업무 게시 페이지</strong>
+      <div class="top-links">
+        <a href="index.html">메인으로</a>
+        <a href="resources.html">자료실</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <p class="label">Service Publishing</p>
+    <h1 id="page-title">업무 게시</h1>
+    <p class="helper" id="page-helper">해당 업무 전용 게시글을 작성하고 관리할 수 있습니다.</p>
+
+    <section class="panel">
+      <h2>관리자 인증</h2>
+      <div class="row">
+        <input id="admin-pass" type="password" placeholder="관리자 비밀번호" />
+        <button id="btn-login" class="btn btn-primary" type="button">관리자 모드 켜기</button>
+        <button id="btn-logout" class="btn btn-ghost" type="button">관리자 모드 끄기</button>
+      </div>
+      <p class="status" id="auth-status">현재: 일반 보기</p>
+    </section>
+
+    <section class="panel" id="editor-panel" style="display:none;">
+      <h2>글 작성 / 수정 (관리자 전용)</h2>
+      <form id="post-form" novalidate>
+        <input id="post-id" type="hidden" />
+        <input id="post-title" type="text" maxlength="120" placeholder="제목" required />
+        <div style="height:0.55rem"></div>
+        <textarea id="post-body" placeholder="내용을 입력하세요." required></textarea>
+        <div class="row" style="margin-top:0.65rem;">
+          <button class="btn btn-primary" type="submit">저장</button>
+          <button class="btn btn-ghost" type="button" id="btn-reset">입력 초기화</button>
+        </div>
+      </form>
+      <p class="status" id="form-status"></p>
+    </section>
+
+    <section class="panel">
+      <h2>게시글 목록</h2>
+      <div id="post-list" class="post-list"></div>
+    </section>
+  </main>
+
+  <script>
+    (function () {
+      var SERVICE_MAP = {
+        nonprofit: "비영리법인설립 업무",
+        immigration: "출입국민원업무",
+        investment: "기업투자·법인설립",
+        patriot: "국가유공자보훈업무"
+      };
+      var ADMIN_PASS = "admin1234";
+      var service = new URL(window.location.href).searchParams.get("service") || "nonprofit";
+      if (!SERVICE_MAP[service]) service = "nonprofit";
+      var STORAGE_KEY = "service-posts:" + service;
+
+      var pageTitle = document.getElementById("page-title");
+      var pageHelper = document.getElementById("page-helper");
+      var adminPass = document.getElementById("admin-pass");
+      var btnLogin = document.getElementById("btn-login");
+      var btnLogout = document.getElementById("btn-logout");
+      var authStatus = document.getElementById("auth-status");
+      var editorPanel = document.getElementById("editor-panel");
+      var postForm = document.getElementById("post-form");
+      var postId = document.getElementById("post-id");
+      var postTitle = document.getElementById("post-title");
+      var postBody = document.getElementById("post-body");
+      var btnReset = document.getElementById("btn-reset");
+      var formStatus = document.getElementById("form-status");
+      var postList = document.getElementById("post-list");
+
+      var adminOn = false;
+
+      pageTitle.textContent = SERVICE_MAP[service] + " · 게시";
+      pageHelper.textContent = SERVICE_MAP[service] + " 전용 게시글을 작성/수정/삭제할 수 있습니다.";
+
+      function loadPosts() {
+        try {
+          var raw = localStorage.getItem(STORAGE_KEY);
+          var parsed = raw ? JSON.parse(raw) : [];
+          return Array.isArray(parsed) ? parsed : [];
+        } catch (e) {
+          return [];
+        }
+      }
+
+      function savePosts(items) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+      }
+
+      function escapeHtml(text) {
+        return String(text || "")
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll("\"", "&quot;")
+          .replaceAll("'", "&#39;");
+      }
+
+      function renderPosts() {
+        var items = loadPosts().sort(function (a, b) { return String(b.created_at || "").localeCompare(String(a.created_at || "")); });
+        if (!items.length) {
+          postList.innerHTML = '<p class="empty">등록된 게시글이 없습니다.</p>';
+          return;
+        }
+        postList.innerHTML = items.map(function (item) {
+          var actions = adminOn
+            ? '<div class="row" style="margin-top:0.55rem;">' +
+              '<button class="btn btn-ghost" type="button" data-act="edit" data-id="' + item.id + '">수정</button>' +
+              '<button class="btn btn-ghost" type="button" data-act="del" data-id="' + item.id + '">삭제</button>' +
+              '</div>'
+            : "";
+          return '<article class="post-item">' +
+            '<h3>' + escapeHtml(item.title) + '</h3>' +
+            '<p class="meta">등록일: ' + escapeHtml(String(item.created_at || "").slice(0, 10)) + '</p>' +
+            '<p class="body">' + escapeHtml(item.body) + '</p>' +
+            actions +
+          '</article>';
+        }).join("");
+      }
+
+      function resetForm() {
+        postId.value = "";
+        postForm.reset();
+      }
+
+      function updateAdminUi() {
+        editorPanel.style.display = adminOn ? "block" : "none";
+        authStatus.textContent = adminOn ? "현재: 관리자 모드 켜짐" : "현재: 일반 보기";
+      }
+
+      btnLogin.addEventListener("click", function () {
+        if ((adminPass.value || "").trim() !== ADMIN_PASS) {
+          authStatus.textContent = "비밀번호가 올바르지 않습니다.";
+          return;
+        }
+        adminOn = true;
+        adminPass.value = "";
+        formStatus.textContent = "";
+        updateAdminUi();
+        renderPosts();
+      });
+
+      btnLogout.addEventListener("click", function () {
+        adminOn = false;
+        formStatus.textContent = "";
+        updateAdminUi();
+        renderPosts();
+      });
+
+      btnReset.addEventListener("click", function () {
+        resetForm();
+        formStatus.textContent = "";
+      });
+
+      postForm.addEventListener("submit", function (e) {
+        e.preventDefault();
+        if (!adminOn) return;
+        var title = (postTitle.value || "").trim();
+        var body = (postBody.value || "").trim();
+        if (!title || !body) {
+          formStatus.textContent = "제목과 내용을 모두 입력해 주세요.";
+          return;
+        }
+
+        var items = loadPosts();
+        var id = postId.value;
+        if (id) {
+          items = items.map(function (item) {
+            if (String(item.id) !== String(id)) return item;
+            item.title = title;
+            item.body = body;
+            return item;
+          });
+          formStatus.textContent = "게시글을 수정했습니다.";
+        } else {
+          items.push({
+            id: Date.now().toString(36) + Math.random().toString(36).slice(2, 7),
+            service: service,
+            title: title,
+            body: body,
+            created_at: new Date().toISOString()
+          });
+          formStatus.textContent = "게시글을 등록했습니다.";
+        }
+        savePosts(items);
+        resetForm();
+        renderPosts();
+      });
+
+      postList.addEventListener("click", function (e) {
+        var t = e.target;
+        if (!t || !t.dataset || !adminOn) return;
+        var act = t.dataset.act;
+        var id = t.dataset.id;
+        if (!act || !id) return;
+
+        var items = loadPosts();
+        if (act === "edit") {
+          var one = items.find(function (item) { return String(item.id) === String(id); });
+          if (!one) return;
+          postId.value = one.id;
+          postTitle.value = one.title || "";
+          postBody.value = one.body || "";
+          formStatus.textContent = "수정 모드입니다.";
+          return;
+        }
+        if (act === "del") {
+          if (!confirm("이 게시글을 삭제하시겠습니까?")) return;
+          items = items.filter(function (item) { return String(item.id) !== String(id); });
+          savePosts(items);
+          formStatus.textContent = "게시글을 삭제했습니다.";
+          renderPosts();
+          if (String(postId.value) === String(id)) resetForm();
+        }
+      });
+
+      updateAdminUi();
+      renderPosts();
+    })();
+  </script>
+</body>
+</html>

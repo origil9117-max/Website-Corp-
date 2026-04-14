@@ -784,6 +784,18 @@
       border-radius: 2px;
       overflow: hidden;
       box-shadow: 0 1px 0 rgba(20, 24, 32, 0.04);
+      cursor: pointer;
+      transition: transform 0.14s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+    }
+
+    .service-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(20, 24, 32, 0.12);
+    }
+
+    .service-card.selected {
+      border-color: rgba(90, 53, 64, 0.5);
+      box-shadow: 0 0 0 3px rgba(90, 53, 64, 0.15), 0 12px 24px rgba(20, 24, 32, 0.16);
     }
 
     .service-card h3 {
@@ -794,6 +806,10 @@
       color: #fff;
       padding: 0.7rem 1rem;
       letter-spacing: -0.02em;
+    }
+
+    .service-card.selected h3 {
+      background: linear-gradient(180deg, #744550 0%, #4c2b34 100%);
     }
 
     .service-card ul {
@@ -1398,7 +1414,7 @@
         <h2 id="services-title" class="serif">주요 업무 분야</h2>
       </div>
       <div class="services-grid">
-        <article class="service-card">
+        <article class="service-card" data-service="nonprofit" tabindex="0" role="button" aria-label="비영리법인설립 업무 상세 보기">
           <h3>비영리법인설립 업무</h3>
           <ul>
             <li>비영리법인(사단·재단) 설립·정관 변경</li>
@@ -1407,7 +1423,7 @@
             <li>설립 후 변경·해산 등 행정 절차</li>
           </ul>
         </article>
-        <article class="service-card">
+        <article class="service-card" data-service="immigration" tabindex="0" role="button" aria-label="출입국민원업무 상세 보기">
           <h3>출입국민원업무</h3>
           <ul>
             <li>재외동포(F-4) 등 체류자격 변경·영주(F-5·F-5-6)</li>
@@ -1416,7 +1432,7 @@
             <li>법무부 등록 출입국민원 대행기관</li>
           </ul>
         </article>
-        <article class="service-card">
+        <article class="service-card" data-service="investment" tabindex="0" role="button" aria-label="기업투자·법인설립 상세 보기">
           <h3>기업투자·법인설립</h3>
           <ul>
             <li>외국인투자기업(FDI) 설립·신고·변경</li>
@@ -1424,7 +1440,7 @@
             <li>국제물류주선, 건설폐기물 수집·운반 등 인·허가(사안별)</li>
           </ul>
         </article>
-        <article class="service-card">
+        <article class="service-card" data-service="patriot" tabindex="0" role="button" aria-label="국가유공자보훈업무 상세 보기">
           <h3>국가유공자보훈업무</h3>
           <ul>
             <li>국가유공자·보훈 등록</li>
@@ -1727,6 +1743,42 @@
           .finally(function () {
             btn.disabled = false;
           });
+      });
+    })();
+
+    (function () {
+      var SELECTED_SERVICE_KEY = "selectedServiceCard";
+      var cards = Array.prototype.slice.call(document.querySelectorAll(".service-card"));
+      if (!cards.length) return;
+
+      function moveToResourcePage(serviceId) {
+        if (!serviceId) return;
+        localStorage.setItem(SELECTED_SERVICE_KEY, serviceId);
+        window.location.href = "resources.html?service=" + encodeURIComponent(serviceId);
+      }
+
+      var remembered = localStorage.getItem(SELECTED_SERVICE_KEY);
+      if (remembered) {
+        cards.forEach(function (card) {
+          if (card.getAttribute("data-service") === remembered) {
+            card.classList.add("selected");
+          }
+        });
+      }
+
+      cards.forEach(function (card) {
+        card.addEventListener("click", function () {
+          cards.forEach(function (item) { item.classList.remove("selected"); });
+          card.classList.add("selected");
+          moveToResourcePage(card.getAttribute("data-service"));
+        });
+
+        card.addEventListener("keydown", function (evt) {
+          if (evt.key === "Enter" || evt.key === " ") {
+            evt.preventDefault();
+            card.click();
+          }
+        });
       });
     })();
   </script>

@@ -419,10 +419,10 @@
       });
 
       postList.addEventListener("click", function (e) {
-        var t = e.target;
-        if (!t || !t.dataset || !adminOn) return;
-        var act = t.dataset.act;
-        var id = t.dataset.id;
+        var btn = e.target && e.target.closest ? e.target.closest("button[data-act]") : null;
+        if (!btn || !adminOn) return;
+        var act = btn.dataset.act;
+        var id = btn.dataset.id;
         if (!act || !id) return;
 
         var items = loadPosts();
@@ -435,6 +435,11 @@
           pendingImages = Array.isArray(one.images) ? one.images.slice() : [];
           renderThumbs();
           formStatus.textContent = "수정 모드입니다.";
+          if (editorPanel.style.display === "none") {
+            editorPanel.style.display = "block";
+          }
+          postTitle.focus();
+          editorPanel.scrollIntoView({ behavior: "smooth", block: "start" });
           return;
         }
         if (act === "del") {

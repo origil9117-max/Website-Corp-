@@ -42,6 +42,30 @@
     .label { font-size: 0.72rem; color: var(--maroon); letter-spacing: 0.14em; text-transform: uppercase; font-weight: 700; }
     h1 { margin: 0.2rem 0 0.25rem; font-size: clamp(1.2rem, 2.7vw, 1.7rem); }
     .helper { margin: 0 0 0.9rem; color: var(--muted); font-size: 0.9rem; }
+    .storage-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      margin: 0 0 0.75rem;
+      padding: 0.32rem 0.55rem;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      font-size: 0.79rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      background: #fff;
+      color: var(--muted);
+    }
+    .storage-badge.cloud {
+      color: #0d7a3f;
+      border-color: rgba(13, 122, 63, 0.35);
+      background: rgba(13, 122, 63, 0.09);
+    }
+    .storage-badge.local {
+      color: #8b2c2c;
+      border-color: rgba(139, 44, 44, 0.32);
+      background: rgba(139, 44, 44, 0.08);
+    }
     .panel {
       border: 1px solid var(--line);
       border-radius: 4px;
@@ -144,6 +168,7 @@
     <p class="label">Service Publishing</p>
     <h1 id="page-title">업무 게시</h1>
     <p class="helper" id="page-helper">해당 업무 전용 게시글을 작성하고 관리할 수 있습니다.</p>
+    <p id="storage-badge" class="storage-badge">저장 방식 확인 중...</p>
 
     <section class="panel">
       <h2>관리자 인증</h2>
@@ -211,6 +236,7 @@
       var btnReset = document.getElementById("btn-reset");
       var formStatus = document.getElementById("form-status");
       var postList = document.getElementById("post-list");
+      var storageBadge = document.getElementById("storage-badge");
 
       var pendingImages = [];
       var currentPosts = [];
@@ -399,6 +425,17 @@
         authStatus.textContent = mode;
       }
 
+      function updateStorageBadge() {
+        storageBadge.classList.remove("cloud", "local");
+        if (cloudEnabled) {
+          storageBadge.classList.add("cloud");
+          storageBadge.textContent = "저장 방식: 공용 저장 (Supabase) · 다른 PC에서도 동일하게 보임";
+        } else {
+          storageBadge.classList.add("local");
+          storageBadge.textContent = "저장 방식: 로컬 저장 (현재 PC만) · 다른 PC와 동기화 안 됨";
+        }
+      }
+
       btnLogin.addEventListener("click", function () {
         if ((adminPass.value || "").trim() !== ADMIN_PASS) {
           authStatus.textContent = "비밀번호가 올바르지 않습니다.";
@@ -558,6 +595,7 @@
       });
 
       updateAdminUi();
+      updateStorageBadge();
       currentPosts = await loadPosts();
       renderPosts();
     })();

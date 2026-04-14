@@ -180,8 +180,10 @@
     </section>
   </main>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
   <script>
-    (function () {
+    (async function () {
       var SERVICE_MAP = {
         nonprofit: "비영리법인설립 업무",
         immigration: "출입국민원업무",
@@ -209,27 +211,21 @@
       var btnReset = document.getElementById("btn-reset");
       var formStatus = document.getElementById("form-status");
       var postList = document.getElementById("post-list");
+
       var pendingImages = [];
+      var currentPosts = [];
+      var adminOn = false;
       var MAX_IMAGES = 5;
       var MAX_IMAGE_BYTES = 1024 * 1024;
-
-      var adminOn = false;
+      var client = null;
+      var cloudEnabled = false;
 
       pageTitle.textContent = SERVICE_MAP[service] + " · 게시";
       pageHelper.textContent = SERVICE_MAP[service] + " 전용 게시글을 작성/수정/삭제할 수 있습니다.";
 
-      function loadPosts() {
-        try {
-          var raw = localStorage.getItem(STORAGE_KEY);
-          var parsed = raw ? JSON.parse(raw) : [];
-          return Array.isArray(parsed) ? parsed : [];
-        } catch (e) {
-          return [];
-        }
-      }
-
-      function savePosts(items) {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+      if (window.supabase && window.SUPABASE_URL && window.SUPABASE_ANON_KEY) {
+        client = window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY);
+        cloudEnabled = true;
       }
 
       function escapeHtml(text) {
@@ -241,8 +237,48 @@
           .replaceAll("'", "&#39;");
       }
 
+      function normalizeUrl(text) {
+        var url = String(text || "").trim();
+        if (!/^https?:\/\//i.test(url)) return "";
+        return url;
+      }
+
+      function parseImageUrlsFromHtml(html) {
+        var doc = new DOMParser().parseFromString(html || "", "text/html");
+        var nodes = Array.prototype.slice.call(doc.querySelectorAll("img"));
+        return nodes.map(function (img) { return normalizeUrl(img.getAttribute("src")); }).filter(Boolean);
+      }
+
+      function loadLocalPosts() {
+        try {
+          var raw = localStorage.getItem(STORAGE_KEY);
+          var parsed = raw ? JSON.parse(raw) : [];
+          return Array.isArray(parsed) ? parsed : [];
+        } catch (e) {
+          return [];
+        }
+      }
+
+      function saveLocalPosts(items) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+      }
+
+      async function loadPosts() {
+        if (cloudEnabled) {
+          try {
+            var res = await client
+              .from("service_posts")
+              .select("id, service, title, body, images, created_at")
+              .eq("service", service)
+              .order("created_at", { ascending: false });
+            if (!res.error) return res.data || [];
+          } catch (e) {}
+        }
+        return loadLocalPosts().sort(function (a, b) { return String(b.created_at || "").localeCompare(String(a.created_at || "")); });
+      }
+
       function renderPosts() {
-        var items = loadPosts().sort(function (a, b) { return String(b.created_at || "").localeCompare(String(a.created_at || "")); });
+        var items = currentPosts;
         if (!items.length) {
           postList.innerHTML = '<p class="empty">등록된 게시글이 없습니다.</p>';
           return;
@@ -251,7 +287,9 @@
           var imagesHtml = "";
           if (Array.isArray(item.images) && item.images.length) {
             imagesHtml = '<div class="post-images">' + item.images.map(function (img) {
-              return '<img src="' + escapeHtml(img.data) + '" alt="' + escapeHtml(img.name || "첨부 이미지") + '" />';
+              var src = img && img.data ? img.data : (img && img.url ? img.url : "");
+              if (!src) return "";
+              return '<img src="' + escapeHtml(src) + '" alt="' + escapeHtml((img && img.name) || "첨부 이미지") + '" />';
             }).join("") + "</div>";
           }
           var actions = adminOn
@@ -264,8 +302,7 @@
             '<h3>' + escapeHtml(item.title) + '</h3>' +
             '<p class="meta">등록일: ' + escapeHtml(String(item.created_at || "").slice(0, 10)) + '</p>' +
             '<p class="body">' + escapeHtml(item.body) + '</p>' +
-            imagesHtml +
-            actions +
+            imagesHtml + actions +
           '</article>';
         }).join("");
       }
@@ -283,9 +320,11 @@
           return;
         }
         thumbList.innerHTML = pendingImages.map(function (img, index) {
+          var src = img.data || img.url || "";
+          var tag = img.url ? "URL" : "파일";
           return '<div class="thumb-item">' +
-            '<img src="' + escapeHtml(img.data) + '" alt="' + escapeHtml(img.name || "이미지") + '" />' +
-            '<button type="button" data-remove-image="' + index + '">삭제</button>' +
+            '<img src="' + escapeHtml(src) + '" alt="' + escapeHtml(img.name || "이미지") + '" />' +
+            '<button type="button" data-remove-image="' + index + '">' + tag + " 삭제</button>" +
           "</div>";
         }).join("");
       }
@@ -314,10 +353,7 @@
           }
           try {
             var dataUrl = await fileToDataURL(file);
-            pendingImages.push({
-              name: file.name || "image",
-              data: dataUrl
-            });
+            pendingImages.push({ name: file.name || "image", data: dataUrl });
           } catch (e) {
             formStatus.textContent = "이미지 읽기에 실패했습니다.";
           }
@@ -325,9 +361,42 @@
         renderThumbs();
       }
 
+      function appendImageUrl(url) {
+        if (pendingImages.length >= MAX_IMAGES) {
+          formStatus.textContent = "이미지는 최대 " + MAX_IMAGES + "장까지 첨부할 수 있습니다.";
+          return;
+        }
+        var safe = normalizeUrl(url);
+        if (!safe) return;
+        var exists = pendingImages.some(function (img) { return img.url === safe; });
+        if (!exists) {
+          pendingImages.push({ name: "외부 이미지", url: safe });
+          renderThumbs();
+        }
+      }
+
+      async function savePostCloud(id, title, body, images) {
+        if (id) {
+          return client.from("service_posts").update({ title: title, body: body, images: images }).eq("id", id);
+        }
+        return client.from("service_posts").insert({
+          service: service,
+          title: title,
+          body: body,
+          images: images
+        });
+      }
+
+      async function deletePostCloud(id) {
+        return client.from("service_posts").delete().eq("id", id);
+      }
+
       function updateAdminUi() {
         editorPanel.style.display = adminOn ? "block" : "none";
-        authStatus.textContent = adminOn ? "현재: 관리자 모드 켜짐" : "현재: 일반 보기";
+        var mode = adminOn ? "현재: 관리자 모드 켜짐" : "현재: 일반 보기";
+        if (cloudEnabled) mode += " (공용 저장 사용)";
+        else mode += " (로컬 저장만 사용)";
+        authStatus.textContent = mode;
       }
 
       btnLogin.addEventListener("click", function () {
@@ -360,8 +429,11 @@
       });
 
       postBody.addEventListener("paste", function (e) {
-        var items = e.clipboardData && e.clipboardData.items ? e.clipboardData.items : [];
+        var clip = e.clipboardData;
+        if (!clip) return;
+
         var files = [];
+        var items = clip.items || [];
         for (var i = 0; i < items.length; i++) {
           var f = items[i].getAsFile ? items[i].getAsFile() : null;
           if (f && /^image\//i.test(f.type)) files.push(f);
@@ -369,6 +441,22 @@
         if (files.length) {
           e.preventDefault();
           appendImageFiles(files);
+          return;
+        }
+
+        var html = clip.getData("text/html");
+        var urlsFromHtml = parseImageUrlsFromHtml(html);
+        if (urlsFromHtml.length) {
+          e.preventDefault();
+          urlsFromHtml.forEach(appendImageUrl);
+          return;
+        }
+
+        var text = clip.getData("text/plain");
+        var maybeUrl = normalizeUrl(text);
+        if (maybeUrl && /\.(png|jpe?g|gif|webp|bmp|svg)(\?.*)?$/i.test(maybeUrl)) {
+          e.preventDefault();
+          appendImageUrl(maybeUrl);
         }
       });
 
@@ -381,9 +469,10 @@
         renderThumbs();
       });
 
-      postForm.addEventListener("submit", function (e) {
+      postForm.addEventListener("submit", async function (e) {
         e.preventDefault();
         if (!adminOn) return;
+
         var title = (postTitle.value || "").trim();
         var body = (postBody.value || "").trim();
         if (!title || !body) {
@@ -391,68 +480,85 @@
           return;
         }
 
-        var items = loadPosts();
         var id = postId.value;
-        if (id) {
-          items = items.map(function (item) {
-            if (String(item.id) !== String(id)) return item;
-            item.title = title;
-            item.body = body;
-            item.images = pendingImages.slice();
-            return item;
-          });
-          formStatus.textContent = "게시글을 수정했습니다.";
+        if (cloudEnabled) {
+          var res = await savePostCloud(id, title, body, pendingImages.slice());
+          if (res.error) {
+            formStatus.textContent = "저장 실패: " + res.error.message + " (service_posts 테이블 확인)";
+            return;
+          }
         } else {
-          items.push({
-            id: Date.now().toString(36) + Math.random().toString(36).slice(2, 7),
-            service: service,
-            title: title,
-            body: body,
-            images: pendingImages.slice(),
-            created_at: new Date().toISOString()
-          });
-          formStatus.textContent = "게시글을 등록했습니다.";
+          var items = loadLocalPosts();
+          if (id) {
+            items = items.map(function (item) {
+              if (String(item.id) !== String(id)) return item;
+              item.title = title;
+              item.body = body;
+              item.images = pendingImages.slice();
+              return item;
+            });
+          } else {
+            items.push({
+              id: Date.now().toString(36) + Math.random().toString(36).slice(2, 7),
+              service: service,
+              title: title,
+              body: body,
+              images: pendingImages.slice(),
+              created_at: new Date().toISOString()
+            });
+          }
+          saveLocalPosts(items);
         }
-        savePosts(items);
+
+        formStatus.textContent = id ? "게시글을 수정했습니다." : "게시글을 등록했습니다.";
         resetForm();
+        currentPosts = await loadPosts();
         renderPosts();
       });
 
-      postList.addEventListener("click", function (e) {
+      postList.addEventListener("click", async function (e) {
         var btn = e.target && e.target.closest ? e.target.closest("button[data-act]") : null;
         if (!btn || !adminOn) return;
         var act = btn.dataset.act;
         var id = btn.dataset.id;
         if (!act || !id) return;
 
-        var items = loadPosts();
+        var one = currentPosts.find(function (item) { return String(item.id) === String(id); });
+        if (!one) return;
+
         if (act === "edit") {
-          var one = items.find(function (item) { return String(item.id) === String(id); });
-          if (!one) return;
           postId.value = one.id;
           postTitle.value = one.title || "";
           postBody.value = one.body || "";
           pendingImages = Array.isArray(one.images) ? one.images.slice() : [];
           renderThumbs();
           formStatus.textContent = "수정 모드입니다.";
-          if (editorPanel.style.display === "none") {
-            editorPanel.style.display = "block";
-          }
           postTitle.focus();
           editorPanel.scrollIntoView({ behavior: "smooth", block: "start" });
           return;
         }
+
         if (act === "del") {
           if (!confirm("이 게시글을 삭제하시겠습니까?")) return;
-          items = items.filter(function (item) { return String(item.id) !== String(id); });
-          savePosts(items);
+          if (cloudEnabled) {
+            var delRes = await deletePostCloud(id);
+            if (delRes.error) {
+              formStatus.textContent = "삭제 실패: " + delRes.error.message;
+              return;
+            }
+          } else {
+            var local = loadLocalPosts().filter(function (item) { return String(item.id) !== String(id); });
+            saveLocalPosts(local);
+          }
           formStatus.textContent = "게시글을 삭제했습니다.";
-          renderPosts();
           if (String(postId.value) === String(id)) resetForm();
+          currentPosts = await loadPosts();
+          renderPosts();
         }
       });
 
       updateAdminUi();
+      currentPosts = await loadPosts();
       renderPosts();
     })();
   </script>

@@ -413,6 +413,11 @@
         });
       }
 
+      function isMissingServicePostsTableError(err) {
+        var msg = err && err.message ? String(err.message) : "";
+        return /service_posts/i.test(msg) && /could not find the table|schema cache|does not exist/i.test(msg);
+      }
+
       async function deletePostCloud(id) {
         return client.from("service_posts").delete().eq("id", id);
       }
@@ -521,8 +526,35 @@
         if (cloudEnabled) {
           var res = await savePostCloud(id, title, body, pendingImages.slice());
           if (res.error) {
-            formStatus.textContent = "저장 실패: " + res.error.message + " (service_posts 테이블 확인)";
-            return;
+            if (isMissingServicePostsTableError(res.error)) {
+              var fallbackItems = loadLocalPosts();
+              if (id) {
+                fallbackItems = fallbackItems.map(function (item) {
+                  if (String(item.id) !== String(id)) return item;
+                  item.title = title;
+                  item.body = body;
+                  item.images = pendingImages.slice();
+                  return item;
+                });
+              } else {
+                fallbackItems.push({
+                  id: Date.now().toString(36) + Math.random().toString(36).slice(2, 7),
+                  service: service,
+                  title: title,
+                  body: body,
+                  images: pendingImages.slice(),
+                  created_at: new Date().toISOString()
+                });
+              }
+              saveLocalPosts(fallbackItems);
+              cloudEnabled = false;
+              updateStorageBadge();
+              updateAdminUi();
+              formStatus.textContent = "Supabase 테이블이 없어 현재 PC 로컬 저장으로 전환했습니다. (테이블 생성 후 공용 저장 가능)";
+            } else {
+              formStatus.textContent = "저장 실패: " + res.error.message + " (service_posts 테이블 확인)";
+              return;
+            }
           }
         } else {
           var items = loadLocalPosts();

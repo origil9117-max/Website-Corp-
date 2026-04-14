@@ -67,6 +67,35 @@
     .btn-primary { color: #fff; background: linear-gradient(180deg, var(--maroon) 0%, var(--maroon-dark) 100%); }
     .btn-ghost { background: #fff; color: var(--ink); border-color: var(--line); }
     .post-list { display: grid; gap: 0.7rem; }
+    .file-help { margin-top: 0.45rem; font-size: 0.8rem; color: var(--muted); }
+    .thumb-list {
+      margin-top: 0.55rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+      gap: 0.5rem;
+    }
+    .thumb-item {
+      border: 1px solid var(--line);
+      border-radius: 3px;
+      overflow: hidden;
+      background: #fff;
+    }
+    .thumb-item img {
+      width: 100%;
+      height: 95px;
+      object-fit: cover;
+      display: block;
+      background: #f3f3f3;
+    }
+    .thumb-item button {
+      width: 100%;
+      border: 0;
+      border-top: 1px solid var(--line);
+      background: #fafafa;
+      padding: 0.32rem 0.4rem;
+      font-size: 0.74rem;
+      cursor: pointer;
+    }
     .post-item {
       border: 1px solid var(--line); border-radius: 4px;
       background: linear-gradient(180deg, #ffffff 0%, #fdfcfa 100%);
@@ -75,6 +104,21 @@
     .post-item h3 { margin: 0; font-size: 0.98rem; line-height: 1.4; }
     .meta { margin-top: 0.35rem; font-size: 0.79rem; color: var(--muted); }
     .body { margin-top: 0.55rem; white-space: pre-wrap; font-size: 0.9rem; }
+    .post-images {
+      margin-top: 0.6rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 0.55rem;
+    }
+    .post-images img {
+      width: 100%;
+      max-height: 220px;
+      object-fit: cover;
+      border: 1px solid var(--line);
+      border-radius: 3px;
+      display: block;
+      background: #f3f3f3;
+    }
     .empty {
       border: 1px dashed var(--line);
       border-radius: 4px;
@@ -118,6 +162,10 @@
         <input id="post-title" type="text" maxlength="120" placeholder="제목" required />
         <div style="height:0.55rem"></div>
         <textarea id="post-body" placeholder="내용을 입력하세요." required></textarea>
+        <div style="height:0.55rem"></div>
+        <input id="post-images-input" type="file" accept="image/*" multiple />
+        <p class="file-help">이미지 첨부 또는 붙여넣기(Ctrl+V) 가능 · 최대 5장 · 각 1MB 이하</p>
+        <div id="thumb-list" class="thumb-list"></div>
         <div class="row" style="margin-top:0.65rem;">
           <button class="btn btn-primary" type="submit">저장</button>
           <button class="btn btn-ghost" type="button" id="btn-reset">입력 초기화</button>
@@ -156,9 +204,14 @@
       var postId = document.getElementById("post-id");
       var postTitle = document.getElementById("post-title");
       var postBody = document.getElementById("post-body");
+      var postImagesInput = document.getElementById("post-images-input");
+      var thumbList = document.getElementById("thumb-list");
       var btnReset = document.getElementById("btn-reset");
       var formStatus = document.getElementById("form-status");
       var postList = document.getElementById("post-list");
+      var pendingImages = [];
+      var MAX_IMAGES = 5;
+      var MAX_IMAGE_BYTES = 1024 * 1024;
 
       var adminOn = false;
 
@@ -195,6 +248,12 @@
           return;
         }
         postList.innerHTML = items.map(function (item) {
+          var imagesHtml = "";
+          if (Array.isArray(item.images) && item.images.length) {
+            imagesHtml = '<div class="post-images">' + item.images.map(function (img) {
+              return '<img src="' + escapeHtml(img.data) + '" alt="' + escapeHtml(img.name || "첨부 이미지") + '" />';
+            }).join("") + "</div>";
+          }
           var actions = adminOn
             ? '<div class="row" style="margin-top:0.55rem;">' +
               '<button class="btn btn-ghost" type="button" data-act="edit" data-id="' + item.id + '">수정</button>' +
@@ -205,6 +264,7 @@
             '<h3>' + escapeHtml(item.title) + '</h3>' +
             '<p class="meta">등록일: ' + escapeHtml(String(item.created_at || "").slice(0, 10)) + '</p>' +
             '<p class="body">' + escapeHtml(item.body) + '</p>' +
+            imagesHtml +
             actions +
           '</article>';
         }).join("");
@@ -213,6 +273,56 @@
       function resetForm() {
         postId.value = "";
         postForm.reset();
+        pendingImages = [];
+        renderThumbs();
+      }
+
+      function renderThumbs() {
+        if (!pendingImages.length) {
+          thumbList.innerHTML = "";
+          return;
+        }
+        thumbList.innerHTML = pendingImages.map(function (img, index) {
+          return '<div class="thumb-item">' +
+            '<img src="' + escapeHtml(img.data) + '" alt="' + escapeHtml(img.name || "이미지") + '" />' +
+            '<button type="button" data-remove-image="' + index + '">삭제</button>' +
+          "</div>";
+        }).join("");
+      }
+
+      function fileToDataURL(file) {
+        return new Promise(function (resolve, reject) {
+          var reader = new FileReader();
+          reader.onload = function () { resolve(String(reader.result || "")); };
+          reader.onerror = function () { reject(new Error("read-failed")); };
+          reader.readAsDataURL(file);
+        });
+      }
+
+      async function appendImageFiles(files) {
+        if (!files || !files.length) return;
+        for (var i = 0; i < files.length; i++) {
+          var file = files[i];
+          if (!file || !/^image\//i.test(file.type)) continue;
+          if (pendingImages.length >= MAX_IMAGES) {
+            formStatus.textContent = "이미지는 최대 " + MAX_IMAGES + "장까지 첨부할 수 있습니다.";
+            break;
+          }
+          if (file.size > MAX_IMAGE_BYTES) {
+            formStatus.textContent = "이미지 '" + file.name + "' 용량이 1MB를 초과합니다.";
+            continue;
+          }
+          try {
+            var dataUrl = await fileToDataURL(file);
+            pendingImages.push({
+              name: file.name || "image",
+              data: dataUrl
+            });
+          } catch (e) {
+            formStatus.textContent = "이미지 읽기에 실패했습니다.";
+          }
+        }
+        renderThumbs();
       }
 
       function updateAdminUi() {
@@ -244,6 +354,33 @@
         formStatus.textContent = "";
       });
 
+      postImagesInput.addEventListener("change", function () {
+        appendImageFiles(postImagesInput.files);
+        postImagesInput.value = "";
+      });
+
+      postBody.addEventListener("paste", function (e) {
+        var items = e.clipboardData && e.clipboardData.items ? e.clipboardData.items : [];
+        var files = [];
+        for (var i = 0; i < items.length; i++) {
+          var f = items[i].getAsFile ? items[i].getAsFile() : null;
+          if (f && /^image\//i.test(f.type)) files.push(f);
+        }
+        if (files.length) {
+          e.preventDefault();
+          appendImageFiles(files);
+        }
+      });
+
+      thumbList.addEventListener("click", function (e) {
+        var t = e.target;
+        if (!t || !t.dataset || typeof t.dataset.removeImage === "undefined") return;
+        var idx = Number(t.dataset.removeImage);
+        if (Number.isNaN(idx)) return;
+        pendingImages.splice(idx, 1);
+        renderThumbs();
+      });
+
       postForm.addEventListener("submit", function (e) {
         e.preventDefault();
         if (!adminOn) return;
@@ -261,6 +398,7 @@
             if (String(item.id) !== String(id)) return item;
             item.title = title;
             item.body = body;
+            item.images = pendingImages.slice();
             return item;
           });
           formStatus.textContent = "게시글을 수정했습니다.";
@@ -270,6 +408,7 @@
             service: service,
             title: title,
             body: body,
+            images: pendingImages.slice(),
             created_at: new Date().toISOString()
           });
           formStatus.textContent = "게시글을 등록했습니다.";
@@ -293,6 +432,8 @@
           postId.value = one.id;
           postTitle.value = one.title || "";
           postBody.value = one.body || "";
+          pendingImages = Array.isArray(one.images) ? one.images.slice() : [];
+          renderThumbs();
           formStatus.textContent = "수정 모드입니다.";
           return;
         }

@@ -285,6 +285,10 @@
               .eq("service", service)
               .order("created_at", { ascending: false });
             if (!res.error) return res.data || [];
+            if (isMissingServicePostsTableError(res.error)) {
+              cloudEnabled = false;
+              updateAdminUi();
+            }
           } catch (e) {}
         }
         return loadLocalPosts().sort(function (a, b) { return String(b.created_at || "").localeCompare(String(a.created_at || "")); });
@@ -645,6 +649,17 @@
           if (cloudEnabled) {
             var delRes = await deletePostCloud(id);
             if (delRes.error) {
+              if (isMissingServicePostsTableError(delRes.error)) {
+                var fallback = loadLocalPosts().filter(function (item) { return String(item.id) !== String(id); });
+                saveLocalPosts(fallback);
+                cloudEnabled = false;
+                updateAdminUi();
+                formStatus.textContent = "Supabase 테이블이 없어 현재 PC 로컬 저장으로 전환했습니다. (테이블 생성 후 공용 저장 가능)";
+                if (String(postId.value) === String(id)) resetForm();
+                currentPosts = await loadPosts();
+                renderPosts();
+                return;
+              }
               formStatus.textContent = "삭제 실패: " + delRes.error.message;
               return;
             }

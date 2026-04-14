@@ -45,17 +45,20 @@ git add .
 
 echo [4/6] 커밋 생성...
 git diff --cached --quiet
-if %errorlevel%==0 (
-  echo 커밋할 변경이 없습니다. (이미 최신 상태)
-) else (
-  for /f %%i in ('powershell -NoProfile -Command "Get-Date -Format \"yyyy-MM-dd HH:mm:ss\""') do set NOW=%%i
-  git commit -m "update: deploy %NOW%"
-  if errorlevel 1 (
-    echo [오류] 커밋에 실패했습니다.
-    pause
-    exit /b 1
-  )
+if errorlevel 1 goto DO_COMMIT
+echo 커밋할 변경이 없습니다. (이미 최신 상태)
+goto AFTER_COMMIT
+
+:DO_COMMIT
+for /f %%i in ('powershell -NoProfile -Command "Get-Date -Format \"yyyy-MM-dd HH:mm:ss\""') do set NOW=%%i
+git commit -m "update: deploy %NOW%"
+if errorlevel 1 (
+  echo [오류] 커밋에 실패했습니다.
+  pause
+  exit /b 1
 )
+
+:AFTER_COMMIT
 
 echo [5/6] 원격 푸시...
 git push origin main

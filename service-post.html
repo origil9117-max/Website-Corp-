@@ -253,7 +253,20 @@
         try {
           var raw = localStorage.getItem(STORAGE_KEY);
           var parsed = raw ? JSON.parse(raw) : [];
-          return Array.isArray(parsed) ? parsed : [];
+          if (!Array.isArray(parsed)) return [];
+          var changed = false;
+          var normalized = parsed.map(function (item) {
+            var one = item && typeof item === "object" ? item : {};
+            if (!one.id) {
+              one.id = Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+              changed = true;
+            }
+            return one;
+          });
+          if (changed) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(normalized));
+          }
+          return normalized;
         } catch (e) {
           return [];
         }

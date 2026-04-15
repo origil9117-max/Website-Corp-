@@ -420,6 +420,10 @@
       letter-spacing: -0.02em;
       text-shadow: none;
     }
+    .hero-mini span.nowrap {
+      white-space: nowrap;
+      font-size: clamp(0.6rem, 1.9vw, 0.69rem);
+    }
 
     @media (max-width: 767px) {
       .hero {
@@ -1334,7 +1338,7 @@
           <div class="hero-mini">
             <span>행정심판</span>
             <span>출입국</span>
-            <span>법인 · 투자</span>
+            <span class="nowrap">법인 · 투자</span>
             <span>보훈</span>
           </div>
         </div>

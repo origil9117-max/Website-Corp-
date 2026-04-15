@@ -38,16 +38,12 @@
       border: 1px solid rgba(124, 93, 147, 0.3); background: #fff; border-radius: 2px;
       padding: 0.35rem 0.6rem;
     }
-    .top-links a.main-link {
-      background: linear-gradient(180deg, #fff2f7 0%, #ffe7f0 100%);
-      border-color: rgba(210, 128, 164, 0.52);
-      color: #704059;
-      animation: mainLinkPulse 1.6s ease-in-out infinite;
-    }
     .top-links a.main-link:hover,
     .top-links a.main-link:focus-visible {
       background: linear-gradient(180deg, #ffe8f1 0%, #ffdce9 100%);
       border-color: rgba(188, 90, 136, 0.58);
+      color: #704059;
+      animation: mainLinkPulse 1.6s ease-in-out infinite;
       text-decoration: none;
     }
     @keyframes mainLinkPulse {
@@ -61,7 +57,8 @@
       }
     }
     @media (prefers-reduced-motion: reduce) {
-      .top-links a.main-link {
+      .top-links a.main-link:hover,
+      .top-links a.main-link:focus-visible {
         animation: none;
       }
     }

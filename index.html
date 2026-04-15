@@ -10,19 +10,19 @@
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700&family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --ink: #12161c;
-      --ink-soft: #2a3038;
-      --paper: #f8f6f2;
-      --paper-dark: #ebe6dc;
-      --navy: #0a0e14;
-      --navy-mid: #121a24;
-      --maroon: #5a3540;
-      --maroon-dark: #3f242e;
-      --gold: #9d8a6f;
-      --gold-light: #c4b59a;
-      --champagne: #dccfb8;
-      --muted: #565d68;
-      --line: rgba(20, 24, 32, 0.09);
+      --ink: #182033;
+      --ink-soft: #2a3244;
+      --paper: #f6f3ef;
+      --paper-dark: #e9e2d6;
+      --navy: #121a2b;
+      --navy-mid: #1a2638;
+      --maroon: #5d4a72;
+      --maroon-dark: #433456;
+      --gold: #9d8663;
+      --gold-light: #c7b28f;
+      --champagne: #d9ccb6;
+      --muted: #5c6273;
+      --line: rgba(24, 32, 51, 0.1);
       --max: 1180px;
     }
 
@@ -783,33 +783,34 @@
       border: 1px solid var(--line);
       border-radius: 2px;
       overflow: hidden;
-      box-shadow: 0 1px 0 rgba(20, 24, 32, 0.04);
+      box-shadow: 0 1px 0 rgba(24, 32, 51, 0.05);
       cursor: pointer;
       transition: transform 0.14s ease, box-shadow 0.18s ease, border-color 0.18s ease;
     }
 
     .service-card:hover {
       transform: translateY(-2px);
-      box-shadow: 0 8px 20px rgba(20, 24, 32, 0.12);
+      box-shadow: 0 12px 24px rgba(24, 32, 51, 0.14);
+      border-color: rgba(93, 74, 114, 0.35);
     }
 
     .service-card.selected {
-      border-color: rgba(90, 53, 64, 0.5);
-      box-shadow: 0 0 0 3px rgba(90, 53, 64, 0.15), 0 12px 24px rgba(20, 24, 32, 0.16);
+      border-color: rgba(93, 74, 114, 0.58);
+      box-shadow: 0 0 0 3px rgba(93, 74, 114, 0.14), 0 14px 28px rgba(24, 32, 51, 0.2);
     }
 
     .service-card h3 {
       font-family: "Noto Serif KR", serif;
       font-size: 0.95rem;
       font-weight: 700;
-      background: linear-gradient(180deg, var(--maroon) 0%, var(--maroon-dark) 100%);
+      background: linear-gradient(180deg, #5f4b76 0%, #3f314f 100%);
       color: #fff;
       padding: 0.7rem 1rem;
       letter-spacing: -0.02em;
     }
 
     .service-card.selected h3 {
-      background: linear-gradient(180deg, #744550 0%, #4c2b34 100%);
+      background: linear-gradient(180deg, #75618c 0%, #4c3b62 100%);
     }
 
     .service-card ul {

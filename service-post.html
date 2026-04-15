@@ -6,12 +6,12 @@
   <title>업무 게시</title>
   <style>
     :root {
-      --ink: #12161c;
-      --muted: #5a6270;
-      --line: rgba(20, 24, 32, 0.12);
-      --paper: #f8f6f2;
-      --maroon: #5a3540;
-      --maroon-dark: #3f242e;
+      --ink: #172033;
+      --muted: #57607a;
+      --line: rgba(23, 32, 51, 0.14);
+      --paper: #f6f3ef;
+      --maroon: #5d4a72;
+      --maroon-dark: #433456;
       --max: 980px;
     }
     * { box-sizing: border-box; }
@@ -35,7 +35,7 @@
     .top-links { display: flex; gap: 0.5rem; flex-wrap: wrap; }
     .top-links a {
       text-decoration: none; color: var(--maroon-dark); font-weight: 700; font-size: 0.82rem;
-      border: 1px solid rgba(90, 53, 64, 0.28); background: #fff; border-radius: 2px;
+      border: 1px solid rgba(93, 74, 114, 0.3); background: #fff; border-radius: 2px;
       padding: 0.35rem 0.6rem;
     }
     .wrap { max-width: var(--max); margin: 0 auto; padding: 1.2rem 1rem 2rem; }
@@ -128,9 +128,9 @@
       font-size: 0.86rem;
     }
     .cloud-warning {
-      border: 1px solid #e7bcbc;
-      background: #fff4f4;
-      color: #7a1f1f;
+      border: 1px solid #d7cfbf;
+      background: #fcf8f1;
+      color: #5f5548;
       border-radius: 4px;
       padding: 0.75rem 0.85rem;
       margin-bottom: 0.8rem;
@@ -494,7 +494,7 @@
           cloudWarning.textContent = "";
         } else {
           cloudWarning.style.display = "block";
-          cloudWarning.textContent = "공용 저장(Supabase)이 연결되지 않아 현재 PC에서만 보입니다. 다른 PC 동기화를 위해 Supabase SQL Editor에서 service_posts 테이블 및 RLS 정책을 생성하세요.";
+          cloudWarning.textContent = "현재는 로컬 저장 모드입니다. 공용 저장(Supabase) 연결 시 다른 PC에서도 동일하게 확인할 수 있습니다.";
         }
       }
 

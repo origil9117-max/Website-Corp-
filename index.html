@@ -401,15 +401,16 @@
     }
 
     .hero-mini {
-      display: grid;
-      grid-template-columns: repeat(5, minmax(0, 1fr));
-      gap: 0.42rem;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.55rem;
       width: 100%;
     }
 
     @media (max-width: 320px) {
       .hero-mini {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.4rem;
       }
     }
 
@@ -417,7 +418,8 @@
       display: block;
       background: rgba(255, 255, 255, 0.66);
       border: 1px solid rgba(124, 93, 147, 0.3);
-      padding: 0.5rem 0.16rem;
+      flex: 0 1 136px;
+      padding: 0.54rem 0.4rem;
       font-size: clamp(0.52rem, 1.35vw, 0.6rem);
       font-weight: 600;
       color: #364057;
@@ -452,7 +454,7 @@
 
     .hero-mini a[data-service="investment"] {
       padding-left: 0.26rem;
-      padding-right: 1rem;
+      padding-right: 1.16rem;
       font-size: clamp(0.48rem, 1.18vw, 0.54rem);
     }
 

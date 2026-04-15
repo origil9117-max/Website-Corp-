@@ -127,7 +127,9 @@
     }
     .post-item h3 { margin: 0; font-size: 0.98rem; line-height: 1.4; }
     .meta { margin-top: 0.35rem; font-size: 0.79rem; color: var(--muted); }
-    .body { margin-top: 0.55rem; white-space: pre-wrap; font-size: 0.9rem; }
+    .body { margin-top: 0.55rem; white-space: pre-wrap; font-size: 0.9rem; word-break: break-word; }
+    .body a { color: #2b6cb0; text-decoration: underline; }
+    .body a:hover { color: #1a4f8a; }
     .post-images {
       margin-top: 0.6rem;
       display: grid;
@@ -275,6 +277,35 @@
           .replaceAll("'", "&#39;");
       }
 
+      function linkifyLine(line) {
+        var s = String(line || "");
+        var re = /https?:\/\/[^\s<]+/gi;
+        var out = [];
+        var last = 0;
+        var m;
+        while ((m = re.exec(s)) !== null) {
+          out.push(escapeHtml(s.slice(last, m.index)));
+          var rawUrl = m[0];
+          var trimmed = rawUrl.replace(/[.,;:!?)]+$/g, "");
+          out.push(
+            '<a href="' +
+              escapeHtml(trimmed) +
+              '" target="_blank" rel="noopener noreferrer">' +
+              escapeHtml(trimmed) +
+              "</a>"
+          );
+          last = m.index + rawUrl.length;
+        }
+        out.push(escapeHtml(s.slice(last)));
+        return out.join("");
+      }
+
+      function formatBodyForDisplay(raw) {
+        var text = String(raw || "");
+        var lines = text.split(/\r\n|\r|\n/);
+        return lines.map(linkifyLine).join("<br>");
+      }
+
       function normalizeUrl(text) {
         var url = String(text || "").trim();
         if (!/^https?:\/\//i.test(url)) return "";
@@ -414,7 +445,7 @@
           return '<article class="post-item">' +
             '<h3>' + escapeHtml(item.title) + '</h3>' +
             '<p class="meta">등록일: ' + escapeHtml(String(item.created_at || "").slice(0, 10)) + '</p>' +
-            '<p class="body">' + escapeHtml(item.body) + '</p>' +
+            '<div class="body">' + formatBodyForDisplay(item.body) + "</div>" +
             imagesHtml + actions +
           '</article>';
         }).join("");
@@ -520,7 +551,10 @@
           cloudWarning.textContent = "";
         } else {
           cloudWarning.style.display = "block";
-          cloudWarning.textContent = "현재는 로컬 저장 모드입니다. 공용 저장(Supabase) 연결 시 다른 PC에서도 동일하게 확인할 수 있습니다.";
+          cloudWarning.innerHTML =
+            "현재는 <strong>로컬 저장</strong> 모드입니다. 이 브라우저에만 글이 저장되어 다른 PC에서는 보이지 않습니다.<br />" +
+            "Supabase에 <code>service_posts</code> 테이블을 만들면 공용 저장으로 전환됩니다. 저장소의 " +
+            "<code>service_posts.sql</code> 내용을 Supabase SQL Editor에서 한 번 실행해 주세요.";
         }
       }
 
@@ -553,16 +587,30 @@
         postImagesInput.value = "";
       });
 
+      function collectClipboardImageFiles(clip) {
+        var files = [];
+        var items = clip.items || [];
+        for (var i = 0; i < items.length; i++) {
+          var it = items[i];
+          if (it.kind === "file" && it.type && /^image\//i.test(it.type)) {
+            var f = it.getAsFile ? it.getAsFile() : null;
+            if (f) files.push(f);
+          }
+        }
+        if (!files.length && clip.files && clip.files.length) {
+          for (var j = 0; j < clip.files.length; j++) {
+            var ff = clip.files[j];
+            if (ff && /^image\//i.test(ff.type)) files.push(ff);
+          }
+        }
+        return files;
+      }
+
       postBody.addEventListener("paste", function (e) {
         var clip = e.clipboardData;
         if (!clip) return;
 
-        var files = [];
-        var items = clip.items || [];
-        for (var i = 0; i < items.length; i++) {
-          var f = items[i].getAsFile ? items[i].getAsFile() : null;
-          if (f && /^image\//i.test(f.type)) files.push(f);
-        }
+        var files = collectClipboardImageFiles(clip);
         if (files.length) {
           e.preventDefault();
           appendImageFiles(files);
@@ -578,7 +626,7 @@
         }
 
         var text = clip.getData("text/plain");
-        var maybeUrl = normalizeUrl(text);
+        var maybeUrl = normalizeUrl((text || "").trim());
         if (maybeUrl && /\.(png|jpe?g|gif|webp|bmp|svg)(\?.*)?$/i.test(maybeUrl)) {
           e.preventDefault();
           appendImageUrl(maybeUrl);

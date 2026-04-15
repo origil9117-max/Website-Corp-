@@ -411,7 +411,8 @@
       }
     }
 
-    .hero-mini span {
+    .hero-mini a {
+      display: block;
       background: rgba(255, 255, 255, 0.66);
       border: 1px solid rgba(124, 93, 147, 0.3);
       padding: 0.5rem 0.28rem;
@@ -423,8 +424,26 @@
       letter-spacing: -0.02em;
       text-shadow: none;
       box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.58);
+      text-decoration: none;
+      transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.12s ease;
     }
-    .hero-mini span.nowrap {
+
+    .hero-mini a:hover,
+    .hero-mini a:focus-visible {
+      background: linear-gradient(180deg, #7c5d93 0%, #5f466f 100%);
+      border-color: rgba(95, 70, 111, 0.92);
+      color: #fff;
+      transform: translateY(-1px);
+      text-decoration: none;
+    }
+    .hero-mini a.selected {
+      background: linear-gradient(180deg, #7c5d93 0%, #5f466f 100%);
+      border-color: rgba(95, 70, 111, 0.92);
+      color: #fff;
+      box-shadow: 0 0 0 2px rgba(124, 93, 147, 0.18), inset 0 0 0 1px rgba(255, 255, 255, 0.32);
+    }
+
+    .hero-mini a.nowrap {
       white-space: nowrap;
       font-size: clamp(0.6rem, 1.9vw, 0.69rem);
     }
@@ -1397,10 +1416,10 @@
         <div class="hero-aside">
           <p class="hero-tagline">Administrative Agent Office</p>
           <div class="hero-mini">
-            <span>행정심판</span>
-            <span>출입국</span>
-            <span class="nowrap">법인&nbsp;·&nbsp;투자</span>
-            <span>보훈</span>
+            <a data-service="nonprofit" href="service-post.html?service=nonprofit" aria-label="비영리법인설립 업무 게시 페이지로 이동">행정심판</a>
+            <a data-service="immigration" href="service-post.html?service=immigration" aria-label="출입국민원업무 게시 페이지로 이동">출입국</a>
+            <a class="nowrap" data-service="investment" href="service-post.html?service=investment" aria-label="기업투자·법인설립 게시 페이지로 이동">법인&nbsp;·&nbsp;투자</a>
+            <a data-service="patriot" href="service-post.html?service=patriot" aria-label="국가유공자보훈업무 게시 페이지로 이동">보훈</a>
           </div>
         </div>
       </div>
@@ -1830,6 +1849,7 @@
     (function () {
       var SELECTED_SERVICE_KEY = "selectedServiceCard";
       var cards = Array.prototype.slice.call(document.querySelectorAll(".service-card"));
+      var heroMiniLinks = Array.prototype.slice.call(document.querySelectorAll(".hero-mini a[data-service]"));
       if (!cards.length) return;
 
       function moveToPublishPage(serviceId) {
@@ -1845,12 +1865,22 @@
             card.classList.add("selected");
           }
         });
+        heroMiniLinks.forEach(function (link) {
+          if (link.getAttribute("data-service") === remembered) {
+            link.classList.add("selected");
+          }
+        });
       }
 
       cards.forEach(function (card) {
         card.addEventListener("click", function () {
           cards.forEach(function (item) { item.classList.remove("selected"); });
+          heroMiniLinks.forEach(function (item) { item.classList.remove("selected"); });
           card.classList.add("selected");
+          var selectedService = card.getAttribute("data-service");
+          heroMiniLinks.forEach(function (link) {
+            if (link.getAttribute("data-service") === selectedService) link.classList.add("selected");
+          });
           moveToPublishPage(card.getAttribute("data-service"));
         });
 
@@ -1859,6 +1889,20 @@
             evt.preventDefault();
             card.click();
           }
+        });
+      });
+
+      heroMiniLinks.forEach(function (link) {
+        link.addEventListener("click", function () {
+          var selectedService = link.getAttribute("data-service");
+          if (!selectedService) return;
+          heroMiniLinks.forEach(function (item) { item.classList.remove("selected"); });
+          cards.forEach(function (item) { item.classList.remove("selected"); });
+          link.classList.add("selected");
+          cards.forEach(function (card) {
+            if (card.getAttribute("data-service") === selectedService) card.classList.add("selected");
+          });
+          localStorage.setItem(SELECTED_SERVICE_KEY, selectedService);
         });
       });
     })();

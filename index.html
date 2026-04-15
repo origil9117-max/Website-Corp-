@@ -10,19 +10,19 @@
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700&family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --ink: #182033;
-      --ink-soft: #2a3244;
-      --paper: #f6f3ef;
-      --paper-dark: #e9e2d6;
-      --navy: #121a2b;
-      --navy-mid: #1a2638;
-      --maroon: #5d4a72;
-      --maroon-dark: #433456;
-      --gold: #9d8663;
-      --gold-light: #c7b28f;
-      --champagne: #d9ccb6;
-      --muted: #5c6273;
-      --line: rgba(24, 32, 51, 0.1);
+      --ink: #243040;
+      --ink-soft: #3a4658;
+      --paper: #f7f5f8;
+      --paper-dark: #ece7ef;
+      --navy: #2b3448;
+      --navy-mid: #3b4760;
+      --maroon: #7c5d93;
+      --maroon-dark: #5f466f;
+      --gold: #b89478;
+      --gold-light: #d8bea6;
+      --champagne: #e5d7c8;
+      --muted: #667086;
+      --line: rgba(36, 48, 64, 0.1);
       --max: 1180px;
     }
 
@@ -298,7 +298,7 @@
       overflow: hidden;
       border-bottom: 1px solid rgba(180, 155, 125, 0.14);
       min-height: min(56vw, 320px);
-      background: linear-gradient(168deg, #06080d 0%, #0b1018 38%, #090c12 100%);
+      background: linear-gradient(140deg, #e8e2f3 0%, #dce8f5 52%, #f4e6dd 100%);
       -webkit-font-smoothing: antialiased;
     }
 
@@ -315,7 +315,7 @@
       pointer-events: none;
       background: radial-gradient(
         ellipse 88% 68% at 76% 12%,
-        rgba(165, 140, 110, 0.09) 0%,
+        rgba(160, 126, 194, 0.26) 0%,
         transparent 56%
       );
     }
@@ -324,9 +324,9 @@
       position: absolute;
       inset: 0;
       z-index: 0;
-      opacity: 0.32;
+      opacity: 0.2;
       background-color: transparent;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='44' height='44' viewBox='0 0 44 44'%3E%3Cpath fill='none' stroke='%23e8dcc8' stroke-opacity='0.11' stroke-width='1' d='M22 8v6M22 30v6M8 22h6M30 22h6'/%3E%3C/svg%3E");
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='44' height='44' viewBox='0 0 44 44'%3E%3Cpath fill='none' stroke='%237c5d93' stroke-opacity='0.14' stroke-width='1' d='M22 8v6M22 30v6M8 22h6M30 22h6'/%3E%3C/svg%3E");
       pointer-events: none;
     }
 
@@ -336,7 +336,7 @@
       max-width: var(--max);
       margin: 0 auto;
       padding: 0.8rem 1.25rem 0.9rem;
-      color: #f2ebe2;
+      color: #2b3448;
       display: grid;
       grid-template-columns: 1fr;
       align-content: center;
@@ -367,14 +367,10 @@
       width: 100%;
       max-width: 320px;
       margin: 0 auto;
-      background: linear-gradient(
-        152deg,
-        rgba(22, 26, 36, 0.9) 0%,
-        rgba(10, 12, 20, 0.94) 100%
-      );
-      border: 1px solid rgba(200, 178, 145, 0.24);
+      background: linear-gradient(152deg, rgba(124, 93, 147, 0.14) 0%, rgba(188, 211, 232, 0.26) 100%);
+      border: 1px solid rgba(124, 93, 147, 0.24);
       border-radius: 4px;
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+      box-shadow: 0 16px 36px rgba(80, 90, 120, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.32);
       backdrop-filter: blur(14px);
     }
 
@@ -392,10 +388,10 @@
       font-size: clamp(0.78rem, 1.6vw, 0.88rem);
       font-weight: 600;
       letter-spacing: 0.14em;
-      color: rgba(242, 232, 218, 0.94);
+      color: rgba(43, 52, 72, 0.92);
       line-height: 1.5;
       margin: 0;
-      text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+      text-shadow: none;
       align-self: flex-end;
     }
 
@@ -413,16 +409,16 @@
     }
 
     .hero-mini span {
-      background: rgba(6, 8, 14, 0.52);
-      border: 1px solid rgba(205, 185, 155, 0.26);
+      background: rgba(255, 255, 255, 0.66);
+      border: 1px solid rgba(124, 93, 147, 0.24);
       padding: 0.5rem 0.28rem;
       font-size: clamp(0.64rem, 2.1vw, 0.72rem);
       font-weight: 600;
-      color: #faf6ef;
+      color: #364057;
       text-align: center;
       border-radius: 2px;
       letter-spacing: -0.02em;
-      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+      text-shadow: none;
     }
 
     @media (max-width: 767px) {
@@ -506,12 +502,12 @@
       font-family: "Noto Sans KR", sans-serif;
       font-size: 0.71rem;
       letter-spacing: 0.1em;
-      color: #ebe2d4;
-      border: 1px solid rgba(175, 155, 125, 0.48);
-      background: rgba(0, 0, 0, 0.32);
+      color: #5a496f;
+      border: 1px solid rgba(124, 93, 147, 0.35);
+      background: rgba(255, 255, 255, 0.64);
       padding: 0.32rem 0.7rem;
       margin-bottom: 0.55rem;
-      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+      text-shadow: none;
     }
 
     .hero h1 {
@@ -521,26 +517,26 @@
       line-height: 1.2;
       margin-bottom: 0.4rem;
       max-width: 22ch;
-      color: #faf6f0;
-      text-shadow: 0 2px 22px rgba(0, 0, 0, 0.45);
+      color: #273245;
+      text-shadow: none;
     }
 
     .hero-sub {
       font-family: "Noto Sans KR", sans-serif;
       font-size: 0.93rem;
-      color: rgba(235, 226, 214, 0.95);
+      color: rgba(52, 64, 84, 0.92);
       margin-bottom: 0.5rem;
       font-weight: 500;
-      text-shadow: 0 1px 8px rgba(0, 0, 0, 0.38);
+      text-shadow: none;
     }
 
     .hero-lead {
       font-size: 0.9rem;
       line-height: 1.55;
-      color: rgba(238, 230, 220, 0.93);
+      color: rgba(59, 71, 96, 0.9);
       max-width: 36rem;
       margin-bottom: 0.75rem;
-      text-shadow: 0 1px 10px rgba(0, 0, 0, 0.42);
+      text-shadow: none;
     }
 
     .hero-cta {

@@ -38,6 +38,33 @@
       border: 1px solid rgba(124, 93, 147, 0.3); background: #fff; border-radius: 2px;
       padding: 0.35rem 0.6rem;
     }
+    .top-links a.main-link {
+      background: linear-gradient(180deg, #fff2f7 0%, #ffe7f0 100%);
+      border-color: rgba(210, 128, 164, 0.52);
+      color: #704059;
+      animation: mainLinkPulse 1.6s ease-in-out infinite;
+    }
+    .top-links a.main-link:hover,
+    .top-links a.main-link:focus-visible {
+      background: linear-gradient(180deg, #ffe8f1 0%, #ffdce9 100%);
+      border-color: rgba(188, 90, 136, 0.58);
+      text-decoration: none;
+    }
+    @keyframes mainLinkPulse {
+      0%, 100% {
+        box-shadow: 0 0 0 0 rgba(210, 128, 164, 0.0);
+        opacity: 1;
+      }
+      50% {
+        box-shadow: 0 0 0 3px rgba(210, 128, 164, 0.22);
+        opacity: 0.88;
+      }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .top-links a.main-link {
+        animation: none;
+      }
+    }
     .wrap { max-width: var(--max); margin: 0 auto; padding: 1.2rem 1rem 2rem; }
     .label { font-size: 0.72rem; color: var(--maroon); letter-spacing: 0.14em; text-transform: uppercase; font-weight: 700; }
     h1 { margin: 0.2rem 0 0.25rem; font-size: clamp(1.2rem, 2.7vw, 1.7rem); }
@@ -144,7 +171,7 @@
     <div class="topbar-inner">
       <strong>업무 게시 페이지</strong>
       <div class="top-links">
-        <a href="index.html">메인으로</a>
+        <a class="main-link" href="index.html">메인으로</a>
         <a href="resources.html">자료실</a>
       </div>
     </div>

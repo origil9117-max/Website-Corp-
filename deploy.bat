@@ -1,4 +1,9 @@
 @echo off
+setlocal
+cd /d "%~dp0"
+powershell -ExecutionPolicy Bypass -File ".\one-click-deploy.ps1"
+pause
+@echo off
 chcp 65001 > nul
 setlocal
 cd /d "%~dp0"

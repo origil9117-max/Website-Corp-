@@ -619,6 +619,40 @@
       text-decoration: none;
       color: #253047;
     }
+    .hero-cta .btn-ghost {
+      background: linear-gradient(180deg, #fff2f7 0%, #ffe7f0 100%);
+      border-color: rgba(210, 128, 164, 0.52);
+      color: #704059;
+      animation: heroGhostPulse 1.6s ease-in-out infinite;
+    }
+
+    .hero-cta .btn-ghost:hover,
+    .hero-cta .btn-ghost:focus-visible {
+      background: linear-gradient(180deg, #ffe8f1 0%, #ffdce9 100%);
+      border-color: rgba(188, 90, 136, 0.58);
+      color: #704059;
+      text-decoration: none;
+    }
+
+    @keyframes heroGhostPulse {
+      0%, 100% {
+        box-shadow:
+          0 4px 14px rgba(55, 64, 90, 0.14),
+          inset 0 0 0 1px rgba(255, 255, 255, 0.62),
+          0 0 0 0 rgba(210, 128, 164, 0);
+      }
+      50% {
+        box-shadow:
+          0 4px 14px rgba(55, 64, 90, 0.14),
+          inset 0 0 0 1px rgba(255, 255, 255, 0.62),
+          0 0 0 3px rgba(210, 128, 164, 0.22);
+      }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .hero-cta .btn-ghost {
+        animation: none;
+      }
+    }
 
     .trust-strip {
       max-width: var(--max);

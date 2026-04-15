@@ -163,6 +163,10 @@
       font-size: 0.86rem;
       display: none;
     }
+    .cloud-warning code { font-size: 0.82em; background: rgba(255,255,255,0.7); padding: 0.05rem 0.25rem; border-radius: 2px; }
+    .cloud-setup-actions { display: flex; flex-wrap: wrap; gap: 0.45rem; align-items: center; margin-top: 0.65rem; }
+    .cloud-setup-actions .btn { font-size: 0.8rem; padding: 0.4rem 0.65rem; }
+    .cloud-diag { margin-top: 0.45rem; font-size: 0.8rem; color: #6b5a7a; word-break: break-word; }
   </style>
 </head>
 <body>
@@ -259,6 +263,36 @@
       var MAX_IMAGE_BYTES = 1024 * 1024;
       var client = null;
       var cloudEnabled = false;
+      var cloudDiag = "";
+
+      var SERVICE_POSTS_SQL =
+        "-- Run once in Supabase SQL Editor (게시글 공용 저장)\r\n" +
+        "\r\n" +
+        "create table if not exists public.service_posts (\r\n" +
+        "  id uuid primary key default gen_random_uuid(),\r\n" +
+        "  service text not null,\r\n" +
+        "  title text not null,\r\n" +
+        "  body text not null,\r\n" +
+        "  images jsonb not null default '[]'::jsonb,\r\n" +
+        "  created_at timestamptz not null default now()\r\n" +
+        ");\r\n" +
+        "\r\n" +
+        "create index if not exists service_posts_service_created_idx\r\n" +
+        "  on public.service_posts (service, created_at desc);\r\n" +
+        "\r\n" +
+        "alter table public.service_posts enable row level security;\r\n" +
+        "\r\n" +
+        "drop policy if exists \"service_posts_all\" on public.service_posts;\r\n" +
+        "create policy \"service_posts_all\" on public.service_posts\r\n" +
+        "  for all\r\n" +
+        "  using (true)\r\n" +
+        "  with check (true);\r\n";
+
+      function getSupabaseProjectRef() {
+        var u = String(window.SUPABASE_URL || "");
+        var m = u.match(/^https?:\/\/([a-z0-9-]+)\.supabase\.co\/?$/i);
+        return m ? m[1] : "";
+      }
 
       pageTitle.textContent = SERVICE_MAP[service] + " · 게시";
       pageHelper.textContent = SERVICE_MAP[service] + " 전용 게시글을 작성/수정/삭제할 수 있습니다.";
@@ -356,6 +390,7 @@
             if (!res.error) return res.data || [];
             if (isMissingServicePostsTableError(res.error)) {
               cloudEnabled = false;
+              cloudDiag = res.error.message || cloudDiag;
               updateAdminUi();
             }
           } catch (e) {}
@@ -364,6 +399,7 @@
       }
 
       async function verifyCloudReady() {
+        cloudDiag = "";
         if (!cloudEnabled) return;
         try {
           var probe = await client
@@ -373,9 +409,66 @@
             .limit(1);
           if (probe.error) {
             cloudEnabled = false;
+            cloudDiag = probe.error.message || "Supabase 오류";
+            if (probe.error.hint) cloudDiag += " · " + probe.error.hint;
           }
         } catch (e) {
           cloudEnabled = false;
+          cloudDiag = e && e.message ? String(e.message) : String(e);
+        }
+      }
+
+      async function retryCloudConnection() {
+        cloudDiag = "";
+        if (!window.supabase || !window.SUPABASE_URL || !window.SUPABASE_ANON_KEY) {
+          cloudDiag = "supabase-config.js에 SUPABASE_URL 또는 SUPABASE_ANON_KEY가 없습니다.";
+          cloudEnabled = false;
+          updateAdminUi();
+          return;
+        }
+        try {
+          client = window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY);
+          cloudEnabled = true;
+          await verifyCloudReady();
+          if (cloudEnabled) {
+            await migrateLocalPostsToCloud();
+          }
+          currentPosts = await loadPosts();
+          renderPosts();
+        } catch (err) {
+          cloudEnabled = false;
+          cloudDiag = err && err.message ? err.message : String(err);
+        }
+        updateAdminUi();
+      }
+
+      function bindCloudSetupButtons() {
+        var copyBtn = document.getElementById("btn-copy-service-sql");
+        var retryBtn = document.getElementById("btn-retry-service-cloud");
+        if (copyBtn) {
+          copyBtn.onclick = function () {
+            var text = SERVICE_POSTS_SQL;
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+              navigator.clipboard.writeText(text).then(function () {
+                copyBtn.textContent = "복사됨 ✓";
+                setTimeout(function () { copyBtn.textContent = "SQL 전체 복사"; }, 2000);
+              }).catch(function () {
+                window.prompt("아래 SQL을 복사해 주세요.", text);
+              });
+            } else {
+              window.prompt("아래 SQL을 복사해 주세요.", text);
+            }
+          };
+        }
+        if (retryBtn) {
+          retryBtn.onclick = function () {
+            retryBtn.disabled = true;
+            retryBtn.textContent = "확인 중…";
+            retryCloudConnection().finally(function () {
+              retryBtn.disabled = false;
+              retryBtn.textContent = "연결 다시 확인";
+            });
+          };
         }
       }
 
@@ -548,13 +641,31 @@
         authStatus.textContent = mode;
         if (cloudEnabled) {
           cloudWarning.style.display = "none";
-          cloudWarning.textContent = "";
+          cloudWarning.innerHTML = "";
         } else {
           cloudWarning.style.display = "block";
+          var ref = getSupabaseProjectRef();
+          var sqlEditorHref = ref
+            ? "https://supabase.com/dashboard/project/" + encodeURIComponent(ref) + "/sql/new"
+            : "https://supabase.com/dashboard";
+          var diagHtml = cloudDiag
+            ? '<p class="cloud-diag">진단: ' + escapeHtml(cloudDiag) + "</p>"
+            : "";
           cloudWarning.innerHTML =
-            "현재는 <strong>로컬 저장</strong> 모드입니다. 이 브라우저에만 글이 저장되어 다른 PC에서는 보이지 않습니다.<br />" +
-            "Supabase에 <code>service_posts</code> 테이블을 만들면 공용 저장으로 전환됩니다. 저장소의 " +
-            "<code>service_posts.sql</code> 내용을 Supabase SQL Editor에서 한 번 실행해 주세요.";
+            "<p>현재는 <strong>로컬 저장</strong> 모드입니다. 이 브라우저에만 글이 저장되어 <strong>다른 PC에서는 보이지 않습니다</strong>.</p>" +
+            "<p style=\"margin-top:0.45rem;\">아래 <strong>SQL 전체 복사</strong> → Supabase에서 <strong>SQL Editor 열기</strong> → 붙여넣기 후 <strong>Run</strong> 한 번이면 공용 저장으로 전환됩니다.</p>" +
+            diagHtml +
+            '<div class="cloud-setup-actions">' +
+            '<button type="button" class="btn btn-primary" id="btn-copy-service-sql">SQL 전체 복사</button>' +
+            '<a class="btn btn-ghost" href="' +
+            escapeHtml(sqlEditorHref) +
+            '" target="_blank" rel="noopener noreferrer">Supabase SQL Editor 열기</a>' +
+            '<button type="button" class="btn btn-ghost" id="btn-retry-service-cloud">연결 다시 확인</button>' +
+            "</div>" +
+            '<p style="margin-top:0.55rem;font-size:0.8rem;color:#6b5a7a;">프로젝트: <code>' +
+            escapeHtml(ref || "(URL 확인)") +
+            "</code> · 테이블: <code>public.service_posts</code></p>";
+          bindCloudSetupButtons();
         }
       }
 
@@ -767,8 +878,8 @@
         }
       });
 
-      updateAdminUi();
       await verifyCloudReady();
+      updateAdminUi();
       await migrateLocalPostsToCloud();
       currentPosts = await loadPosts();
       renderPosts();

@@ -1249,15 +1249,16 @@
       padding: 0.65rem 0.9rem;
       min-height: 2.75rem;
       background: var(--paper);
-      border: 1px solid var(--line);
+      border: 1px solid rgba(55, 66, 92, 0.28);
       border-radius: 2px;
       font-size: 0.88rem;
       color: var(--ink-soft);
     }
 
     .search-label {
-      color: var(--muted);
+      color: #3d4861;
       font-size: 0.72rem;
+      font-weight: 700;
       margin-right: 0.25rem;
     }
 
@@ -1293,11 +1294,20 @@
 
     .search-portals a[href*="google.com"] {
       color: #2b3a67;
+      font-weight: 700;
     }
 
     .search-portals a[href*="google.com"]:hover {
       color: #1c2a55;
       text-decoration: underline;
+    }
+
+    .search-portals a[href*="google.com"] .google-gu {
+      color: #2f9e44;
+    }
+
+    .search-portals a[href*="google.com"] .google-geul {
+      color: #f2c230;
     }
 
     .search-portals a[href*="daum.net"]:hover {
@@ -1686,7 +1696,7 @@
             </dl>
             <dl class="contact-block">
               <dt>팩스</dt>
-              <dd>051-516-5459</dd>
+              <dd><a href="tel:051-516-5459">051-516-5459</a></dd>
             </dl>
             <dl class="contact-block">
               <dt>이메일</dt>
@@ -1704,7 +1714,7 @@
                   target="_blank"
                   rel="noopener noreferrer"
                   title="구글에서 대한민국행정사사무소 검색"
-                  >구글</a><span class="search-portals-sep" aria-hidden="true"> · </span><a
+                  ><span class="google-gu">구</span><span class="google-geul">글</span></a><span class="search-portals-sep" aria-hidden="true"> · </span><a
                   href="https://search.naver.com/search.naver?query=%EB%8C%80%ED%95%9C%EB%AF%BC%EA%B5%AD%ED%96%89%EC%A0%95%EC%82%AC%EC%82%AC%EB%AC%B4%EC%86%8C"
                   target="_blank"
                   rel="noopener noreferrer"

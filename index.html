@@ -1291,6 +1291,15 @@
       color: #3182f6;
     }
 
+    .search-portals a[href*="google.com"] {
+      color: #2b3a67;
+    }
+
+    .search-portals a[href*="google.com"]:hover {
+      color: #1c2a55;
+      text-decoration: underline;
+    }
+
     .search-portals a[href*="daum.net"]:hover {
       color: #1a62d4;
       text-decoration: underline;
@@ -1691,6 +1700,191 @@
               <span class="search-label">검색</span> 대한민국행정사사무소
               <span class="search-portals">
                 <a
+                  href="https://www.google.com/search?q=%EB%8C%80%ED%95%9C%EB%AF%BC%EA%B5%AD%ED%96%89%EC%A0%95%EC%82%AC%EC%82%AC%EB%AC%B4%EC%86%8C"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  title="구글에서 대한민국행정사사무소 검색"
+                  >구글</a><span class="search-portals-sep" aria-hidden="true"> · </span><a
+                  href="https://search.naver.com/search.naver?query=%EB%8C%80%ED%95%9C%EB%AF%BC%EA%B5%AD%ED%96%89%EC%A0%95%EC%82%AC%EC%82%AC%EB%AC%B4%EC%86%8C"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  title="네이버에서 대한민국행정사사무소 검색"
+                  >네이버</a><span class="search-portals-sep" aria-hidden="true"> · </span><a
+                  href="https://search.daum.net/search?w=tot&q=%EB%8C%80%ED%95%9C%EB%AF%BC%EA%B5%AD%ED%96%89%EC%A0%95%EC%82%AC%EC%82%AC%EB%AC%B4%EC%86%8C"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  title="다음에서 대한민국행정사사무소 검색"
+                  >다음</a>
+              </span>
+            </div>
+          </div>
+
+          <p class="contact-note">
+            본 페이지는 홈페이지 표시 목적의 안내이며, 구체적 사안은 상담을 통해 확인합니다. 홈페이지만으로 법률 자문이 성립하지 않습니다.
+          </p>
+        </div>
+
+        <aside class="consult-form-wrap" aria-labelledby="consult-form-title">
+          <h3 id="consult-form-title">상담요청</h3>
+          <form class="consult-form" id="consult-form" action="#" method="post" novalidate>
+            <p id="consult-status" class="consult-status-msg" role="status" aria-live="polite"></p>
+            <label for="consult-name">성명</label>
+            <input type="text" id="consult-name" name="name" autocomplete="name" required placeholder="성함을 입력해 주세요" />
+
+            <label for="consult-phone">연락처</label>
+            <input type="tel" id="consult-phone" name="phone" autocomplete="tel" required placeholder="전화번호" />
+
+            <label for="consult-msg">메시지</label>
+            <textarea id="consult-msg" name="message" required placeholder="상담 내용을 간단히 적어 주세요"></textarea>
+
+            <button type="submit" class="btn-send">보내기</button>
+          </form>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+      <div>
+        <p class="firm">대한민국행정사사무소</p>
+        <p>대표·행정사 이근철 · 부산광역시 금정구 중앙대로1629번길 16, 삼한스퀘어 2층 223호</p>
+        <p style="margin-top: 0.5rem;">
+          <a href="https://blog.naver.com/visainasia" rel="noopener noreferrer" style="color: rgba(245, 242, 235, 0.85);">공식 블로그 (네이버)</a>
+        </p>
+        <p style="margin-top: 0.75rem;">© <span id="y"></span> 대한민국행정사사무소. All rights reserved.</p>
+      </div>
+      <div class="footer-logos" aria-label="관련 기관 링크">
+        <a class="footer-logo-link" href="https://daaa.or.kr/vtMain.html" target="_blank" rel="noopener noreferrer" aria-label="대한행정사회 새 창 열기">
+          <img src="images/logo-daaa.png" alt="대한행정사회" />
+        </a>
+        <span class="footer-logo-sep" aria-hidden="true">|</span>
+        <a class="footer-logo-link" href="https://www.hikorea.go.kr/Main.pt" target="_blank" rel="noopener noreferrer" aria-label="하이코리아 새 창 열기">
+          <img src="images/logo-hikorea.png" alt="하이코리아" />
+        </a>
+        <span class="footer-logo-sep" aria-hidden="true">|</span>
+        <a class="footer-logo-link" href="https://mois.go.kr/frt/a01/frtMain.do" target="_blank" rel="noopener noreferrer" aria-label="행정안전부 새 창 열기">
+          <img src="images/logo-mois.png" alt="행정안전부" />
+        </a>
+        <span class="footer-logo-sep" aria-hidden="true">|</span>
+        <a class="footer-logo-link" href="https://www.law.go.kr/main.html" target="_blank" rel="noopener noreferrer" aria-label="국가법령정보센터 새 창 열기">
+          <img src="images/logo-lawgo.png" alt="국가법령정보센터" />
+        </a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+  <script>
+    document.getElementById("y").textContent = new Date().getFullYear();
+
+    (async function () {
+      var LOCAL_NOTICE_KEY = "websiteCorpNotices";
+      var topTitle = document.getElementById("top-notice-title");
+      var topBodyLegacy = document.getElementById("top-notice-body");
+      if (!topTitle) return;
+      if (topBodyLegacy) {
+        topBodyLegacy.textContent = "";
+        topBodyLegacy.style.display = "none";
+      }
+      function loadLocalNotices() {
+        try {
+          var raw = localStorage.getItem(LOCAL_NOTICE_KEY);
+          var parsed = raw ? JSON.parse(raw) : [];
+          return Array.isArray(parsed) ? parsed : [];
+        } catch (e) {
+          return [];
+        }
+      }
+
+      function sortItems(items) {
+        return items.slice().sort(function (a, b) {
+          if (!!a.pinned !== !!b.pinned) return a.pinned ? -1 : 1;
+          var ad = String(a.created_at || a.createdText || "");
+          var bd = String(b.created_at || b.createdText || "");
+          if (ad === bd) return 0;
+          return ad > bd ? -1 : 1;
+        });
+      }
+
+      var top = null;
+      if (!window.supabase || !window.SUPABASE_URL || !window.SUPABASE_ANON_KEY) {
+        var localOnly = sortItems(loadLocalNotices());
+        if (localOnly.length > 0) top = localOnly[0];
+      } else {
+        var client = window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY);
+        var res = await client
+          .from("notices")
+          .select("title, content, pinned, created_at")
+          .order("pinned", { ascending: false })
+          .order("created_at", { ascending: false })
+          .limit(1);
+
+        if (!res.error && res.data && res.data.length > 0) top = res.data[0];
+      }
+
+      if (!top) return;
+      topTitle.textContent = String(top.title || "공지사항");
+    })();
+
+    (function () {
+      var form = document.getElementById("consult-form");
+      var statusEl = document.getElementById("consult-status");
+      if (!form || !statusEl) return;
+
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+        statusEl.textContent = "";
+        statusEl.classList.remove("ok", "err");
+
+        var name = (document.getElementById("consult-name").value || "").trim();
+        var phone = (document.getElementById("consult-phone").value || "").trim();
+        var msg = (document.getElementById("consult-msg").value || "").trim();
+        if (!name || !phone || !msg) {
+          statusEl.classList.add("err");
+          statusEl.textContent = "성명, 연락처, 메시지를 모두 입력해 주세요.";
+          return;
+        }
+
+        var btn = form.querySelector(".btn-send");
+        btn.disabled = true;
+
+        fetch("https://formsubmit.co/ajax/lkc@daum.net", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+          referrerPolicy: "unsafe-url",
+          body: JSON.stringify({
+            name: name,
+            phone: phone,
+            message: msg,
+            _subject: "[상담요청] 대한민국행정사사무소 — " + name,
+            _captcha: false,
+            _url: window.location.href,
+          }),
+        })
+          .then(function (res) {
+            return res.text().then(function (text) {
+              var data = null;
+              try {
+                data = text ? JSON.parse(text) : null;
+              } catch (parseErr) {
+                throw new Error(
+                  "서버 응답을 해석할 수 없습니다. 배포 URL(https)에서 다시 시도해 주세요."
+                );
+              }
+              return { res: res, data: data };
+            });
+          })
+          .then(function (o) {
+            var data = o.data;
+            if (
+              data &&
+              (data.success === false ||
+                data.success === "false" ||
                   href="https://search.naver.com/search.naver?query=%EB%8C%80%ED%95%9C%EB%AF%BC%EA%B5%AD%ED%96%89%EC%A0%95%EC%82%AC%EC%82%AC%EB%AC%B4%EC%86%8C"
                   target="_blank"
                   rel="noopener noreferrer"

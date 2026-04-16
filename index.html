@@ -933,7 +933,9 @@
     }
 
     .blog-cta a {
-      display: inline-block;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.55rem;
       padding: 0.55rem 1.15rem;
       font-weight: 700;
       font-size: 0.92rem;
@@ -943,6 +945,14 @@
       text-decoration: none;
       box-shadow: 0 2px 8px rgba(3, 199, 90, 0.35);
       transition: background 0.15s, box-shadow 0.15s, transform 0.1s;
+    }
+
+    .blog-cta-mouse-icon {
+      width: 18px;
+      height: 18px;
+      display: inline-block;
+      flex: 0 0 auto;
+      margin-right: 0.1rem; /* 버튼 우측 패딩과 살짝 간격 */
     }
 
     .blog-cta a:hover {
@@ -1628,7 +1638,15 @@
       </div>
       <div class="services-footer-row">
         <p class="blog-cta">
-          <a href="https://blog.naver.com/visainasia" rel="noopener noreferrer">네이버 블로그에서 상세 글 보기(클릭) →</a>
+          <a href="https://blog.naver.com/visainasia" rel="noopener noreferrer">
+            네이버 블로그에서 상세 글 보기(클릭)
+            <span class="blog-cta-mouse-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M5.5 3.5L20.5 12L13.8 13.7L12.2 20.4L5.5 3.5Z" fill="rgba(255,255,255,0.95)"/>
+                <path d="M13.8 13.7L9.2 18.3" stroke="rgba(255,255,255,0.95)" stroke-width="1.6" stroke-linecap="round"/>
+              </svg>
+            </span>
+          </a>
         </p>
       </div>
     </section>

@@ -374,6 +374,11 @@
         });
       }
 
+      function isRlsDenied(err) {
+        var msg = err && err.message ? String(err.message) : "";
+        return /row-level security policy/i.test(msg);
+      }
+
       async function migrateLocalNoticesToCloud() {
         if (!client) return;
         var localItems = loadLocalNotices();
@@ -714,7 +719,15 @@
             res = await client.from("notices").insert({ title: title, content: content, pinned: pinned });
           }
           if (res.error) {
-            setStatus(formStatus, "err", "저장 실패: " + res.error.message);
+            if (isRlsDenied(res.error)) {
+              setStatus(
+                formStatus,
+                "err",
+                "저장 실패: notices RLS 정책이 쓰기를 막고 있습니다. Supabase SQL Editor에서 저장소의 notices.sql을 1회 실행해 주세요."
+              );
+            } else {
+              setStatus(formStatus, "err", "저장 실패: " + res.error.message);
+            }
             return;
           }
         } else {
@@ -775,7 +788,15 @@
           if (client) {
             var del = await client.from("notices").delete().eq("id", id);
             if (del.error) {
-              setStatus(formStatus, "err", "삭제 실패: " + del.error.message);
+              if (isRlsDenied(del.error)) {
+                setStatus(
+                  formStatus,
+                  "err",
+                  "삭제 실패: notices RLS 정책이 쓰기를 막고 있습니다. Supabase SQL Editor에서 저장소의 notices.sql을 1회 실행해 주세요."
+                );
+              } else {
+                setStatus(formStatus, "err", "삭제 실패: " + del.error.message);
+              }
               return;
             }
           } else {

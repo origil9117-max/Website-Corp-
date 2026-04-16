@@ -14,7 +14,11 @@ create index if not exists notices_pinned_created_idx
 
 alter table public.notices enable row level security;
 
+-- 예전 SUPABASE_SETUP.md 예시 정책(익명 INSERT 불가)이 남아 있으면 저장이 계속 실패합니다.
+drop policy if exists "notices read all" on public.notices;
+drop policy if exists "notices write auth" on public.notices;
 drop policy if exists "notices_all" on public.notices;
+
 create policy "notices_all" on public.notices
   for all
   using (true)

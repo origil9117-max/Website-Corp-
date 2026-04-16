@@ -250,14 +250,8 @@
             .order("pinned", { ascending: false })
             .order("created_at", { ascending: false });
 
-          if (!res.error) {
-            items = res.data || [];
-            if (items.length === 0) {
-              items = loadLocalNotices();
-            }
-          } else {
-            items = loadLocalNotices();
-          }
+          if (!res.error) items = res.data || [];
+          else items = [];
         }
         items = sortNotices(items);
         if (items.length === 0) {

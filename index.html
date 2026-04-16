@@ -1806,12 +1806,7 @@
           .order("created_at", { ascending: false })
           .limit(1);
 
-        if (!res.error && res.data && res.data.length > 0) {
-          top = res.data[0];
-        } else {
-          var localFallback = sortItems(loadLocalNotices());
-          if (localFallback.length > 0) top = localFallback[0];
-        }
+        if (!res.error && res.data && res.data.length > 0) top = res.data[0];
       }
 
       if (!top) return;

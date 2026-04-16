@@ -374,13 +374,52 @@
         });
       }
 
+      async function migrateLocalNoticesToCloud() {
+        if (!client) return;
+        var localItems = loadLocalNotices();
+        if (!localItems.length) return;
+        try {
+          var cloud = await client
+            .from("notices")
+            .select("title, content, pinned, created_at");
+          if (cloud.error) return;
+          var existing = Array.isArray(cloud.data) ? cloud.data : [];
+          var toInsert = [];
+          for (var i = 0; i < localItems.length; i++) {
+            var n = localItems[i];
+            var createdAt = n.created_at || n.createdText || new Date().toISOString();
+            var dup = existing.some(function (c) {
+              return String(c.title || "") === String(n.title || "") &&
+                     String(c.content || "") === String(n.content || "") &&
+                     !!c.pinned === !!n.pinned;
+            });
+            if (!dup) {
+              toInsert.push({
+                title: n.title || "",
+                content: n.content || "",
+                pinned: !!n.pinned,
+                created_at: createdAt
+              });
+            }
+          }
+          if (toInsert.length) {
+            var ins = await client.from("notices").insert(toInsert);
+            if (ins.error) return;
+          }
+          localStorage.removeItem(LOCAL_NOTICE_KEY);
+          setStatus(authStatus, "ok", "로컬 공지를 공용(Supabase)으로 동기화했습니다.");
+        } catch (e) {
+          return;
+        }
+      }
+
       function isAdmin() {
         return !!(localAdmin || (currentSession && currentSession.user));
       }
 
       async function renderList() {
         var items = [];
-        if (client && currentSession) {
+        if (client) {
           var res = await client
             .from("notices")
             .select("id, title, content, pinned, created_at")
@@ -499,6 +538,7 @@
         client = window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY);
         var sessionRes = await client.auth.getSession();
         currentSession = sessionRes.data.session;
+        await migrateLocalNoticesToCloud();
       }
       updateAdminUi();
       await renderList();
@@ -667,7 +707,7 @@
         }
 
         var res;
-        if (currentSession && client) {
+        if (client) {
           if (id) {
             res = await client.from("notices").update({ title: title, content: content, pinned: pinned }).eq("id", id);
           } else {
@@ -711,7 +751,7 @@
         if (!act || !id) return;
 
         if (act === "edit") {
-          if (currentSession && client) {
+          if (client) {
             var one = await client.from("notices").select("id, title, content, pinned").eq("id", id).maybeSingle();
             if (one.error || !one.data) return;
             document.getElementById("notice-id").value = one.data.id;
@@ -732,7 +772,7 @@
 
         if (act === "del") {
           if (!confirm("이 공지를 삭제하시겠습니까?")) return;
-          if (currentSession && client) {
+          if (client) {
             var del = await client.from("notices").delete().eq("id", id);
             if (del.error) {
               setStatus(formStatus, "err", "삭제 실패: " + del.error.message);

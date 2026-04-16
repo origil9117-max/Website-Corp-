@@ -1327,6 +1327,26 @@
       user-select: none;
     }
 
+    .search-mouse-icon {
+      width: 26px;
+      height: 26px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      background: #ffd84d;
+      box-shadow: 0 1px 0 rgba(0, 0, 0, 0.06);
+      border: 1px solid rgba(210, 160, 30, 0.55);
+      flex: 0 0 auto;
+      margin-left: 0.1rem;
+    }
+
+    .search-mouse-icon svg {
+      width: 16px;
+      height: 16px;
+      display: block;
+    }
+
     .contact-note {
       margin-top: 1.5rem;
       padding: 0.9rem 1rem;
@@ -1714,6 +1734,12 @@
             <p>아래와 같이 포털에서 사무소명으로 검색하실 수 있습니다.</p>
             <div class="search-bar">
               <span class="search-label">검색</span> 대한민국행정사사무소
+              <span class="search-mouse-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M10 2L19 11L17 13L10 6V2Z" fill="rgba(55,66,92,0.88)"/>
+                  <path d="M12 6L3 15L11 23L23 11L12 6Z" fill="none" stroke="rgba(55,66,92,0.88)" stroke-width="1.6" stroke-linejoin="round"/>
+                </svg>
+              </span>
               <span class="search-portals">
                 <a
                   href="https://www.google.com/search?q=%EB%8C%80%ED%95%9C%EB%AF%BC%EA%B5%AD%ED%96%89%EC%A0%95%EC%82%AC%EC%82%AC%EB%AC%B4%EC%86%8C"

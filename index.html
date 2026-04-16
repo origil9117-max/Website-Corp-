@@ -1324,6 +1324,7 @@
       font-size: inherit;
       font-weight: inherit;
       line-height: inherit;
+      animation: googleBlink 1.2s ease-in-out infinite;
     }
 
     .search-portals a[href*="google.com"] .google-geul {
@@ -1331,6 +1332,25 @@
       font-size: inherit;
       font-weight: inherit;
       line-height: inherit;
+      animation: googleBlink 1.2s ease-in-out infinite;
+      animation-delay: 0.15s;
+    }
+
+    @keyframes googleBlink {
+      0%,
+      100% {
+        opacity: 1;
+      }
+      50% {
+        opacity: 0.25;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .search-portals a[href*="google.com"] .google-gu,
+      .search-portals a[href*="google.com"] .google-geul {
+        animation: none;
+      }
     }
 
     .search-portals a[href*="daum.net"]:hover {

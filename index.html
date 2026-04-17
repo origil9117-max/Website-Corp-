@@ -241,15 +241,18 @@
     }
 
     .top-notice-inner {
-      max-width: var(--max);
+      max-width: none;
       margin: 0 auto;
-      padding: 0.6rem 1.25rem;
+      padding: 0.6rem clamp(1rem, 3vw, 2rem);
       display: flex;
       align-items: center;
       gap: 0.7rem;
       flex-wrap: wrap;
       font-size: 0.82rem;
       color: var(--ink-soft);
+      border-left: none;
+      border-right: none;
+      box-shadow: none;
     }
 
     .top-notice-link {

@@ -67,7 +67,7 @@
     @media (min-width: 760px) {
       .grid {
         display: grid;
-        grid-template-columns: minmax(0, 80fr) minmax(220px, 20fr);
+        grid-template-columns: minmax(0, 4fr) minmax(220px, 1fr);
         gap: 0.9rem;
         align-items: start;
       }
@@ -81,6 +81,11 @@
         max-width: 100%;
         min-width: 0;
       }
+    }
+
+    .grid > .panel {
+      width: 100%;
+      justify-self: stretch;
     }
 
     .panel {
@@ -122,16 +127,6 @@
 
     .notice-compose-panel {
       min-width: 320px;
-    }
-
-    @media (min-width: 920px) {
-      .notice-compose-panel {
-        width: min(460px, 46vw);
-        max-width: calc(100% - 1rem);
-        resize: horizontal;
-        min-height: 520px;
-        overflow: auto;
-      }
     }
 
     .notice-compose-panel {
@@ -635,11 +630,20 @@
       });
 
       if (noticeContentEditor) {
+        noticeContentEditor.setAttribute("contenteditable", "true");
+        noticeContentEditor.setAttribute("spellcheck", "true");
         noticeContentEditor.addEventListener("mouseup", function () {
           setTimeout(function () {
             saveCurrentEditorRange();
             showSelectionToolbar();
           }, 0);
+        });
+        noticeContentEditor.addEventListener("keydown", function (e) {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            document.execCommand("insertLineBreak");
+            saveCurrentEditorRange();
+          }
         });
         noticeContentEditor.addEventListener("keyup", function () {
           setTimeout(function () {
@@ -697,6 +701,19 @@
         }
         document.body.classList.remove("notice-editing");
       }
+
+      function normalizePanelLayout() {
+        if (composePanel) {
+          composePanel.style.width = "100%";
+          composePanel.style.maxWidth = "100%";
+        }
+        if (noticeListPanel) {
+          noticeListPanel.style.width = "100%";
+          noticeListPanel.style.maxWidth = "100%";
+        }
+      }
+
+      normalizePanelLayout();
 
       if (composePanel && composeResizer) {
         composeResizer.addEventListener("pointerdown", function (e) {

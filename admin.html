@@ -100,6 +100,35 @@
       font-size: 1rem;
     }
 
+    .panel-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.6rem;
+      margin-bottom: 0.8rem;
+    }
+
+    .panel-head h2 {
+      margin: 0;
+    }
+
+    .btn-zoom {
+      padding: 0.32rem 0.6rem;
+      font-size: 0.76rem;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: #2f3440;
+      border-radius: 3px;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .btn-zoom[aria-pressed="true"] {
+      border-color: rgba(90, 53, 64, 0.5);
+      background: rgba(90, 53, 64, 0.1);
+      color: var(--maroon-dark);
+    }
+
     label {
       display: block;
       font-size: 0.8rem;
@@ -393,7 +422,10 @@
 
     <div class="grid">
       <section class="panel notice-compose-panel">
-        <h2>공지 등록 / 수정</h2>
+        <div class="panel-head">
+          <h2>공지 등록 / 수정</h2>
+          <button id="btn-compose-zoom" class="btn-zoom" type="button" aria-pressed="false">확대</button>
+        </div>
         <form id="notice-form" novalidate>
           <input type="hidden" id="notice-id" value="" />
 
@@ -451,6 +483,7 @@
       var composePanel = document.querySelector(".notice-compose-panel");
       var noticeListPanel = document.querySelector(".notice-list-panel");
       var composeResizer = document.getElementById("compose-resizer");
+      var btnComposeZoom = document.getElementById("btn-compose-zoom");
       var noticeContentEditor = document.getElementById("notice-content-editor");
       var selectionToolbar = document.getElementById("selection-toolbar");
       var selectionColor = document.getElementById("selection-color");
@@ -472,6 +505,7 @@
       var showLoginForm = false;
       var savedEditorRange = null;
       var editingNoticeId = "";
+      var composeZoomed = false;
 
       function setStatus(el, type, msg) {
         el.classList.remove("ok", "err");
@@ -702,6 +736,23 @@
         document.body.classList.remove("notice-editing");
       }
 
+      function applyComposeZoom() {
+        if (!grid || window.innerWidth < 760) return;
+        if (composeZoomed) {
+          grid.style.gridTemplateColumns = "minmax(0, 9fr) minmax(180px, 1fr)";
+          if (btnComposeZoom) {
+            btnComposeZoom.textContent = "축소";
+            btnComposeZoom.setAttribute("aria-pressed", "true");
+          }
+        } else {
+          grid.style.gridTemplateColumns = "minmax(0, 4fr) minmax(220px, 1fr)";
+          if (btnComposeZoom) {
+            btnComposeZoom.textContent = "확대";
+            btnComposeZoom.setAttribute("aria-pressed", "false");
+          }
+        }
+      }
+
       function normalizePanelLayout() {
         if (composePanel) {
           composePanel.style.width = "100%";
@@ -714,6 +765,14 @@
       }
 
       normalizePanelLayout();
+      applyComposeZoom();
+
+      if (btnComposeZoom) {
+        btnComposeZoom.addEventListener("click", function () {
+          composeZoomed = !composeZoomed;
+          applyComposeZoom();
+        });
+      }
 
       if (composePanel && composeResizer) {
         composeResizer.addEventListener("pointerdown", function (e) {

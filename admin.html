@@ -150,6 +150,11 @@
       line-height: 1.6;
     }
 
+    .notice-editor:focus {
+      outline: 2px solid rgba(90, 53, 64, 0.35);
+      outline-offset: 1px;
+    }
+
     .notice-editor:empty::before {
       content: attr(data-placeholder);
       color: #8d95a2;
@@ -396,6 +401,7 @@
             id="notice-content-editor"
             class="notice-editor"
             contenteditable="true"
+            tabindex="0"
             data-placeholder="공지 내용을 입력해 주세요."
             role="textbox"
             aria-multiline="true"
@@ -643,13 +649,32 @@
             showSelectionToolbar();
           }, 0);
         });
-        noticeContentEditor.addEventListener("keydown", function (e) {
-          if (e.key === "Enter") {
-            e.preventDefault();
-            document.execCommand("insertLineBreak");
-            saveCurrentEditorRange();
-          }
-        });
+        noticeContentEditor.addEventListener(
+          "keydown",
+          function (e) {
+            if (!e.isComposing) {
+              var navKeys = {
+                ArrowUp: true,
+                ArrowDown: true,
+                ArrowLeft: true,
+                ArrowRight: true,
+                Home: true,
+                End: true,
+                PageUp: true,
+                PageDown: true
+              };
+              if (navKeys[e.key]) {
+                e.stopPropagation();
+              }
+            }
+            if (e.key === "Enter" && !e.isComposing) {
+              e.preventDefault();
+              document.execCommand("insertLineBreak");
+              saveCurrentEditorRange();
+            }
+          },
+          true
+        );
         noticeContentEditor.addEventListener("keyup", function () {
           setTimeout(function () {
             saveCurrentEditorRange();

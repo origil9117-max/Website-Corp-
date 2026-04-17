@@ -594,11 +594,11 @@
         if (!currentRangeInEditor()) return;
         noticeContentEditor.focus();
         if (cmd === "underline") {
-          wrapSelectionWithStyle("text-decoration:underline");
+          document.execCommand("underline", false, null);
           return;
         }
         if (cmd === "bold") {
-          wrapSelectionWithStyle("font-weight:700");
+          document.execCommand("bold", false, null);
           return;
         }
         if (cmd === "bigger") {
@@ -659,7 +659,10 @@
       }
       if (selectionToolbar) {
         selectionToolbar.addEventListener("mousedown", function (e) {
-          e.preventDefault();
+          var t = e.target;
+          if (t && t.closest && t.closest("button[data-editor-cmd]")) {
+            e.preventDefault();
+          }
         });
       }
       document.addEventListener("selectionchange", function () {

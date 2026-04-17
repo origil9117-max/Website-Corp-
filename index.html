@@ -288,6 +288,27 @@
       color: var(--ink);
     }
 
+    .top-notice-title.is-live {
+      color: #a63f1f;
+      animation: noticeTitleBlink 1.1s ease-in-out infinite;
+    }
+
+    @keyframes noticeTitleBlink {
+      0%,
+      100% {
+        opacity: 1;
+      }
+      50% {
+        opacity: 0.55;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .top-notice-title.is-live {
+        animation: none;
+      }
+    }
+
     /* 구버전 캐시에서 남아있는 본문 미리보기 강제 숨김 */
     #top-notice-body,
     .top-notice-body {
@@ -1906,8 +1927,12 @@
         if (!res.error && res.data && res.data.length > 0) top = res.data[0];
       }
 
-      if (!top) return;
+      if (!top) {
+        topTitle.classList.remove("is-live");
+        return;
+      }
       topTitle.textContent = String(top.title || "공지사항");
+      topTitle.classList.add("is-live");
     })();
 
     (function () {

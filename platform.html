@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>지능형 행정 플랫폼 | 대한민국행정사사무소</title>
+  <meta name="description" content="복잡한 행정 민원 절차를 한곳에서 이해하고 준비할 수 있도록 정보를 구조화해 제공합니다. 일반 안내이며 개별 사안은 상담이 필요합니다." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700&family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --ink: #243040;
+      --ink-soft: #3a4658;
+      --muted: #667086;
+      --paper: #f7f5f8;
+      --line: rgba(36, 48, 64, 0.1);
+      --maroon: #7c5d93;
+      --maroon-dark: #5f466f;
+      --gold: #b89478;
+      --max: 980px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: "Noto Sans KR", system-ui, sans-serif;
+      color: var(--ink);
+      background: var(--paper);
+      line-height: 1.65;
+      font-size: 16px;
+    }
+
+    a {
+      color: var(--maroon);
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      background: rgba(250, 249, 246, 0.94);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .topbar-inner {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 0.78rem 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.7rem 1rem;
+      flex-wrap: wrap;
+    }
+
+    .brand {
+      font-family: "Noto Serif KR", serif;
+      font-weight: 700;
+      color: var(--ink);
+      text-decoration: none;
+      font-size: 0.95rem;
+    }
+
+    .brand span {
+      display: block;
+      font-family: "Noto Sans KR", system-ui, sans-serif;
+      font-size: 0.66rem;
+      color: var(--muted);
+      font-weight: 500;
+      margin-top: 0.18rem;
+    }
+
+    .links {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .links a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--maroon-dark);
+      font-weight: 700;
+      text-decoration: none;
+      font-size: 0.8rem;
+      border: 1px solid rgba(90, 53, 64, 0.22);
+      border-radius: 2px;
+      background: #fff;
+      padding: 0.35rem 0.62rem;
+    }
+
+    .links a:hover {
+      text-decoration: none;
+      background: #f7f1eb;
+    }
+
+    .wrap {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 1.35rem 1rem 2.5rem;
+    }
+
+    .section-label {
+      margin: 0 0 0.4rem;
+      font-size: 0.72rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--maroon);
+      font-weight: 700;
+    }
+
+    h1 {
+      font-family: "Noto Serif KR", serif;
+      font-size: clamp(1.2rem, 3vw, 1.65rem);
+      font-weight: 700;
+      line-height: 1.35;
+      margin-bottom: 0.65rem;
+    }
+
+    .lead {
+      color: var(--ink-soft);
+      font-size: 0.95rem;
+      margin-bottom: 1.25rem;
+    }
+
+    /* 제목·본문·안내·CTA를 한 열로 묶어 카드 그리드보다 안쪽으로 정렬 */
+    .platform-prose {
+      max-width: 42em;
+      margin-left: 0;
+      margin-right: auto;
+    }
+
+    @media (max-width: 767px) {
+      .platform-prose {
+        width: 92%;
+        max-width: 42em;
+        margin-left: auto;
+        margin-right: auto;
+      }
+    }
+
+    .platform-hero {
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 1.15rem 1.1rem 1.2rem;
+      background: linear-gradient(165deg, #fff 0%, #f5f0f7 100%);
+      box-shadow: 0 4px 18px rgba(36, 48, 64, 0.06);
+      margin-bottom: 1.35rem;
+    }
+
+    .platform-hero h2 {
+      font-size: 1rem;
+      font-weight: 800;
+      margin-bottom: 0.45rem;
+      color: var(--maroon-dark);
+    }
+
+    .platform-hero p {
+      font-size: 0.88rem;
+      color: var(--ink-soft);
+    }
+
+    .platform-grid {
+      display: grid;
+      gap: 0.85rem;
+      grid-template-columns: 1fr;
+    }
+
+    @media (min-width: 640px) {
+      .platform-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    .platform-card {
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      background: #fff;
+      padding: 1rem 0.95rem 1.05rem;
+      box-shadow: 0 1px 0 rgba(36, 48, 64, 0.04);
+    }
+
+    .platform-card h3 {
+      font-size: 0.92rem;
+      font-weight: 800;
+      margin-bottom: 0.4rem;
+      color: var(--ink);
+    }
+
+    .platform-card p {
+      font-size: 0.84rem;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .platform-card .tag {
+      display: inline-block;
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      color: var(--maroon);
+      margin-bottom: 0.35rem;
+    }
+
+    .trust-mini {
+      margin: 1.35rem 0 1rem;
+      padding: 0.65rem 0.85rem;
+      font-size: 0.78rem;
+      color: var(--ink-soft);
+      border: 1px dashed rgba(90, 53, 64, 0.25);
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.75);
+    }
+
+    .trust-mini strong {
+      color: var(--ink);
+    }
+
+    .disclaimer {
+      border-left: 3px solid var(--gold);
+      padding: 0.75rem 0.95rem;
+      background: #fff;
+      border-radius: 0 4px 4px 0;
+      font-size: 0.8rem;
+      color: var(--muted);
+      line-height: 1.55;
+      margin-bottom: 1.25rem;
+    }
+
+    .disclaimer strong {
+      color: var(--ink);
+    }
+
+    .cta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.65rem;
+      align-items: center;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.52rem 1rem;
+      font-size: 0.85rem;
+      font-weight: 700;
+      border-radius: 2px;
+      text-decoration: none;
+    }
+
+    .btn-primary {
+      color: #fff;
+      background: linear-gradient(180deg, var(--maroon) 0%, var(--maroon-dark) 100%);
+      border: 1px solid rgba(0, 0, 0, 0.06);
+    }
+
+    .btn-primary:hover {
+      opacity: 0.93;
+      text-decoration: none;
+      color: #fff;
+    }
+
+    .btn-ghost {
+      color: var(--ink);
+      background: #fff;
+      border: 1px solid var(--line);
+    }
+
+    .btn-ghost:hover {
+      background: #faf8fb;
+      text-decoration: none;
+    }
+
+    .next-steps {
+      margin-top: 1.5rem;
+      padding-top: 1.1rem;
+      border-top: 1px solid var(--line);
+    }
+
+    .next-steps h2 {
+      font-size: 0.95rem;
+      margin-bottom: 0.5rem;
+      font-weight: 800;
+    }
+
+    .next-steps ul {
+      margin: 0;
+      padding-left: 1.1rem;
+      font-size: 0.84rem;
+      color: var(--ink-soft);
+    }
+
+    .next-steps li {
+      margin-bottom: 0.35rem;
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a href="index.html" class="brand">
+        대한민국행정사사무소
+        <span>Republic of Korea Administrative Scrivener Office</span>
+      </a>
+      <div class="links">
+        <a href="index.html">메인</a>
+        <a href="notice.html">공지사항</a>
+        <a href="resources.html">자료실</a>
+      </div>
+    </div>
+  </header>
+
+  <div class="wrap">
+    <div class="platform-prose">
+    <p class="section-label">Intelligent Administrative Platform</p>
+    <h1>지능형 행정 플랫폼</h1>
+    <p class="lead">
+      AI 시대에 맞춰 복잡한 행정 민원 정보를 <strong>체계적으로 안내</strong>하고, 방문 상담 전에 절차와 준비 방향을 이해하실 수 있도록 하는 공간입니다.
+      법률 자문이 아닌 <strong>일반 정보·절차 안내</strong>이며, 구체적인 사안은 반드시 상담을 통해 확인합니다.
+    </p>
+
+    <section class="platform-hero" aria-labelledby="platform-hero-title">
+      <h2 id="platform-hero-title">행정사 사무소 홈페이지의 정보 허브</h2>
+      <p>
+        출입국·인허가·행정심판 등 분야별 자료와 공지를 한데 모아, 민원 준비와 문의 경로를 명확히 안내합니다. 단계적으로 서비스를 확장할 예정입니다.
+      </p>
+    </section>
+    </div>
+
+    <div class="platform-grid" role="list">
+      <article class="platform-card" role="listitem">
+        <span class="tag">STEP</span>
+        <h3>민원 로드맵</h3>
+        <p>절차를 단계별로 정리해 필요 서류·유의사항·대략적인 흐름을 안내합니다. 개별 사항은 상담 시 조정됩니다.</p>
+      </article>
+      <article class="platform-card" role="listitem">
+        <span class="tag">CHECK</span>
+        <h3>서류·준비 체크</h3>
+        <p>사안 유형에 따라 준비해야 할 서류와 확인 포인트를 목록 형태로 제시합니다(일반 안내 수준).</p>
+      </article>
+      <article class="platform-card" role="listitem">
+        <span class="tag">FAQ</span>
+        <h3>자주 묻는 질문</h3>
+        <p>반복 질문을 분류해 두어 빠르게 찾아보실 수 있도록 구성합니다. 블로그·게시글과 연계합니다.</p>
+      </article>
+      <article class="platform-card" role="listitem">
+        <span class="tag">LINK</span>
+        <h3>공지·자료실 연동</h3>
+        <p>공지사항과 자료실, 업무별 안내 게시와 연결해 최신 정보를 한곳에서 찾을 수 있게 합니다.</p>
+      </article>
+    </div>
+
+    <div class="platform-prose">
+    <p class="trust-mini" role="note">
+      <strong>신뢰</strong> · 법무부 출입국민원대행기관 등록 · 대한행정사회 소속 · 정부행정전문가
+    </p>
+
+    <div class="disclaimer" role="region" aria-label="안내 문구">
+      <strong>유의사항.</strong> 본 페이지 및 사이트의 안내는 일반적인 정보 제공 목적이며, 개별 사건에 대한 법률 자문이나 확정적 판단을 대체하지 않습니다.
+      구체적인 권리·의무·제출 서류는 사안별로 달라질 수 있으므로 <strong>전화 또는 방문 상담</strong>을 권장합니다.
+    </div>
+
+    <div class="cta-row">
+      <a class="btn btn-primary" href="tel:051-515-5459" aria-label="대표전화 051-515-5459">전화 상담 051-515-5459</a>
+      <a class="btn btn-ghost" href="notice.html">공지사항 보기</a>
+      <a class="btn btn-ghost" href="resources.html">자료실</a>
+    </div>
+
+    <section class="next-steps" aria-labelledby="next-title">
+      <h2 id="next-title">향후 계획 (단계적 도입)</h2>
+      <ul>
+        <li>분야별 단계 안내(로드맵) 콘텐츠 정비 및 사이트 내 탐색 경로 강화</li>
+        <li>FAQ·검색과 공지·블로그 연동으로 정보 체계화</li>
+        <li>범위·면책을 명확히 한 뒤, 문서 초안·용어 설명 등 보조 기능은 별도 검토</li>
+      </ul>
+    </section>
+    </div>
+  </div>
+</body>
+</html>

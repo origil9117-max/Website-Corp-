@@ -141,8 +141,9 @@
 
     .body {
       margin: 0.6rem 0 0;
-      white-space: pre-wrap;
       font-size: 0.9rem;
+      line-height: 1.6;
+      word-break: break-word;
     }
 
     .pin {
@@ -238,6 +239,48 @@
           .replaceAll("'", "&#39;");
       }
 
+      function sanitizeInlineStyle(styleText) {
+        var src = String(styleText || "").toLowerCase();
+        var out = [];
+        src.split(";").forEach(function (rule) {
+          var parts = rule.split(":");
+          if (parts.length < 2) return;
+          var prop = parts[0].trim();
+          var val = parts.slice(1).join(":").trim();
+          if (!prop || !val) return;
+          if (prop === "font-size" && /^[0-9.]+(px|em|rem|%)$/.test(val)) out.push(prop + ":" + val);
+          if (prop === "font-weight" && /^(bold|[1-9]00)$/.test(val)) out.push(prop + ":" + val);
+          if (prop === "text-decoration" && /^(underline|none)$/.test(val)) out.push(prop + ":" + val);
+          if (prop === "color" && /^#([0-9a-f]{3}|[0-9a-f]{6})$/.test(val)) out.push(prop + ":" + val);
+        });
+        return out.join("; ");
+      }
+
+      function sanitizeNoticeHtml(rawHtml) {
+        var allowed = {
+          B: true, STRONG: true, I: true, EM: true, U: true, BR: true,
+          P: true, DIV: true, UL: true, OL: true, LI: true, SPAN: true
+        };
+        var doc = new DOMParser().parseFromString(String(rawHtml || ""), "text/html");
+
+        function clean(node) {
+          if (node.nodeType === 3) return escapeHtml(node.nodeValue || "");
+          if (node.nodeType !== 1) return "";
+          var tag = String(node.tagName || "").toUpperCase();
+          var children = Array.prototype.slice.call(node.childNodes).map(clean).join("");
+          if (!allowed[tag]) return children;
+          if (tag === "BR") return "<br>";
+          var attrs = "";
+          if (tag === "SPAN") {
+            var safeStyle = sanitizeInlineStyle(node.getAttribute("style"));
+            if (safeStyle) attrs = ' style="' + escapeHtml(safeStyle) + '"';
+          }
+          return "<" + tag.toLowerCase() + attrs + ">" + children + "</" + tag.toLowerCase() + ">";
+        }
+
+        return Array.prototype.slice.call(doc.body.childNodes).map(clean).join("").trim();
+      }
+
       async function render() {
         var items = [];
         if (!window.supabase || !window.SUPABASE_URL || !window.SUPABASE_ANON_KEY) {
@@ -261,7 +304,7 @@
 
         noticeList.innerHTML = items.map(function (item) {
           var title = escapeHtml(item.title || "");
-          var content = escapeHtml(item.content || "");
+          var content = sanitizeNoticeHtml(item.content || "");
           var created = escapeHtml(String(item.created_at || item.createdText || "").slice(0, 10));
           var pin = item.pinned ? '<span class="pin">고정</span>' : "";
 
@@ -269,7 +312,7 @@
             '<article class="item">' +
             "<h2>" + pin + title + "</h2>" +
             '<p class="meta">등록일: ' + created + "</p>" +
-            '<p class="body">' + content + "</p>" +
+            '<div class="body">' + content + "</div>" +
             "</article>"
           );
         }).join("");

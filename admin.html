@@ -64,10 +64,22 @@
       gap: 0.9rem;
     }
 
-    @media (min-width: 920px) {
+    @media (min-width: 760px) {
       .grid {
-        grid-template-columns: minmax(0, 380px) minmax(0, 1fr);
+        display: grid;
+        grid-template-columns: minmax(0, 80fr) minmax(220px, 20fr);
+        gap: 0.9rem;
         align-items: start;
+      }
+      .notice-compose-panel {
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+      }
+      .notice-list-panel {
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
       }
     }
 
@@ -106,6 +118,101 @@
     textarea {
       min-height: 120px;
       resize: vertical;
+    }
+
+    .notice-compose-panel {
+      min-width: 320px;
+    }
+
+    @media (min-width: 920px) {
+      .notice-compose-panel {
+        width: min(460px, 46vw);
+        max-width: calc(100% - 1rem);
+        resize: horizontal;
+        min-height: 520px;
+        overflow: auto;
+      }
+    }
+
+    .notice-compose-panel {
+      position: relative;
+      resize: both;
+      overflow: auto;
+    }
+
+    .notice-editor {
+      width: 100%;
+      min-height: 180px;
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: 2px;
+      padding: 0.6rem 0.65rem;
+      font: inherit;
+      color: var(--ink);
+      overflow: auto;
+      resize: both;
+      line-height: 1.6;
+    }
+
+    .notice-editor:empty::before {
+      content: attr(data-placeholder);
+      color: #8d95a2;
+      pointer-events: none;
+    }
+
+    .selection-toolbar {
+      position: static;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      gap: 0.34rem;
+      margin: 0.45rem 0 0.45rem;
+      padding: 0.35rem 0.45rem;
+      border: 1px solid rgba(20, 24, 32, 0.15);
+      border-radius: 7px;
+      background: rgba(255, 255, 255, 0.98);
+      box-shadow: 0 8px 24px rgba(20, 24, 32, 0.14);
+    }
+
+    .selection-toolbar .btn {
+      padding: 0.3rem 0.52rem;
+      font-size: 0.76rem;
+      line-height: 1.1;
+    }
+
+    .selection-toolbar input[type="color"] {
+      width: 1.7rem;
+      height: 1.35rem;
+      padding: 0;
+      border: 1px solid var(--line);
+      border-radius: 3px;
+      background: #fff;
+      cursor: pointer;
+    }
+
+    .notice-compose-panel::after {
+      content: "";
+      position: absolute;
+      right: 0.3rem;
+      bottom: 0.3rem;
+      width: 12px;
+      height: 12px;
+      pointer-events: none;
+      background:
+        linear-gradient(135deg, transparent 44%, rgba(90, 53, 64, 0.45) 45%, rgba(90, 53, 64, 0.45) 55%, transparent 56%),
+        linear-gradient(135deg, transparent 62%, rgba(90, 53, 64, 0.65) 63%, rgba(90, 53, 64, 0.65) 73%, transparent 74%);
+      opacity: 0.9;
+    }
+
+    .panel-resizer {
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      width: 20px;
+      height: 20px;
+      cursor: nwse-resize;
+      z-index: 5;
+      background: transparent;
     }
 
     .row {
@@ -209,6 +316,21 @@
       display: grid;
       gap: 0.65rem;
     }
+    .notice-list-panel {
+      min-width: 220px;
+    }
+
+    .item.is-editing {
+      border-color: rgba(90, 53, 64, 0.55);
+      box-shadow: 0 0 0 2px rgba(90, 53, 64, 0.14);
+      background: linear-gradient(180deg, #fff 0%, #fff7fb 100%);
+    }
+    .btn.is-active-edit {
+      background: rgba(90, 53, 64, 0.16);
+      border-color: rgba(90, 53, 64, 0.56);
+      color: #3f242e;
+      font-weight: 800;
+    }
 
     .item {
       border: 1px solid var(--line);
@@ -231,8 +353,9 @@
 
     .body {
       margin: 0.55rem 0 0;
-      white-space: pre-wrap;
       font-size: 0.86rem;
+      line-height: 1.55;
+      word-break: break-word;
     }
 
     .empty {
@@ -274,7 +397,7 @@
     </div>
 
     <div class="grid">
-      <section class="panel">
+      <section class="panel notice-compose-panel">
         <h2>공지 등록 / 수정</h2>
         <form id="notice-form" novalidate>
           <input type="hidden" id="notice-id" value="" />
@@ -282,8 +405,23 @@
           <label for="notice-title">제목</label>
           <input id="notice-title" type="text" maxlength="120" required placeholder="예) 5월 휴무 안내" />
 
-          <label for="notice-content">내용</label>
-          <textarea id="notice-content" required placeholder="공지 내용을 입력해 주세요."></textarea>
+          <label for="notice-content-editor">내용</label>
+          <div
+            id="notice-content-editor"
+            class="notice-editor"
+            contenteditable="true"
+            data-placeholder="공지 내용을 입력해 주세요."
+            role="textbox"
+            aria-multiline="true"
+          ></div>
+          <div id="selection-toolbar" class="selection-toolbar" aria-label="선택 텍스트 편집 메뉴">
+            <button class="btn btn-ghost" type="button" data-editor-cmd="underline">밑줄</button>
+            <button class="btn btn-ghost" type="button" data-editor-cmd="bigger">A+</button>
+            <button class="btn btn-ghost" type="button" data-editor-cmd="smaller">A-</button>
+            <input id="selection-color" type="color" value="#b02135" title="글자 색상" aria-label="글자 색상" />
+            <button class="btn btn-ghost" type="button" data-editor-cmd="clearStyle">초기화</button>
+          </div>
+          <textarea id="notice-content" style="display:none;"></textarea>
 
           <label class="row">
             <input id="notice-pinned" type="checkbox" />
@@ -296,9 +434,10 @@
           </div>
           <p id="form-status" class="status" role="status" aria-live="polite"></p>
         </form>
+        <div id="compose-resizer" class="panel-resizer" aria-hidden="true"></div>
       </section>
 
-      <section class="panel">
+      <section class="panel notice-list-panel">
         <h2>등록된 공지</h2>
         <div id="notice-list" class="notice-list"></div>
       </section>
@@ -313,6 +452,13 @@
       var noticeForm = document.getElementById("notice-form");
       var formStatus = document.getElementById("form-status");
       var noticeList = document.getElementById("notice-list");
+      var grid = document.querySelector(".grid");
+      var composePanel = document.querySelector(".notice-compose-panel");
+      var noticeListPanel = document.querySelector(".notice-list-panel");
+      var composeResizer = document.getElementById("compose-resizer");
+      var noticeContentEditor = document.getElementById("notice-content-editor");
+      var selectionToolbar = document.getElementById("selection-toolbar");
+      var selectionColor = document.getElementById("selection-color");
       var authStatus = document.getElementById("auth-status");
       var passInput = document.getElementById("admin-pass");
       var loginRow = document.getElementById("auth-login-row");
@@ -329,6 +475,8 @@
       var localAdmin = false;
       var ADMIN_EMAIL = "lkc@daum.net";
       var showLoginForm = false;
+      var savedEditorRange = null;
+      var editingNoticeId = "";
 
       function setStatus(el, type, msg) {
         el.classList.remove("ok", "err");
@@ -345,9 +493,238 @@
           .replaceAll("'", "&#39;");
       }
 
+      function sanitizeInlineStyle(styleText) {
+        var src = String(styleText || "").toLowerCase();
+        var out = [];
+        src.split(";").forEach(function (rule) {
+          var parts = rule.split(":");
+          if (parts.length < 2) return;
+          var prop = parts[0].trim();
+          var val = parts.slice(1).join(":").trim();
+          if (!prop || !val) return;
+          if (prop === "font-size" && /^[0-9.]+(px|em|rem|%)$/.test(val)) out.push(prop + ":" + val);
+          if (prop === "font-weight" && /^(bold|[1-9]00)$/.test(val)) out.push(prop + ":" + val);
+          if (prop === "text-decoration" && /^(underline|none)$/.test(val)) out.push(prop + ":" + val);
+          if (prop === "color" && /^#([0-9a-f]{3}|[0-9a-f]{6})$/.test(val)) out.push(prop + ":" + val);
+        });
+        return out.join("; ");
+      }
+
+      function sanitizeNoticeHtml(rawHtml) {
+        var allowed = {
+          B: true, STRONG: true, I: true, EM: true, U: true, BR: true,
+          P: true, DIV: true, UL: true, OL: true, LI: true, SPAN: true
+        };
+        var doc = new DOMParser().parseFromString(String(rawHtml || ""), "text/html");
+
+        function clean(node) {
+          if (node.nodeType === 3) return escapeHtml(node.nodeValue || "");
+          if (node.nodeType !== 1) return "";
+          var tag = String(node.tagName || "").toUpperCase();
+          var children = Array.prototype.slice.call(node.childNodes).map(clean).join("");
+          if (!allowed[tag]) return children;
+          if (tag === "BR") return "<br>";
+          var attrs = "";
+          if (tag === "SPAN") {
+            var safeStyle = sanitizeInlineStyle(node.getAttribute("style"));
+            if (safeStyle) attrs = ' style="' + escapeHtml(safeStyle) + '"';
+          }
+          return "<" + tag.toLowerCase() + attrs + ">" + children + "</" + tag.toLowerCase() + ">";
+        }
+
+        return Array.prototype.slice.call(doc.body.childNodes).map(clean).join("").trim();
+      }
+
+      function editorPlainText() {
+        return String((noticeContentEditor && noticeContentEditor.textContent) || "").trim();
+      }
+
+      function currentRangeInEditor() {
+        var sel = window.getSelection ? window.getSelection() : null;
+        if (!sel || !sel.rangeCount) return null;
+        var range = sel.getRangeAt(0);
+        if (!range || range.collapsed) return null;
+        var common = range.commonAncestorContainer;
+        var host = common && common.nodeType === 1 ? common : (common ? common.parentElement : null);
+        if (!host || !noticeContentEditor || !noticeContentEditor.contains(host)) return null;
+        return range;
+      }
+
+      function saveCurrentEditorRange() {
+        var range = currentRangeInEditor();
+        savedEditorRange = range ? range.cloneRange() : null;
+      }
+
+      function restoreSavedEditorRange() {
+        if (!savedEditorRange) return false;
+        var sel = window.getSelection ? window.getSelection() : null;
+        if (!sel) return false;
+        sel.removeAllRanges();
+        sel.addRange(savedEditorRange);
+        return true;
+      }
+
+      function wrapSelectionWithStyle(styleText) {
+        var range = currentRangeInEditor();
+        if (!range) return;
+        var selectedText = String(range.toString() || "").trim();
+        if (!selectedText) return;
+        var span = document.createElement("span");
+        span.setAttribute("style", styleText);
+        try {
+          var fragment = range.extractContents();
+          span.appendChild(fragment);
+          range.insertNode(span);
+          var sel = window.getSelection();
+          sel.removeAllRanges();
+          var next = document.createRange();
+          next.selectNodeContents(span);
+          sel.addRange(next);
+        } catch (err) {
+          document.execCommand("styleWithCSS", false, true);
+          if (/font-size/.test(styleText)) {
+            document.execCommand("fontSize", false, /1\.2/.test(styleText) ? "5" : "2");
+          }
+          if (/color/.test(styleText)) {
+            var color = styleText.split(":")[1];
+            document.execCommand("foreColor", false, color);
+          }
+        }
+      }
+
+      function runEditorCommand(cmd) {
+        if (!noticeContentEditor) return;
+        if (!currentRangeInEditor()) restoreSavedEditorRange();
+        if (!currentRangeInEditor()) return;
+        noticeContentEditor.focus();
+        if (cmd === "underline") {
+          wrapSelectionWithStyle("text-decoration:underline");
+          return;
+        }
+        if (cmd === "bigger") {
+          wrapSelectionWithStyle("font-size:1.2em");
+          return;
+        }
+        if (cmd === "smaller") {
+          wrapSelectionWithStyle("font-size:0.86em");
+          return;
+        }
+        if (cmd === "clearStyle") {
+          document.execCommand("removeFormat", false, null);
+          document.execCommand("unlink", false, null);
+          return;
+        }
+        document.execCommand(cmd, false, null);
+      }
+
+      function hideSelectionToolbar() {
+        if (selectionToolbar) selectionToolbar.classList.remove("is-open");
+      }
+
+      function showSelectionToolbar() {
+        if (selectionToolbar) selectionToolbar.classList.add("is-open");
+      }
+
+      noticeForm.addEventListener("click", function (e) {
+        var btn = e.target && e.target.closest ? e.target.closest("[data-editor-cmd]") : null;
+        if (!btn) return;
+        e.preventDefault();
+        runEditorCommand(btn.getAttribute("data-editor-cmd"));
+        saveCurrentEditorRange();
+        showSelectionToolbar();
+      });
+
+      if (noticeContentEditor) {
+        noticeContentEditor.addEventListener("mouseup", function () {
+          setTimeout(function () {
+            saveCurrentEditorRange();
+            showSelectionToolbar();
+          }, 0);
+        });
+        noticeContentEditor.addEventListener("keyup", function () {
+          setTimeout(function () {
+            saveCurrentEditorRange();
+            showSelectionToolbar();
+          }, 0);
+        });
+      }
+      if (selectionToolbar) {
+        selectionToolbar.addEventListener("mousedown", function (e) {
+          e.preventDefault();
+        });
+      }
+      document.addEventListener("selectionchange", function () {
+        if (!noticeContentEditor) return;
+        var range = currentRangeInEditor();
+        if (range) {
+          savedEditorRange = range.cloneRange();
+          showSelectionToolbar();
+        }
+      });
+      document.addEventListener("mousedown", function (e) {
+        if (!selectionToolbar || !noticeContentEditor) return;
+        var t = e.target;
+        if (selectionToolbar.contains(t) || noticeContentEditor.contains(t)) return;
+        saveCurrentEditorRange();
+      });
+      document.addEventListener("scroll", saveCurrentEditorRange, true);
+      window.addEventListener("resize", saveCurrentEditorRange);
+      if (selectionColor) {
+        selectionColor.addEventListener("input", function () {
+          var color = String(selectionColor.value || "").trim().toLowerCase();
+          if (!/^#([0-9a-f]{6})$/.test(color)) return;
+          if (!currentRangeInEditor()) restoreSavedEditorRange();
+          wrapSelectionWithStyle("color:" + color);
+          saveCurrentEditorRange();
+          showSelectionToolbar();
+        });
+      }
+
       function resetForm() {
         noticeForm.reset();
         document.getElementById("notice-id").value = "";
+        if (noticeContentEditor) noticeContentEditor.innerHTML = "";
+        savedEditorRange = null;
+        editingNoticeId = "";
+        if (composePanel) {
+          composePanel.style.width = "";
+          composePanel.style.height = "";
+          composePanel.style.minHeight = "";
+        }
+        if (noticeListPanel) {
+          noticeListPanel.style.width = "";
+          noticeListPanel.style.maxWidth = "";
+        }
+        document.body.classList.remove("notice-editing");
+      }
+
+      if (composePanel && composeResizer) {
+        composeResizer.addEventListener("pointerdown", function (e) {
+          e.preventDefault();
+          var rect = composePanel.getBoundingClientRect();
+          var startX = e.clientX;
+          var startY = e.clientY;
+          var startW = rect.width;
+          var startH = rect.height;
+
+          function onMove(ev) {
+            var nextW = Math.max(520, Math.min(window.innerWidth - 320, startW + (ev.clientX - startX)));
+            var nextH = Math.max(520, Math.min(window.innerHeight - 40, startH + (ev.clientY - startY)));
+            composePanel.style.width = nextW + "px";
+            composePanel.style.height = nextH + "px";
+            if (noticeListPanel && grid) {
+              var free = Math.max(220, Math.min(320, grid.clientWidth - nextW - 14));
+              noticeListPanel.style.width = free + "px";
+              noticeListPanel.style.maxWidth = free + "px";
+            }
+          }
+          function onUp() {
+            window.removeEventListener("pointermove", onMove);
+            window.removeEventListener("pointerup", onUp);
+          }
+          window.addEventListener("pointermove", onMove);
+          window.addEventListener("pointerup", onUp);
+        });
       }
 
       function loadLocalNotices() {
@@ -448,18 +825,22 @@
         noticeList.innerHTML = items.map(function (item) {
           var pinTag = item.pinned ? " · 상단고정" : "";
           var created = String(item.created_at || item.createdText || "").slice(0, 16).replace("T", " ");
+          var editingCls = String(editingNoticeId) === String(item.id) ? " is-editing" : "";
+          var editBtnCls = String(editingNoticeId) === String(item.id) ? " is-active-edit" : "";
+          var editBtnText = String(editingNoticeId) === String(item.id) ? "수정중" : "수정";
+          var editPressed = String(editingNoticeId) === String(item.id) ? "true" : "false";
           var control = adminOn
             ? '<div class="row">' +
-              '<button class="btn btn-ghost" type="button" data-act="edit" data-id="' + item.id + '">수정</button>' +
+              '<button class="btn btn-ghost' + editBtnCls + '" type="button" data-act="edit" data-id="' + item.id + '" aria-pressed="' + editPressed + '">' + editBtnText + "</button>" +
               '<button class="btn btn-ghost" type="button" data-act="del" data-id="' + item.id + '">삭제</button>' +
               "</div>"
             : "";
 
           return (
-            '<article class="item">' +
+            '<article class="item' + editingCls + '">' +
             "<h3>" + escapeHtml(item.title) + "</h3>" +
             '<p class="meta">등록: ' + escapeHtml(created) + pinTag + "</p>" +
-            '<p class="body">' + escapeHtml(item.content) + "</p>" +
+            '<div class="body">' + sanitizeNoticeHtml(item.content) + "</div>" +
             control +
             "</article>"
           );
@@ -505,21 +886,19 @@
 
       function updateAdminUi() {
         var on = isAdmin();
+        document.body.classList.toggle("admin-on", !!on);
         passInput.disabled = on;
         btnLogin.disabled = on;
         btnLogout.disabled = false;
         btnLogin.textContent = "관리자 모드 켜기";
         btnLogout.textContent = "관리자 모드 끄기";
         loginRow.style.display = "flex";
-        if (!on && showLoginForm) {
-          passInput.style.display = "";
-          btnTestConn.style.display = "";
-        } else if (on) {
+        if (on) {
           passInput.style.display = "none";
           btnTestConn.style.display = "";
         } else {
-          passInput.style.display = "none";
-          btnTestConn.style.display = "none";
+          passInput.style.display = "";
+          btnTestConn.style.display = "";
         }
         applyAuthButtonStyles();
         if (localAdmin) {
@@ -549,13 +928,6 @@
       await renderList();
 
       btnLogin.addEventListener("click", async function () {
-        if (!isAdmin() && !showLoginForm) {
-          showLoginForm = true;
-          passInput.value = "";
-          updateAdminUi();
-          setStatus(authStatus, "", "비밀번호를 입력한 뒤 `관리자 모드 켜기`를 눌러 로그인하세요.");
-          return;
-        }
         var email = ADMIN_EMAIL;
         var password = (passInput.value || "").trim();
         if (!password) {
@@ -704,9 +1076,11 @@
         }
         var id = document.getElementById("notice-id").value;
         var title = (document.getElementById("notice-title").value || "").trim();
-        var content = (document.getElementById("notice-content").value || "").trim();
+        var contentHtml = sanitizeNoticeHtml((noticeContentEditor && noticeContentEditor.innerHTML) || "");
+        var contentText = editorPlainText();
+        document.getElementById("notice-content").value = contentHtml;
         var pinned = document.getElementById("notice-pinned").checked;
-        if (!title || !content) {
+        if (!title || !contentText) {
           setStatus(formStatus, "err", "제목과 내용을 모두 입력해 주세요.");
           return;
         }
@@ -714,9 +1088,9 @@
         var res;
         if (client) {
           if (id) {
-            res = await client.from("notices").update({ title: title, content: content, pinned: pinned }).eq("id", id);
+            res = await client.from("notices").update({ title: title, content: contentHtml, pinned: pinned }).eq("id", id);
           } else {
-            res = await client.from("notices").insert({ title: title, content: content, pinned: pinned });
+            res = await client.from("notices").insert({ title: title, content: contentHtml, pinned: pinned });
           }
           if (res.error) {
             if (isRlsDenied(res.error)) {
@@ -736,7 +1110,7 @@
             itemsLocal = itemsLocal.map(function (n) {
               if (String(n.id) !== String(id)) return n;
               n.title = title;
-              n.content = content;
+              n.content = contentHtml;
               n.pinned = pinned;
               return n;
             });
@@ -744,7 +1118,7 @@
             itemsLocal.push({
               id: String(Date.now()),
               title: title,
-              content: content,
+              content: contentHtml,
               pinned: pinned,
               createdText: new Date().toISOString().slice(0, 16).replace("T", " ")
             });
@@ -764,27 +1138,43 @@
         if (!act || !id) return;
 
         if (act === "edit") {
+          editingNoticeId = String(id);
+          document.body.classList.add("notice-editing");
+          if (composePanel) {
+            composePanel.style.width = "";
+            composePanel.style.minHeight = "620px";
+          }
+          if (noticeListPanel) {
+            noticeListPanel.style.width = "240px";
+            noticeListPanel.style.maxWidth = "240px";
+          }
+          await renderList();
           if (client) {
             var one = await client.from("notices").select("id, title, content, pinned").eq("id", id).maybeSingle();
             if (one.error || !one.data) return;
             document.getElementById("notice-id").value = one.data.id;
             document.getElementById("notice-title").value = one.data.title;
-            document.getElementById("notice-content").value = one.data.content;
+            if (noticeContentEditor) noticeContentEditor.innerHTML = sanitizeNoticeHtml(one.data.content || "");
             document.getElementById("notice-pinned").checked = !!one.data.pinned;
           } else {
             var oneLocal = loadLocalNotices().find(function (x) { return String(x.id) === String(id); });
             if (!oneLocal) return;
             document.getElementById("notice-id").value = oneLocal.id;
             document.getElementById("notice-title").value = oneLocal.title || "";
-            document.getElementById("notice-content").value = oneLocal.content || "";
+            if (noticeContentEditor) noticeContentEditor.innerHTML = sanitizeNoticeHtml(oneLocal.content || "");
             document.getElementById("notice-pinned").checked = !!oneLocal.pinned;
           }
           setStatus(formStatus, "", "수정 모드입니다. 내용을 변경 후 저장해 주세요.");
+          if (noticeContentEditor) {
+            noticeContentEditor.focus();
+            noticeContentEditor.scrollIntoView({ block: "nearest", behavior: "smooth" });
+          }
           return;
         }
 
         if (act === "del") {
           if (!confirm("이 공지를 삭제하시겠습니까?")) return;
+          if (String(editingNoticeId) === String(id)) editingNoticeId = "";
           if (client) {
             var del = await client.from("notices").delete().eq("id", id);
             if (del.error) {

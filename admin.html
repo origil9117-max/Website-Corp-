@@ -186,6 +186,16 @@
       cursor: pointer;
     }
 
+    .selection-toolbar select {
+      height: 1.45rem;
+      border: 1px solid var(--line);
+      border-radius: 3px;
+      background: #fff;
+      padding: 0 0.32rem;
+      font-size: 0.76rem;
+      color: #2f3440;
+    }
+
     
 
     .row {
@@ -391,9 +401,17 @@
             aria-multiline="true"
           ></div>
           <div id="selection-toolbar" class="selection-toolbar" aria-label="선택 텍스트 편집 메뉴">
+            <button class="btn btn-ghost" type="button" data-editor-cmd="bold">진하게</button>
             <button class="btn btn-ghost" type="button" data-editor-cmd="underline">밑줄</button>
             <button class="btn btn-ghost" type="button" data-editor-cmd="bigger">A+</button>
             <button class="btn btn-ghost" type="button" data-editor-cmd="smaller">A-</button>
+            <select id="selection-font" aria-label="폰트 선택">
+              <option value="">폰트</option>
+              <option value="'Noto Sans KR', sans-serif">기본</option>
+              <option value="'Malgun Gothic', 'Noto Sans KR', sans-serif">맑은 고딕</option>
+              <option value="'Nanum Gothic', 'Noto Sans KR', sans-serif">나눔고딕</option>
+              <option value="'Nanum Myeongjo', serif">나눔명조</option>
+            </select>
             <input id="selection-color" type="color" value="#b02135" title="글자 색상" aria-label="글자 색상" />
             <button class="btn btn-ghost" type="button" data-editor-cmd="clearStyle">초기화</button>
           </div>
@@ -434,6 +452,7 @@
       var noticeContentEditor = document.getElementById("notice-content-editor");
       var selectionToolbar = document.getElementById("selection-toolbar");
       var selectionColor = document.getElementById("selection-color");
+      var selectionFont = document.getElementById("selection-font");
       var authStatus = document.getElementById("auth-status");
       var passInput = document.getElementById("admin-pass");
       var loginRow = document.getElementById("auth-login-row");
@@ -482,6 +501,7 @@
           if (prop === "font-weight" && /^(bold|[1-9]00)$/.test(val)) out.push(prop + ":" + val);
           if (prop === "text-decoration" && /^(underline|none)$/.test(val)) out.push(prop + ":" + val);
           if (prop === "color" && /^#([0-9a-f]{3}|[0-9a-f]{6})$/.test(val)) out.push(prop + ":" + val);
+          if (prop === "font-family" && /^[a-z0-9,\- "'()]+$/.test(val)) out.push(prop + ":" + val);
         });
         return out.join("; ");
       }
@@ -577,6 +597,10 @@
           wrapSelectionWithStyle("text-decoration:underline");
           return;
         }
+        if (cmd === "bold") {
+          wrapSelectionWithStyle("font-weight:700");
+          return;
+        }
         if (cmd === "bigger") {
           wrapSelectionWithStyle("font-size:1.2em");
           return;
@@ -662,6 +686,17 @@
           wrapSelectionWithStyle("color:" + color);
           saveCurrentEditorRange();
           showSelectionToolbar();
+        });
+      }
+      if (selectionFont) {
+        selectionFont.addEventListener("change", function () {
+          var font = String(selectionFont.value || "").trim();
+          if (!font) return;
+          if (!currentRangeInEditor()) restoreSavedEditorRange();
+          wrapSelectionWithStyle("font-family:" + font);
+          saveCurrentEditorRange();
+          showSelectionToolbar();
+          selectionFont.selectedIndex = 0;
         });
       }
 

@@ -307,6 +307,60 @@
     .next-steps li {
       margin-bottom: 0.35rem;
     }
+
+    /* 작업 중 안내 */
+    .platform-wip-banner {
+      background: linear-gradient(
+        105deg,
+        rgba(232, 212, 188, 0.55) 0%,
+        rgba(214, 196, 228, 0.4) 48%,
+        rgba(232, 218, 200, 0.5) 100%
+      );
+      border-bottom: 1px solid rgba(120, 92, 64, 0.22);
+      padding: 0.58rem 1rem;
+    }
+
+    .platform-wip-banner-inner {
+      max-width: var(--max);
+      margin: 0 auto;
+      font-size: 0.81rem;
+      font-weight: 500;
+      color: var(--ink-soft);
+      text-align: center;
+      line-height: 1.55;
+    }
+
+    .platform-wip-banner-inner strong {
+      color: var(--maroon-dark);
+      font-weight: 800;
+    }
+
+    .platform-title-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      gap: 0.45rem 0.75rem;
+      margin-bottom: 0.65rem;
+    }
+
+    .platform-title-row h1 {
+      margin-bottom: 0;
+    }
+
+    .platform-wip-badge {
+      display: inline-block;
+      font-family: "Noto Sans KR", system-ui, sans-serif;
+      font-size: 0.68rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      color: #4a3318;
+      background: linear-gradient(180deg, #faf0e4 0%, #e8d4bc 100%);
+      border: 1px solid rgba(184, 148, 120, 0.72);
+      padding: 0.2rem 0.5rem;
+      border-radius: 3px;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.65);
+      white-space: nowrap;
+    }
   </style>
 </head>
 <body>
@@ -324,10 +378,20 @@
     </div>
   </header>
 
+  <div class="platform-wip-banner" role="status" aria-live="polite">
+    <p class="platform-wip-banner-inner">
+      <strong>작업 중</strong> — 지능형 행정 플랫폼은 준비 및 점검 중입니다. 표시되는 안내·기능은 단계적으로 열리며 변경될 수 있습니다. 급한 문의는
+      <a href="tel:051-515-5459">대표전화</a> 또는 <a href="index.html#contact">연락처</a>를 이용해 주세요.
+    </p>
+  </div>
+
   <div class="wrap">
     <div class="platform-prose">
     <p class="section-label">Intelligent Administrative Platform</p>
-    <h1>지능형 행정 플랫폼</h1>
+    <div class="platform-title-row">
+      <h1 id="platform-page-title">지능형 행정 플랫폼</h1>
+      <span class="platform-wip-badge">작업 중</span>
+    </div>
     <p class="lead">
       AI 시대에 맞춰 복잡한 행정 민원 정보를 <strong>체계적으로 안내</strong>하고, 방문 상담 전에 절차와 준비 방향을 이해하실 수 있도록 하는 공간입니다.
       법률 자문이 아닌 <strong>일반 정보·절차 안내</strong>이며, 구체적인 사안은 반드시 상담을 통해 확인합니다.

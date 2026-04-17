@@ -64,28 +64,15 @@
       gap: 0.9rem;
     }
 
-    @media (min-width: 760px) {
-      .grid {
-        display: grid;
-        grid-template-columns: minmax(0, 4fr) minmax(220px, 1fr);
-        gap: 0.9rem;
-        align-items: start;
-      }
-      .notice-compose-panel {
-        width: 100%;
-        max-width: 100%;
-        min-width: 0;
-      }
-      .notice-list-panel {
-        width: 100%;
-        max-width: 100%;
-        min-width: 0;
-      }
+    .grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 0.9rem;
+      align-items: start;
     }
 
     .grid > .panel {
       width: 100%;
-      justify-self: stretch;
     }
 
     .panel {
@@ -113,20 +100,7 @@
     }
 
     .btn-zoom {
-      padding: 0.32rem 0.6rem;
-      font-size: 0.76rem;
-      border: 1px solid var(--line);
-      background: #fff;
-      color: #2f3440;
-      border-radius: 3px;
-      cursor: pointer;
-      font-weight: 700;
-    }
-
-    .btn-zoom[aria-pressed="true"] {
-      border-color: rgba(90, 53, 64, 0.5);
-      background: rgba(90, 53, 64, 0.1);
-      color: var(--maroon-dark);
+      display: none;
     }
 
     label {
@@ -709,19 +683,9 @@
       }
 
       function applyComposeZoom() {
-        if (!grid || window.innerWidth < 760) return;
-        if (composeZoomed) {
-          grid.style.gridTemplateColumns = "minmax(0, 9fr) minmax(180px, 1fr)";
-          if (btnComposeZoom) {
-            btnComposeZoom.textContent = "축소";
-            btnComposeZoom.setAttribute("aria-pressed", "true");
-          }
-        } else {
-          grid.style.gridTemplateColumns = "minmax(0, 4fr) minmax(220px, 1fr)";
-          if (btnComposeZoom) {
-            btnComposeZoom.textContent = "확대";
-            btnComposeZoom.setAttribute("aria-pressed", "false");
-          }
+        if (btnComposeZoom) {
+          btnComposeZoom.textContent = "확대";
+          btnComposeZoom.setAttribute("aria-pressed", "false");
         }
       }
 
@@ -739,12 +703,7 @@
       normalizePanelLayout();
       applyComposeZoom();
 
-      if (btnComposeZoom) {
-        btnComposeZoom.addEventListener("click", function () {
-          composeZoomed = !composeZoomed;
-          applyComposeZoom();
-        });
-      }
+      composeZoomed = false;
 
       function loadLocalNotices() {
         try {
@@ -1160,10 +1119,6 @@
           editingNoticeId = String(id);
           document.body.classList.add("notice-editing");
           if (composePanel) composePanel.style.width = "";
-          if (noticeListPanel) {
-            noticeListPanel.style.width = "240px";
-            noticeListPanel.style.maxWidth = "240px";
-          }
           await renderList();
           if (client) {
             var one = await client.from("notices").select("id, title, content, pinned").eq("id", id).maybeSingle();

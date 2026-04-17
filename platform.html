@@ -18,7 +18,8 @@
       --maroon: #7c5d93;
       --maroon-dark: #5f466f;
       --gold: #b89478;
-      --max: 980px;
+      /* 메인 열 폭(기존 980px → 넓게) */
+      --max: 1200px;
     }
 
     * {
@@ -56,7 +57,7 @@
     .topbar-inner {
       max-width: var(--max);
       margin: 0 auto;
-      padding: 0.78rem 1rem;
+      padding: 0.78rem clamp(0.85rem, 2.4vw, 1.35rem);
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -110,7 +111,7 @@
     .wrap {
       max-width: var(--max);
       margin: 0 auto;
-      padding: 1.35rem 1rem 2.5rem;
+      padding: 1.35rem clamp(0.85rem, 2.4vw, 1.35rem) 2.5rem;
     }
 
     .section-label {
@@ -136,19 +137,18 @@
       margin-bottom: 1.25rem;
     }
 
-    /* 제목·본문·안내·CTA를 한 열로 묶어 카드 그리드보다 안쪽으로 정렬 */
+    /* 제목·본문·안내·CTA — 본문 가독성은 .lead 줄길이로 유지, 폭은 본문과 그리드 정렬 */
     .platform-prose {
-      max-width: 42em;
-      margin-left: 0;
-      margin-right: auto;
+      max-width: 100%;
+    }
+
+    .platform-prose .lead {
+      max-width: 52em;
     }
 
     @media (max-width: 767px) {
-      .platform-prose {
-        width: 92%;
-        max-width: 42em;
-        margin-left: auto;
-        margin-right: auto;
+      .platform-prose .lead {
+        max-width: none;
       }
     }
 
@@ -317,7 +317,7 @@
         rgba(232, 218, 200, 0.5) 100%
       );
       border-bottom: 1px solid rgba(120, 92, 64, 0.22);
-      padding: 0.58rem 1rem;
+      padding: 0.58rem clamp(0.85rem, 2.4vw, 1.35rem);
     }
 
     .platform-wip-banner-inner {

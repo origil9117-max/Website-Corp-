@@ -540,6 +540,8 @@
       background: linear-gradient(180deg, #ebe6dc 0%, var(--paper) 55%);
       padding: 1.75rem 1.25rem 2rem;
       border-bottom: 1px solid var(--line);
+      max-width: none;
+      margin: 0;
     }
 
     @media (min-width: 768px) {
@@ -718,8 +720,8 @@
     }
 
     .trust-strip {
-      max-width: var(--max);
-      margin: 0 auto;
+      max-width: none;
+      margin: 0;
       padding: 0 1.25rem 1.35rem;
     }
 
@@ -734,6 +736,8 @@
       flex-wrap: wrap;
       align-items: center;
       gap: 0.75rem 1.25rem;
+      max-width: var(--max);
+      margin: 0 auto;
       padding: 1rem 1.15rem;
       background: #fff;
       border: 1px solid var(--line);

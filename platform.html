@@ -338,6 +338,27 @@
       font-weight: 800;
     }
 
+    .platform-wip-pulse {
+      display: inline-block;
+      animation: platformWipPulse 1.35s ease-in-out infinite;
+    }
+
+    @keyframes platformWipPulse {
+      0%,
+      100% {
+        opacity: 1;
+      }
+      50% {
+        opacity: 0.28;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .platform-wip-pulse {
+        animation: none;
+      }
+    }
+
   </style>
 </head>
 <body>
@@ -357,7 +378,7 @@
 
   <div class="platform-wip-banner" role="status" aria-live="polite">
     <p class="platform-wip-banner-inner">
-      <strong>작업 중</strong> — 지능형 행정 플랫폼은 준비 및 점검 중입니다. 표시되는 안내·기능은 단계적으로 열리며 변경될 수 있습니다. 급한 문의는
+      <strong class="platform-wip-pulse">작업 중</strong> — 지능형 행정 플랫폼은 준비 및 점검 중입니다. 표시되는 안내·기능은 단계적으로 열리며 변경될 수 있습니다. 급한 문의는
       <a href="tel:051-515-5459">대표전화</a> 또는 <a href="index.html#contact">연락처</a>를 이용해 주세요.
     </p>
   </div>

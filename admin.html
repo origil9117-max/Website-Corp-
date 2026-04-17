@@ -160,8 +160,7 @@
 
     .notice-compose-panel {
       position: relative;
-      resize: both;
-      overflow: auto;
+      overflow: visible;
     }
 
     .notice-editor {
@@ -174,7 +173,6 @@
       font: inherit;
       color: var(--ink);
       overflow: auto;
-      resize: both;
       line-height: 1.6;
     }
 
@@ -214,30 +212,7 @@
       cursor: pointer;
     }
 
-    .notice-compose-panel::after {
-      content: "";
-      position: absolute;
-      right: 0.3rem;
-      bottom: 0.3rem;
-      width: 12px;
-      height: 12px;
-      pointer-events: none;
-      background:
-        linear-gradient(135deg, transparent 44%, rgba(90, 53, 64, 0.45) 45%, rgba(90, 53, 64, 0.45) 55%, transparent 56%),
-        linear-gradient(135deg, transparent 62%, rgba(90, 53, 64, 0.65) 63%, rgba(90, 53, 64, 0.65) 73%, transparent 74%);
-      opacity: 0.9;
-    }
-
-    .panel-resizer {
-      position: absolute;
-      right: 0;
-      bottom: 0;
-      width: 20px;
-      height: 20px;
-      cursor: nwse-resize;
-      z-index: 5;
-      background: transparent;
-    }
+    
 
     .row {
       display: flex;
@@ -461,7 +436,6 @@
           </div>
           <p id="form-status" class="status" role="status" aria-live="polite"></p>
         </form>
-        <div id="compose-resizer" class="panel-resizer" aria-hidden="true"></div>
       </section>
 
       <section class="panel notice-list-panel">
@@ -482,7 +456,6 @@
       var grid = document.querySelector(".grid");
       var composePanel = document.querySelector(".notice-compose-panel");
       var noticeListPanel = document.querySelector(".notice-list-panel");
-      var composeResizer = document.getElementById("compose-resizer");
       var btnComposeZoom = document.getElementById("btn-compose-zoom");
       var noticeContentEditor = document.getElementById("notice-content-editor");
       var selectionToolbar = document.getElementById("selection-toolbar");
@@ -726,8 +699,7 @@
         editingNoticeId = "";
         if (composePanel) {
           composePanel.style.width = "";
-          composePanel.style.height = "";
-          composePanel.style.minHeight = "";
+          composePanel.style.maxWidth = "";
         }
         if (noticeListPanel) {
           noticeListPanel.style.width = "";
@@ -771,35 +743,6 @@
         btnComposeZoom.addEventListener("click", function () {
           composeZoomed = !composeZoomed;
           applyComposeZoom();
-        });
-      }
-
-      if (composePanel && composeResizer) {
-        composeResizer.addEventListener("pointerdown", function (e) {
-          e.preventDefault();
-          var rect = composePanel.getBoundingClientRect();
-          var startX = e.clientX;
-          var startY = e.clientY;
-          var startW = rect.width;
-          var startH = rect.height;
-
-          function onMove(ev) {
-            var nextW = Math.max(520, Math.min(window.innerWidth - 320, startW + (ev.clientX - startX)));
-            var nextH = Math.max(520, Math.min(window.innerHeight - 40, startH + (ev.clientY - startY)));
-            composePanel.style.width = nextW + "px";
-            composePanel.style.height = nextH + "px";
-            if (noticeListPanel && grid) {
-              var free = Math.max(220, Math.min(320, grid.clientWidth - nextW - 14));
-              noticeListPanel.style.width = free + "px";
-              noticeListPanel.style.maxWidth = free + "px";
-            }
-          }
-          function onUp() {
-            window.removeEventListener("pointermove", onMove);
-            window.removeEventListener("pointerup", onUp);
-          }
-          window.addEventListener("pointermove", onMove);
-          window.addEventListener("pointerup", onUp);
         });
       }
 
@@ -1216,10 +1159,7 @@
         if (act === "edit") {
           editingNoticeId = String(id);
           document.body.classList.add("notice-editing");
-          if (composePanel) {
-            composePanel.style.width = "";
-            composePanel.style.minHeight = "620px";
-          }
+          if (composePanel) composePanel.style.width = "";
           if (noticeListPanel) {
             noticeListPanel.style.width = "240px";
             noticeListPanel.style.maxWidth = "240px";

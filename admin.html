@@ -494,6 +494,13 @@
           .replaceAll("'", "&#39;");
       }
 
+      function normalizeNoticeText(str) {
+        return String(str || "")
+          .replace(/\u00a0/g, " ")
+          .replace(/[\u200b-\u200d\ufeff]/g, "")
+          .replace(/[ \t]{2,}/g, " ");
+      }
+
       function sanitizeInlineStyle(styleText) {
         var src = String(styleText || "").toLowerCase();
         var out = [];
@@ -520,7 +527,7 @@
         var doc = new DOMParser().parseFromString(String(rawHtml || ""), "text/html");
 
         function clean(node) {
-          if (node.nodeType === 3) return escapeHtml(node.nodeValue || "");
+          if (node.nodeType === 3) return escapeHtml(normalizeNoticeText(node.nodeValue || ""));
           if (node.nodeType !== 1) return "";
           var tag = String(node.tagName || "").toUpperCase();
           var children = Array.prototype.slice.call(node.childNodes).map(clean).join("");

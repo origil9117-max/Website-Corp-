@@ -2050,6 +2050,43 @@
         return files;
       }
 
+      /**
+       * text/plain만 비어 있는 경우가 많음(예: 브라우저·앱에서 "링크 주소 복사", Slack/카카오 등).
+       * text/uri-list → HTML 파싱 innerText 순으로 보강한다.
+       */
+      function getClipboardPlainWithFallback(clip, htmlPassThrough) {
+        if (!clip) return "";
+        var p = clip.getData("text/plain");
+        if (p != null && String(p).trim()) return String(p);
+
+        try {
+          var uris = clip.getData("text/uri-list");
+          if (uris && String(uris).trim()) {
+            var lines = String(uris).split(/\r?\n/);
+            for (var u = 0; u < lines.length; u++) {
+              var line = lines[u].trim();
+              if (line && line.charAt(0) !== "#") return line;
+            }
+          }
+        } catch (e0) {}
+
+        var html =
+          htmlPassThrough != null && String(htmlPassThrough).trim() !== ""
+            ? String(htmlPassThrough)
+            : String(clip.getData("text/html") || "");
+        if (!html.trim()) return "";
+
+        try {
+          var stripped = stripExternalEditorPasteNoiseAggressive(html);
+          var doc = new DOMParser().parseFromString(stripped, "text/html");
+          if (!doc.body) return "";
+          var t = doc.body.innerText != null ? doc.body.innerText : doc.body.textContent;
+          return t ? String(t) : "";
+        } catch (e1) {
+          return "";
+        }
+      }
+
       /** 우클릭 "이미지 복사" 시 HTML에만 blob:img가 있고 ClipboardItem 파일이 없는 경우 */
       function tryPasteBlobImageFromHtml(html, onFallback) {
         try {
@@ -2084,7 +2121,7 @@
           insertHtmlIntoEditor(cleaned);
           return;
         }
-        var plain = clip.getData("text/plain") || "";
+        var plain = getClipboardPlainWithFallback(clip, html).trim();
         if (plain) {
           insertHtmlIntoEditor(
             plain
@@ -2111,7 +2148,7 @@
           runHtmlPasteBranch(clip, html);
           return;
         }
-        var text = (clip.getData("text/plain") || "").trim();
+        var text = getClipboardPlainWithFallback(clip, "").trim();
         var maybeUrl = normalizeUrl(text);
         if (maybeUrl && isSafeImgSrc(maybeUrl)) {
           insertHtmlIntoEditor(
@@ -2150,13 +2187,14 @@
             return;
           }
 
-          var htmlRaw = clip.getData("text/html");
-          var hasHtml = htmlRaw && String(htmlRaw).trim();
-          var plainRaw = clip.getData("text/plain") || "";
-          var hasPlain = String(plainRaw).trim();
+          var htmlRaw = clip.getData("text/html") || "";
+          var hasHtml = String(htmlRaw).trim();
+          var plainMerged = getClipboardPlainWithFallback(clip, hasHtml ? htmlRaw : "").trim();
+          /** plain만 비어 있어도 uri-list·HTML 본문에서 주소를 복구할 수 있음 */
+          var hasPasteText = plainMerged || hasHtml;
 
           /** 클립보드에 텍스트/HTML이 있으면 즉시 삽입 (async clipboard.read만 쓰면 붙여넣기가 비는 경우 방지) */
-          if (hasHtml || hasPlain) {
+          if (hasPasteText) {
             e.preventDefault();
             if (hasHtml && tryPasteBlobImageFromHtml(htmlRaw, function () {
               runHtmlPasteBranch(clip, htmlRaw);

@@ -680,6 +680,25 @@
           .replace(/</g, "&lt;");
       }
 
+      /** 게시 본문 <a href> — http(s)·mailto·동일 사이트 상대경로만 허용 */
+      function sanitizeLinkHref(href) {
+        var h = String(href || "").trim();
+        if (!h || h.length > 2048) return "";
+        var low = h.toLowerCase();
+        if (low.indexOf("javascript:") === 0 || low.indexOf("vbscript:") === 0) return "";
+        if (low.indexOf("data:") === 0) return "";
+        if (/^https?:\/\//i.test(h)) return h;
+        if (/^mailto:/i.test(h)) return h;
+        if (/^tel:/i.test(h)) {
+          var tRest = h.replace(/^tel:/i, "").replace(/\s/g, "");
+          if (/^[\d+*#\-()]{5,40}$/.test(tRest)) return h;
+          return "";
+        }
+        if (h[0] === "#" || h[0] === "?" || h[0] === "/" || h[0] === ".") return h;
+        if (!/^[a-z][a-z0-9+.-]*:/i.test(h)) return h;
+        return "";
+      }
+
       function normalizeImgSrc(src) {
         var s = String(src || "").trim();
         if (!s) return "";
@@ -787,6 +806,7 @@
 
       function sanitizePostBodyHtml(rawHtml) {
         var allowed = {
+          A: true,
           B: true, STRONG: true, I: true, EM: true, U: true, BR: true,
           P: true, DIV: true, UL: true, OL: true, LI: true, SPAN: true, IMG: true
         };
@@ -811,6 +831,15 @@
               escapeHtml(styleOut) +
               '" />'
             );
+          }
+          if (tag === "A") {
+            var href = sanitizeLinkHref(node.getAttribute("href"));
+            if (!href) return children;
+            var attrs = ' href="' + escapeAttr(href) + '"';
+            if (/^https?:\/\//i.test(href) || /^mailto:/i.test(href) || /^tel:/i.test(href)) {
+              attrs += ' target="_blank" rel="noopener noreferrer"';
+            }
+            return "<a" + attrs + ">" + children + "</a>";
           }
           if (!allowed[tag]) return children;
           if (tag === "BR") return "<br>";

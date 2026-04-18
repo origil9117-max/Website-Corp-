@@ -107,6 +107,14 @@
       overflow: auto;
       line-height: 1.6;
     }
+    /* contenteditable 기본 <p> margin(약 1em) + 외부 붙여넣기 빈 문단 → 사이 빈칸이 커짐 */
+    .post-editor p,
+    .post-editor div {
+      margin: 0.35em 0;
+    }
+    .post-editor li {
+      margin: 0.2em 0;
+    }
     .post-editor:focus {
       outline: 2px solid rgba(90, 53, 64, 0.35);
       outline-offset: 1px;
@@ -857,6 +865,67 @@
         return Array.prototype.slice.call(doc.body.childNodes).map(clean).join("").trim();
       }
 
+      /** 붙여넣기 후 빈 <p>/<div>, 연속 <br> 로 생기는 과한 세로 공백 제거 */
+      function collapseConsecutiveBrInEditor(root) {
+        if (!root) return;
+        var brs = root.querySelectorAll("br");
+        for (var i = brs.length - 1; i >= 0; i--) {
+          var br = brs[i];
+          if (!br.parentNode) continue;
+          var prev = br.previousSibling;
+          while (prev && prev.nodeType === 3 && !String(prev.nodeValue || "").replace(/\u00a0/g, " ").trim()) {
+            prev = prev.previousSibling;
+          }
+          if (prev && prev.nodeType === 1 && String(prev.tagName).toUpperCase() === "BR") {
+            br.parentNode.removeChild(br);
+          }
+        }
+      }
+
+      function removeEmptyBlocksInEditor(root) {
+        if (!root) return;
+        var g = 0;
+        while (g++ < 24) {
+          var removed = false;
+          var nodes = root.querySelectorAll("p, div");
+          for (var i = nodes.length - 1; i >= 0; i--) {
+            var el = nodes[i];
+            if (!el.parentNode || el === root) continue;
+            if (el.querySelector("img")) continue;
+            var text = (el.textContent || "").replace(/\u00a0/g, " ").replace(/\u200b/g, "").trim();
+            if (text !== "") continue;
+            var onlyBrs = true;
+            var ch = el.childNodes;
+            for (var j = 0; j < ch.length; j++) {
+              var c = ch[j];
+              if (c.nodeType === 3 && String(c.nodeValue || "").replace(/\u00a0/g, " ").trim()) {
+                onlyBrs = false;
+                break;
+              }
+              if (c.nodeType === 1) {
+                var tn = String(c.tagName).toUpperCase();
+                if (tn !== "BR") {
+                  onlyBrs = false;
+                  break;
+                }
+              }
+            }
+            if (ch.length === 0 || onlyBrs) {
+              el.parentNode.removeChild(el);
+              removed = true;
+            }
+          }
+          if (!removed) break;
+        }
+      }
+
+      function tidyPostEditorDom(root) {
+        if (!root) return;
+        removeEmptyBlocksInEditor(root);
+        collapseConsecutiveBrInEditor(root);
+        removeEmptyBlocksInEditor(root);
+      }
+
       function insertHtmlIntoEditor(htmlStr) {
         if (!postBodyEditor || !String(htmlStr || "").trim()) return;
         postBodyEditor.focus();
@@ -888,6 +957,7 @@
         normalizeEditorImages(postBodyEditor);
         setTimeout(function () {
           linkifyStandaloneUrlsInEditor(postBodyEditor);
+          tidyPostEditorDom(postBodyEditor);
         }, 0);
       }
 

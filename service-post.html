@@ -222,6 +222,49 @@
       margin: 0.35em 0;
       vertical-align: middle;
     }
+    .post-editor img.editor-inline-img {
+      cursor: pointer;
+      border-radius: 2px;
+    }
+    .post-editor img.editor-inline-img.editor-inline-img--selected {
+      outline: 2px solid var(--maroon);
+      outline-offset: 2px;
+    }
+    .post-image-toolbar {
+      display: none;
+      position: fixed;
+      z-index: 10050;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.28rem;
+      padding: 0.38rem 0.5rem;
+      background: #fff;
+      border: 1px solid rgba(36, 48, 64, 0.18);
+      border-radius: 6px;
+      box-shadow: 0 8px 28px rgba(0, 0, 0, 0.14);
+      max-width: min(96vw, 22rem);
+    }
+    .post-image-toolbar.is-visible {
+      display: flex;
+    }
+    .post-image-toolbar .btn-img {
+      border: 1px solid var(--line);
+      background: #fafafa;
+      border-radius: 2px;
+      padding: 0.28rem 0.45rem;
+      font-size: 0.72rem;
+      font-weight: 700;
+      cursor: pointer;
+      color: var(--ink);
+    }
+    .post-image-toolbar .btn-img:hover {
+      background: #f0ecf5;
+      border-color: rgba(124, 93, 147, 0.45);
+    }
+    .post-image-toolbar .btn-img.danger {
+      color: #8b2c2c;
+      border-color: rgba(139, 44, 44, 0.35);
+    }
     .post-images {
       margin-top: 0.6rem;
       display: grid;
@@ -319,6 +362,20 @@
           <input id="post-selection-color" type="color" value="#243040" title="글자 색상" aria-label="글자 색상" />
           <button class="btn btn-ghost" type="button" data-editor-cmd="clearStyle">초기화</button>
         </div>
+        <div
+          id="post-image-toolbar"
+          class="post-image-toolbar"
+          role="toolbar"
+          aria-label="선택한 그림"
+          hidden
+        >
+          <span style="font-size:0.7rem;color:var(--muted);margin-right:0.2rem;">그림</span>
+          <button type="button" class="btn-img" data-img-act="w25">25%</button>
+          <button type="button" class="btn-img" data-img-act="w50">50%</button>
+          <button type="button" class="btn-img" data-img-act="w75">75%</button>
+          <button type="button" class="btn-img" data-img-act="w100">100%</button>
+          <button type="button" class="btn-img danger" data-img-act="del">삭제</button>
+        </div>
         <p class="paste-hint" role="note">
           <strong>네이버 블로그 등 외부 편집기</strong>에서는 글 전체를 복사해도 클립보드에 그림이 포함되지 않는 경우가 많습니다. 이미지가 비어 있으면
           <span class="paste-hint-list">(1) 그림에서 우클릭 → <em>이미지 복사</em> 후 본문에 붙여넣기 (2) <kbd style="font-size:0.85em;">Win+Shift+S</kbd> 캡처 후 붙여넣기 (3) 이미지를 저장한 뒤 아래 [파일 선택]으로 첨부</span>
@@ -372,7 +429,9 @@
       var postSelectionToolbar = document.getElementById("post-selection-toolbar");
       var postSelectionColor = document.getElementById("post-selection-color");
       var postSelectionFont = document.getElementById("post-selection-font");
+      var postImageToolbar = document.getElementById("post-image-toolbar");
       var savedEditorRange = null;
+      var selectedEditorImg = null;
       var cloudWarning = document.getElementById("cloud-warning");
       var postImagesInput = document.getElementById("post-images-input");
       var thumbList = document.getElementById("thumb-list");
@@ -537,6 +596,21 @@
         return out.join("; ");
       }
 
+      function buildImgStyleForSanitize(node) {
+        var st = String(node.getAttribute("style") || "");
+        var mw = "100%";
+        var m = st.match(/max-width\s*:\s*([^;]+)/i);
+        if (m) {
+          var v = String(m[1]).trim();
+          if (/^([1-9][0-9]?|100)%$/.test(v)) mw = v;
+          else if (/^([1-9][0-9]{2,3})px$/i.test(v)) {
+            var px = parseInt(v, 10);
+            if (px >= 50 && px <= 2000) mw = px + "px";
+          }
+        }
+        return "max-width:" + mw + ";height:auto;display:block;margin:0.35em 0;";
+      }
+
       function sanitizePostBodyHtml(rawHtml) {
         var allowed = {
           B: true, STRONG: true, I: true, EM: true, U: true, BR: true,
@@ -553,12 +627,15 @@
             var src = resolveImgNodeSrc(node);
             if (!isSafeImgSrc(src)) return "";
             var alt = escapeHtml(normalizePostText(node.getAttribute("alt") || ""));
+            var styleOut = buildImgStyleForSanitize(node);
             return (
               '<img src="' +
               escapeAttr(src) +
               '" alt="' +
               alt +
-              '" loading="lazy" decoding="async" style="max-width:100%;height:auto;display:block;margin:0.35em 0;" />'
+              '" loading="lazy" decoding="async" style="' +
+              escapeHtml(styleOut) +
+              '" />'
             );
           }
           if (!allowed[tag]) return children;
@@ -602,6 +679,150 @@
           sel.addRange(range);
         }
         saveCurrentEditorRange();
+        normalizeEditorImages(postBodyEditor);
+      }
+
+      function normalizeEditorImages(root) {
+        if (!root) return;
+        Array.prototype.forEach.call(root.querySelectorAll("img"), function (img) {
+          img.contentEditable = "false";
+          img.setAttribute("draggable", "false");
+          img.classList.add("editor-inline-img");
+        });
+      }
+
+      function positionImageToolbar() {
+        if (!postImageToolbar || !selectedEditorImg) return;
+        postImageToolbar.removeAttribute("hidden");
+        postImageToolbar.classList.add("is-visible");
+        var rect = selectedEditorImg.getBoundingClientRect();
+        requestAnimationFrame(function () {
+          var tw = postImageToolbar.offsetWidth || 200;
+          var th = postImageToolbar.offsetHeight || 40;
+          var top = rect.top - th - 8;
+          if (top < 8) top = rect.bottom + 8;
+          if (top + th > window.innerHeight - 8) top = Math.max(8, window.innerHeight - th - 8);
+          var left = rect.left + rect.width / 2 - tw / 2;
+          left = Math.max(8, Math.min(left, window.innerWidth - tw - 8));
+          postImageToolbar.style.top = top + "px";
+          postImageToolbar.style.left = left + "px";
+        });
+      }
+
+      function clearEditorImageSelection() {
+        if (selectedEditorImg) {
+          selectedEditorImg.classList.remove("editor-inline-img--selected");
+          selectedEditorImg = null;
+        }
+        if (postImageToolbar) {
+          postImageToolbar.setAttribute("hidden", "");
+          postImageToolbar.classList.remove("is-visible");
+        }
+      }
+
+      function selectEditorImage(img) {
+        if (!img || !postBodyEditor.contains(img)) return;
+        if (selectedEditorImg && selectedEditorImg !== img) {
+          selectedEditorImg.classList.remove("editor-inline-img--selected");
+        }
+        selectedEditorImg = img;
+        img.classList.add("editor-inline-img--selected");
+        postBodyEditor.focus();
+        var sel = window.getSelection();
+        if (sel) {
+          var r = document.createRange();
+          r.selectNode(img);
+          sel.removeAllRanges();
+          sel.addRange(r);
+        }
+        positionImageToolbar();
+      }
+
+      function removeSelectedEditorImage() {
+        if (!selectedEditorImg || !postBodyEditor.contains(selectedEditorImg)) return;
+        selectedEditorImg.remove();
+        clearEditorImageSelection();
+        saveCurrentEditorRange();
+      }
+
+      function applySelectedImageWidth(pct) {
+        if (!selectedEditorImg || !postBodyEditor.contains(selectedEditorImg)) return;
+        selectedEditorImg.style.maxWidth = pct + "%";
+        selectedEditorImg.style.width = "";
+        positionImageToolbar();
+        saveCurrentEditorRange();
+      }
+
+      function bindEditorImageTools() {
+        if (!postBodyEditor || !postImageToolbar) return;
+
+        postBodyEditor.addEventListener(
+          "mousedown",
+          function (e) {
+            if (e.target.tagName === "IMG") {
+              e.preventDefault();
+              selectEditorImage(e.target);
+            }
+          },
+          true
+        );
+
+        postBodyEditor.addEventListener("click", function (e) {
+          if (e.target.tagName === "IMG") return;
+          clearEditorImageSelection();
+        });
+
+        postImageToolbar.addEventListener("mousedown", function (e) {
+          if (e.target.closest && e.target.closest("[data-img-act]")) {
+            e.preventDefault();
+          }
+        });
+
+        postImageToolbar.addEventListener("click", function (e) {
+          var btn = e.target && e.target.closest ? e.target.closest("[data-img-act]") : null;
+          if (!btn) return;
+          e.preventDefault();
+          var act = btn.getAttribute("data-img-act");
+          if (act === "del") {
+            removeSelectedEditorImage();
+            return;
+          }
+          if (act === "w25") applySelectedImageWidth(25);
+          else if (act === "w50") applySelectedImageWidth(50);
+          else if (act === "w75") applySelectedImageWidth(75);
+          else if (act === "w100") applySelectedImageWidth(100);
+        });
+
+        postBodyEditor.addEventListener(
+          "keydown",
+          function (e) {
+            if (!selectedEditorImg || !postBodyEditor.contains(selectedEditorImg)) return;
+            if (e.key === "Delete" || e.key === "Backspace") {
+              e.preventDefault();
+              e.stopPropagation();
+              removeSelectedEditorImage();
+            }
+          },
+          true
+        );
+
+        document.addEventListener("mousedown", function (e) {
+          var t = e.target;
+          if (!postBodyEditor || !postImageToolbar) return;
+          if (postBodyEditor.contains(t) || postImageToolbar.contains(t)) return;
+          clearEditorImageSelection();
+        });
+
+        window.addEventListener("scroll", function () {
+          if (selectedEditorImg && postImageToolbar && postImageToolbar.classList.contains("is-visible")) {
+            positionImageToolbar();
+          }
+        }, true);
+        window.addEventListener("resize", function () {
+          if (selectedEditorImg && postImageToolbar && postImageToolbar.classList.contains("is-visible")) {
+            positionImageToolbar();
+          }
+        });
       }
 
       async function insertInlineImageFile(file) {
@@ -799,6 +1020,8 @@
             postSelectionFont.selectedIndex = 0;
           });
         }
+
+        bindEditorImageTools();
       }
 
       function linkifyLine(line) {
@@ -1037,6 +1260,7 @@
       function resetForm() {
         postId.value = "";
         postForm.reset();
+        clearEditorImageSelection();
         if (postBodyEditor) postBodyEditor.innerHTML = "";
         savedEditorRange = null;
         pendingImages = [];
@@ -1364,7 +1588,9 @@
             } else {
               postBodyEditor.textContent = rawBody;
             }
+            normalizeEditorImages(postBodyEditor);
           }
+          clearEditorImageSelection();
           savedEditorRange = null;
           pendingImages = Array.isArray(one.images) ? one.images.slice() : [];
           renderThumbs();

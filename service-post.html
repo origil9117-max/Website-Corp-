@@ -886,6 +886,9 @@
         }
         saveCurrentEditorRange();
         normalizeEditorImages(postBodyEditor);
+        setTimeout(function () {
+          linkifyStandaloneUrlsInEditor(postBodyEditor);
+        }, 0);
       }
 
       function normalizeEditorImages(root) {
@@ -1495,6 +1498,9 @@
             if (e.key === "Enter" && !e.isComposing) {
               e.preventDefault();
               document.execCommand("insertLineBreak");
+              setTimeout(function () {
+                linkifyStandaloneUrlsInEditor(postBodyEditor);
+              }, 0);
               saveCurrentEditorRange();
             }
           },
@@ -1567,6 +1573,38 @@
           });
         }
         bindEditorImageTools();
+      }
+
+      /** 본문 편집기: 한 줄이 통째로 URL일 때 <a>로 표시 (엔터 직후 등) */
+      function linkifyStandaloneUrlsInEditor(root) {
+        if (!root) return;
+        var batch = [];
+        var tw = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null);
+        var node;
+        while ((node = tw.nextNode())) {
+          if (!node.parentNode) continue;
+          if (node.parentNode.closest && node.parentNode.closest("a")) continue;
+          var raw = String(node.nodeValue || "");
+          var t = raw.replace(/\u00a0/g, " ").trim();
+          if (!t) continue;
+          if (t.split(/\s+/).length > 1) continue;
+          var href = t.replace(/[.,;:!?)]+$/g, "");
+          if (!/^https?:\/\//i.test(href)) {
+            href = normalizeUrl(t) || "";
+          }
+          if (!/^https?:\/\//i.test(href)) continue;
+          var safe = sanitizeLinkHref(href);
+          if (!safe) continue;
+          batch.push({ node: node, href: safe, label: href });
+        }
+        batch.forEach(function (item) {
+          var a = document.createElement("a");
+          a.href = item.href;
+          a.target = "_blank";
+          a.rel = "noopener noreferrer";
+          a.textContent = item.label;
+          item.node.parentNode.replaceChild(a, item.node);
+        });
       }
 
       function linkifyLine(line) {
@@ -2112,6 +2150,23 @@
             return;
           }
 
+          var htmlRaw = clip.getData("text/html");
+          var hasHtml = htmlRaw && String(htmlRaw).trim();
+          var plainRaw = clip.getData("text/plain") || "";
+          var hasPlain = String(plainRaw).trim();
+
+          /** 클립보드에 텍스트/HTML이 있으면 즉시 삽입 (async clipboard.read만 쓰면 붙여넣기가 비는 경우 방지) */
+          if (hasHtml || hasPlain) {
+            e.preventDefault();
+            if (hasHtml && tryPasteBlobImageFromHtml(htmlRaw, function () {
+              runHtmlPasteBranch(clip, htmlRaw);
+            })) {
+              return;
+            }
+            syncPasteFromClipboard(clip);
+            return;
+          }
+
           function tryReadClipboardImageThenSync() {
             if (!navigator.clipboard || !navigator.clipboard.read) {
               return Promise.resolve(false);
@@ -2149,23 +2204,7 @@
 
           if (navigator.clipboard && navigator.clipboard.read) {
             e.preventDefault();
-            void tryReadClipboardImageThenSync().then(function (ok) {
-              if (!ok) syncPasteFromClipboard(clip);
-            });
-            return;
-          }
-
-          var htmlSync = clip.getData("text/html");
-          if (htmlSync && String(htmlSync).trim()) {
-            e.preventDefault();
-            syncPasteFromClipboard(clip);
-            return;
-          }
-          var textSync = (clip.getData("text/plain") || "").trim();
-          var maybeUrlSync = normalizeUrl(textSync);
-          if (maybeUrlSync && isSafeImgSrc(maybeUrlSync)) {
-            e.preventDefault();
-            syncPasteFromClipboard(clip);
+            void tryReadClipboardImageThenSync();
             return;
           }
         });

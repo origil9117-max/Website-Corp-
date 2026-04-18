@@ -825,8 +825,15 @@
         });
       }
 
+      function isLikelyImageFile(file) {
+        if (!file) return false;
+        if (file.type && /^image\//i.test(file.type)) return true;
+        var n = (file.name || "").toLowerCase();
+        return /\.(png|jpe?g|gif|webp|bmp)$/i.test(n);
+      }
+
       async function insertInlineImageFile(file) {
-        if (!file || !/^image\//i.test(file.type)) return;
+        if (!file || !isLikelyImageFile(file)) return;
         if (file.size > MAX_IMAGE_BYTES) {
           formStatus.textContent =
             "붙여넣은 이미지 용량이 1MB를 초과합니다. (" + (file.name || "이미지") + ")";
@@ -1416,21 +1423,80 @@
 
       function collectClipboardImageFiles(clip) {
         var files = [];
-        var items = clip.items || [];
-        for (var i = 0; i < items.length; i++) {
-          var it = items[i];
-          if (it.kind === "file" && it.type && /^image\//i.test(it.type)) {
-            var f = it.getAsFile ? it.getAsFile() : null;
-            if (f) files.push(f);
+        var seen = Object.create(null);
+        function add(f) {
+          if (!f || typeof f.size !== "number") return;
+          if (!isLikelyImageFile(f)) return;
+          var key = f.size + "|" + (f.type || "") + "|" + (f.name || "");
+          if (seen[key]) return;
+          seen[key] = true;
+          files.push(f);
+        }
+        var items = clip.items;
+        if (items && items.length) {
+          for (var i = 0; i < items.length; i++) {
+            var it = items[i];
+            if (it.kind === "file" && typeof it.getAsFile === "function") {
+              add(it.getAsFile());
+            }
           }
         }
-        if (!files.length && clip.files && clip.files.length) {
+        if (clip.files && clip.files.length) {
           for (var j = 0; j < clip.files.length; j++) {
-            var ff = clip.files[j];
-            if (ff && /^image\//i.test(ff.type)) files.push(ff);
+            add(clip.files[j]);
           }
         }
         return files;
+      }
+
+      /** 우클릭 "이미지 복사" 시 HTML에만 blob:img가 있고 ClipboardItem 파일이 없는 경우 */
+      function tryPasteBlobImageFromHtml(html, onFallback) {
+        try {
+          if (String(html).indexOf("blob:") === -1) return false;
+          var doc = new DOMParser().parseFromString(String(html), "text/html");
+          var el = doc.querySelector('img[src^="blob:"]');
+          if (!el) return false;
+          var src = el.getAttribute("src");
+          if (!src || src.indexOf("blob:") !== 0) return false;
+          fetch(src)
+            .then(function (r) {
+              if (!r.ok) throw new Error("blob-fetch");
+              return r.blob();
+            })
+            .then(function (blob) {
+              var t = blob.type && /^image\//i.test(blob.type) ? blob.type : "image/png";
+              var file = new File([blob], "image.png", { type: t });
+              return insertInlineImageFile(file);
+            })
+            .catch(function () {
+              onFallback();
+            });
+          return true;
+        } catch (err) {
+          return false;
+        }
+      }
+
+      function runHtmlPasteBranch(clip, html) {
+        var cleaned = sanitizePostBodyHtml(stripExternalEditorPasteNoise(html));
+        if (cleaned) {
+          insertHtmlIntoEditor(cleaned);
+          return;
+        }
+        var plain = clip.getData("text/plain") || "";
+        if (plain) {
+          insertHtmlIntoEditor(
+            plain
+              .split(/\r\n|\r|\n/)
+              .filter(function (line) {
+                return !isNoiseOnlyPasteLine(line);
+              })
+              .map(function (line) {
+                return escapeHtml(normalizePostText(line));
+              })
+              .join("<br>")
+          );
+        }
       }
 
       if (postBodyEditor) {
@@ -1452,25 +1518,12 @@
           var html = clip.getData("text/html");
           if (html && String(html).trim()) {
             e.preventDefault();
-            var cleaned = sanitizePostBodyHtml(stripExternalEditorPasteNoise(html));
-            if (cleaned) {
-              insertHtmlIntoEditor(cleaned);
-            } else {
-              var plain = clip.getData("text/plain") || "";
-              if (plain) {
-                insertHtmlIntoEditor(
-                  plain
-                    .split(/\r\n|\r|\n/)
-                    .filter(function (line) {
-                      return !isNoiseOnlyPasteLine(line);
-                    })
-                    .map(function (line) {
-                      return escapeHtml(normalizePostText(line));
-                    })
-                    .join("<br>")
-                );
-              }
+            if (tryPasteBlobImageFromHtml(html, function () {
+              runHtmlPasteBranch(clip, html);
+            })) {
+              return;
             }
+            runHtmlPasteBranch(clip, html);
             return;
           }
 

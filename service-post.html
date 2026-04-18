@@ -97,7 +97,7 @@
     }
     .post-editor {
       width: 100%;
-      min-height: 180px;
+      min-height: 6.5rem;
       border: 1px solid var(--line);
       background: #fff;
       border-radius: 2px;
@@ -843,11 +843,15 @@
           if (tag === "A") {
             var href = sanitizeLinkHref(node.getAttribute("href"));
             if (!href) return children;
+            var inner = Array.prototype.slice.call(node.childNodes).map(clean).join("");
+            if (!String(inner).replace(/\s/g, "").trim()) {
+              inner = escapeHtml(href);
+            }
             var attrs = ' href="' + escapeAttr(href) + '"';
             if (/^https?:\/\//i.test(href) || /^mailto:/i.test(href) || /^tel:/i.test(href)) {
               attrs += ' target="_blank" rel="noopener noreferrer"';
             }
-            return "<a" + attrs + ">" + children + "</a>";
+            return "<a" + attrs + ">" + inner + "</a>";
           }
           if (!allowed[tag]) return children;
           if (tag === "BR") return "<br>";
@@ -918,6 +922,7 @@
         saveCurrentEditorRange();
         normalizeEditorImages(postBodyEditor);
         setTimeout(function () {
+          ensureAnchorsHaveVisibleText(postBodyEditor);
           linkifyStandaloneUrlsInEditor(postBodyEditor);
           tidyPostEditorDom(postBodyEditor);
         }, 0);
@@ -1605,6 +1610,20 @@
           });
         }
         bindEditorImageTools();
+      }
+
+      /** 붙여넣기 HTML이 <a href="url"></a> 처럼 안 보이는 빈 링크일 때 주소를 글자로 채움 */
+      function ensureAnchorsHaveVisibleText(root) {
+        if (!root) return;
+        var as = root.querySelectorAll("a[href]");
+        for (var ai = 0; ai < as.length; ai++) {
+          var a = as[ai];
+          var h = a.getAttribute("href") || "";
+          if (!h) continue;
+          if (!String(a.textContent || "").replace(/\s/g, "").trim()) {
+            a.textContent = h;
+          }
+        }
       }
 
       /** 본문 편집기: 한 줄이 통째로 URL일 때 <a>로 표시 (엔터 직후 등) */

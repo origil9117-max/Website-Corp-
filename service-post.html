@@ -433,22 +433,50 @@
           .replace(/</g, "&lt;");
       }
 
-      function isSafeImgSrc(src) {
+      function normalizeImgSrc(src) {
         var s = String(src || "").trim();
-        if (/^data:image\/(png|jpe?g|gif|webp|bmp);base64,/i.test(s)) {
-          return s.length <= 2500000;
+        if (!s) return "";
+        if (s.indexOf("//") === 0 && s.indexOf("http") !== 0) {
+          s = "https:" + s;
         }
-        if (/^https:\/\//i.test(s)) {
-          try {
-            var u = new URL(s);
-            if (u.protocol !== "https:") return false;
-            var path = u.pathname + u.search;
-            return /\.(png|jpe?g|gif|webp|bmp|svg)(\?|#|$)/i.test(path);
-          } catch (e) {
-            return false;
+        return s;
+      }
+
+      /** 붙여넣기/저장용: data URL 또는 http(s) 원격 이미지 (확장자 없는 CDN·구글 문서 URL 포함) */
+      function isSafeImgSrc(src) {
+        var s = normalizeImgSrc(src);
+        if (!s) return false;
+        if (/^javascript:/i.test(s) || /^vbscript:/i.test(s)) return false;
+        if (/^data:/i.test(s)) {
+          if (/^data:image\/(png|jpe?g|gif|webp|bmp);base64,/i.test(s)) {
+            return s.length <= 2500000;
           }
+          return false;
         }
-        return false;
+        try {
+          var u = new URL(s);
+          if (u.protocol !== "http:" && u.protocol !== "https:") return false;
+          return true;
+        } catch (e) {
+          return false;
+        }
+      }
+
+      function resolveImgNodeSrc(node) {
+        var src = node.getAttribute("src") || "";
+        if (!String(src).trim()) {
+          src =
+            node.getAttribute("data-src") ||
+            node.getAttribute("data-lazy-src") ||
+            node.getAttribute("data-original") ||
+            node.getAttribute("data-rawsrc") ||
+            "";
+        }
+        if (!String(src).trim() && node.getAttribute("srcset")) {
+          var part = String(node.getAttribute("srcset")).split(",")[0].trim();
+          src = part.split(/\s+/)[0] || "";
+        }
+        return normalizeImgSrc(src);
       }
 
       function sanitizeInlineStyle(styleText) {
@@ -482,7 +510,7 @@
           var tag = String(node.tagName || "").toUpperCase();
           var children = Array.prototype.slice.call(node.childNodes).map(clean).join("");
           if (tag === "IMG") {
-            var src = node.getAttribute("src");
+            var src = resolveImgNodeSrc(node);
             if (!isSafeImgSrc(src)) return "";
             var alt = escapeHtml(normalizePostText(node.getAttribute("alt") || ""));
             return (
@@ -490,7 +518,7 @@
               escapeAttr(src) +
               '" alt="' +
               alt +
-              '" style="max-width:100%;height:auto;display:block;margin:0.35em 0;" />'
+              '" loading="lazy" decoding="async" style="max-width:100%;height:auto;display:block;margin:0.35em 0;" />'
             );
           }
           if (!allowed[tag]) return children;
@@ -767,6 +795,9 @@
 
       function normalizeUrl(text) {
         var url = String(text || "").trim();
+        if (url.indexOf("//") === 0 && url.indexOf("http") !== 0) {
+          url = "https:" + url;
+        }
         if (!/^https?:\/\//i.test(url)) return "";
         return url;
       }
@@ -1178,12 +1209,7 @@
 
           var text = (clip.getData("text/plain") || "").trim();
           var maybeUrl = normalizeUrl(text);
-          if (
-            maybeUrl &&
-            /^https:\/\//i.test(maybeUrl) &&
-            /\.(png|jpe?g|gif|webp|bmp|svg)(\?|#|$)/i.test(maybeUrl) &&
-            isSafeImgSrc(maybeUrl)
-          ) {
+          if (maybeUrl && isSafeImgSrc(maybeUrl)) {
             e.preventDefault();
             insertHtmlIntoEditor(
               sanitizePostBodyHtml('<img src="' + maybeUrl.replace(/"/g, "") + '" alt="">')

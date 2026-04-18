@@ -66,10 +66,15 @@
         <textarea id="platform-edit-lead" rows="3"></textarea>
         <label for="platform-edit-body">본문 (HTML 가능)</label>
         <textarea id="platform-edit-body" rows="14" placeholder="예: &lt;p&gt;문단&lt;/p&gt;"></textarea>
+        <p class="platform-hint">편집을 시작할 때 아래 버튼으로 화면에 보이는 안내를 불러올 수 있습니다.</p>
+        <p class="platform-hint">
+          <button type="button" class="btn btn-ghost" id="platform-btn-load-from-page">현재 화면 안내 불러오기</button>
+        </p>
         <p class="platform-hint">저장 시 방문자에게 바로 보입니다. 잘못된 HTML은 레이아웃이 깨질 수 있으니 확인 후 저장하세요.</p>
         <div class="cta-row">
           <button type="button" class="btn btn-primary" id="platform-btn-save">저장</button>
           <button type="button" class="btn btn-ghost" id="platform-btn-revert">이 페이지 기본 문구로 되돌리기</button>
+          <button type="button" class="btn btn-ghost" id="platform-btn-clear-persisted">저장본 삭제 (클라우드·브라우저)</button>
         </div>
         <p id="platform-form-status" class="platform-status" role="status"></p>
       </section>
@@ -80,15 +85,14 @@
         <p class="section-label">STEP</p>
         <h1>민원 로드맵</h1>
         <p class="lead" id="platform-lead">
-          절차를 단계별로 정리해 필요 서류·유의사항·대략적인 흐름을 안내합니다. 개별 사항은 상담 시 조정됩니다.
+          행정 민원 절차를 단계별로 안내합니다. 개별 일정·요건은 상담에서 확정합니다.
         </p>
         <div class="platform-sub-body" id="platform-sub-body">
           <p>
-            분야·사안에 따라 필요한 절차를 <strong>단계별</strong>로 정리하고, 각 단계에서 준비할 서류와 유의사항, 대략적인 소요·흐름을 안내합니다.
-            실제 일정과 요건은 사안별로 달라질 수 있으므로 <strong>개별 상담</strong>에서 확정합니다.
+            필요 서류·유의사항·대략적인 흐름을 단계별로 정리합니다. 사안에 따라 달라지는 부분은 <strong>개별 상담</strong>에서 안내합니다.
           </p>
           <p>
-            홈페이지의 <a href="index.html">업무 안내·게시</a>와 연계해, 관심 분야의 개요를 먼저 확인하신 뒤 로드맵을 참고하실 수 있도록 단계적으로 보강할 예정입니다.
+            메인의 <a href="index.html">업무 안내·게시</a>와 함께 참고하실 수 있도록 내용을 보강해 나갑니다.
           </p>
         </div>
       </article>

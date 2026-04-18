@@ -882,48 +882,10 @@
         }
       }
 
-      function removeEmptyBlocksInEditor(root) {
-        if (!root) return;
-        var g = 0;
-        while (g++ < 24) {
-          var removed = false;
-          var nodes = root.querySelectorAll("p, div");
-          for (var i = nodes.length - 1; i >= 0; i--) {
-            var el = nodes[i];
-            if (!el.parentNode || el === root) continue;
-            if (el.querySelector("img")) continue;
-            var text = (el.textContent || "").replace(/\u00a0/g, " ").replace(/\u200b/g, "").trim();
-            if (text !== "") continue;
-            var onlyBrs = true;
-            var ch = el.childNodes;
-            for (var j = 0; j < ch.length; j++) {
-              var c = ch[j];
-              if (c.nodeType === 3 && String(c.nodeValue || "").replace(/\u00a0/g, " ").trim()) {
-                onlyBrs = false;
-                break;
-              }
-              if (c.nodeType === 1) {
-                var tn = String(c.tagName).toUpperCase();
-                if (tn !== "BR") {
-                  onlyBrs = false;
-                  break;
-                }
-              }
-            }
-            if (ch.length === 0 || onlyBrs) {
-              el.parentNode.removeChild(el);
-              removed = true;
-            }
-          }
-          if (!removed) break;
-        }
-      }
-
       function tidyPostEditorDom(root) {
         if (!root) return;
-        removeEmptyBlocksInEditor(root);
+        /* 빈 블록 제거는 일부 붙여넣기 구조에서 본문/이미지까지 지워져 '공백만' 보이는 문제가 있어 연속 br만 정리 */
         collapseConsecutiveBrInEditor(root);
-        removeEmptyBlocksInEditor(root);
       }
 
       function insertHtmlIntoEditor(htmlStr) {
@@ -2158,6 +2120,58 @@
       }
 
       /** 우클릭 "이미지 복사" 시 HTML에만 blob:img가 있고 ClipboardItem 파일이 없는 경우 */
+      /**
+       * 살균 결과가 비었을 때(테이블·커스텀 태그 등): 원본에서 안전한 img·본문 텍스트만 뽑아 삽입
+       */
+      function buildPasteHtmlWhenSanitizeEmpty(rawHtml) {
+        try {
+          var s = stripExternalEditorPasteNoiseAggressive(String(rawHtml || ""));
+          var doc = new DOMParser().parseFromString(s, "text/html");
+          var out = [];
+          var seenSrc = Object.create(null);
+          var imgs = doc.querySelectorAll("img");
+          for (var ii = 0; ii < imgs.length; ii++) {
+            var src = resolveImgNodeSrc(imgs[ii]);
+            if (!isSafeImgSrc(src)) continue;
+            if (seenSrc[src]) continue;
+            seenSrc[src] = true;
+            var alt = escapeHtml(normalizePostText(imgs[ii].getAttribute("alt") || ""));
+            out.push(
+              '<p><img src="' +
+                escapeAttr(src) +
+                '" alt="' +
+                alt +
+                '" loading="lazy" decoding="async" style="max-width:100%;height:auto;display:block;margin:0.35em auto;float:none;" /></p>'
+            );
+          }
+          var bt = doc.body;
+          if (bt) {
+            var clo = bt.cloneNode(true);
+            var ri = clo.querySelectorAll("img");
+            for (var j = 0; j < ri.length; j++) {
+              ri[j].remove();
+            }
+            var rawTxt = clo.innerText != null ? clo.innerText : clo.textContent || "";
+            rawTxt = String(rawTxt)
+              .replace(/\u00a0/g, " ")
+              .replace(/\u200b/g, "");
+            if (rawTxt.trim()) {
+              var lines = rawTxt.split(/\r\n|\r|\n/);
+              var textParas = [];
+              for (var k = 0; k < lines.length; k++) {
+                var line = lines[k].trim();
+                if (!line || isNoiseOnlyPasteLine(line)) continue;
+                textParas.push("<p>" + escapeHtml(normalizePostText(line)) + "</p>");
+              }
+              out = textParas.concat(out);
+            }
+          }
+          return out.join("");
+        } catch (err) {
+          return "";
+        }
+      }
+
       function tryPasteBlobImageFromHtml(html, onFallback) {
         try {
           if (String(html).indexOf("blob:") === -1) return false;
@@ -2187,8 +2201,13 @@
 
       function runHtmlPasteBranch(clip, html) {
         var cleaned = sanitizePostBodyHtml(stripExternalEditorPasteNoiseAggressive(html));
-        if (cleaned) {
+        if (String(cleaned).trim()) {
           insertHtmlIntoEditor(cleaned);
+          return;
+        }
+        var rebuilt = buildPasteHtmlWhenSanitizeEmpty(html);
+        if (String(rebuilt).trim()) {
+          insertHtmlIntoEditor(rebuilt);
           return;
         }
         var plain = getClipboardPlainWithFallback(clip, html).trim();
@@ -2226,7 +2245,7 @@
           );
           return;
         }
-        if (text) {
+        if (String(text).trim()) {
           insertHtmlIntoEditor(
             text
               .split(/\r\n|\r|\n/)

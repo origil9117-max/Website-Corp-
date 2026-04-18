@@ -3,6 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
   <title>업무 게시</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -114,19 +116,37 @@
       color: #8d95a2;
       pointer-events: none;
     }
+    .selection-toolbar-hint {
+      margin: 0 0 0.35rem;
+      font-size: 0.78rem;
+      line-height: 1.45;
+      color: var(--muted);
+    }
+    .selection-toolbar-hint strong {
+      color: var(--maroon);
+      font-weight: 800;
+    }
+    .selection-toolbar-hint-sub {
+      display: block;
+      margin-top: 0.35rem;
+      font-size: 0.76rem;
+      color: var(--muted);
+    }
     .selection-toolbar {
       position: static;
       z-index: 1;
       display: flex;
       align-items: center;
-      flex-wrap: wrap;
+      flex-wrap: nowrap;
       gap: 0.34rem;
-      margin: 0.45rem 0 0.45rem;
+      margin: 0 0 0.5rem;
       padding: 0.35rem 0.45rem;
       border: 1px solid rgba(20, 24, 32, 0.15);
       border-radius: 7px;
       background: rgba(255, 255, 255, 0.98);
       box-shadow: 0 8px 24px rgba(20, 24, 32, 0.14);
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
     }
     .selection-toolbar .btn {
       padding: 0.3rem 0.52rem;
@@ -150,6 +170,41 @@
       padding: 0 0.32rem;
       font-size: 0.76rem;
       color: #2f3440;
+    }
+    .selection-align-inline {
+      display: inline-flex;
+      align-items: center;
+      flex-wrap: nowrap;
+      flex-shrink: 0;
+      gap: 0.28rem;
+      padding: 0.1rem 0.32rem;
+      border: 1px solid rgba(124, 93, 147, 0.45);
+      border-radius: 5px;
+      background: linear-gradient(180deg, #faf6fc 0%, #f3ebf7 100%);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.85);
+    }
+    .selection-toolbar-label {
+      font-size: 0.74rem;
+      font-weight: 800;
+      color: var(--maroon);
+      letter-spacing: -0.02em;
+      white-space: nowrap;
+    }
+    #post-selection-align {
+      min-width: 5.75rem;
+      height: 1.45rem;
+      font-weight: 700;
+      border-color: rgba(124, 93, 147, 0.45);
+      border-radius: 3px;
+      background: #fff;
+    }
+    .selection-toolbar-sep {
+      width: 1px;
+      align-self: stretch;
+      min-height: 1.2rem;
+      margin: 0 0.08rem;
+      background: rgba(36, 48, 64, 0.15);
+      flex-shrink: 0;
     }
     .btn {
       border: 1px solid transparent; border-radius: 2px; cursor: pointer;
@@ -212,6 +267,11 @@
       word-break: break-word;
       line-height: 1.65;
     }
+    .body::after {
+      content: "";
+      display: table;
+      clear: both;
+    }
     .body a { color: #2b6cb0; text-decoration: underline; }
     .body a:hover { color: #1a4f8a; }
     .body img,
@@ -230,32 +290,45 @@
       outline: 2px solid var(--maroon);
       outline-offset: 2px;
     }
+    .post-editor.post-editor--img-align-drag {
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    .post-editor.post-editor--img-align-drag img.editor-inline-img {
+      cursor: ew-resize;
+    }
     .post-image-toolbar {
       display: none;
       position: fixed;
       z-index: 10050;
-      flex-wrap: wrap;
+      flex-wrap: nowrap;
       align-items: center;
-      gap: 0.28rem;
-      padding: 0.38rem 0.5rem;
+      align-content: center;
+      gap: 0.28rem 0.35rem;
+      padding: 0.38rem 0.45rem;
       background: #fff;
       border: 1px solid rgba(36, 48, 64, 0.18);
       border-radius: 6px;
       box-shadow: 0 8px 28px rgba(0, 0, 0, 0.14);
-      max-width: min(96vw, 22rem);
+      box-sizing: border-box;
+      max-width: min(calc(100vw - 16px), 36rem);
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
     }
     .post-image-toolbar.is-visible {
       display: flex;
     }
     .post-image-toolbar .btn-img {
+      flex: 0 0 auto;
       border: 1px solid var(--line);
       background: #fafafa;
       border-radius: 2px;
-      padding: 0.28rem 0.45rem;
-      font-size: 0.72rem;
+      padding: 0.24rem 0.38rem;
+      font-size: 0.7rem;
       font-weight: 700;
       cursor: pointer;
       color: var(--ink);
+      white-space: nowrap;
     }
     .post-image-toolbar .btn-img:hover {
       background: #f0ecf5;
@@ -264,6 +337,27 @@
     .post-image-toolbar .btn-img.danger {
       color: #8b2c2c;
       border-color: rgba(139, 44, 44, 0.35);
+    }
+    .post-image-toolbar .img-toolbar-cap {
+      font-size: 0.62rem;
+      font-weight: 800;
+      color: var(--maroon);
+      letter-spacing: -0.03em;
+      margin-right: 0.06rem;
+      flex: 0 0 auto;
+    }
+    .post-image-toolbar .btn-img--align {
+      min-width: 2.35rem;
+      border-color: rgba(124, 93, 147, 0.5);
+      background: linear-gradient(180deg, #faf8fc 0%, #f3ebf7 100%);
+    }
+    .post-image-toolbar-sep {
+      flex: 0 0 auto;
+      width: 1px;
+      align-self: stretch;
+      min-height: 1.1rem;
+      margin: 0 0.1rem;
+      background: rgba(36, 48, 64, 0.18);
     }
     .post-images {
       margin-top: 0.6rem;
@@ -338,16 +432,21 @@
         <input id="post-title" type="text" maxlength="120" placeholder="제목" required />
         <div style="height:0.55rem"></div>
         <label class="form-field-label" for="post-body-editor">내용</label>
-        <div
-          id="post-body-editor"
-          class="post-editor"
-          contenteditable="true"
-          tabindex="0"
-          data-placeholder="내용을 입력하세요."
-          role="textbox"
-          aria-multiline="true"
-        ></div>
+        <p class="selection-toolbar-hint">
+          아래에서 글자 서식·<strong>문단 정렬(정렬)</strong>·색을 고른 뒤 본문에 입력하거나 글을 선택해 적용하세요.
+          <span class="selection-toolbar-hint-sub">본문 안 그림은 선택한 뒤 <strong>가로로 끌면</strong> 왼쪽·가운데·오른쪽 배치가 바뀝니다.</span>
+        </p>
         <div id="post-selection-toolbar" class="selection-toolbar" aria-label="선택 텍스트 편집 메뉴">
+          <div class="selection-align-inline" aria-label="문단 정렬">
+            <label class="selection-toolbar-label" for="post-selection-align">정렬</label>
+            <select id="post-selection-align" title="문단 정렬 (왼쪽·가운데·오른쪽)" aria-label="문단 정렬">
+              <option value="">선택…</option>
+              <option value="alignLeft">왼쪽</option>
+              <option value="alignCenter">가운데</option>
+              <option value="alignRight">오른쪽</option>
+            </select>
+          </div>
+          <span class="selection-toolbar-sep" aria-hidden="true"></span>
           <button class="btn btn-ghost" type="button" data-editor-cmd="bold">진하게</button>
           <button class="btn btn-ghost" type="button" data-editor-cmd="underline">밑줄</button>
           <button class="btn btn-ghost" type="button" data-editor-cmd="bigger">A+</button>
@@ -359,9 +458,19 @@
             <option value="'Nanum Gothic', 'Noto Sans KR', sans-serif">나눔고딕</option>
             <option value="'Nanum Myeongjo', serif">나눔명조</option>
           </select>
+          <span class="selection-toolbar-sep" aria-hidden="true"></span>
           <input id="post-selection-color" type="color" value="#243040" title="글자 색상" aria-label="글자 색상" />
           <button class="btn btn-ghost" type="button" data-editor-cmd="clearStyle">초기화</button>
         </div>
+        <div
+          id="post-body-editor"
+          class="post-editor"
+          contenteditable="true"
+          tabindex="0"
+          data-placeholder="내용을 입력하세요."
+          role="textbox"
+          aria-multiline="true"
+        ></div>
         <div
           id="post-image-toolbar"
           class="post-image-toolbar"
@@ -369,11 +478,18 @@
           aria-label="선택한 그림"
           hidden
         >
-          <span style="font-size:0.7rem;color:var(--muted);margin-right:0.2rem;">그림</span>
+          <span style="font-size:0.68rem;color:var(--muted);margin-right:0.12rem;flex-shrink:0;">그림</span>
+          <span class="img-toolbar-cap">비율</span>
           <button type="button" class="btn-img" data-img-act="w25">25%</button>
           <button type="button" class="btn-img" data-img-act="w50">50%</button>
           <button type="button" class="btn-img" data-img-act="w75">75%</button>
           <button type="button" class="btn-img" data-img-act="w100">100%</button>
+          <span class="post-image-toolbar-sep" aria-hidden="true"></span>
+          <span class="img-toolbar-cap">위치</span>
+          <button type="button" class="btn-img btn-img--align" data-img-act="align-left" title="왼쪽">왼쪽</button>
+          <button type="button" class="btn-img btn-img--align" data-img-act="align-center" title="가운데">가운데</button>
+          <button type="button" class="btn-img btn-img--align" data-img-act="align-right" title="오른쪽">오른쪽</button>
+          <span class="post-image-toolbar-sep" aria-hidden="true"></span>
           <button type="button" class="btn-img danger" data-img-act="del">삭제</button>
         </div>
         <p class="paste-hint" role="note">
@@ -429,9 +545,14 @@
       var postSelectionToolbar = document.getElementById("post-selection-toolbar");
       var postSelectionColor = document.getElementById("post-selection-color");
       var postSelectionFont = document.getElementById("post-selection-font");
+      var postSelectionAlign = document.getElementById("post-selection-align");
       var postImageToolbar = document.getElementById("post-image-toolbar");
       var savedEditorRange = null;
+      /** 툴바 select 클릭 시 selectionchange가 먼저 지워 savedEditorRange를 비우므로, 캡처 mousedown에서 범위 스냅샷 */
+      var toolbarRangeSnapshot = null;
       var selectedEditorImg = null;
+      /** 그림 가로 드래그로 왼쪽·가운데·오른쪽 배치 */
+      var imageAlignDragSession = null;
       var cloudWarning = document.getElementById("cloud-warning");
       var postImagesInput = document.getElementById("post-images-input");
       var thumbList = document.getElementById("thumb-list");
@@ -515,6 +636,26 @@
         return s;
       }
 
+      /** 정렬·편집 도구줄이 붙어 나온 경우(공백 없이 반복되는 문자열 포함) */
+      function stripExternalEditorPasteNoiseAggressive(html) {
+        var s = stripExternalEditorPasteNoise(html);
+        var prev;
+        var guard = 0;
+        do {
+          prev = s;
+          s = s
+            .replace(/(?:오른쪽|왼쪽|가운데)\s*정렬/gi, "")
+            .replace(/사진\s*편집/gi, "")
+            .replace(/문서\s*너비/gi, "")
+            .replace(/옆트림|옆트임/g, "")
+            .replace(/삭제{2,}/g, "")
+            .replace(/작게{2,}/g, "");
+          guard++;
+        } while (s !== prev && guard < 30);
+        s = s.replace(/\u200b/g, "").replace(/\s{2,}/g, " ");
+        return s;
+      }
+
       function isNoiseOnlyPasteLine(line) {
         var t = String(line || "").replace(/\u00a0/g, " ").trim();
         if (!t) return true;
@@ -522,6 +663,13 @@
         if (/^대표사진\s*삭제$/i.test(t)) return true;
         if (/^AI\s*활용\s*설정$/i.test(t)) return true;
         if (/^Previous\s*image\s*Next\s*image$/i.test(t)) return true;
+        if (/^(?:오른쪽|왼쪽|가운데)\s*정렬$/i.test(t)) return true;
+        if (/^사진\s*편집$/i.test(t)) return true;
+        if (/^작게$/i.test(t)) return true;
+        if (/^문서\s*너비$/i.test(t)) return true;
+        if (/^옆트림$/i.test(t) || /^옆트임$/i.test(t)) return true;
+        if (/^삭제+$/i.test(t) && t.length <= 8) return true;
+        if (/^[오른쪽왼쪽가운데정렬\s]+$/.test(t) && t.length < 80) return true;
         return false;
       }
 
@@ -596,6 +744,22 @@
         return out.join("; ");
       }
 
+      /** 문단·블록 정렬 (저장 시 유지) */
+      function sanitizeBlockStyle(styleText) {
+        var src = String(styleText || "");
+        var out = [];
+        src.split(";").forEach(function (rule) {
+          var parts = rule.split(":");
+          if (parts.length < 2) return;
+          var prop = parts[0].trim().toLowerCase();
+          var val = parts.slice(1).join(":").trim().toLowerCase();
+          if (prop === "text-align" && /^(left|right|center|justify)$/.test(val)) {
+            out.push("text-align:" + val);
+          }
+        });
+        return out.join("; ");
+      }
+
       function buildImgStyleForSanitize(node) {
         var st = String(node.getAttribute("style") || "");
         var mw = "100%";
@@ -608,7 +772,17 @@
             if (px >= 50 && px <= 2000) mw = px + "px";
           }
         }
-        return "max-width:" + mw + ";height:auto;display:block;margin:0.35em 0;";
+        var align = "center";
+        if (/float\s*:\s*left/i.test(st)) align = "left";
+        else if (/float\s*:\s*right/i.test(st)) align = "right";
+        var base = "max-width:" + mw + ";height:auto;display:block;";
+        if (align === "left") {
+          return base + "float:left;margin:0.35em 1em 0.35em 0;";
+        }
+        if (align === "right") {
+          return base + "float:right;margin:0.35em 0 0.35em 1em;";
+        }
+        return base + "float:none;margin:0.35em auto;";
       }
 
       function sanitizePostBodyHtml(rawHtml) {
@@ -641,7 +815,10 @@
           if (!allowed[tag]) return children;
           if (tag === "BR") return "<br>";
           var attrs = "";
-          if (tag === "SPAN") {
+          if (tag === "P" || tag === "DIV" || tag === "LI") {
+            var blockSt = sanitizeBlockStyle(node.getAttribute("style"));
+            if (blockSt) attrs = ' style="' + escapeHtml(blockSt) + '"';
+          } else if (tag === "SPAN") {
             var safeStyle = sanitizeInlineStyle(node.getAttribute("style"));
             if (safeStyle) attrs = ' style="' + escapeHtml(safeStyle) + '"';
           }
@@ -684,6 +861,17 @@
 
       function normalizeEditorImages(root) {
         if (!root) return;
+        var anchors = root.querySelectorAll("a");
+        for (var ai = anchors.length - 1; ai >= 0; ai--) {
+          var a = anchors[ai];
+          if (!a.parentNode) continue;
+          var ch = a.childNodes;
+          if (ch.length === 1 && ch[0].nodeType === 1 && String(ch[0].tagName).toUpperCase() === "IMG") {
+            var im = ch[0];
+            a.parentNode.insertBefore(im, a);
+            a.remove();
+          }
+        }
         Array.prototype.forEach.call(root.querySelectorAll("img"), function (img) {
           img.contentEditable = "false";
           img.setAttribute("draggable", "false");
@@ -697,15 +885,43 @@
         postImageToolbar.classList.add("is-visible");
         var rect = selectedEditorImg.getBoundingClientRect();
         requestAnimationFrame(function () {
-          var tw = postImageToolbar.offsetWidth || 200;
-          var th = postImageToolbar.offsetHeight || 40;
-          var top = rect.top - th - 8;
-          if (top < 8) top = rect.bottom + 8;
-          if (top + th > window.innerHeight - 8) top = Math.max(8, window.innerHeight - th - 8);
-          var left = rect.left + rect.width / 2 - tw / 2;
-          left = Math.max(8, Math.min(left, window.innerWidth - tw - 8));
-          postImageToolbar.style.top = top + "px";
-          postImageToolbar.style.left = left + "px";
+          requestAnimationFrame(function () {
+            var vw = window.innerWidth;
+            var vh = window.innerHeight;
+            var tw = postImageToolbar.offsetWidth || 200;
+            var th = postImageToolbar.offsetHeight || 40;
+            var margin = 8;
+            var selBottom = postSelectionToolbar
+              ? postSelectionToolbar.getBoundingClientRect().bottom + margin
+              : margin;
+            var ed = postBodyEditor ? postBodyEditor.getBoundingClientRect() : null;
+            var minY = Math.max(selBottom, ed ? ed.top + 2 : selBottom);
+
+            var topBelow = Math.max(rect.bottom + margin, minY);
+            var topAbove = rect.top - th - margin;
+
+            var top;
+            if (topBelow + th <= vh - margin) {
+              top = topBelow;
+            } else if (topAbove >= minY && topAbove + th <= vh - margin) {
+              top = topAbove;
+            } else if (topAbove >= minY) {
+              top = topAbove;
+            } else {
+              top = Math.max(minY, vh - th - margin);
+            }
+            if (top < minY) top = minY;
+            if (top + th > vh - margin) top = Math.max(minY, vh - th - margin);
+
+            var left = rect.left + rect.width / 2 - tw / 2;
+            if (ed) {
+              left = Math.max(ed.left + margin, Math.min(left, ed.right - tw - margin));
+            }
+            left = Math.max(margin, Math.min(left, vw - tw - margin));
+
+            postImageToolbar.style.top = top + "px";
+            postImageToolbar.style.left = left + "px";
+          });
         });
       }
 
@@ -753,22 +969,136 @@
         saveCurrentEditorRange();
       }
 
+      function applySelectedImageAlign(align) {
+        if (!selectedEditorImg || !postBodyEditor.contains(selectedEditorImg)) return;
+        var img = selectedEditorImg;
+        var mw = img.style.maxWidth || "";
+        if (!mw) {
+          var attr = img.getAttribute("style") || "";
+          var mm = attr.match(/max-width\s*:\s*([^;]+)/i);
+          if (mm) mw = mm[1].trim();
+        }
+        if (align === "left") {
+          img.style.float = "left";
+          img.style.display = "block";
+          img.style.margin = "0.35em 1em 0.35em 0";
+        } else if (align === "right") {
+          img.style.float = "right";
+          img.style.display = "block";
+          img.style.margin = "0.35em 0 0.35em 1em";
+        } else {
+          img.style.float = "none";
+          img.style.display = "block";
+          img.style.margin = "0.35em auto";
+        }
+        if (mw) img.style.maxWidth = mw;
+        img.style.width = "";
+        positionImageToolbar();
+        saveCurrentEditorRange();
+      }
+
+      function detachImageAlignDragListeners() {
+        document.removeEventListener("mousemove", onImageAlignDragMove, true);
+        document.removeEventListener("mouseup", onImageAlignDragEnd, true);
+      }
+
+      function imageAlignDragCoords(ev) {
+        if (ev.touches && ev.touches[0]) {
+          return { x: ev.touches[0].clientX, y: ev.touches[0].clientY };
+        }
+        if (ev.changedTouches && ev.changedTouches[0]) {
+          return { x: ev.changedTouches[0].clientX, y: ev.changedTouches[0].clientY };
+        }
+        return { x: ev.clientX, y: ev.clientY };
+      }
+
+      function onImageAlignDragMove(e) {
+        var s = imageAlignDragSession;
+        if (!s) return;
+        var p = imageAlignDragCoords(e);
+        if (p.x === undefined || isNaN(p.x)) return;
+        var dx = p.x - s.x0;
+        var dy = p.y - s.y0;
+        if (!s.dragCursor && (Math.abs(dx) > 5 || Math.abs(dy) > 5)) {
+          if (Math.abs(dx) >= Math.abs(dy) && postBodyEditor) {
+            postBodyEditor.classList.add("post-editor--img-align-drag");
+            s.dragCursor = true;
+          }
+        }
+        if (s.dragCursor && e.cancelable) e.preventDefault();
+      }
+
+      function onImageAlignDragEnd(e) {
+        var s = imageAlignDragSession;
+        if (!s) return;
+        var p = imageAlignDragCoords(e);
+        var dx = p.x - s.x0;
+        var dy = p.y - s.y0;
+        detachImageAlignDragListeners();
+        if (postBodyEditor) postBodyEditor.classList.remove("post-editor--img-align-drag");
+        imageAlignDragSession = null;
+
+        if (!postBodyEditor || !postBodyEditor.contains(s.img)) return;
+        var upTarget = e.target;
+        if (upTarget && postImageToolbar && postImageToolbar.contains(upTarget)) return;
+        if (!upTarget || !postBodyEditor.contains(upTarget)) return;
+        if (Math.abs(dx) < 16) return;
+        if (Math.abs(dy) > Math.abs(dx) * 1.05) return;
+
+        selectEditorImage(s.img);
+        var ed = postBodyEditor.getBoundingClientRect();
+        var w = ed.width;
+        if (w < 8) return;
+        var rel = (p.x - ed.left) / w;
+        if (rel < 0) rel = 0;
+        if (rel > 1) rel = 1;
+        var align = rel < 0.34 ? "left" : rel < 0.67 ? "center" : "right";
+        applySelectedImageAlign(align);
+      }
+
+      function beginImageAlignDragTracking(ev, img) {
+        detachImageAlignDragListeners();
+        if (!img) return;
+        var p = imageAlignDragCoords(ev);
+        imageAlignDragSession = { img: img, x0: p.x, y0: p.y, dragCursor: false };
+        document.addEventListener("mousemove", onImageAlignDragMove, true);
+        document.addEventListener("mouseup", onImageAlignDragEnd, true);
+      }
+
+      /** <a><img></a> 등으로 감싸인 경우 클릭 타깃이 IMG가 아닐 수 있음 */
+      function findDelegatedEditorImg(target, root) {
+        if (!target || !root) return null;
+        var el = target.nodeType === 1 ? target : target.parentElement;
+        if (!el) return null;
+        var img = el.tagName === "IMG" ? el : el.closest ? el.closest("img") : null;
+        if (!img || !root.contains(img)) return null;
+        return img;
+      }
+
       function bindEditorImageTools() {
         if (!postBodyEditor || !postImageToolbar) return;
 
-        postBodyEditor.addEventListener(
-          "mousedown",
-          function (e) {
-            if (e.target.tagName === "IMG") {
-              e.preventDefault();
-              selectEditorImage(e.target);
-            }
-          },
-          true
-        );
+        function onPostEditorImgActivate(e) {
+          if (e.pointerType === "mouse" && e.button !== 0) return;
+          var img = findDelegatedEditorImg(e.target, postBodyEditor);
+          if (!img) return;
+          e.preventDefault();
+          if (e.stopPropagation) e.stopPropagation();
+          selectEditorImage(img);
+          beginImageAlignDragTracking(e, img);
+        }
+
+        if (window.PointerEvent) {
+          postBodyEditor.addEventListener("pointerdown", onPostEditorImgActivate, {
+            capture: true,
+            passive: false
+          });
+        } else {
+          postBodyEditor.addEventListener("mousedown", onPostEditorImgActivate, true);
+        }
 
         postBodyEditor.addEventListener("click", function (e) {
-          if (e.target.tagName === "IMG") return;
+          if (findDelegatedEditorImg(e.target, postBodyEditor)) return;
           clearEditorImageSelection();
         });
 
@@ -791,6 +1121,9 @@
           else if (act === "w50") applySelectedImageWidth(50);
           else if (act === "w75") applySelectedImageWidth(75);
           else if (act === "w100") applySelectedImageWidth(100);
+          else if (act === "align-left") applySelectedImageAlign("left");
+          else if (act === "align-center") applySelectedImageAlign("center");
+          else if (act === "align-right") applySelectedImageAlign("right");
         });
 
         postBodyEditor.addEventListener(
@@ -845,7 +1178,7 @@
           var html =
             '<img src="' +
             escapeAttr(dataUrl) +
-            '" alt="" style="max-width:100%;height:auto;display:block;margin:0.35em 0;" />';
+            '" alt="" style="max-width:100%;height:auto;display:block;float:none;margin:0.35em auto;" />';
           insertHtmlIntoEditor(html);
         } catch (err) {
           formStatus.textContent = "이미지 읽기에 실패했습니다.";
@@ -856,19 +1189,40 @@
         return String((postBodyEditor && postBodyEditor.textContent) || "").trim();
       }
 
-      function currentRangeInEditor() {
+      /** 글자 없이 그림만 넣은 경우 textContent가 비어 저장 검증에 걸리므로 이미지도 본문으로 인정 */
+      function editorHasContent() {
+        if (!postBodyEditor) return false;
+        var txt = String(postBodyEditor.textContent || "")
+          .replace(/\u00a0/g, " ")
+          .replace(/[\u200b-\u200d\ufeff]/g, "")
+          .trim();
+        if (txt.length > 0) return true;
+        var imgs = postBodyEditor.querySelectorAll("img");
+        for (var i = 0; i < imgs.length; i++) {
+          if (String(imgs[i].getAttribute("src") || "").trim()) return true;
+        }
+        return false;
+      }
+
+      function getAnyRangeInEditor() {
         var sel = window.getSelection ? window.getSelection() : null;
-        if (!sel || !sel.rangeCount) return null;
+        if (!sel || !sel.rangeCount || !postBodyEditor) return null;
         var range = sel.getRangeAt(0);
-        if (!range || range.collapsed) return null;
+        if (!range) return null;
         var common = range.commonAncestorContainer;
         var host = common && common.nodeType === 1 ? common : (common ? common.parentElement : null);
-        if (!host || !postBodyEditor || !postBodyEditor.contains(host)) return null;
+        if (!host || !postBodyEditor.contains(host)) return null;
+        return range;
+      }
+
+      function currentRangeInEditor() {
+        var range = getAnyRangeInEditor();
+        if (!range || range.collapsed) return null;
         return range;
       }
 
       function saveCurrentEditorRange() {
-        var range = currentRangeInEditor();
+        var range = getAnyRangeInEditor();
         savedEditorRange = range ? range.cloneRange() : null;
       }
 
@@ -879,6 +1233,103 @@
         sel.removeAllRanges();
         sel.addRange(savedEditorRange);
         return true;
+      }
+
+      function snapshotToolbarRangeFromSelection() {
+        try {
+          var sel = window.getSelection ? window.getSelection() : null;
+          if (!sel || !sel.rangeCount || !postBodyEditor) return;
+          var r = sel.getRangeAt(0);
+          var node = r.commonAncestorContainer;
+          var host = node.nodeType === 1 ? node : node.parentElement;
+          if (host && postBodyEditor.contains(host)) {
+            toolbarRangeSnapshot = r.cloneRange();
+          }
+        } catch (e) {}
+      }
+
+      function restoreToolbarRangeSnapshot() {
+        if (!toolbarRangeSnapshot || !postBodyEditor) return false;
+        try {
+          postBodyEditor.focus();
+          var sel = window.getSelection();
+          if (!sel) return false;
+          sel.removeAllRanges();
+          sel.addRange(toolbarRangeSnapshot);
+          toolbarRangeSnapshot = null;
+          return true;
+        } catch (e) {
+          toolbarRangeSnapshot = null;
+          return false;
+        }
+      }
+
+      /** 문단 정렬: execCommand만 쓰면 줄바꿈-only 본문에서 실패하는 경우가 많아 DOM으로 확실히 적용 */
+      function findBlockElementForTextAlign(range) {
+        if (!postBodyEditor || !range) return null;
+        var root = postBodyEditor;
+        var node = range.commonAncestorContainer;
+        if (node === root) node = range.startContainer;
+        var el = node.nodeType === 1 ? node : node.parentElement;
+        if (!el) return null;
+        while (el && el !== root) {
+          if (/^(P|DIV|LI|H[1-6]|BLOCKQUOTE)$/i.test(el.tagName)) return el;
+          el = el.parentElement;
+        }
+        return null;
+      }
+
+      function applyTextAlignCommand(cmd) {
+        if (!postBodyEditor) return;
+        if (!getAnyRangeInEditor()) {
+          if (!restoreToolbarRangeSnapshot() && !restoreSavedEditorRange()) return;
+        }
+        if (!getAnyRangeInEditor()) return;
+        postBodyEditor.focus();
+
+        var val =
+          cmd === "alignLeft" ? "left" : cmd === "alignCenter" ? "center" : "right";
+
+        function setAlignOnBlock(block) {
+          if (!block || block === postBodyEditor || !postBodyEditor.contains(block)) return false;
+          block.style.setProperty("text-align", val, "");
+          return true;
+        }
+
+        var range = getAnyRangeInEditor();
+        var block = findBlockElementForTextAlign(range);
+
+        if (!block) {
+          try {
+            document.execCommand("styleWithCSS", false, true);
+          } catch (e0) {}
+          try {
+            document.execCommand("formatBlock", false, "div");
+          } catch (e1) {}
+          range = getAnyRangeInEditor();
+          block = range ? findBlockElementForTextAlign(range) : null;
+        }
+
+        if (block && setAlignOnBlock(block)) {
+          saveCurrentEditorRange();
+          return;
+        }
+
+        try {
+          document.execCommand("styleWithCSS", false, true);
+        } catch (e2) {}
+        try {
+          document.execCommand(
+            cmd === "alignLeft"
+              ? "justifyLeft"
+              : cmd === "alignCenter"
+                ? "justifyCenter"
+                : "justifyRight",
+            false,
+            null
+          );
+        } catch (e3) {}
+        saveCurrentEditorRange();
       }
 
       function wrapSelectionWithStyle(styleText) {
@@ -909,13 +1360,50 @@
         }
       }
 
+      /** execCommand('underline')가 환경에 따라 무반응일 때 대비 */
+      function wrapSelectionWithInlineTag(tagName) {
+        var range = currentRangeInEditor();
+        if (!range) return;
+        var selectedText = String(range.toString() || "").trim();
+        if (!selectedText) return;
+        var el = document.createElement(tagName);
+        try {
+          var fragment = range.extractContents();
+          el.appendChild(fragment);
+          range.insertNode(el);
+          var sel = window.getSelection();
+          if (!sel) return;
+          sel.removeAllRanges();
+          var next = document.createRange();
+          next.selectNodeContents(el);
+          sel.addRange(next);
+        } catch (err2) {
+          try {
+            document.execCommand("styleWithCSS", false, true);
+            document.execCommand("underline", false, null);
+          } catch (err3) {}
+        }
+      }
+
       function runEditorCommand(cmd) {
         if (!postBodyEditor) return;
-        if (!currentRangeInEditor()) restoreSavedEditorRange();
-        if (!currentRangeInEditor()) return;
+        var isAlign =
+          cmd === "alignLeft" || cmd === "alignCenter" || cmd === "alignRight";
+        if (!isAlign) {
+          if (!currentRangeInEditor()) restoreSavedEditorRange();
+          if (!currentRangeInEditor()) return;
+        } else {
+          if (!getAnyRangeInEditor()) restoreSavedEditorRange();
+          if (!getAnyRangeInEditor()) return;
+        }
         postBodyEditor.focus();
+        if (isAlign) {
+          applyTextAlignCommand(cmd);
+          return;
+        }
         if (cmd === "underline") {
-          document.execCommand("underline", false, null);
+          wrapSelectionWithInlineTag("u");
+          saveCurrentEditorRange();
           return;
         }
         if (cmd === "bold") {
@@ -942,13 +1430,16 @@
         if (!postBodyEditor) return;
         postBodyEditor.setAttribute("contenteditable", "true");
         postBodyEditor.setAttribute("spellcheck", "true");
-        postForm.addEventListener("click", function (e) {
-          var btn = e.target && e.target.closest ? e.target.closest("[data-editor-cmd]") : null;
-          if (!btn || !postSelectionToolbar || !postSelectionToolbar.contains(btn)) return;
-          e.preventDefault();
-          runEditorCommand(btn.getAttribute("data-editor-cmd"));
-          saveCurrentEditorRange();
-        });
+        if (postSelectionToolbar) {
+          postSelectionToolbar.addEventListener("click", function (e) {
+            var btn = e.target && e.target.closest ? e.target.closest("[data-editor-cmd]") : null;
+            if (!btn) return;
+            e.preventDefault();
+            e.stopPropagation();
+            runEditorCommand(btn.getAttribute("data-editor-cmd"));
+            saveCurrentEditorRange();
+          });
+        }
         postBodyEditor.addEventListener("mouseup", function () {
           setTimeout(function () {
             saveCurrentEditorRange();
@@ -986,19 +1477,23 @@
           }, 0);
         });
         if (postSelectionToolbar) {
-          postSelectionToolbar.addEventListener("mousedown", function (e) {
-            var t = e.target;
-            if (t && t.closest && t.closest("button[data-editor-cmd]")) {
-              e.preventDefault();
-            }
-          });
+          postSelectionToolbar.addEventListener(
+            "mousedown",
+            function (e) {
+              var t = e.target;
+              if (t && String(t.tagName).toUpperCase() === "SELECT") {
+                snapshotToolbarRangeFromSelection();
+              }
+              if (t && t.closest && t.closest("button[data-editor-cmd]")) {
+                e.preventDefault();
+              }
+            },
+            true
+          );
         }
         document.addEventListener("selectionchange", function () {
           if (!postBodyEditor) return;
-          var range = currentRangeInEditor();
-          if (range) {
-            savedEditorRange = range.cloneRange();
-          }
+          saveCurrentEditorRange();
         });
         document.addEventListener("mousedown", function (e) {
           if (!postSelectionToolbar || !postBodyEditor) return;
@@ -1021,13 +1516,27 @@
           postSelectionFont.addEventListener("change", function () {
             var font = String(postSelectionFont.value || "").trim();
             if (!font) return;
-            if (!currentRangeInEditor()) restoreSavedEditorRange();
+            postBodyEditor.focus();
+            if (!currentRangeInEditor()) {
+              if (!restoreToolbarRangeSnapshot()) restoreSavedEditorRange();
+            }
             wrapSelectionWithStyle("font-family:" + font);
             saveCurrentEditorRange();
             postSelectionFont.selectedIndex = 0;
           });
         }
-
+        if (postSelectionAlign) {
+          postSelectionAlign.addEventListener("change", function () {
+            var v = String(postSelectionAlign.value || "").trim();
+            if (!v) return;
+            postBodyEditor.focus();
+            if (!getAnyRangeInEditor()) {
+              if (!restoreToolbarRangeSnapshot()) restoreSavedEditorRange();
+            }
+            applyTextAlignCommand(v);
+            postSelectionAlign.selectedIndex = 0;
+          });
+        }
         bindEditorImageTools();
       }
 
@@ -1298,6 +1807,31 @@
         });
       }
 
+      /** blob: URL은 저장 시 sanitize에서 제거되므로, 저장 직전에 data URL로 바꿉니다. */
+      async function convertBlobImagesInEditorToDataUrls() {
+        if (!postBodyEditor) return;
+        var imgs = postBodyEditor.querySelectorAll('img[src^="blob:"]');
+        for (var i = 0; i < imgs.length; i++) {
+          var img = imgs[i];
+          var blobUrl = img.getAttribute("src") || "";
+          if (blobUrl.indexOf("blob:") !== 0) continue;
+          try {
+            var res = await fetch(blobUrl);
+            if (!res.ok) continue;
+            var blob = await res.blob();
+            var file = new File([blob], "paste.png", { type: blob.type && /^image\//i.test(blob.type) ? blob.type : "image/png" });
+            if (file.size > MAX_IMAGE_BYTES) {
+              throw new Error("이미지가 1MB를 초과합니다. 용량을 줄인 뒤 다시 붙여 넣어 주세요.");
+            }
+            var dataUrl = await fileToDataURL(file);
+            if (!isSafeImgSrc(dataUrl)) continue;
+            img.setAttribute("src", dataUrl);
+          } catch (err) {
+            if (err && err.message && /1MB|초과/.test(err.message)) throw err;
+          }
+        }
+      }
+
       async function appendImageFiles(files) {
         if (!files || !files.length) return;
         for (var i = 0; i < files.length; i++) {
@@ -1478,7 +2012,7 @@
       }
 
       function runHtmlPasteBranch(clip, html) {
-        var cleaned = sanitizePostBodyHtml(stripExternalEditorPasteNoise(html));
+        var cleaned = sanitizePostBodyHtml(stripExternalEditorPasteNoiseAggressive(html));
         if (cleaned) {
           insertHtmlIntoEditor(cleaned);
           return;
@@ -1487,6 +2021,40 @@
         if (plain) {
           insertHtmlIntoEditor(
             plain
+              .split(/\r\n|\r|\n/)
+              .filter(function (line) {
+                return !isNoiseOnlyPasteLine(line);
+              })
+              .map(function (line) {
+                return escapeHtml(normalizePostText(line));
+              })
+              .join("<br>")
+          );
+        }
+      }
+
+      function syncPasteFromClipboard(clip) {
+        var html = clip.getData("text/html");
+        if (html && String(html).trim()) {
+          if (tryPasteBlobImageFromHtml(html, function () {
+            runHtmlPasteBranch(clip, html);
+          })) {
+            return;
+          }
+          runHtmlPasteBranch(clip, html);
+          return;
+        }
+        var text = (clip.getData("text/plain") || "").trim();
+        var maybeUrl = normalizeUrl(text);
+        if (maybeUrl && isSafeImgSrc(maybeUrl)) {
+          insertHtmlIntoEditor(
+            sanitizePostBodyHtml('<img src="' + maybeUrl.replace(/"/g, "") + '" alt="">')
+          );
+          return;
+        }
+        if (text) {
+          insertHtmlIntoEditor(
+            text
               .split(/\r\n|\r|\n/)
               .filter(function (line) {
                 return !isNoiseOnlyPasteLine(line);
@@ -1515,25 +2083,60 @@
             return;
           }
 
-          var html = clip.getData("text/html");
-          if (html && String(html).trim()) {
-            e.preventDefault();
-            if (tryPasteBlobImageFromHtml(html, function () {
-              runHtmlPasteBranch(clip, html);
-            })) {
-              return;
+          function tryReadClipboardImageThenSync() {
+            if (!navigator.clipboard || !navigator.clipboard.read) {
+              return Promise.resolve(false);
             }
-            runHtmlPasteBranch(clip, html);
+            return navigator.clipboard
+              .read()
+              .then(function (items) {
+                var p = null;
+                for (var i = 0; i < items.length; i++) {
+                  var types = items[i].types || [];
+                  for (var j = 0; j < types.length; j++) {
+                    if (/^image\//i.test(types[j])) {
+                      p = items[i].getType(types[j]);
+                      break;
+                    }
+                  }
+                  if (p) break;
+                }
+                if (!p) return Promise.reject(new Error("no-clipboard-image"));
+                return p;
+              })
+              .then(function (blob) {
+                if (!blob || blob.size < 20) return Promise.reject(new Error("empty-blob"));
+                var ct = blob.type && /^image\//i.test(blob.type) ? blob.type : "image/png";
+                var file = new File([blob], "clipboard.png", { type: ct });
+                return insertInlineImageFile(file);
+              })
+              .then(function () {
+                return true;
+              })
+              .catch(function () {
+                return false;
+              });
+          }
+
+          if (navigator.clipboard && navigator.clipboard.read) {
+            e.preventDefault();
+            void tryReadClipboardImageThenSync().then(function (ok) {
+              if (!ok) syncPasteFromClipboard(clip);
+            });
             return;
           }
 
-          var text = (clip.getData("text/plain") || "").trim();
-          var maybeUrl = normalizeUrl(text);
-          if (maybeUrl && isSafeImgSrc(maybeUrl)) {
+          var htmlSync = clip.getData("text/html");
+          if (htmlSync && String(htmlSync).trim()) {
             e.preventDefault();
-            insertHtmlIntoEditor(
-              sanitizePostBodyHtml('<img src="' + maybeUrl.replace(/"/g, "") + '" alt="">')
-            );
+            syncPasteFromClipboard(clip);
+            return;
+          }
+          var textSync = (clip.getData("text/plain") || "").trim();
+          var maybeUrlSync = normalizeUrl(textSync);
+          if (maybeUrlSync && isSafeImgSrc(maybeUrlSync)) {
+            e.preventDefault();
+            syncPasteFromClipboard(clip);
             return;
           }
         });
@@ -1550,75 +2153,90 @@
 
       postForm.addEventListener("submit", async function (e) {
         e.preventDefault();
-        if (!adminOn) return;
+        if (!adminOn) {
+          formStatus.textContent = "먼저 위에서 관리자 모드를 켜 주세요.";
+          return;
+        }
 
         var title = (postTitle.value || "").trim();
-        if (!title || !editorPlainText()) {
+        if (!title || !editorHasContent()) {
           formStatus.textContent = "제목과 내용을 모두 입력해 주세요.";
           return;
         }
-        var body = sanitizePostBodyHtml((postBodyEditor && postBodyEditor.innerHTML) || "").trim();
 
-        var id = postId.value;
-        if (cloudEnabled) {
-          var res = await savePostCloud(id, title, body, pendingImages.slice());
-          if (res.error) {
-            if (isMissingServicePostsTableError(res.error)) {
-              var fallbackItems = loadLocalPosts();
-              if (id) {
-                fallbackItems = fallbackItems.map(function (item) {
-                  if (String(item.id) !== String(id)) return item;
-                  item.title = title;
-                  item.body = body;
-                  item.images = pendingImages.slice();
-                  return item;
-                });
+        try {
+          formStatus.textContent = "저장 중…";
+          await convertBlobImagesInEditorToDataUrls();
+          var body = sanitizePostBodyHtml((postBodyEditor && postBodyEditor.innerHTML) || "").trim();
+          if (!body) {
+            formStatus.textContent =
+              "저장할 본문이 비어 있습니다. 붙여넣은 그림이 보이면 blob 주소일 수 있어 변환에 실패했을 수 있습니다. 이미지를 다시 붙여 넣거나 파일로 첨부해 주세요.";
+            return;
+          }
+
+          var id = postId.value;
+          if (cloudEnabled) {
+            var res = await savePostCloud(id, title, body, pendingImages.slice());
+            if (res.error) {
+              if (isMissingServicePostsTableError(res.error)) {
+                var fallbackItems = loadLocalPosts();
+                if (id) {
+                  fallbackItems = fallbackItems.map(function (item) {
+                    if (String(item.id) !== String(id)) return item;
+                    item.title = title;
+                    item.body = body;
+                    item.images = pendingImages.slice();
+                    return item;
+                  });
+                } else {
+                  fallbackItems.push({
+                    id: Date.now().toString(36) + Math.random().toString(36).slice(2, 7),
+                    service: service,
+                    title: title,
+                    body: body,
+                    images: pendingImages.slice(),
+                    created_at: new Date().toISOString()
+                  });
+                }
+                saveLocalPosts(fallbackItems);
+                cloudEnabled = false;
+                updateAdminUi();
               } else {
-                fallbackItems.push({
-                  id: Date.now().toString(36) + Math.random().toString(36).slice(2, 7),
-                  service: service,
-                  title: title,
-                  body: body,
-                  images: pendingImages.slice(),
-                  created_at: new Date().toISOString()
-                });
+                formStatus.textContent = "저장 실패: " + res.error.message + " (service_posts 테이블 확인)";
+                return;
               }
-              saveLocalPosts(fallbackItems);
-              cloudEnabled = false;
-              updateAdminUi();
-              formStatus.textContent = "Supabase 테이블이 없어 현재 PC 로컬 저장으로 전환했습니다. (테이블 생성 후 공용 저장 가능)";
-            } else {
-              formStatus.textContent = "저장 실패: " + res.error.message + " (service_posts 테이블 확인)";
-              return;
             }
-          }
-        } else {
-          var items = loadLocalPosts();
-          if (id) {
-            items = items.map(function (item) {
-              if (String(item.id) !== String(id)) return item;
-              item.title = title;
-              item.body = body;
-              item.images = pendingImages.slice();
-              return item;
-            });
           } else {
-            items.push({
-              id: Date.now().toString(36) + Math.random().toString(36).slice(2, 7),
-              service: service,
-              title: title,
-              body: body,
-              images: pendingImages.slice(),
-              created_at: new Date().toISOString()
-            });
+            var items = loadLocalPosts();
+            if (id) {
+              items = items.map(function (item) {
+                if (String(item.id) !== String(id)) return item;
+                item.title = title;
+                item.body = body;
+                item.images = pendingImages.slice();
+                return item;
+              });
+            } else {
+              items.push({
+                id: Date.now().toString(36) + Math.random().toString(36).slice(2, 7),
+                service: service,
+                title: title,
+                body: body,
+                images: pendingImages.slice(),
+                created_at: new Date().toISOString()
+              });
+            }
+            saveLocalPosts(items);
           }
-          saveLocalPosts(items);
-        }
 
-        formStatus.textContent = id ? "게시글을 수정했습니다." : "게시글을 등록했습니다.";
-        resetForm();
-        currentPosts = await loadPosts();
-        renderPosts();
+          formStatus.textContent = id ? "게시글을 수정했습니다." : "게시글을 등록했습니다.";
+          resetForm();
+          currentPosts = await loadPosts();
+          renderPosts();
+        } catch (err) {
+          formStatus.textContent =
+            "저장 중 오류: " + (err && err.message ? String(err.message) : String(err));
+        }
       });
 
       postList.addEventListener("click", async function (e) {

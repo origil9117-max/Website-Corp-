@@ -161,11 +161,107 @@
       pointer-events: none;
     }
 
+    .notice-editor img,
+    .body img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+      margin: 0.35em 0;
+      vertical-align: middle;
+    }
+    .notice-editor img.editor-inline-img {
+      cursor: pointer;
+      border-radius: 2px;
+    }
+    .notice-editor img.editor-inline-img.editor-inline-img--selected {
+      outline: 2px solid var(--maroon);
+      outline-offset: 2px;
+    }
+    .notice-editor.post-editor--img-align-drag {
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    .notice-editor.post-editor--img-align-drag img.editor-inline-img {
+      cursor: ew-resize;
+    }
+    .notice-image-toolbar {
+      display: none;
+      position: fixed;
+      z-index: 10050;
+      flex-wrap: nowrap;
+      align-items: center;
+      gap: 0.28rem 0.35rem;
+      padding: 0.38rem 0.45rem;
+      background: #fff;
+      border: 1px solid rgba(36, 48, 64, 0.18);
+      border-radius: 6px;
+      box-shadow: 0 8px 28px rgba(0, 0, 0, 0.14);
+      box-sizing: border-box;
+      max-width: min(calc(100vw - 16px), 36rem);
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .notice-image-toolbar.is-visible {
+      display: flex;
+    }
+    .notice-image-toolbar .btn-img {
+      flex: 0 0 auto;
+      border: 1px solid var(--line);
+      background: #fafafa;
+      border-radius: 2px;
+      padding: 0.24rem 0.38rem;
+      font-size: 0.7rem;
+      font-weight: 700;
+      cursor: pointer;
+      color: var(--ink);
+      white-space: nowrap;
+    }
+    .notice-image-toolbar .btn-img:hover {
+      background: #f0ecf5;
+      border-color: rgba(124, 93, 147, 0.45);
+    }
+    .notice-image-toolbar .btn-img.danger {
+      color: #8b2c2c;
+      border-color: rgba(139, 44, 44, 0.35);
+    }
+    .notice-image-toolbar .img-toolbar-cap {
+      font-size: 0.62rem;
+      font-weight: 800;
+      color: var(--maroon);
+      margin-right: 0.06rem;
+      flex-shrink: 0;
+    }
+    .notice-image-toolbar .btn-img--align {
+      min-width: 2.35rem;
+      border-color: rgba(124, 93, 147, 0.5);
+      background: linear-gradient(180deg, #faf8fc 0%, #f3ebf7 100%);
+    }
+    .notice-image-toolbar-sep {
+      flex: 0 0 auto;
+      width: 1px;
+      align-self: stretch;
+      min-height: 1.1rem;
+      margin: 0 0.1rem;
+      background: rgba(36, 48, 64, 0.18);
+    }
+    .notice-paste-hint {
+      margin: 0.4rem 0 0.35rem;
+      font-size: 0.76rem;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+    .body::after {
+      content: "";
+      display: table;
+      clear: both;
+    }
+
     .selection-toolbar {
       position: static;
       z-index: 1;
       display: flex;
       align-items: center;
+      flex-wrap: nowrap;
       gap: 0.34rem;
       margin: 0.45rem 0 0.45rem;
       padding: 0.35rem 0.45rem;
@@ -173,6 +269,40 @@
       border-radius: 7px;
       background: rgba(255, 255, 255, 0.98);
       box-shadow: 0 8px 24px rgba(20, 24, 32, 0.14);
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .selection-align-inline {
+      display: inline-flex;
+      align-items: center;
+      flex-shrink: 0;
+      gap: 0.28rem;
+      padding: 0.1rem 0.32rem;
+      border: 1px solid rgba(124, 93, 147, 0.45);
+      border-radius: 5px;
+      background: linear-gradient(180deg, #faf6fc 0%, #f3ebf7 100%);
+    }
+    .selection-toolbar-label {
+      font-size: 0.74rem;
+      font-weight: 800;
+      color: var(--maroon);
+      white-space: nowrap;
+    }
+    #notice-selection-align {
+      min-width: 5.75rem;
+      height: 1.45rem;
+      font-weight: 700;
+      border-color: rgba(124, 93, 147, 0.45);
+      border-radius: 3px;
+      background: #fff;
+    }
+    .selection-toolbar-sep {
+      width: 1px;
+      align-self: stretch;
+      min-height: 1.2rem;
+      margin: 0 0.08rem;
+      background: rgba(36, 48, 64, 0.15);
+      flex-shrink: 0;
     }
 
     .selection-toolbar .btn {
@@ -406,7 +536,40 @@
             role="textbox"
             aria-multiline="true"
           ></div>
+          <div
+            id="notice-image-toolbar"
+            class="notice-image-toolbar"
+            role="toolbar"
+            aria-label="선택한 그림"
+            hidden
+          >
+            <span style="font-size:0.68rem;color:var(--muted);margin-right:0.12rem;flex-shrink:0;">그림</span>
+            <span class="img-toolbar-cap">비율</span>
+            <button type="button" class="btn-img" data-img-act="w25">25%</button>
+            <button type="button" class="btn-img" data-img-act="w50">50%</button>
+            <button type="button" class="btn-img" data-img-act="w75">75%</button>
+            <button type="button" class="btn-img" data-img-act="w100">100%</button>
+            <span class="notice-image-toolbar-sep" aria-hidden="true"></span>
+            <span class="img-toolbar-cap">위치</span>
+            <button type="button" class="btn-img btn-img--align" data-img-act="align-left" title="왼쪽">왼쪽</button>
+            <button type="button" class="btn-img btn-img--align" data-img-act="align-center" title="가운데">가운데</button>
+            <button type="button" class="btn-img btn-img--align" data-img-act="align-right" title="오른쪽">오른쪽</button>
+            <span class="notice-image-toolbar-sep" aria-hidden="true"></span>
+            <button type="button" class="btn-img danger" data-img-act="del">삭제</button>
+          </div>
+          <p class="notice-paste-hint" role="note">그림은 붙여넣기 또는 아래 파일 선택으로 넣을 수 있습니다. 선택 후 비율·위치를 조정하거나 가로로 끌어 배치할 수 있습니다.</p>
+          <input id="notice-inline-image-input" type="file" accept="image/*" multiple style="font-size:0.82rem;max-width:100%;" />
           <div id="selection-toolbar" class="selection-toolbar" aria-label="선택 텍스트 편집 메뉴">
+            <div class="selection-align-inline" aria-label="문단 정렬">
+              <label class="selection-toolbar-label" for="notice-selection-align">정렬</label>
+              <select id="notice-selection-align" title="문단 정렬" aria-label="문단 정렬">
+                <option value="">선택…</option>
+                <option value="justifyLeft">왼쪽</option>
+                <option value="justifyCenter">가운데</option>
+                <option value="justifyRight">오른쪽</option>
+              </select>
+            </div>
+            <span class="selection-toolbar-sep" aria-hidden="true"></span>
             <button class="btn btn-ghost" type="button" data-editor-cmd="bold">진하게</button>
             <button class="btn btn-ghost" type="button" data-editor-cmd="underline">밑줄</button>
             <button class="btn btn-ghost" type="button" data-editor-cmd="bigger">A+</button>
@@ -457,8 +620,11 @@
       var btnComposeZoom = document.getElementById("btn-compose-zoom");
       var noticeContentEditor = document.getElementById("notice-content-editor");
       var selectionToolbar = document.getElementById("selection-toolbar");
+      var noticeImageToolbar = document.getElementById("notice-image-toolbar");
+      var noticeInlineImageInput = document.getElementById("notice-inline-image-input");
       var selectionColor = document.getElementById("selection-color");
       var selectionFont = document.getElementById("selection-font");
+      var noticeSelectionAlign = document.getElementById("notice-selection-align");
       var authStatus = document.getElementById("auth-status");
       var passInput = document.getElementById("admin-pass");
       var loginRow = document.getElementById("auth-login-row");
@@ -478,6 +644,9 @@
       var savedEditorRange = null;
       var editingNoticeId = "";
       var composeZoomed = false;
+      var selectedNoticeImg = null;
+      var imageAlignDragSession = null;
+      var MAX_NOTICE_IMAGE_BYTES = 1024 * 1024;
 
       function setStatus(el, type, msg) {
         el.classList.remove("ok", "err");
@@ -501,6 +670,54 @@
           .replace(/[ \t]{2,}/g, " ");
       }
 
+      function escapeAttr(str) {
+        return String(str || "")
+          .replace(/&/g, "&amp;")
+          .replace(/"/g, "&quot;")
+          .replace(/</g, "&lt;");
+      }
+
+      function normalizeImgSrc(src) {
+        var s = String(src || "").trim();
+        if (!s) return "";
+        if (s.indexOf("//") === 0 && s.indexOf("http") !== 0) s = "https:" + s;
+        return s;
+      }
+
+      function isSafeImgSrc(src) {
+        var s = normalizeImgSrc(src);
+        if (!s) return false;
+        if (/^javascript:/i.test(s) || /^vbscript:/i.test(s)) return false;
+        if (/^data:/i.test(s)) {
+          if (/^data:image\/(png|jpe?g|gif|webp|bmp);base64,/i.test(s)) return s.length <= 2500000;
+          return false;
+        }
+        try {
+          var u = new URL(s);
+          if (u.protocol !== "http:" && u.protocol !== "https:") return false;
+          return true;
+        } catch (e) {
+          return false;
+        }
+      }
+
+      function resolveImgNodeSrc(node) {
+        var src = node.getAttribute("src") || "";
+        if (!String(src).trim()) {
+          src =
+            node.getAttribute("data-src") ||
+            node.getAttribute("data-lazy-src") ||
+            node.getAttribute("data-original") ||
+            node.getAttribute("data-rawsrc") ||
+            "";
+        }
+        if (!String(src).trim() && node.getAttribute("srcset")) {
+          var part = String(node.getAttribute("srcset")).split(",")[0].trim();
+          src = part.split(/\s+/)[0] || "";
+        }
+        return normalizeImgSrc(src);
+      }
+
       function sanitizeInlineStyle(styleText) {
         var src = String(styleText || "").toLowerCase();
         var out = [];
@@ -519,10 +736,46 @@
         return out.join("; ");
       }
 
+      function sanitizeBlockStyle(styleText) {
+        var src = String(styleText || "");
+        var out = [];
+        src.split(";").forEach(function (rule) {
+          var parts = rule.split(":");
+          if (parts.length < 2) return;
+          var prop = parts[0].trim().toLowerCase();
+          var val = parts.slice(1).join(":").trim().toLowerCase();
+          if (prop === "text-align" && /^(left|right|center|justify)$/.test(val)) {
+            out.push("text-align:" + val);
+          }
+        });
+        return out.join("; ");
+      }
+
+      function buildImgStyleForSanitize(node) {
+        var st = String(node.getAttribute("style") || "");
+        var mw = "100%";
+        var m = st.match(/max-width\s*:\s*([^;]+)/i);
+        if (m) {
+          var v = String(m[1]).trim();
+          if (/^([1-9][0-9]?|100)%$/.test(v)) mw = v;
+          else if (/^([1-9][0-9]{2,3})px$/i.test(v)) {
+            var px = parseInt(v, 10);
+            if (px >= 50 && px <= 2000) mw = px + "px";
+          }
+        }
+        var align = "center";
+        if (/float\s*:\s*left/i.test(st)) align = "left";
+        else if (/float\s*:\s*right/i.test(st)) align = "right";
+        var base = "max-width:" + mw + ";height:auto;display:block;";
+        if (align === "left") return base + "float:left;margin:0.35em 1em 0.35em 0;";
+        if (align === "right") return base + "float:right;margin:0.35em 0 0.35em 1em;";
+        return base + "float:none;margin:0.35em auto;";
+      }
+
       function sanitizeNoticeHtml(rawHtml) {
         var allowed = {
           B: true, STRONG: true, I: true, EM: true, U: true, BR: true,
-          P: true, DIV: true, UL: true, OL: true, LI: true, SPAN: true
+          P: true, DIV: true, UL: true, OL: true, LI: true, SPAN: true, IMG: true
         };
         var doc = new DOMParser().parseFromString(String(rawHtml || ""), "text/html");
 
@@ -531,12 +784,30 @@
           if (node.nodeType !== 1) return "";
           var tag = String(node.tagName || "").toUpperCase();
           var children = Array.prototype.slice.call(node.childNodes).map(clean).join("");
+          if (tag === "IMG") {
+            var src = resolveImgNodeSrc(node);
+            if (!isSafeImgSrc(src)) return "";
+            var alt = escapeHtml(normalizeNoticeText(node.getAttribute("alt") || ""));
+            var styleOut = buildImgStyleForSanitize(node);
+            return (
+              '<img src="' +
+              escapeAttr(src) +
+              '" alt="' +
+              alt +
+              '" loading="lazy" decoding="async" style="' +
+              escapeHtml(styleOut) +
+              '" />'
+            );
+          }
           if (!allowed[tag]) return children;
           if (tag === "BR") return "<br>";
           var attrs = "";
           if (tag === "SPAN") {
             var safeStyle = sanitizeInlineStyle(node.getAttribute("style"));
             if (safeStyle) attrs = ' style="' + escapeHtml(safeStyle) + '"';
+          } else if (tag === "P" || tag === "DIV" || tag === "LI") {
+            var blockSt = sanitizeBlockStyle(node.getAttribute("style"));
+            if (blockSt) attrs = ' style="' + escapeHtml(blockSt) + '"';
           }
           return "<" + tag.toLowerCase() + attrs + ">" + children + "</" + tag.toLowerCase() + ">";
         }
@@ -546,6 +817,440 @@
 
       function editorPlainText() {
         return String((noticeContentEditor && noticeContentEditor.textContent) || "").trim();
+      }
+
+      function noticeEditorHasContent() {
+        if (!noticeContentEditor) return false;
+        var txt = String(noticeContentEditor.textContent || "")
+          .replace(/\u00a0/g, " ")
+          .replace(/[\u200b-\u200d\ufeff]/g, "")
+          .trim();
+        if (txt.length > 0) return true;
+        var imgs = noticeContentEditor.querySelectorAll("img");
+        for (var i = 0; i < imgs.length; i++) {
+          if (String(imgs[i].getAttribute("src") || "").trim()) return true;
+        }
+        return false;
+      }
+
+      function getAnyRangeInNoticeEditor() {
+        var sel = window.getSelection ? window.getSelection() : null;
+        if (!sel || !sel.rangeCount || !noticeContentEditor) return null;
+        var range = sel.getRangeAt(0);
+        if (!range) return null;
+        var common = range.commonAncestorContainer;
+        var host = common && common.nodeType === 1 ? common : (common ? common.parentElement : null);
+        if (!host || !noticeContentEditor.contains(host)) return null;
+        return range;
+      }
+
+      function insertHtmlIntoNoticeEditor(htmlStr) {
+        if (!noticeContentEditor || !String(htmlStr || "").trim()) return;
+        noticeContentEditor.focus();
+        var sel = window.getSelection();
+        if (!sel.rangeCount) {
+          var r = document.createRange();
+          r.selectNodeContents(noticeContentEditor);
+          r.collapse(false);
+          sel.addRange(r);
+        }
+        var range = sel.getRangeAt(0);
+        range.deleteContents();
+        var wrapper = document.createElement("div");
+        wrapper.innerHTML = htmlStr;
+        var frag = document.createDocumentFragment();
+        var last = null;
+        while (wrapper.firstChild) {
+          last = wrapper.firstChild;
+          frag.appendChild(last);
+        }
+        range.insertNode(frag);
+        if (last) {
+          range.setStartAfter(last);
+          range.collapse(true);
+          sel.removeAllRanges();
+          sel.addRange(range);
+        }
+        saveCurrentEditorRange();
+        normalizeNoticeEditorImages(noticeContentEditor);
+      }
+
+      function normalizeNoticeEditorImages(root) {
+        if (!root) return;
+        var anchors = root.querySelectorAll("a");
+        for (var ai = anchors.length - 1; ai >= 0; ai--) {
+          var a = anchors[ai];
+          if (!a.parentNode) continue;
+          var ch = a.childNodes;
+          if (ch.length === 1 && ch[0].nodeType === 1 && String(ch[0].tagName).toUpperCase() === "IMG") {
+            var im = ch[0];
+            a.parentNode.insertBefore(im, a);
+            a.remove();
+          }
+        }
+        Array.prototype.forEach.call(root.querySelectorAll("img"), function (img) {
+          img.contentEditable = "false";
+          img.setAttribute("draggable", "false");
+          img.classList.add("editor-inline-img");
+        });
+      }
+
+      function fileToDataURL(file) {
+        return new Promise(function (resolve, reject) {
+          var reader = new FileReader();
+          reader.onload = function () {
+            resolve(String(reader.result || ""));
+          };
+          reader.onerror = function () {
+            reject(new Error("read-failed"));
+          };
+          reader.readAsDataURL(file);
+        });
+      }
+
+      function isLikelyImageFile(file) {
+        if (!file) return false;
+        if (file.type && /^image\//i.test(file.type)) return true;
+        var n = (file.name || "").toLowerCase();
+        return /\.(png|jpe?g|gif|webp|bmp)$/i.test(n);
+      }
+
+      async function insertNoticeInlineImageFile(file) {
+        if (!file || !isLikelyImageFile(file)) return;
+        if (file.size > MAX_NOTICE_IMAGE_BYTES) {
+          setStatus(formStatus, "err", "이미지 용량이 1MB를 초과합니다. (" + (file.name || "이미지") + ")");
+          return;
+        }
+        try {
+          var dataUrl = await fileToDataURL(file);
+          if (!isSafeImgSrc(dataUrl)) return;
+          var html =
+            '<img src="' +
+            escapeAttr(dataUrl) +
+            '" alt="" style="max-width:100%;height:auto;display:block;float:none;margin:0.35em auto;" />';
+          insertHtmlIntoNoticeEditor(html);
+          setStatus(formStatus, "", "");
+        } catch (err) {
+          setStatus(formStatus, "err", "이미지 읽기에 실패했습니다.");
+        }
+      }
+
+      async function convertBlobImagesInNoticeEditorToDataUrls() {
+        if (!noticeContentEditor) return;
+        var imgs = noticeContentEditor.querySelectorAll('img[src^="blob:"]');
+        for (var i = 0; i < imgs.length; i++) {
+          var img = imgs[i];
+          var blobUrl = img.getAttribute("src") || "";
+          if (blobUrl.indexOf("blob:") !== 0) continue;
+          try {
+            var res = await fetch(blobUrl);
+            if (!res.ok) continue;
+            var blob = await res.blob();
+            var file = new File([blob], "paste.png", {
+              type: blob.type && /^image\//i.test(blob.type) ? blob.type : "image/png"
+            });
+            if (file.size > MAX_NOTICE_IMAGE_BYTES) {
+              throw new Error("이미지가 1MB를 초과합니다.");
+            }
+            var dataUrl = await fileToDataURL(file);
+            if (!isSafeImgSrc(dataUrl)) continue;
+            img.setAttribute("src", dataUrl);
+          } catch (err) {
+            if (err && err.message && /1MB|초과/.test(err.message)) throw err;
+          }
+        }
+      }
+
+      function positionNoticeImageToolbar() {
+        if (!noticeImageToolbar || !selectedNoticeImg) return;
+        noticeImageToolbar.removeAttribute("hidden");
+        noticeImageToolbar.classList.add("is-visible");
+        var rect = selectedNoticeImg.getBoundingClientRect();
+        requestAnimationFrame(function () {
+          requestAnimationFrame(function () {
+            var vw = window.innerWidth;
+            var vh = window.innerHeight;
+            var tw = noticeImageToolbar.offsetWidth || 200;
+            var th = noticeImageToolbar.offsetHeight || 40;
+            var margin = 8;
+            var ed = noticeContentEditor ? noticeContentEditor.getBoundingClientRect() : null;
+            var fmt = selectionToolbar ? selectionToolbar.getBoundingClientRect() : null;
+            var fmtTop = fmt ? fmt.top : vh;
+            var minY = ed ? ed.top + margin : margin;
+            var topBelow = rect.bottom + margin;
+            var topAbove = rect.top - th - margin;
+            var top;
+            var maxTopForBelow = fmtTop - th - margin;
+            if (topBelow <= maxTopForBelow && topBelow + th <= vh - margin) {
+              top = Math.max(minY, topBelow);
+            } else if (topAbove >= minY && topAbove + th <= fmtTop - margin) {
+              top = topAbove;
+            } else if (topAbove >= minY) {
+              top = topAbove;
+            } else {
+              top = Math.max(minY, Math.min(topBelow, maxTopForBelow));
+            }
+            if (top + th > fmtTop - margin) top = Math.max(minY, fmtTop - th - margin);
+            if (top < minY) top = minY;
+            if (top + th > vh - margin) top = Math.max(minY, vh - th - margin);
+
+            var left = rect.left + rect.width / 2 - tw / 2;
+            if (ed) {
+              left = Math.max(ed.left + margin, Math.min(left, ed.right - tw - margin));
+            }
+            left = Math.max(margin, Math.min(left, vw - tw - margin));
+
+            noticeImageToolbar.style.top = top + "px";
+            noticeImageToolbar.style.left = left + "px";
+          });
+        });
+      }
+
+      function clearNoticeImageSelection() {
+        if (selectedNoticeImg) {
+          selectedNoticeImg.classList.remove("editor-inline-img--selected");
+          selectedNoticeImg = null;
+        }
+        if (noticeImageToolbar) {
+          noticeImageToolbar.setAttribute("hidden", "");
+          noticeImageToolbar.classList.remove("is-visible");
+        }
+      }
+
+      function selectNoticeEditorImage(img) {
+        if (!img || !noticeContentEditor.contains(img)) return;
+        if (selectedNoticeImg && selectedNoticeImg !== img) {
+          selectedNoticeImg.classList.remove("editor-inline-img--selected");
+        }
+        selectedNoticeImg = img;
+        img.classList.add("editor-inline-img--selected");
+        noticeContentEditor.focus();
+        var sel = window.getSelection();
+        if (sel) {
+          var r = document.createRange();
+          r.selectNode(img);
+          sel.removeAllRanges();
+          sel.addRange(r);
+        }
+        positionNoticeImageToolbar();
+      }
+
+      function removeSelectedNoticeEditorImage() {
+        if (!selectedNoticeImg || !noticeContentEditor.contains(selectedNoticeImg)) return;
+        selectedNoticeImg.remove();
+        clearNoticeImageSelection();
+        saveCurrentEditorRange();
+      }
+
+      function applySelectedNoticeImageWidth(pct) {
+        if (!selectedNoticeImg || !noticeContentEditor.contains(selectedNoticeImg)) return;
+        selectedNoticeImg.style.maxWidth = pct + "%";
+        selectedNoticeImg.style.width = "";
+        positionNoticeImageToolbar();
+        saveCurrentEditorRange();
+      }
+
+      function applySelectedNoticeImageAlign(align) {
+        if (!selectedNoticeImg || !noticeContentEditor.contains(selectedNoticeImg)) return;
+        var img = selectedNoticeImg;
+        var mw = img.style.maxWidth || "";
+        if (!mw) {
+          var attr = img.getAttribute("style") || "";
+          var mm = attr.match(/max-width\s*:\s*([^;]+)/i);
+          if (mm) mw = mm[1].trim();
+        }
+        if (align === "left") {
+          img.style.float = "left";
+          img.style.display = "block";
+          img.style.margin = "0.35em 1em 0.35em 0";
+        } else if (align === "right") {
+          img.style.float = "right";
+          img.style.display = "block";
+          img.style.margin = "0.35em 0 0.35em 1em";
+        } else {
+          img.style.float = "none";
+          img.style.display = "block";
+          img.style.margin = "0.35em auto";
+        }
+        if (mw) img.style.maxWidth = mw;
+        img.style.width = "";
+        positionNoticeImageToolbar();
+        saveCurrentEditorRange();
+      }
+
+      function detachNoticeImageAlignDragListeners() {
+        document.removeEventListener("mousemove", onNoticeImageAlignDragMove, true);
+        document.removeEventListener("mouseup", onNoticeImageAlignDragEnd, true);
+      }
+
+      function noticeImageAlignDragCoords(ev) {
+        return { x: ev.clientX, y: ev.clientY };
+      }
+
+      function onNoticeImageAlignDragMove(e) {
+        var s = imageAlignDragSession;
+        if (!s) return;
+        var p = noticeImageAlignDragCoords(e);
+        var dx = p.x - s.x0;
+        var dy = p.y - s.y0;
+        if (!s.dragCursor && (Math.abs(dx) > 5 || Math.abs(dy) > 5)) {
+          if (Math.abs(dx) >= Math.abs(dy) && noticeContentEditor) {
+            noticeContentEditor.classList.add("post-editor--img-align-drag");
+            s.dragCursor = true;
+          }
+        }
+        if (s.dragCursor && e.cancelable) e.preventDefault();
+      }
+
+      function onNoticeImageAlignDragEnd(e) {
+        var s = imageAlignDragSession;
+        if (!s) return;
+        var p = noticeImageAlignDragCoords(e);
+        var dx = p.x - s.x0;
+        var dy = p.y - s.y0;
+        detachNoticeImageAlignDragListeners();
+        if (noticeContentEditor) noticeContentEditor.classList.remove("post-editor--img-align-drag");
+        imageAlignDragSession = null;
+
+        if (!noticeContentEditor || !noticeContentEditor.contains(s.img)) return;
+        var upTarget = e.target;
+        if (upTarget && noticeImageToolbar && noticeImageToolbar.contains(upTarget)) return;
+        if (!upTarget || !noticeContentEditor.contains(upTarget)) return;
+        if (Math.abs(dx) < 16) return;
+        if (Math.abs(dy) > Math.abs(dx) * 1.05) return;
+
+        selectNoticeEditorImage(s.img);
+        var ed = noticeContentEditor.getBoundingClientRect();
+        var w = ed.width;
+        if (w < 8) return;
+        var rel = (p.x - ed.left) / w;
+        if (rel < 0) rel = 0;
+        if (rel > 1) rel = 1;
+        var align = rel < 0.34 ? "left" : rel < 0.67 ? "center" : "right";
+        applySelectedNoticeImageAlign(align);
+      }
+
+      function beginNoticeImageAlignDragTracking(ev, img) {
+        detachNoticeImageAlignDragListeners();
+        if (!img) return;
+        var p = noticeImageAlignDragCoords(ev);
+        imageAlignDragSession = { img: img, x0: p.x, y0: p.y, dragCursor: false };
+        document.addEventListener("mousemove", onNoticeImageAlignDragMove, true);
+        document.addEventListener("mouseup", onNoticeImageAlignDragEnd, true);
+      }
+
+      /** 붙여넣기 등으로 <a><img></a>처럼 감싸진 경우 e.target이 IMG가 아닐 수 있음 */
+      function findDelegatedEditorImg(target, root) {
+        if (!target || !root) return null;
+        var el = target.nodeType === 1 ? target : target.parentElement;
+        if (!el) return null;
+        var img = el.tagName === "IMG" ? el : el.closest ? el.closest("img") : null;
+        if (!img || !root.contains(img)) return null;
+        return img;
+      }
+
+      function bindNoticeImageTools() {
+        if (!noticeContentEditor || !noticeImageToolbar) return;
+
+        function onNoticeEditorImgActivate(e) {
+          if (e.pointerType === "mouse" && e.button !== 0) return;
+          var img = findDelegatedEditorImg(e.target, noticeContentEditor);
+          if (!img) return;
+          e.preventDefault();
+          if (e.stopPropagation) e.stopPropagation();
+          selectNoticeEditorImage(img);
+          beginNoticeImageAlignDragTracking(e, img);
+        }
+
+        if (window.PointerEvent) {
+          noticeContentEditor.addEventListener("pointerdown", onNoticeEditorImgActivate, {
+            capture: true,
+            passive: false
+          });
+        } else {
+          noticeContentEditor.addEventListener("mousedown", onNoticeEditorImgActivate, true);
+        }
+
+        noticeContentEditor.addEventListener("click", function (e) {
+          if (findDelegatedEditorImg(e.target, noticeContentEditor)) return;
+          clearNoticeImageSelection();
+        });
+
+        noticeImageToolbar.addEventListener("mousedown", function (e) {
+          if (e.target.closest && e.target.closest("[data-img-act]")) {
+            e.preventDefault();
+          }
+        });
+
+        noticeImageToolbar.addEventListener("click", function (e) {
+          var btn = e.target && e.target.closest ? e.target.closest("[data-img-act]") : null;
+          if (!btn) return;
+          e.preventDefault();
+          var act = btn.getAttribute("data-img-act");
+          if (act === "del") {
+            removeSelectedNoticeEditorImage();
+            return;
+          }
+          if (act === "w25") applySelectedNoticeImageWidth(25);
+          else if (act === "w50") applySelectedNoticeImageWidth(50);
+          else if (act === "w75") applySelectedNoticeImageWidth(75);
+          else if (act === "w100") applySelectedNoticeImageWidth(100);
+          else if (act === "align-left") applySelectedNoticeImageAlign("left");
+          else if (act === "align-center") applySelectedNoticeImageAlign("center");
+          else if (act === "align-right") applySelectedNoticeImageAlign("right");
+        });
+
+        noticeContentEditor.addEventListener(
+          "keydown",
+          function (e) {
+            if (!selectedNoticeImg || !noticeContentEditor.contains(selectedNoticeImg)) return;
+            if (e.key === "Delete" || e.key === "Backspace") {
+              e.preventDefault();
+              e.stopPropagation();
+              removeSelectedNoticeEditorImage();
+            }
+          },
+          true
+        );
+
+        window.addEventListener("scroll", function () {
+          if (selectedNoticeImg && noticeImageToolbar && noticeImageToolbar.classList.contains("is-visible")) {
+            positionNoticeImageToolbar();
+          }
+        }, true);
+        window.addEventListener("resize", function () {
+          if (selectedNoticeImg && noticeImageToolbar && noticeImageToolbar.classList.contains("is-visible")) {
+            positionNoticeImageToolbar();
+          }
+        });
+      }
+
+      function collectClipboardImageFiles(clip) {
+        var files = [];
+        var seen = Object.create(null);
+        function add(f) {
+          if (!f || typeof f.size !== "number") return;
+          if (!isLikelyImageFile(f)) return;
+          var key = f.size + "|" + (f.type || "") + "|" + (f.name || "");
+          if (seen[key]) return;
+          seen[key] = true;
+          files.push(f);
+        }
+        var items = clip.items;
+        if (items && items.length) {
+          for (var i = 0; i < items.length; i++) {
+            var it = items[i];
+            if (it.kind === "file" && typeof it.getAsFile === "function") {
+              add(it.getAsFile());
+            }
+          }
+        }
+        if (clip.files && clip.files.length) {
+          for (var j = 0; j < clip.files.length; j++) {
+            add(clip.files[j]);
+          }
+        }
+        return files;
       }
 
       function currentRangeInEditor() {
@@ -560,7 +1265,7 @@
       }
 
       function saveCurrentEditorRange() {
-        var range = currentRangeInEditor();
+        var range = getAnyRangeInNoticeEditor();
         savedEditorRange = range ? range.cloneRange() : null;
       }
 
@@ -690,25 +1395,35 @@
         });
       }
       if (selectionToolbar) {
-        selectionToolbar.addEventListener("mousedown", function (e) {
-          var t = e.target;
-          if (t && t.closest && t.closest("button[data-editor-cmd]")) {
-            e.preventDefault();
-          }
-        });
+        selectionToolbar.addEventListener(
+          "mousedown",
+          function (e) {
+            var t = e.target;
+            if (t && String(t.tagName).toUpperCase() === "SELECT") {
+              saveCurrentEditorRange();
+            }
+            if (t && t.closest && t.closest("button[data-editor-cmd]")) {
+              e.preventDefault();
+            }
+          },
+          true
+        );
       }
       document.addEventListener("selectionchange", function () {
         if (!noticeContentEditor) return;
-        var range = currentRangeInEditor();
+        var range = getAnyRangeInNoticeEditor();
         if (range) {
           savedEditorRange = range.cloneRange();
           showSelectionToolbar();
         }
       });
       document.addEventListener("mousedown", function (e) {
-        if (!selectionToolbar || !noticeContentEditor) return;
+        if (!noticeContentEditor) return;
         var t = e.target;
-        if (selectionToolbar.contains(t) || noticeContentEditor.contains(t)) return;
+        if (noticeImageToolbar && noticeImageToolbar.contains(t)) return;
+        if (selectionToolbar && selectionToolbar.contains(t)) return;
+        if (noticeContentEditor.contains(t)) return;
+        clearNoticeImageSelection();
         saveCurrentEditorRange();
       });
       document.addEventListener("scroll", saveCurrentEditorRange, true);
@@ -734,10 +1449,63 @@
           selectionFont.selectedIndex = 0;
         });
       }
+      if (noticeSelectionAlign) {
+        noticeSelectionAlign.addEventListener("change", function () {
+          var v = String(noticeSelectionAlign.value || "").trim();
+          if (!v || !noticeContentEditor) return;
+          noticeContentEditor.focus();
+          if (!restoreSavedEditorRange()) {
+            var r = getAnyRangeInNoticeEditor();
+            if (r) {
+              var sel = window.getSelection();
+              if (sel) {
+                sel.removeAllRanges();
+                sel.addRange(r);
+              }
+            }
+          }
+          try {
+            document.execCommand(v, false, null);
+          } catch (err) {}
+          saveCurrentEditorRange();
+          showSelectionToolbar();
+          noticeSelectionAlign.selectedIndex = 0;
+        });
+      }
+
+      bindNoticeImageTools();
+
+      if (noticeInlineImageInput) {
+        noticeInlineImageInput.addEventListener("change", function () {
+          if (!noticeInlineImageInput.files || !noticeInlineImageInput.files.length) return;
+          void (async function () {
+            for (var i = 0; i < noticeInlineImageInput.files.length; i++) {
+              await insertNoticeInlineImageFile(noticeInlineImageInput.files[i]);
+            }
+            noticeInlineImageInput.value = "";
+          })();
+        });
+      }
+
+      if (noticeContentEditor) {
+        noticeContentEditor.addEventListener("paste", function (e) {
+          var clip = e.clipboardData;
+          if (!clip) return;
+          var files = collectClipboardImageFiles(clip);
+          if (!files.length) return;
+          e.preventDefault();
+          void (async function () {
+            for (var i = 0; i < files.length; i++) {
+              await insertNoticeInlineImageFile(files[i]);
+            }
+          })();
+        });
+      }
 
       function resetForm() {
         noticeForm.reset();
         document.getElementById("notice-id").value = "";
+        clearNoticeImageSelection();
         if (noticeContentEditor) noticeContentEditor.innerHTML = "";
         savedEditorRange = null;
         editingNoticeId = "";
@@ -1124,14 +1892,26 @@
         }
         var id = document.getElementById("notice-id").value;
         var title = (document.getElementById("notice-title").value || "").trim();
-        var contentHtml = sanitizeNoticeHtml((noticeContentEditor && noticeContentEditor.innerHTML) || "");
-        var contentText = editorPlainText();
-        document.getElementById("notice-content").value = contentHtml;
         var pinned = document.getElementById("notice-pinned").checked;
-        if (!title || !contentText) {
+        if (!title || !noticeEditorHasContent()) {
           setStatus(formStatus, "err", "제목과 내용을 모두 입력해 주세요.");
           return;
         }
+
+        try {
+          setStatus(formStatus, "", "저장 중…");
+          await convertBlobImagesInNoticeEditorToDataUrls();
+        } catch (err) {
+          setStatus(
+            formStatus,
+            "err",
+            err && err.message ? String(err.message) : "이미지 변환에 실패했습니다. 용량을 줄이거나 다시 넣어 주세요."
+          );
+          return;
+        }
+
+        var contentHtml = sanitizeNoticeHtml((noticeContentEditor && noticeContentEditor.innerHTML) || "");
+        document.getElementById("notice-content").value = contentHtml;
 
         var res;
         if (client) {
@@ -1195,14 +1975,20 @@
             if (one.error || !one.data) return;
             document.getElementById("notice-id").value = one.data.id;
             document.getElementById("notice-title").value = one.data.title;
-            if (noticeContentEditor) noticeContentEditor.innerHTML = sanitizeNoticeHtml(one.data.content || "");
+            if (noticeContentEditor) {
+              noticeContentEditor.innerHTML = sanitizeNoticeHtml(one.data.content || "");
+              normalizeNoticeEditorImages(noticeContentEditor);
+            }
             document.getElementById("notice-pinned").checked = !!one.data.pinned;
           } else {
             var oneLocal = loadLocalNotices().find(function (x) { return String(x.id) === String(id); });
             if (!oneLocal) return;
             document.getElementById("notice-id").value = oneLocal.id;
             document.getElementById("notice-title").value = oneLocal.title || "";
-            if (noticeContentEditor) noticeContentEditor.innerHTML = sanitizeNoticeHtml(oneLocal.content || "");
+            if (noticeContentEditor) {
+              noticeContentEditor.innerHTML = sanitizeNoticeHtml(oneLocal.content || "");
+              normalizeNoticeEditorImages(noticeContentEditor);
+            }
             document.getElementById("notice-pinned").checked = !!oneLocal.pinned;
           }
           setStatus(formStatus, "", "수정 모드입니다. 내용을 변경 후 저장해 주세요.");

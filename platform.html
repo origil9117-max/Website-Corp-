@@ -359,6 +359,78 @@
       }
     }
 
+    html {
+      scroll-padding-top: 5.5rem;
+      scroll-behavior: smooth;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html {
+        scroll-behavior: auto;
+      }
+    }
+
+    .platform-category-nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.45rem;
+      align-items: center;
+      margin: 0 0 1.1rem;
+      padding: 0.55rem 0.65rem;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.92);
+      box-shadow: 0 2px 12px rgba(36, 48, 64, 0.05);
+    }
+
+    .platform-category-nav-label {
+      font-size: 0.72rem;
+      font-weight: 800;
+      color: var(--maroon-dark);
+      margin-right: 0.25rem;
+      white-space: nowrap;
+    }
+
+    .platform-category-nav a {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.32rem 0.62rem;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--ink);
+      background: #fff;
+      border: 1px solid rgba(124, 93, 147, 0.35);
+      border-radius: 999px;
+      text-decoration: none;
+    }
+
+    .platform-category-nav a:hover {
+      background: linear-gradient(180deg, #faf8fc 0%, #f3ebf7 100%);
+      text-decoration: none;
+      border-color: var(--maroon);
+    }
+
+    .platform-card-title {
+      display: inline-block;
+      color: var(--ink);
+      text-decoration: none;
+      font-size: 0.92rem;
+      font-weight: 800;
+      line-height: 1.35;
+      border-radius: 2px;
+    }
+
+    .platform-card-title:hover {
+      color: var(--maroon-dark);
+      text-decoration: underline;
+      text-underline-offset: 0.12em;
+    }
+
+    .platform-card-title:focus-visible {
+      outline: 2px solid var(--maroon);
+      outline-offset: 3px;
+    }
+
   </style>
 </head>
 <body>
@@ -400,25 +472,33 @@
     </section>
     </div>
 
-    <div class="platform-grid" role="list">
-      <article class="platform-card" role="listitem">
+    <nav class="platform-category-nav" aria-label="플랫폼 카테고리">
+      <span class="platform-category-nav-label">카테고리</span>
+      <a href="minwon-roadmap.html">민원 로드맵</a>
+      <a href="platform-check.html">서류·준비 체크</a>
+      <a href="platform-faq.html">자주 묻는 질문</a>
+      <a href="platform-hub.html">공지·자료실 연동</a>
+    </nav>
+
+    <div class="platform-grid" role="navigation" aria-label="카테고리 요약 카드">
+      <article class="platform-card">
         <span class="tag">STEP</span>
-        <h3>민원 로드맵</h3>
+        <h3><a class="platform-card-title" href="minwon-roadmap.html">민원 로드맵</a></h3>
         <p>절차를 단계별로 정리해 필요 서류·유의사항·대략적인 흐름을 안내합니다. 개별 사항은 상담 시 조정됩니다.</p>
       </article>
-      <article class="platform-card" role="listitem">
+      <article class="platform-card">
         <span class="tag">CHECK</span>
-        <h3>서류·준비 체크</h3>
+        <h3><a class="platform-card-title" href="platform-check.html">서류·준비 체크</a></h3>
         <p>사안 유형에 따라 준비해야 할 서류와 확인 포인트를 목록 형태로 제시합니다(일반 안내 수준).</p>
       </article>
-      <article class="platform-card" role="listitem">
+      <article class="platform-card">
         <span class="tag">FAQ</span>
-        <h3>자주 묻는 질문</h3>
+        <h3><a class="platform-card-title" href="platform-faq.html">자주 묻는 질문</a></h3>
         <p>반복 질문을 분류해 두어 빠르게 찾아보실 수 있도록 구성합니다. 블로그·게시글과 연계합니다.</p>
       </article>
-      <article class="platform-card" role="listitem">
+      <article class="platform-card">
         <span class="tag">LINK</span>
-        <h3>공지·자료실 연동</h3>
+        <h3><a class="platform-card-title" href="platform-hub.html">공지·자료실 연동</a></h3>
         <p>공지사항과 자료실, 업무별 안내 게시와 연결해 최신 정보를 한곳에서 찾을 수 있게 합니다.</p>
       </article>
     </div>

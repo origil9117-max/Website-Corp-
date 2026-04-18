@@ -1,0 +1,331 @@
+/* 지능형 행정 플랫폼 — 카테고리 전용 하위 페이지 공통 */
+:root {
+  --ink: #243040;
+  --ink-soft: #3a4658;
+  --muted: #667086;
+  --paper: #f7f5f8;
+  --line: rgba(36, 48, 64, 0.1);
+  --maroon: #7c5d93;
+  --maroon-dark: #5f466f;
+  --gold: #b89478;
+  --page-pad: clamp(0.75rem, 4vw, 2rem);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: "Noto Sans KR", system-ui, sans-serif;
+  color: var(--ink);
+  background: var(--paper);
+  line-height: 1.65;
+  font-size: 16px;
+}
+
+a {
+  color: var(--maroon);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  background: rgba(250, 249, 246, 0.94);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--line);
+}
+
+.topbar-inner {
+  max-width: none;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0.65rem var(--page-pad);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.7rem 1rem;
+  flex-wrap: wrap;
+}
+
+.brand {
+  font-family: "Noto Serif KR", serif;
+  font-weight: 700;
+  color: var(--ink);
+  text-decoration: none;
+  font-size: 0.95rem;
+}
+
+.brand span {
+  display: block;
+  font-family: "Noto Sans KR", system-ui, sans-serif;
+  font-size: 0.66rem;
+  color: var(--muted);
+  font-weight: 500;
+  margin-top: 0.18rem;
+}
+
+.links {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.links a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--maroon-dark);
+  font-weight: 700;
+  text-decoration: none;
+  font-size: 0.8rem;
+  border: 1px solid rgba(90, 53, 64, 0.22);
+  border-radius: 2px;
+  background: #fff;
+  padding: 0.35rem 0.62rem;
+}
+
+.links a:hover {
+  text-decoration: none;
+  background: #f7f1eb;
+}
+
+.wrap {
+  max-width: none;
+  width: 100%;
+  margin: 0 auto;
+  padding: 1.25rem var(--page-pad) 2.5rem;
+}
+
+.platform-breadcrumb {
+  font-size: 0.82rem;
+  color: var(--muted);
+  margin-bottom: 1rem;
+  line-height: 1.5;
+}
+
+.platform-breadcrumb a {
+  font-weight: 700;
+}
+
+.platform-breadcrumb .sep {
+  margin: 0 0.35rem;
+  opacity: 0.65;
+}
+
+.section-label {
+  margin: 0 0 0.4rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--maroon);
+  font-weight: 700;
+}
+
+h1 {
+  font-family: "Noto Serif KR", serif;
+  font-size: clamp(1.2rem, 3vw, 1.65rem);
+  font-weight: 700;
+  line-height: 1.35;
+  margin-bottom: 0.75rem;
+}
+
+.lead {
+  color: var(--ink-soft);
+  font-size: 0.95rem;
+  margin-bottom: 1.1rem;
+  max-width: 52em;
+}
+
+.platform-sub-body {
+  max-width: 52em;
+  font-size: 0.9rem;
+  color: var(--ink-soft);
+  line-height: 1.65;
+}
+
+.platform-sub-body p {
+  margin-bottom: 0.85rem;
+}
+
+.platform-sub-body strong {
+  color: var(--ink);
+}
+
+.platform-category-links {
+  margin-top: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 0.85rem;
+  align-items: center;
+}
+
+.platform-category-links a {
+  font-size: 0.84rem;
+  font-weight: 700;
+}
+
+.platform-sibling-nav {
+  margin-top: 1.75rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--line);
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.platform-sibling-nav strong {
+  color: var(--ink);
+  display: block;
+  margin-bottom: 0.45rem;
+  font-size: 0.78rem;
+}
+
+.platform-sibling-nav ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem 1rem;
+  align-items: center;
+}
+
+.platform-sibling-nav li {
+  display: block;
+}
+
+.trust-mini {
+  margin: 1.5rem 0 1rem;
+  padding: 0.65rem 0.85rem;
+  font-size: 0.78rem;
+  color: var(--ink-soft);
+  border: 1px dashed rgba(90, 53, 64, 0.25);
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.75);
+}
+
+.trust-mini strong {
+  color: var(--ink);
+}
+
+.disclaimer {
+  border-left: 3px solid var(--gold);
+  padding: 0.75rem 0.95rem;
+  background: #fff;
+  border-radius: 0 4px 4px 0;
+  font-size: 0.8rem;
+  color: var(--muted);
+  line-height: 1.55;
+  margin-bottom: 1.25rem;
+}
+
+.disclaimer strong {
+  color: var(--ink);
+}
+
+.cta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.52rem 1rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  border-radius: 2px;
+  text-decoration: none;
+}
+
+.btn-primary {
+  color: #fff;
+  background: linear-gradient(180deg, var(--maroon) 0%, var(--maroon-dark) 100%);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.btn-primary:hover {
+  opacity: 0.93;
+  text-decoration: none;
+  color: #fff;
+}
+
+.btn-ghost {
+  color: var(--ink);
+  background: #fff;
+  border: 1px solid var(--line);
+}
+
+.btn-ghost:hover {
+  background: #faf8fb;
+  text-decoration: none;
+}
+
+.platform-back {
+  margin-top: 1.25rem;
+  font-size: 0.86rem;
+}
+
+.platform-back a {
+  font-weight: 700;
+}
+
+.platform-wip-banner {
+  background: linear-gradient(
+    105deg,
+    rgba(232, 212, 188, 0.55) 0%,
+    rgba(214, 196, 228, 0.4) 48%,
+    rgba(232, 218, 200, 0.5) 100%
+  );
+  border-bottom: 1px solid rgba(120, 92, 64, 0.22);
+  padding: 0.58rem var(--page-pad);
+}
+
+.platform-wip-banner-inner {
+  max-width: none;
+  width: 100%;
+  margin: 0 auto;
+  font-size: 0.81rem;
+  font-weight: 500;
+  color: var(--ink-soft);
+  text-align: center;
+  line-height: 1.55;
+}
+
+.platform-wip-banner-inner strong {
+  color: var(--maroon-dark);
+  font-weight: 800;
+}
+
+.platform-wip-pulse {
+  display: inline-block;
+  animation: platformWipPulse 1.35s ease-in-out infinite;
+}
+
+@keyframes platformWipPulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.28;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .platform-wip-pulse {
+    animation: none;
+  }
+}

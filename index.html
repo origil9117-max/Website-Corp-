@@ -441,7 +441,8 @@
       }
     }
 
-    .hero-mini a {
+    .hero-mini a,
+    .hero-platform-cats-grid a {
       display: block;
       background: rgba(255, 255, 255, 0.66);
       border: 1px solid rgba(124, 93, 147, 0.3);
@@ -459,8 +460,19 @@
       white-space: nowrap;
     }
 
+    .hero-platform-cats-grid a {
+      white-space: normal;
+      line-height: 1.35;
+      min-height: 2.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
     .hero-mini a:hover,
-    .hero-mini a:focus-visible {
+    .hero-mini a:focus-visible,
+    .hero-platform-cats-grid a:hover,
+    .hero-platform-cats-grid a:focus-visible {
       background: linear-gradient(180deg, #7c5d93 0%, #5f466f 100%);
       border-color: rgba(95, 70, 111, 0.92);
       color: #fff;
@@ -618,6 +630,34 @@
       flex-wrap: wrap;
       gap: 0.55rem;
       align-items: center;
+    }
+
+    .hero-platform-cats {
+      margin-top: 0.7rem;
+      max-width: 38rem;
+      font-size: 0.78rem;
+      line-height: 1.55;
+      color: rgba(59, 71, 96, 0.9);
+    }
+
+    .hero-platform-cats-label {
+      display: block;
+      font-weight: 700;
+      color: rgba(47, 58, 80, 0.85);
+      margin-bottom: 0.4rem;
+    }
+
+    .hero-platform-cats-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.5rem;
+      max-width: 22rem;
+    }
+
+    @media (max-width: 380px) {
+      .hero-platform-cats-grid {
+        gap: 0.38rem;
+      }
     }
 
     .btn {
@@ -909,8 +949,23 @@
       font-weight: 700;
       background: linear-gradient(180deg, #5f4b76 0%, #3f314f 100%);
       color: #fff;
-      padding: 0.7rem 1rem;
+      padding: 0;
+      margin: 0;
       letter-spacing: -0.02em;
+    }
+
+    .service-card h3 a.service-card-title {
+      display: block;
+      color: inherit;
+      text-decoration: none;
+      padding: 0.7rem 1rem;
+    }
+
+    .service-card h3 a.service-card-title:hover,
+    .service-card h3 a.service-card-title:focus-visible {
+      text-decoration: underline;
+      text-underline-offset: 0.14em;
+      outline: none;
     }
 
     .service-card.selected h3 {
@@ -1557,16 +1612,25 @@
             <a class="btn btn-ghost" href="#services">업무 분야</a>
             <a class="btn btn-ghost" href="platform.html">지능형 행정 플랫폼</a>
           </div>
+          <nav class="hero-platform-cats" aria-label="지능형 행정 플랫폼 카테고리 바로가기">
+            <span class="hero-platform-cats-label">플랫폼 카테고리</span>
+            <div class="hero-platform-cats-grid">
+              <a href="minwon-roadmap.html">민원 로드맵</a>
+              <a href="platform-check.html">서류·준비 체크</a>
+              <a href="platform-faq.html">자주 묻는 질문</a>
+              <a href="platform-hub.html">공지·자료실 연동</a>
+            </div>
+          </nav>
         </div>
         <div class="hero-aside">
           <p class="hero-tagline">Administrative Agent Office</p>
           <div class="hero-mini">
-            <a data-service="nonprofit" href="service-post.html?service=nonprofit" aria-label="비영리법인설립 업무 게시 페이지로 이동">비영리법인</a>
-            <a data-service="immigration" href="service-post.html?service=immigration" aria-label="출입국민원업무 게시 페이지로 이동">출입국민원</a>
-            <a class="nowrap" data-service="investment" href="service-post.html?service=investment" aria-label="기업투자·법인설립 게시 페이지로 이동">기업투자 · 법인</a>
-            <a data-service="patriot" href="service-post.html?service=patriot" aria-label="국가유공자보훈업무 게시 페이지로 이동">국가유공자보훈</a>
-            <a data-service="permit" href="service-post.html?service=permit" aria-label="인허가 민원 업무 게시 페이지로 이동">인허가 민원</a>
-            <a data-service="appeal" href="service-post.html?service=appeal" aria-label="행정심판 업무 게시 페이지로 이동">행정심판</a>
+            <a data-service="nonprofit" href="service-nonprofit.html" aria-label="비영리법인설립 업무 게시 페이지로 이동">비영리법인</a>
+            <a data-service="immigration" href="service-immigration.html" aria-label="출입국민원업무 게시 페이지로 이동">출입국민원</a>
+            <a class="nowrap" data-service="investment" href="service-investment.html" aria-label="기업투자·법인설립 게시 페이지로 이동">기업투자 · 법인</a>
+            <a data-service="patriot" href="service-patriot.html" aria-label="국가유공자보훈업무 게시 페이지로 이동">국가유공자보훈</a>
+            <a data-service="permit" href="service-permit.html" aria-label="인허가 민원 업무 게시 페이지로 이동">인허가 민원</a>
+            <a data-service="appeal" href="service-appeal.html" aria-label="행정심판 업무 게시 페이지로 이동">행정심판</a>
           </div>
         </div>
       </div>
@@ -1642,8 +1706,8 @@
         <h2 id="services-title" class="serif">주요 업무 분야</h2>
       </div>
       <div class="services-grid">
-        <article class="service-card" data-service="nonprofit" tabindex="0" role="button" aria-label="비영리법인설립 업무 상세 보기">
-          <h3>비영리법인설립 업무</h3>
+        <article class="service-card" data-service="nonprofit" aria-label="비영리법인설립 업무 상세 보기">
+          <h3><a class="service-card-title" href="service-nonprofit.html">비영리법인설립 업무</a></h3>
           <ul>
             <li>비영리법인(사단·재단) 설립·정관 변경</li>
             <li>협동조합설립</li>
@@ -1651,8 +1715,8 @@
             <li>설립 후 변경·해산 등 행정 절차</li>
           </ul>
         </article>
-        <article class="service-card" data-service="immigration" tabindex="0" role="button" aria-label="출입국민원업무 상세 보기">
-          <h3>출입국민원업무</h3>
+        <article class="service-card" data-service="immigration" aria-label="출입국민원업무 상세 보기">
+          <h3><a class="service-card-title" href="service-immigration.html">출입국민원업무</a></h3>
           <ul>
             <li>재외동포(F4)·영주권(F5)·거소증 신청·국적상실 신고 등</li>
             <li>외국인 투자(D-8)·전문인력(E-7) 등 비자·체류</li>
@@ -1660,8 +1724,8 @@
             <li>법무부 등록 출입국민원 대행기관</li>
           </ul>
         </article>
-        <article class="service-card" data-service="investment" tabindex="0" role="button" aria-label="기업투자·법인설립 상세 보기">
-          <h3>기업투자·법인설립</h3>
+        <article class="service-card" data-service="investment" aria-label="기업투자·법인설립 상세 보기">
+          <h3><a class="service-card-title" href="service-investment.html">기업투자·법인설립</a></h3>
           <ul>
             <li>외국인투자기업(FDI) 설립·신고·변경</li>
             <li>국내 법인·지점 등 기업 관련 설립</li>
@@ -1669,8 +1733,8 @@
             <li>중국영사관업무 · 베트남영사관업무</li>
           </ul>
         </article>
-        <article class="service-card" data-service="patriot" tabindex="0" role="button" aria-label="국가유공자보훈업무 상세 보기">
-          <h3>국가유공자보훈업무</h3>
+        <article class="service-card" data-service="patriot" aria-label="국가유공자보훈업무 상세 보기">
+          <h3><a class="service-card-title" href="service-patriot.html">국가유공자보훈업무</a></h3>
           <ul>
             <li>국가유공자·보훈 등록</li>
             <li>국가장애인등록</li>
@@ -1678,8 +1742,8 @@
             <li>이의신청·행정심판 등 불복(사안별)</li>
           </ul>
         </article>
-        <article class="service-card" data-service="permit" tabindex="0" role="button" aria-label="인허가 민원 업무 상세 보기">
-          <h3>인허가 민원</h3>
+        <article class="service-card" data-service="permit" aria-label="인허가 민원 업무 상세 보기">
+          <h3><a class="service-card-title" href="service-permit.html">인허가 민원</a></h3>
           <ul>
             <li>식품접객업·개발행위·의료법인설립, 폐기물처리업 허가 등</li>
             <li>비영리사단(재단)·사회적협동조합·재개발·재건축조합 인가 등</li>
@@ -1687,8 +1751,8 @@
             <li>공장설립 승인, 각종 인허가 취소 이의신청 구제</li>
           </ul>
         </article>
-        <article class="service-card" data-service="appeal" tabindex="0" role="button" aria-label="행정심판 업무 상세 보기">
-          <h3>행정심판</h3>
+        <article class="service-card" data-service="appeal" aria-label="행정심판 업무 상세 보기">
+          <h3><a class="service-card-title" href="service-appeal.html">행정심판</a></h3>
           <ul>
             <li>처분 취소·무효 확인 등 행정심판 청구</li>
             <li>집행정지 신청 및 의견서 작성 지원</li>
@@ -2040,13 +2104,25 @@
       var heroMiniLinks = Array.prototype.slice.call(document.querySelectorAll(".hero-mini a[data-service]"));
       if (!cards.length) return;
 
+      var SERVICE_ENTRY_PAGE = {
+        nonprofit: "service-nonprofit.html",
+        immigration: "service-immigration.html",
+        investment: "service-investment.html",
+        patriot: "service-patriot.html",
+        permit: "service-permit.html",
+        appeal: "service-appeal.html"
+      };
+
       function moveToPublishPage(serviceId) {
         if (!serviceId) return;
-        window.location.href = "service-post.html?service=" + encodeURIComponent(serviceId);
+        var entry = SERVICE_ENTRY_PAGE[serviceId];
+        window.location.href =
+          entry || "service-post.html?service=" + encodeURIComponent(serviceId) + "&ui=10";
       }
 
       cards.forEach(function (card) {
-        card.addEventListener("click", function () {
+        card.addEventListener("click", function (e) {
+          if (e.target.closest && e.target.closest("a.service-card-title")) return;
           cards.forEach(function (item) { item.classList.remove("selected"); });
           heroMiniLinks.forEach(function (item) { item.classList.remove("selected"); });
           card.classList.add("selected");
@@ -2055,13 +2131,6 @@
             if (link.getAttribute("data-service") === selectedService) link.classList.add("selected");
           });
           moveToPublishPage(card.getAttribute("data-service"));
-        });
-
-        card.addEventListener("keydown", function (evt) {
-          if (evt.key === "Enter" || evt.key === " ") {
-            evt.preventDefault();
-            card.click();
-          }
         });
       });
 

@@ -146,6 +146,18 @@
       word-break: break-word;
     }
 
+    .body img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+      margin: 0.35em 0;
+    }
+    .body::after {
+      content: "";
+      display: table;
+      clear: both;
+    }
+
     .pin {
       display: inline-block;
       margin-right: 0.4rem;
@@ -247,6 +259,54 @@
           .replace(/[ \t]{2,}/g, " ");
       }
 
+      function escapeAttr(str) {
+        return String(str || "")
+          .replace(/&/g, "&amp;")
+          .replace(/"/g, "&quot;")
+          .replace(/</g, "&lt;");
+      }
+
+      function normalizeImgSrc(src) {
+        var s = String(src || "").trim();
+        if (!s) return "";
+        if (s.indexOf("//") === 0 && s.indexOf("http") !== 0) s = "https:" + s;
+        return s;
+      }
+
+      function isSafeImgSrc(src) {
+        var s = normalizeImgSrc(src);
+        if (!s) return false;
+        if (/^javascript:/i.test(s) || /^vbscript:/i.test(s)) return false;
+        if (/^data:/i.test(s)) {
+          if (/^data:image\/(png|jpe?g|gif|webp|bmp);base64,/i.test(s)) return s.length <= 2500000;
+          return false;
+        }
+        try {
+          var u = new URL(s);
+          if (u.protocol !== "http:" && u.protocol !== "https:") return false;
+          return true;
+        } catch (e) {
+          return false;
+        }
+      }
+
+      function resolveImgNodeSrc(node) {
+        var src = node.getAttribute("src") || "";
+        if (!String(src).trim()) {
+          src =
+            node.getAttribute("data-src") ||
+            node.getAttribute("data-lazy-src") ||
+            node.getAttribute("data-original") ||
+            node.getAttribute("data-rawsrc") ||
+            "";
+        }
+        if (!String(src).trim() && node.getAttribute("srcset")) {
+          var part = String(node.getAttribute("srcset")).split(",")[0].trim();
+          src = part.split(/\s+/)[0] || "";
+        }
+        return normalizeImgSrc(src);
+      }
+
       function sanitizeInlineStyle(styleText) {
         var src = String(styleText || "").toLowerCase();
         var out = [];
@@ -260,14 +320,51 @@
           if (prop === "font-weight" && /^(bold|[1-9]00)$/.test(val)) out.push(prop + ":" + val);
           if (prop === "text-decoration" && /^(underline|none)$/.test(val)) out.push(prop + ":" + val);
           if (prop === "color" && /^#([0-9a-f]{3}|[0-9a-f]{6})$/.test(val)) out.push(prop + ":" + val);
+          if (prop === "font-family" && /^[a-z0-9,\- "'()]+$/.test(val)) out.push(prop + ":" + val);
         });
         return out.join("; ");
+      }
+
+      function sanitizeBlockStyle(styleText) {
+        var src = String(styleText || "");
+        var out = [];
+        src.split(";").forEach(function (rule) {
+          var parts = rule.split(":");
+          if (parts.length < 2) return;
+          var prop = parts[0].trim().toLowerCase();
+          var val = parts.slice(1).join(":").trim().toLowerCase();
+          if (prop === "text-align" && /^(left|right|center|justify)$/.test(val)) {
+            out.push("text-align:" + val);
+          }
+        });
+        return out.join("; ");
+      }
+
+      function buildImgStyleForSanitize(node) {
+        var st = String(node.getAttribute("style") || "");
+        var mw = "100%";
+        var m = st.match(/max-width\s*:\s*([^;]+)/i);
+        if (m) {
+          var v = String(m[1]).trim();
+          if (/^([1-9][0-9]?|100)%$/.test(v)) mw = v;
+          else if (/^([1-9][0-9]{2,3})px$/i.test(v)) {
+            var px = parseInt(v, 10);
+            if (px >= 50 && px <= 2000) mw = px + "px";
+          }
+        }
+        var align = "center";
+        if (/float\s*:\s*left/i.test(st)) align = "left";
+        else if (/float\s*:\s*right/i.test(st)) align = "right";
+        var base = "max-width:" + mw + ";height:auto;display:block;";
+        if (align === "left") return base + "float:left;margin:0.35em 1em 0.35em 0;";
+        if (align === "right") return base + "float:right;margin:0.35em 0 0.35em 1em;";
+        return base + "float:none;margin:0.35em auto;";
       }
 
       function sanitizeNoticeHtml(rawHtml) {
         var allowed = {
           B: true, STRONG: true, I: true, EM: true, U: true, BR: true,
-          P: true, DIV: true, UL: true, OL: true, LI: true, SPAN: true
+          P: true, DIV: true, UL: true, OL: true, LI: true, SPAN: true, IMG: true
         };
         var doc = new DOMParser().parseFromString(String(rawHtml || ""), "text/html");
 
@@ -276,12 +373,30 @@
           if (node.nodeType !== 1) return "";
           var tag = String(node.tagName || "").toUpperCase();
           var children = Array.prototype.slice.call(node.childNodes).map(clean).join("");
+          if (tag === "IMG") {
+            var src = resolveImgNodeSrc(node);
+            if (!isSafeImgSrc(src)) return "";
+            var alt = escapeHtml(normalizeNoticeText(node.getAttribute("alt") || ""));
+            var styleOut = buildImgStyleForSanitize(node);
+            return (
+              '<img src="' +
+              escapeAttr(src) +
+              '" alt="' +
+              alt +
+              '" loading="lazy" decoding="async" style="' +
+              escapeHtml(styleOut) +
+              '" />'
+            );
+          }
           if (!allowed[tag]) return children;
           if (tag === "BR") return "<br>";
           var attrs = "";
           if (tag === "SPAN") {
             var safeStyle = sanitizeInlineStyle(node.getAttribute("style"));
             if (safeStyle) attrs = ' style="' + escapeHtml(safeStyle) + '"';
+          } else if (tag === "P" || tag === "DIV" || tag === "LI") {
+            var blockSt = sanitizeBlockStyle(node.getAttribute("style"));
+            if (blockSt) attrs = ' style="' + escapeHtml(blockSt) + '"';
           }
           return "<" + tag.toLowerCase() + attrs + ">" + children + "</" + tag.toLowerCase() + ">";
         }

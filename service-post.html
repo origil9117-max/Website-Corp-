@@ -159,6 +159,18 @@
     .btn-ghost { background: #fff; color: var(--ink); border-color: var(--line); }
     .post-list { display: grid; gap: 0.7rem; }
     .file-help { margin-top: 0.45rem; font-size: 0.8rem; color: var(--muted); }
+    .paste-hint {
+      margin: 0.5rem 0 0.35rem;
+      padding: 0.55rem 0.65rem;
+      font-size: 0.78rem;
+      line-height: 1.55;
+      color: var(--muted);
+      background: #f7f4fb;
+      border-left: 3px solid rgba(124, 93, 147, 0.45);
+      border-radius: 0 3px 3px 0;
+    }
+    .paste-hint strong { color: var(--ink); font-weight: 700; }
+    .paste-hint .paste-hint-list { display: block; margin-top: 0.35rem; }
     .thumb-list {
       margin-top: 0.55rem;
       display: grid;
@@ -307,6 +319,10 @@
           <input id="post-selection-color" type="color" value="#243040" title="글자 색상" aria-label="글자 색상" />
           <button class="btn btn-ghost" type="button" data-editor-cmd="clearStyle">초기화</button>
         </div>
+        <p class="paste-hint" role="note">
+          <strong>네이버 블로그 등 외부 편집기</strong>에서는 글 전체를 복사해도 클립보드에 그림이 포함되지 않는 경우가 많습니다. 이미지가 비어 있으면
+          <span class="paste-hint-list">(1) 그림에서 우클릭 → <em>이미지 복사</em> 후 본문에 붙여넣기 (2) <kbd style="font-size:0.85em;">Win+Shift+S</kbd> 캡처 후 붙여넣기 (3) 이미지를 저장한 뒤 아래 [파일 선택]으로 첨부</span>
+        </p>
         <div style="height:0.55rem"></div>
         <input id="post-images-input" type="file" accept="image/*" multiple />
         <p class="file-help">파일 첨부·클립보드 이미지 붙여넣기 시 본문에 그림으로 삽입됩니다. 외부에서 복사한 글·표는 HTML로 붙여넣기 됩니다. 첨부는 최대 5장·각 1MB 이하</p>
@@ -424,6 +440,30 @@
           .replace(/\u00a0/g, " ")
           .replace(/[\u200b-\u200d\ufeff]/g, "")
           .replace(/[ \t]{2,}/g, " ");
+      }
+
+      /** 네이버 블로그 등에서 복사 시 따라오는 UI 문구(HTML/텍스트) */
+      function stripExternalEditorPasteNoise(html) {
+        var s = String(html || "");
+        [
+          /사진\s*설명을\s*입력하세요\.?/gi,
+          /대표사진\s*삭제/gi,
+          /AI\s*활용\s*설정/gi,
+          /Previous\s*image\s*Next\s*image/gi
+        ].forEach(function (re) {
+          s = s.replace(re, "");
+        });
+        return s;
+      }
+
+      function isNoiseOnlyPasteLine(line) {
+        var t = String(line || "").replace(/\u00a0/g, " ").trim();
+        if (!t) return true;
+        if (/^사진\s*설명을\s*입력하세요/i.test(t)) return true;
+        if (/^대표사진\s*삭제$/i.test(t)) return true;
+        if (/^AI\s*활용\s*설정$/i.test(t)) return true;
+        if (/^Previous\s*image\s*Next\s*image$/i.test(t)) return true;
+        return false;
       }
 
       function escapeAttr(str) {
@@ -1188,7 +1228,7 @@
           var html = clip.getData("text/html");
           if (html && String(html).trim()) {
             e.preventDefault();
-            var cleaned = sanitizePostBodyHtml(html);
+            var cleaned = sanitizePostBodyHtml(stripExternalEditorPasteNoise(html));
             if (cleaned) {
               insertHtmlIntoEditor(cleaned);
             } else {
@@ -1197,6 +1237,9 @@
                 insertHtmlIntoEditor(
                   plain
                     .split(/\r\n|\r|\n/)
+                    .filter(function (line) {
+                      return !isNoiseOnlyPasteLine(line);
+                    })
                     .map(function (line) {
                       return escapeHtml(normalizePostText(line));
                     })

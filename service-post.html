@@ -97,7 +97,7 @@
     }
     .post-editor {
       width: 100%;
-      min-height: 6.5rem;
+      min-height: 3.5rem;
       border: 1px solid var(--line);
       background: #fff;
       border-radius: 2px;
@@ -2279,8 +2279,71 @@
         }
       }
 
+      /** 주소창·「링크 주소 복사」 등 한 줄 https URL — 빈 <a> HTML 경로를 타지 않고 DOM으로 바로 삽입 */
+      function getSingleLineHttpUrlFromClipboard(clip) {
+        if (!clip) return "";
+        var p = clip.getData("text/plain") || "";
+        p = String(p).replace(/\r\n/g, "\n").trim();
+        if (p.indexOf("\n") >= 0) return "";
+        if (p && /^https?:\/\/.+/i.test(p) && p.length < 4096) return p;
+        try {
+          var uris = clip.getData("text/uri-list");
+          if (!uris || !String(uris).trim()) return "";
+          var lines = String(uris).split(/\r?\n/);
+          for (var ui = 0; ui < lines.length; ui++) {
+            var line = lines[ui].trim();
+            if (!line || line.charAt(0) === "#") continue;
+            if (!/\s/.test(line) && /^https?:\/\//i.test(line) && line.length < 4096) return line;
+          }
+        } catch (eU) {}
+        return "";
+      }
+
+      function insertParagraphUrlLinkDom(rawUrl) {
+        var trimmed = String(rawUrl || "").trim();
+        var hrefRaw = trimmed.replace(/[.,;:!?)]+$/g, "");
+        var href = sanitizeLinkHref(hrefRaw) || sanitizeLinkHref(trimmed);
+        if (!href || !postBodyEditor) return;
+        postBodyEditor.focus();
+        var sel = window.getSelection();
+        if (!sel.rangeCount) {
+          var r0 = document.createRange();
+          r0.selectNodeContents(postBodyEditor);
+          r0.collapse(false);
+          sel.addRange(r0);
+        }
+        var range = sel.getRangeAt(0);
+        if (!postBodyEditor.contains(range.commonAncestorContainer)) {
+          range = document.createRange();
+          range.selectNodeContents(postBodyEditor);
+          range.collapse(false);
+          sel.removeAllRanges();
+          sel.addRange(range);
+        }
+        range.deleteContents();
+        var pEl = document.createElement("p");
+        var aEl = document.createElement("a");
+        aEl.href = href;
+        aEl.target = "_blank";
+        aEl.rel = "noopener noreferrer";
+        aEl.textContent = trimmed;
+        pEl.appendChild(aEl);
+        range.insertNode(pEl);
+        range.setStartAfter(pEl);
+        range.collapse(true);
+        sel.removeAllRanges();
+        sel.addRange(range);
+        saveCurrentEditorRange();
+        normalizeEditorImages(postBodyEditor);
+        setTimeout(function () {
+          tidyPostEditorDom(postBodyEditor);
+        }, 0);
+      }
+
       if (postBodyEditor) {
-        postBodyEditor.addEventListener("paste", function (e) {
+        postBodyEditor.addEventListener(
+          "paste",
+          function (e) {
           var clip = e.clipboardData;
           if (!clip) return;
 
@@ -2292,6 +2355,14 @@
                 await insertInlineImageFile(files[i]);
               }
             })();
+            return;
+          }
+
+          var soloUrl = getSingleLineHttpUrlFromClipboard(clip);
+          if (soloUrl) {
+            e.preventDefault();
+            e.stopPropagation();
+            insertParagraphUrlLinkDom(soloUrl);
             return;
           }
 
@@ -2353,7 +2424,9 @@
             void tryReadClipboardImageThenSync();
             return;
           }
-        });
+        },
+        true
+        );
       }
 
       thumbList.addEventListener("click", function (e) {

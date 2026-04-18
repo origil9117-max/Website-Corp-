@@ -943,15 +943,91 @@
       box-shadow: 0 0 0 3px rgba(93, 74, 114, 0.14), 0 14px 28px rgba(24, 32, 51, 0.2);
     }
 
+    /* 헤더가 낮아 단일 그라데이션은 잘 안 보임 → 상단 광택 레이어 + 대비 큰 바탕 그라데이션 병합 */
     .service-card h3 {
       font-family: "Noto Serif KR", serif;
       font-size: 0.95rem;
       font-weight: 700;
-      background: linear-gradient(180deg, #5f4b76 0%, #3f314f 100%);
-      color: #fff;
+      position: relative;
+      color: #faf9fc;
       padding: 0;
       margin: 0;
       letter-spacing: -0.02em;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+      background-color: #3a3148;
+      background-image: linear-gradient(
+          175deg,
+          rgba(255, 250, 255, 0.34) 0%,
+          rgba(255, 255, 255, 0.1) 22%,
+          transparent 52%
+        ),
+        linear-gradient(118deg, #2d243c 0%, #6958cc 36%, #4b3d62 55%, #1f1728 100%);
+    }
+
+    .service-card[data-service="nonprofit"] h3 {
+      background-color: #3f2f50;
+      background-image: linear-gradient(
+          175deg,
+          rgba(255, 230, 255, 0.4) 0%,
+          rgba(255, 255, 255, 0.12) 26%,
+          transparent 55%
+        ),
+        linear-gradient(118deg, #281c38 0%, #7b5fa8 34%, #4e3e64 56%, #1a1224 100%);
+    }
+
+    .service-card[data-service="immigration"] h3 {
+      background-color: #244060;
+      background-image: linear-gradient(
+          175deg,
+          rgba(200, 230, 255, 0.45) 0%,
+          rgba(255, 255, 255, 0.08) 28%,
+          transparent 58%
+        ),
+        linear-gradient(122deg, #0f2840 0%, #3d7ab8 38%, #255a88 58%, #0c2038 100%);
+    }
+
+    .service-card[data-service="investment"] h3 {
+      background-color: #3a3428;
+      background-image: linear-gradient(
+          175deg,
+          rgba(255, 235, 210, 0.35) 0%,
+          rgba(255, 255, 255, 0.1) 26%,
+          transparent 55%
+        ),
+        linear-gradient(120deg, #1e1a16 0%, #6a5a48 40%, #454038 62%, #141210 100%);
+    }
+
+    .service-card[data-service="patriot"] h3 {
+      background-color: #4a2832;
+      background-image: linear-gradient(
+          175deg,
+          rgba(255, 210, 210, 0.32) 0%,
+          rgba(255, 255, 255, 0.08) 28%,
+          transparent 56%
+        ),
+        linear-gradient(118deg, #2c1820 0%, #a05058 36%, #683844 56%, #241018 100%);
+    }
+
+    .service-card[data-service="permit"] h3 {
+      background-color: #235048;
+      background-image: linear-gradient(
+          175deg,
+          rgba(200, 255, 245, 0.38) 0%,
+          rgba(255, 255, 255, 0.1) 27%,
+          transparent 56%
+        ),
+        linear-gradient(122deg, #123230 0%, #3da090 40%, #2a6860 58%, #0e2824 100%);
+    }
+
+    .service-card[data-service="appeal"] h3 {
+      background-color: #342e48;
+      background-image: linear-gradient(
+          175deg,
+          rgba(230, 220, 255, 0.4) 0%,
+          rgba(255, 255, 255, 0.1) 26%,
+          transparent 55%
+        ),
+        linear-gradient(118deg, #221c32 0%, #6c5c9c 36%, #483c68 56%, #161020 100%);
     }
 
     .service-card h3 a.service-card-title {
@@ -968,8 +1044,82 @@
       outline: none;
     }
 
-    .service-card.selected h3 {
-      background: linear-gradient(180deg, #75618c 0%, #4c3b62 100%);
+    .service-card.selected[data-service="nonprofit"] h3 {
+      background-color: #4a3860;
+      background-image: linear-gradient(
+          175deg,
+          rgba(255, 240, 255, 0.5) 0%,
+          rgba(255, 255, 255, 0.18) 24%,
+          transparent 52%
+        ),
+        linear-gradient(118deg, #321c48 0%, #8c72c4 34%, #5c4a78 54%, #241a32 100%);
+    }
+
+    .service-card.selected[data-service="immigration"] h3 {
+      background-color: #2e5080;
+      background-image: linear-gradient(
+          175deg,
+          rgba(210, 240, 255, 0.5) 0%,
+          rgba(255, 255, 255, 0.15) 26%,
+          transparent 54%
+        ),
+        linear-gradient(122deg, #143550 0%, #4a8ec8 38%, #2e70a8 56%, #102840 100%);
+    }
+
+    .service-card.selected[data-service="investment"] h3 {
+      background-color: #484038;
+      background-image: linear-gradient(
+          175deg,
+          rgba(255, 240, 220, 0.42) 0%,
+          rgba(255, 255, 255, 0.14) 26%,
+          transparent 54%
+        ),
+        linear-gradient(120deg, #282420 0%, #7c6c58 40%, #504840 60%, #1c1a16 100%);
+    }
+
+    .service-card.selected[data-service="patriot"] h3 {
+      background-color: #583038;
+      background-image: linear-gradient(
+          175deg,
+          rgba(255, 220, 220, 0.42) 0%,
+          rgba(255, 255, 255, 0.12) 28%,
+          transparent 54%
+        ),
+        linear-gradient(118deg, #381824 0%, #b86870 36%, #784850 56%, #301820 100%);
+    }
+
+    .service-card.selected[data-service="permit"] h3 {
+      background-color: #2c6858;
+      background-image: linear-gradient(
+          175deg,
+          rgba(210, 255, 245, 0.45) 0%,
+          rgba(255, 255, 255, 0.14) 27%,
+          transparent 54%
+        ),
+        linear-gradient(122deg, #184038 0%, #48b8a0 40%, #348878 58%, #123830 100%);
+    }
+
+    .service-card.selected[data-service="appeal"] h3 {
+      background-color: #40385c;
+      background-image: linear-gradient(
+          175deg,
+          rgba(235, 225, 255, 0.48) 0%,
+          rgba(255, 255, 255, 0.15) 26%,
+          transparent 52%
+        ),
+        linear-gradient(118deg, #2a2440 0%, #7c6cb0 36%, #584878 54%, #1c1830 100%);
+    }
+
+    /* data-service 없을 때 선택 강조 */
+    .service-card.selected:not([data-service]) h3 {
+      background-color: #4a4060;
+      background-image: linear-gradient(
+          175deg,
+          rgba(255, 245, 255, 0.42) 0%,
+          rgba(255, 255, 255, 0.14) 26%,
+          transparent 54%
+        ),
+        linear-gradient(118deg, #322848 0%, #7868a0 38%, #50456a 56%, #201828 100%);
     }
 
     .service-card ul {

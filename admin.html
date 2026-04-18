@@ -912,7 +912,7 @@
         if (!file) return false;
         if (file.type && /^image\//i.test(file.type)) return true;
         var n = (file.name || "").toLowerCase();
-        return /\.(png|jpe?g|gif|webp|bmp)$/i.test(n);
+        return /\.(png|jpe?g|gif|webp|bmp|avif|heic|jfif|tiff?)$/i.test(n);
       }
 
       async function insertNoticeInlineImageFile(file) {
@@ -1240,9 +1240,14 @@
         if (items && items.length) {
           for (var i = 0; i < items.length; i++) {
             var it = items[i];
-            if (it.kind === "file" && typeof it.getAsFile === "function") {
-              add(it.getAsFile());
-            }
+            try {
+              if (typeof it.getAsFile !== "function") continue;
+              if (it.kind === "file") {
+                add(it.getAsFile());
+              } else if (/^image\//i.test(String(it.type || ""))) {
+                add(it.getAsFile());
+              }
+            } catch (ex) {}
           }
         }
         if (clip.files && clip.files.length) {
@@ -1492,13 +1497,55 @@
           var clip = e.clipboardData;
           if (!clip) return;
           var files = collectClipboardImageFiles(clip);
-          if (!files.length) return;
-          e.preventDefault();
-          void (async function () {
-            for (var i = 0; i < files.length; i++) {
-              await insertNoticeInlineImageFile(files[i]);
-            }
-          })();
+          if (files.length) {
+            e.preventDefault();
+            void (async function () {
+              for (var i = 0; i < files.length; i++) {
+                await insertNoticeInlineImageFile(files[i]);
+              }
+            })();
+            return;
+          }
+          var hasText =
+            String(clip.getData("text/plain") || "")
+              .replace(/\uFEFF/g, "")
+              .trim() ||
+            String(clip.getData("text/html") || "").trim();
+          if (hasText) return;
+          if (navigator.clipboard && navigator.clipboard.read) {
+            e.preventDefault();
+            void navigator.clipboard
+              .read()
+              .then(function (items) {
+                var p = null;
+                for (var i = 0; i < items.length; i++) {
+                  var types = items[i].types || [];
+                  for (var j = 0; j < types.length; j++) {
+                    if (/^image\//i.test(types[j])) {
+                      p = items[i].getType(types[j]);
+                      break;
+                    }
+                  }
+                  if (p) break;
+                }
+                if (!p) return Promise.reject(new Error("no-clipboard-image"));
+                return p;
+              })
+              .then(function (blob) {
+                if (!blob || blob.size < 20) return Promise.reject(new Error("empty-blob"));
+                var ct = blob.type && /^image\//i.test(blob.type) ? blob.type : "image/png";
+                var file = new File([blob], "clipboard.png", { type: ct });
+                return insertNoticeInlineImageFile(file);
+              })
+              .catch(function () {
+                setStatus(
+                  formStatus,
+                  "err",
+                  "클립보드 이미지를 읽지 못했습니다. 한 번 더 붙여 넣거나 파일로 선택해 주세요."
+                );
+              });
+            return;
+          }
         });
       }
 

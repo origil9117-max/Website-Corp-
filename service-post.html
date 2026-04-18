@@ -1231,7 +1231,27 @@
         if (!file) return false;
         if (file.type && /^image\//i.test(file.type)) return true;
         var n = (file.name || "").toLowerCase();
-        return /\.(png|jpe?g|gif|webp|bmp)$/i.test(n);
+        return /\.(png|jpe?g|gif|webp|bmp|avif|heic|jfif|tiff?)$/i.test(n);
+      }
+
+      /** 클립보드에 그림 데이터 종류가 있으면 '한 줄 주소' 처리로 덮어쓰지 않음(이미지 복사 시 uri-list만 오는 경우) */
+      function clipboardHasImageMimeItem(clip) {
+        if (!clip || !clip.items || !clip.items.length) return false;
+        for (var i = 0; i < clip.items.length; i++) {
+          if (/^image\//i.test(String(clip.items[i].type || ""))) return true;
+        }
+        return false;
+      }
+
+      /** 주소 한 줄만 왔을 때 링크 대신 그림으로 붙일 수 있는 http(s) URL */
+      function looksLikeDirectImageHttpUrl(u) {
+        if (!u || !/^https?:\/\//i.test(String(u).trim())) return false;
+        try {
+          var p = new URL(String(u).trim()).pathname || "";
+          return /\.(png|jpe?g|gif|webp|bmp|avif|svg|heic|jfif|tiff?)(\s*)$/i.test(p);
+        } catch (err) {
+          return /\.(png|jpe?g|gif|webp|bmp|avif|svg|heic|jfif)(\?|#|$)/i.test(String(u));
+        }
       }
 
       async function insertInlineImageFile(file) {
@@ -1954,23 +1974,13 @@
         if (!files || !files.length) return;
         for (var i = 0; i < files.length; i++) {
           var file = files[i];
-          if (!file || !/^image\//i.test(file.type)) continue;
-          if (pendingImages.length >= MAX_IMAGES) {
-            formStatus.textContent = "이미지는 최대 " + MAX_IMAGES + "장까지 첨부할 수 있습니다.";
+          if (!file || !isLikelyImageFile(file)) continue;
+          if (postBodyEditor && postBodyEditor.querySelectorAll("img").length >= MAX_IMAGES) {
+            formStatus.textContent = "본문 그림은 최대 " + MAX_IMAGES + "장까지 넣을 수 있습니다.";
             break;
           }
-          if (file.size > MAX_IMAGE_BYTES) {
-            formStatus.textContent = "이미지 '" + file.name + "' 용량이 1MB를 초과합니다.";
-            continue;
-          }
-          try {
-            var dataUrl = await fileToDataURL(file);
-            pendingImages.push({ name: file.name || "image", data: dataUrl });
-          } catch (e) {
-            formStatus.textContent = "이미지 읽기에 실패했습니다.";
-          }
+          await insertInlineImageFile(file);
         }
-        renderThumbs();
       }
 
       function appendImageUrl(url) {
@@ -2068,10 +2078,12 @@
         formStatus.textContent = "";
       });
 
-      postImagesInput.addEventListener("change", function () {
-        appendImageFiles(postImagesInput.files);
-        postImagesInput.value = "";
-      });
+      if (postImagesInput) {
+        postImagesInput.addEventListener("change", function () {
+          appendImageFiles(postImagesInput.files);
+          postImagesInput.value = "";
+        });
+      }
 
       function collectClipboardImageFiles(clip) {
         var files = [];
@@ -2088,9 +2100,14 @@
         if (items && items.length) {
           for (var i = 0; i < items.length; i++) {
             var it = items[i];
-            if (it.kind === "file" && typeof it.getAsFile === "function") {
-              add(it.getAsFile());
-            }
+            try {
+              if (typeof it.getAsFile !== "function") continue;
+              if (it.kind === "file") {
+                add(it.getAsFile());
+              } else if (/^image\//i.test(String(it.type || ""))) {
+                add(it.getAsFile());
+              }
+            } catch (ex) {}
           }
         }
         if (clip.files && clip.files.length) {
@@ -2279,31 +2296,64 @@
         }
       }
 
+      /** Chrome 등: text/plain 없이 HTML에만 빈 <a href="https://..."></a> 가 오는 경우 */
+      function getSingleHttpUrlFromHtmlOnlyClipboard(html) {
+        if (!html || !String(html).trim()) return "";
+        try {
+          var d = new DOMParser().parseFromString(String(html), "text/html");
+          var links = d.querySelectorAll('a[href*="http"]');
+          if (links.length !== 1) return "";
+          var u = (links[0].getAttribute("href") || "").trim();
+          if (!/^https?:\/\//i.test(u) || u.length > 4096) return "";
+          var vis = (links[0].textContent || "").replace(/\u00a0/g, " ").replace(/\u200b/g, "").trim();
+          if (vis && vis !== u && !/^https?:\/\//i.test(vis)) return "";
+          return u;
+        } catch (eH) {
+          return "";
+        }
+      }
+
       /** 주소창·「링크 주소 복사」 등 한 줄 https URL — 빈 <a> HTML 경로를 타지 않고 DOM으로 바로 삽입 */
       function getSingleLineHttpUrlFromClipboard(clip) {
         if (!clip) return "";
-        var p = clip.getData("text/plain") || "";
-        p = String(p).replace(/\r\n/g, "\n").trim();
-        if (p.indexOf("\n") >= 0) return "";
-        if (p && /^https?:\/\/.+/i.test(p) && p.length < 4096) return p;
+        function oneLineUrlFromText(t) {
+          if (t == null) return "";
+          var s = String(t)
+            .replace(/^\uFEFF/, "")
+            .replace(/\r\n/g, "\n")
+            .replace(/\r/g, "\n");
+          var lines = s
+            .split("\n")
+            .map(function (x) {
+              return x.trim();
+            })
+            .filter(Boolean);
+          if (lines.length !== 1) return "";
+          var u = lines[0];
+          if (/^https?:\/\/.+/i.test(u) && u.length < 4096) return u;
+          return "";
+        }
+        var fromPlain = oneLineUrlFromText(clip.getData("text/plain"));
+        if (fromPlain) return fromPlain;
         try {
           var uris = clip.getData("text/uri-list");
-          if (!uris || !String(uris).trim()) return "";
-          var lines = String(uris).split(/\r?\n/);
-          for (var ui = 0; ui < lines.length; ui++) {
-            var line = lines[ui].trim();
-            if (!line || line.charAt(0) === "#") continue;
-            if (!/\s/.test(line) && /^https?:\/\//i.test(line) && line.length < 4096) return line;
+          if (uris && String(uris).trim()) {
+            var lines = String(uris).split(/\r?\n/);
+            for (var ui = 0; ui < lines.length; ui++) {
+              var line = lines[ui].trim();
+              if (!line || line.charAt(0) === "#") continue;
+              if (!/\s/.test(line) && /^https?:\/\//i.test(line) && line.length < 4096) return line;
+            }
           }
         } catch (eU) {}
-        return "";
+        return getSingleHttpUrlFromHtmlOnlyClipboard(clip.getData("text/html"));
       }
 
       function insertParagraphUrlLinkDom(rawUrl) {
         var trimmed = String(rawUrl || "").trim();
         var hrefRaw = trimmed.replace(/[.,;:!?)]+$/g, "");
         var href = sanitizeLinkHref(hrefRaw) || sanitizeLinkHref(trimmed);
-        if (!href || !postBodyEditor) return;
+        if (!postBodyEditor) return;
         postBodyEditor.focus();
         var sel = window.getSelection();
         if (!sel.rangeCount) {
@@ -2313,7 +2363,12 @@
           sel.addRange(r0);
         }
         var range = sel.getRangeAt(0);
-        if (!postBodyEditor.contains(range.commonAncestorContainer)) {
+        var anc = range.commonAncestorContainer;
+        var walk = anc;
+        while (walk && walk !== postBodyEditor) {
+          walk = walk.parentNode;
+        }
+        if (walk !== postBodyEditor) {
           range = document.createRange();
           range.selectNodeContents(postBodyEditor);
           range.collapse(false);
@@ -2321,13 +2376,18 @@
           sel.addRange(range);
         }
         range.deleteContents();
+
         var pEl = document.createElement("p");
-        var aEl = document.createElement("a");
-        aEl.href = href;
-        aEl.target = "_blank";
-        aEl.rel = "noopener noreferrer";
-        aEl.textContent = trimmed;
-        pEl.appendChild(aEl);
+        if (href) {
+          var aEl = document.createElement("a");
+          aEl.href = href;
+          aEl.target = "_blank";
+          aEl.rel = "noopener noreferrer";
+          aEl.textContent = trimmed;
+          pEl.appendChild(aEl);
+        } else {
+          pEl.textContent = trimmed;
+        }
         range.insertNode(pEl);
         range.setStartAfter(pEl);
         range.collapse(true);
@@ -2358,11 +2418,24 @@
             return;
           }
 
-          var soloUrl = getSingleLineHttpUrlFromClipboard(clip);
+          var soloUrl = clipboardHasImageMimeItem(clip)
+            ? ""
+            : getSingleLineHttpUrlFromClipboard(clip);
           if (soloUrl) {
             e.preventDefault();
             e.stopPropagation();
-            insertParagraphUrlLinkDom(soloUrl);
+            e.stopImmediatePropagation();
+            if (looksLikeDirectImageHttpUrl(soloUrl)) {
+              insertHtmlIntoEditor(
+                sanitizePostBodyHtml(
+                  '<p><img src="' +
+                    escapeAttr(soloUrl) +
+                    '" alt="" loading="lazy" decoding="async" style="max-width:100%;height:auto;display:block;margin:0.35em auto;float:none;" /></p>'
+                )
+              );
+            } else {
+              insertParagraphUrlLinkDom(soloUrl);
+            }
             return;
           }
 
@@ -2421,7 +2494,12 @@
 
           if (navigator.clipboard && navigator.clipboard.read) {
             e.preventDefault();
-            void tryReadClipboardImageThenSync();
+            void tryReadClipboardImageThenSync().then(function (ok) {
+              if (!ok) {
+                formStatus.textContent =
+                  "클립보드 이미지를 읽지 못했습니다. 한 번 더 붙여 넣거나 [파일 선택]으로 넣어 주세요.";
+              }
+            });
             return;
           }
         },

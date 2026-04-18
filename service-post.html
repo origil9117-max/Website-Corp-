@@ -202,6 +202,14 @@
     }
     .body a { color: #2b6cb0; text-decoration: underline; }
     .body a:hover { color: #1a4f8a; }
+    .body img,
+    .post-editor img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+      margin: 0.35em 0;
+      vertical-align: middle;
+    }
     .post-images {
       margin-top: 0.6rem;
       display: grid;
@@ -301,7 +309,7 @@
         </div>
         <div style="height:0.55rem"></div>
         <input id="post-images-input" type="file" accept="image/*" multiple />
-        <p class="file-help">이미지 첨부 또는 붙여넣기(Ctrl+V) 가능 · 최대 5장 · 각 1MB 이하</p>
+        <p class="file-help">파일 첨부·클립보드 이미지 붙여넣기 시 본문에 그림으로 삽입됩니다. 외부에서 복사한 글·표는 HTML로 붙여넣기 됩니다. 첨부는 최대 5장·각 1MB 이하</p>
         <div id="thumb-list" class="thumb-list"></div>
         <div class="row" style="margin-top:0.65rem;">
           <button class="btn btn-primary" type="submit">저장</button>
@@ -418,6 +426,31 @@
           .replace(/[ \t]{2,}/g, " ");
       }
 
+      function escapeAttr(str) {
+        return String(str || "")
+          .replace(/&/g, "&amp;")
+          .replace(/"/g, "&quot;")
+          .replace(/</g, "&lt;");
+      }
+
+      function isSafeImgSrc(src) {
+        var s = String(src || "").trim();
+        if (/^data:image\/(png|jpe?g|gif|webp|bmp);base64,/i.test(s)) {
+          return s.length <= 2500000;
+        }
+        if (/^https:\/\//i.test(s)) {
+          try {
+            var u = new URL(s);
+            if (u.protocol !== "https:") return false;
+            var path = u.pathname + u.search;
+            return /\.(png|jpe?g|gif|webp|bmp|svg)(\?|#|$)/i.test(path);
+          } catch (e) {
+            return false;
+          }
+        }
+        return false;
+      }
+
       function sanitizeInlineStyle(styleText) {
         var src = String(styleText || "").toLowerCase();
         var out = [];
@@ -439,7 +472,7 @@
       function sanitizePostBodyHtml(rawHtml) {
         var allowed = {
           B: true, STRONG: true, I: true, EM: true, U: true, BR: true,
-          P: true, DIV: true, UL: true, OL: true, LI: true, SPAN: true
+          P: true, DIV: true, UL: true, OL: true, LI: true, SPAN: true, IMG: true
         };
         var doc = new DOMParser().parseFromString(String(rawHtml || ""), "text/html");
 
@@ -448,6 +481,18 @@
           if (node.nodeType !== 1) return "";
           var tag = String(node.tagName || "").toUpperCase();
           var children = Array.prototype.slice.call(node.childNodes).map(clean).join("");
+          if (tag === "IMG") {
+            var src = node.getAttribute("src");
+            if (!isSafeImgSrc(src)) return "";
+            var alt = escapeHtml(normalizePostText(node.getAttribute("alt") || ""));
+            return (
+              '<img src="' +
+              escapeAttr(src) +
+              '" alt="' +
+              alt +
+              '" style="max-width:100%;height:auto;display:block;margin:0.35em 0;" />'
+            );
+          }
           if (!allowed[tag]) return children;
           if (tag === "BR") return "<br>";
           var attrs = "";
@@ -459,6 +504,56 @@
         }
 
         return Array.prototype.slice.call(doc.body.childNodes).map(clean).join("").trim();
+      }
+
+      function insertHtmlIntoEditor(htmlStr) {
+        if (!postBodyEditor || !String(htmlStr || "").trim()) return;
+        postBodyEditor.focus();
+        var sel = window.getSelection();
+        if (!sel.rangeCount) {
+          var r = document.createRange();
+          r.selectNodeContents(postBodyEditor);
+          r.collapse(false);
+          sel.addRange(r);
+        }
+        var range = sel.getRangeAt(0);
+        range.deleteContents();
+        var wrapper = document.createElement("div");
+        wrapper.innerHTML = htmlStr;
+        var frag = document.createDocumentFragment();
+        var last = null;
+        while (wrapper.firstChild) {
+          last = wrapper.firstChild;
+          frag.appendChild(last);
+        }
+        range.insertNode(frag);
+        if (last) {
+          range.setStartAfter(last);
+          range.collapse(true);
+          sel.removeAllRanges();
+          sel.addRange(range);
+        }
+        saveCurrentEditorRange();
+      }
+
+      async function insertInlineImageFile(file) {
+        if (!file || !/^image\//i.test(file.type)) return;
+        if (file.size > MAX_IMAGE_BYTES) {
+          formStatus.textContent =
+            "붙여넣은 이미지 용량이 1MB를 초과합니다. (" + (file.name || "이미지") + ")";
+          return;
+        }
+        try {
+          var dataUrl = await fileToDataURL(file);
+          if (!isSafeImgSrc(dataUrl)) return;
+          var html =
+            '<img src="' +
+            escapeAttr(dataUrl) +
+            '" alt="" style="max-width:100%;height:auto;display:block;margin:0.35em 0;" />';
+          insertHtmlIntoEditor(html);
+        } catch (err) {
+          formStatus.textContent = "이미지 읽기에 실패했습니다.";
+        }
       }
 
       function editorPlainText() {
@@ -674,12 +769,6 @@
         var url = String(text || "").trim();
         if (!/^https?:\/\//i.test(url)) return "";
         return url;
-      }
-
-      function parseImageUrlsFromHtml(html) {
-        var doc = new DOMParser().parseFromString(html || "", "text/html");
-        var nodes = Array.prototype.slice.call(doc.querySelectorAll("img"));
-        return nodes.map(function (img) { return normalizeUrl(img.getAttribute("src")); }).filter(Boolean);
       }
 
       function loadLocalPosts() {
@@ -1057,23 +1146,49 @@
           var files = collectClipboardImageFiles(clip);
           if (files.length) {
             e.preventDefault();
-            appendImageFiles(files);
+            void (async function () {
+              for (var i = 0; i < files.length; i++) {
+                await insertInlineImageFile(files[i]);
+              }
+            })();
             return;
           }
 
           var html = clip.getData("text/html");
-          var urlsFromHtml = parseImageUrlsFromHtml(html);
-          if (urlsFromHtml.length) {
+          if (html && String(html).trim()) {
             e.preventDefault();
-            urlsFromHtml.forEach(appendImageUrl);
+            var cleaned = sanitizePostBodyHtml(html);
+            if (cleaned) {
+              insertHtmlIntoEditor(cleaned);
+            } else {
+              var plain = clip.getData("text/plain") || "";
+              if (plain) {
+                insertHtmlIntoEditor(
+                  plain
+                    .split(/\r\n|\r|\n/)
+                    .map(function (line) {
+                      return escapeHtml(normalizePostText(line));
+                    })
+                    .join("<br>")
+                );
+              }
+            }
             return;
           }
 
-          var text = clip.getData("text/plain");
-          var maybeUrl = normalizeUrl((text || "").trim());
-          if (maybeUrl && /\.(png|jpe?g|gif|webp|bmp|svg)(\?.*)?$/i.test(maybeUrl)) {
+          var text = (clip.getData("text/plain") || "").trim();
+          var maybeUrl = normalizeUrl(text);
+          if (
+            maybeUrl &&
+            /^https:\/\//i.test(maybeUrl) &&
+            /\.(png|jpe?g|gif|webp|bmp|svg)(\?|#|$)/i.test(maybeUrl) &&
+            isSafeImgSrc(maybeUrl)
+          ) {
             e.preventDefault();
-            appendImageUrl(maybeUrl);
+            insertHtmlIntoEditor(
+              sanitizePostBodyHtml('<img src="' + maybeUrl.replace(/"/g, "") + '" alt="">')
+            );
+            return;
           }
         });
       }

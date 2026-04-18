@@ -10,7 +10,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700&family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="platform-pages.css" />
 </head>
-<body>
+<body data-platform-slug="platform-hub">
   <header class="topbar">
     <div class="topbar-inner">
       <a href="index.html" class="brand">
@@ -40,13 +40,47 @@
       <span>공지·자료실 연동</span>
     </nav>
 
+    <div id="platform-admin-root" class="platform-admin-mount">
+      <section class="platform-panel platform-auth" aria-label="관리자 인증">
+        <h2>관리자 인증</h2>
+        <p class="platform-hint" style="margin-top: 0">관리자로 로그인한 경우에만 아래 안내 본문을 편집·저장할 수 있습니다. 자료실·공지와 동일한 방식입니다.</p>
+        <details class="platform-auth-details">
+          <summary>비상 모드(로컬 저장) 안내 — 펼치기</summary>
+          <div class="platform-auth-details-body">
+            <p>Supabase에 연결되지 않거나 <code>platform_pages</code> 테이블이 없을 때는 브라우저에만 저장됩니다. 다른 PC와 공유하려면 SQL로 테이블을 만든 뒤 클라우드에 저장하세요.</p>
+          </div>
+        </details>
+        <p id="platform-auth-mode" class="platform-auth-mode" data-mode="view" role="status">현재: 일반 보기</p>
+        <div class="platform-auth-row" id="platform-auth-login-row">
+          <input id="platform-admin-pass" type="password" autocomplete="current-password" placeholder="관리자 비밀번호" />
+          <button type="button" class="btn btn-ghost" id="platform-btn-login">관리자 모드 켜기</button>
+          <button type="button" class="btn btn-primary" id="platform-btn-logout">관리자 모드 끄기</button>
+          <button type="button" class="btn btn-ghost" id="platform-btn-test">연결 테스트</button>
+        </div>
+        <p id="platform-auth-status" class="platform-status" role="status"></p>
+      </section>
+      <section class="platform-panel platform-editor" id="platform-editor-panel" style="display: none" aria-label="본문 편집">
+        <h2>안내 본문 편집 (관리자 전용)</h2>
+        <label for="platform-edit-lead">요약 문단 (리드, 일반 텍스트)</label>
+        <textarea id="platform-edit-lead" rows="3"></textarea>
+        <label for="platform-edit-body">본문 (HTML 가능)</label>
+        <textarea id="platform-edit-body" rows="14" placeholder="예: &lt;p&gt;문단&lt;/p&gt;"></textarea>
+        <p class="platform-hint">저장 시 방문자에게 바로 보입니다. 잘못된 HTML은 레이아웃이 깨질 수 있으니 확인 후 저장하세요.</p>
+        <div class="cta-row">
+          <button type="button" class="btn btn-primary" id="platform-btn-save">저장</button>
+          <button type="button" class="btn btn-ghost" id="platform-btn-revert">이 페이지 기본 문구로 되돌리기</button>
+        </div>
+        <p id="platform-form-status" class="platform-status" role="status"></p>
+      </section>
+    </div>
+
     <article>
       <p class="section-label">LINK</p>
       <h1>공지·자료실 연동</h1>
-      <p class="lead">
+      <p class="lead" id="platform-lead">
         공지사항과 자료실, 업무별 안내 게시와 연결해 최신 정보를 한곳에서 찾을 수 있게 합니다.
       </p>
-      <div class="platform-sub-body">
+      <div class="platform-sub-body" id="platform-sub-body">
         <p>
           <a href="notice.html">공지사항</a>, <a href="resources.html">자료실</a>, 메인의 <strong>업무별 안내·게시</strong>를 한데 묶어 최신 정보를 찾기 쉽게 합니다.
           휴무·절차 변경 등 중요 알림은 공지를 우선 확인해 주세요.
@@ -84,5 +118,12 @@
 
     <p class="platform-back"><a href="platform.html">← 지능형 행정 플랫폼 목차로 돌아가기</a></p>
   </div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+  <script>
+    if (typeof window.SUPABASE_URL === "undefined") window.SUPABASE_URL = "";
+    if (typeof window.SUPABASE_ANON_KEY === "undefined") window.SUPABASE_ANON_KEY = "";
+  </script>
+  <script src="platform-admin.js" defer></script>
 </body>
 </html>

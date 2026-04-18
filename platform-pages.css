@@ -9,6 +9,8 @@
   --maroon-dark: #5f466f;
   --gold: #b89478;
   --page-pad: clamp(0.75rem, 4vw, 2rem);
+  --platform-ok: #0d7a3f;
+  --platform-err: #b02135;
 }
 
 * {
@@ -328,4 +330,158 @@ h1 {
   .platform-wip-pulse {
     animation: none;
   }
+}
+
+/* —— 관리자 인증·편집 (platform-admin.js) —— */
+.platform-admin-mount {
+  margin-bottom: 0.85rem;
+}
+
+.platform-panel {
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: #fff;
+  padding: 0.95rem 1rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 1px 0 rgba(36, 48, 64, 0.04);
+}
+
+.platform-panel h2 {
+  font-size: 0.95rem;
+  margin: 0 0 0.55rem;
+  font-weight: 800;
+  color: var(--maroon-dark);
+}
+
+.platform-panel label {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--muted);
+  margin-bottom: 0.35rem;
+  margin-top: 0.65rem;
+}
+
+.platform-panel label:first-of-type {
+  margin-top: 0.35rem;
+}
+
+.platform-panel textarea {
+  width: 100%;
+  font: inherit;
+  padding: 0.55rem 0.6rem;
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  resize: vertical;
+  min-height: 4rem;
+}
+
+.platform-hint {
+  font-size: 0.78rem;
+  color: var(--muted);
+  margin: 0.35rem 0 0.65rem;
+  line-height: 1.5;
+}
+
+.platform-hint code {
+  font-size: 0.85em;
+  background: rgba(36, 48, 64, 0.06);
+  padding: 0.05rem 0.25rem;
+  border-radius: 2px;
+}
+
+.platform-auth-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  align-items: center;
+  margin-top: 0.45rem;
+}
+
+.platform-auth-row input[type="password"] {
+  flex: 1 1 160px;
+  min-width: 140px;
+  font: inherit;
+  padding: 0.5rem 0.55rem;
+  border: 1px solid var(--line);
+  border-radius: 2px;
+}
+
+.platform-auth-details {
+  margin: 0.45rem 0 0.65rem;
+  border: 1px dashed var(--line);
+  border-radius: 4px;
+  padding: 0.45rem 0.65rem 0.55rem;
+  background: rgba(250, 248, 244, 0.95);
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+
+.platform-auth-details summary {
+  cursor: pointer;
+  font-weight: 700;
+  color: var(--muted);
+  list-style: none;
+}
+
+.platform-auth-details summary::-webkit-details-marker {
+  display: none;
+}
+
+.platform-auth-details-body {
+  margin-top: 0.45rem;
+  padding-top: 0.4rem;
+  border-top: 1px dashed rgba(20, 24, 32, 0.1);
+  line-height: 1.5;
+}
+
+.platform-auth-details-body p {
+  margin: 0.35rem 0 0;
+}
+
+.platform-auth-mode {
+  display: inline-block;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin: 0.55rem 0 0.35rem;
+  padding: 0.28rem 0.55rem;
+  border-radius: 3px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.85);
+}
+
+.platform-auth-mode[data-mode="view"] {
+  color: var(--muted);
+  border-style: dashed;
+}
+
+.platform-auth-mode[data-mode="login"] {
+  color: var(--maroon-dark);
+  border-color: rgba(90, 53, 64, 0.35);
+  background: rgba(90, 53, 64, 0.06);
+}
+
+.platform-auth-mode[data-mode="admin"] {
+  color: var(--platform-ok);
+  border-color: rgba(13, 122, 63, 0.35);
+  background: rgba(13, 122, 63, 0.08);
+}
+
+.platform-status {
+  min-height: 1.2rem;
+  font-size: 0.83rem;
+  margin-top: 0.45rem;
+}
+
+.platform-status.ok {
+  color: var(--platform-ok);
+}
+
+.platform-status.err {
+  color: var(--platform-err);
+}
+
+body.platform-admin-on .platform-editor textarea {
+  border-color: rgba(124, 93, 147, 0.35);
 }

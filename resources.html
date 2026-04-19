@@ -294,6 +294,12 @@
       margin: 0.35rem 0 0;
     }
 
+    .auth-details.auth-local-details > .auth-details-body {
+      margin-top: 0;
+      padding-top: 0;
+      border-top: none;
+    }
+
     .attachment-notice {
       margin: 0 0 0.75rem;
       padding: 0.75rem 0.85rem;
@@ -461,9 +467,6 @@
     <header class="head">
       <p class="section-label">Resource Center</p>
       <h1 id="resources-title">자료실</h1>
-      <p class="helper" id="resources-helper">
-        등록된 자료를 확인할 수 있습니다. 첨부파일(5MB 이하)을 올리려면 아래 권장 절차대로 Supabase에 관리자 로그인 후 저장하세요.
-      </p>
       <div id="resources-upload-guide" class="notice-box" role="region" aria-label="5MB 이하 첨부 권장 절차" hidden>
         <strong>5MB 이하 파일 첨부 · 권장 절차</strong>
         <ol>
@@ -502,8 +505,7 @@
           <p class="meta" id="auth-supabase-hint" style="margin-top: 0.45rem"></p>
         </div>
 
-        <details class="auth-details auth-local-details" id="auth-local-details">
-          <summary>Supabase 연결 불가 시 · 로컬 비상 모드 (첨부 약 450KB)</summary>
+        <div class="auth-details auth-local-details" id="auth-local-details">
           <div class="auth-details-body">
             <p>
               브라우저 저장소에만 기록되는 임시 방식입니다. 큰 파일은 올릴 수 없습니다. 연결 설정·비상 암호는 프로젝트
@@ -514,7 +516,7 @@
               <button id="btn-login-local" type="button" class="btn btn-ghost">로컬 비상 모드 로그인</button>
             </div>
           </div>
-        </details>
+        </div>
       </div>
 
       <div id="auth-panel-admin" class="auth-panel-admin" style="display: none">
@@ -592,12 +594,7 @@
       var service = new URL(window.location.href).searchParams.get("service");
       if (service && serviceMap[service]) {
         var titleEl = document.getElementById("resources-title");
-        var helperEl = document.getElementById("resources-helper");
         if (titleEl) titleEl.textContent = serviceMap[service] + " · 자료실";
-        if (helperEl)
-          helperEl.textContent =
-            serviceMap[service] +
-            " 관련 자료를 확인할 수 있습니다. 첨부(5MB 이하)는 Supabase 관리자 로그인 후 저장하세요.";
       }
 
       var STORAGE_BUCKET = "resource-files";

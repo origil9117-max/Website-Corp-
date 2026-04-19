@@ -105,6 +105,13 @@
     .head {
       margin-bottom: 1rem;
     }
+    .head-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.65rem;
+      flex-wrap: wrap;
+    }
 
     .section-label {
       margin: 0 0 0.35rem;
@@ -468,7 +475,10 @@
 
   <main class="wrap">
     <header class="head">
-      <p class="section-label">Resource Center</p>
+      <div class="head-top">
+        <p class="section-label">Resource Center</p>
+        <button id="btn-auth-toggle" type="button" class="btn btn-ghost">관리자 모드</button>
+      </div>
       <h1 id="resources-title">자료실</h1>
       <div id="resources-upload-guide" class="notice-box" role="region" aria-label="5MB 이하 첨부 권장 절차" hidden>
         <strong>5MB 이하 파일 첨부 · 권장 절차</strong>
@@ -484,7 +494,7 @@
       </div>
     </header>
 
-    <section class="panel" aria-label="관리자 인증">
+    <section id="auth-section" class="panel" aria-label="관리자 인증" hidden>
       <h2>관리자 인증</h2>
       <p class="helper" style="margin-bottom: 0.45rem">
         자료 등록·수정·삭제는 로그인 후에만 가능합니다. <strong>첨부 최대 5MB</strong>는 <strong>일반 로그인(Supabase)</strong>을 이용하세요. 로컬 비상 모드는 첨부 약 450KB로 제한됩니다.
@@ -612,10 +622,12 @@
       var btnLoginLocal = document.getElementById("btn-login-local");
       var btnLogout = document.getElementById("btn-logout");
       var btnTestConn = document.getElementById("btn-test-conn");
+      var btnAuthToggle = document.getElementById("btn-auth-toggle");
       var authStatus = document.getElementById("auth-status");
       var authSupabaseHint = document.getElementById("auth-supabase-hint");
       var authPanelLoggedOut = document.getElementById("auth-panel-logged-out");
       var authPanelAdmin = document.getElementById("auth-panel-admin");
+      var authSection = document.getElementById("auth-section");
 
       var editor = document.getElementById("resource-editor");
       var form = document.getElementById("resource-form");
@@ -629,6 +641,7 @@
       var currentSession = null;
       var ADMIN_EMAIL = "lkc@daum.net";
       var localAdmin = false;
+      var authSectionOpen = false;
 
       function isAdmin() {
         return !!(localAdmin || (currentSession && currentSession.user));
@@ -946,6 +959,16 @@
             uploadGuide.setAttribute("hidden", "");
           }
         }
+
+        if (on) authSectionOpen = true;
+        if (authSection) {
+          if (authSectionOpen) authSection.removeAttribute("hidden");
+          else authSection.setAttribute("hidden", "");
+        }
+        if (btnAuthToggle) {
+          btnAuthToggle.textContent = authSectionOpen ? "관리자 모드 닫기" : "관리자 모드";
+          btnAuthToggle.setAttribute("aria-expanded", authSectionOpen ? "true" : "false");
+        }
       }
 
       if (!window.supabase || !window.SUPABASE_URL || !window.SUPABASE_ANON_KEY) {
@@ -957,6 +980,13 @@
       }
       updateAdminUi();
       await renderList();
+
+      if (btnAuthToggle) {
+        btnAuthToggle.addEventListener("click", function () {
+          authSectionOpen = !authSectionOpen;
+          updateAdminUi();
+        });
+      }
 
       btnLoginSupabase.addEventListener("click", async function () {
         if (!client) {

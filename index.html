@@ -394,23 +394,6 @@
       }
     }
 
-    .hero-aside-column {
-      display: flex;
-      flex-direction: column;
-      gap: 0.65rem;
-      width: 100%;
-      max-width: 380px;
-      margin: 0.75rem auto 0;
-      align-self: start;
-      box-sizing: border-box;
-    }
-
-    @media (min-width: 768px) {
-      .hero-aside-column {
-        margin: 0 0 0 auto;
-      }
-    }
-
     .hero-aside {
       display: flex;
       flex-direction: column;
@@ -419,7 +402,8 @@
       gap: 0.85rem;
       padding: 1rem 1.25rem;
       width: 100%;
-      margin: 0;
+      max-width: 380px;
+      margin: 0.75rem auto 0;
       background: linear-gradient(152deg, rgba(124, 93, 147, 0.14) 0%, rgba(188, 211, 232, 0.26) 100%);
       border: 1px solid rgba(124, 93, 147, 0.34);
       border-radius: 4px;
@@ -428,6 +412,7 @@
         inset 0 1px 0 rgba(255, 255, 255, 0.34),
         inset 0 0 0 1px rgba(255, 255, 255, 0.5);
       backdrop-filter: blur(14px);
+      align-self: start;
       box-sizing: border-box;
     }
 
@@ -435,31 +420,9 @@
       .hero-aside {
         align-items: flex-end;
         text-align: right;
+        margin: 0 0 0 auto;
         padding: 1.1rem 1.3rem;
       }
-    }
-
-    .hero-future-panel {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 5.25rem;
-      padding: 0.75rem 1rem;
-      border: 1px solid rgba(124, 93, 147, 0.38);
-      border-radius: 4px;
-      background: rgba(255, 255, 255, 0.42);
-      box-shadow:
-        0 8px 22px rgba(80, 90, 120, 0.1),
-        inset 0 0 0 1px rgba(255, 255, 255, 0.65);
-      box-sizing: border-box;
-    }
-
-    .hero-future-placeholder {
-      font-size: 0.72rem;
-      font-weight: 600;
-      letter-spacing: 0.06em;
-      color: rgba(59, 71, 96, 0.45);
-      user-select: none;
     }
 
     .hero-tagline {
@@ -1816,22 +1779,17 @@
             <a class="btn btn-ghost" href="platform.html">지능형 행정 플랫폼</a>
           </div>
         </div>
-        <div class="hero-aside-column">
-          <aside class="hero-aside" aria-label="업무 분야 바로가기">
-            <p class="hero-tagline">Administrative Agent Office</p>
-            <div class="hero-mini">
-              <a data-service="nonprofit" href="service-nonprofit.html" aria-label="비영리법인설립업무 게시 페이지로 이동">비영리법인</a>
-              <a data-service="immigration" href="service-immigration.html" aria-label="출입국민원업무 게시 페이지로 이동">출입국민원</a>
-              <a data-service="investment" href="service-investment.html" aria-label="기업투자·법인설립 게시 페이지로 이동">기업투자 · 법인</a>
-              <a data-service="patriot" href="service-patriot.html" aria-label="국가유공자보훈업무 게시 페이지로 이동">국가유공자보훈</a>
-              <a data-service="permit" href="service-permit.html" aria-label="인허가 민원 업무 게시 페이지로 이동">인허가 민원</a>
-              <a data-service="appeal" href="service-appeal.html" aria-label="행정심판 업무 게시 페이지로 이동">행정심판</a>
-            </div>
-          </aside>
-          <div class="hero-future-panel" role="region" aria-label="추가 안내 콘텐츠 준비 영역">
-            <span class="hero-future-placeholder">업데이트 예정</span>
+        <aside class="hero-aside" aria-label="업무 분야 바로가기">
+          <p class="hero-tagline">Administrative Agent Office</p>
+          <div class="hero-mini">
+            <a data-service="nonprofit" href="service-nonprofit.html" aria-label="비영리법인설립업무 게시 페이지로 이동">비영리법인</a>
+            <a data-service="immigration" href="service-immigration.html" aria-label="출입국민원업무 게시 페이지로 이동">출입국민원</a>
+            <a data-service="investment" href="service-investment.html" aria-label="기업투자·법인설립 게시 페이지로 이동">기업투자 · 법인</a>
+            <a data-service="patriot" href="service-patriot.html" aria-label="국가유공자보훈업무 게시 페이지로 이동">국가유공자보훈</a>
+            <a data-service="permit" href="service-permit.html" aria-label="인허가 민원 업무 게시 페이지로 이동">인허가 민원</a>
+            <a data-service="appeal" href="service-appeal.html" aria-label="행정심판 업무 게시 페이지로 이동">행정심판</a>
           </div>
-        </div>
+        </aside>
       </div>
       <div class="hero-bottom">
         <div class="hero-platform-cats-wrap">

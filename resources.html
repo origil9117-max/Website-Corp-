@@ -960,23 +960,63 @@
         wasAdmin = on;
       }
 
+      async function deactivateAdminMode(opts) {
+        var silent = !!(opts && opts.silent);
+        var wasLocalEmergency = localAdmin;
+        if (client && currentSession) {
+          try {
+            await client.auth.signOut();
+          } catch (e) {
+            /* unload/네트워크 상황에서는 signOut 실패를 무시하고 UI만 종료 */
+          }
+        }
+        currentSession = null;
+        localAdmin = false;
+        authSectionOpen = false;
+        if (adminPassSupabase) adminPassSupabase.value = "";
+        if (adminPassLocal) adminPassLocal.value = "";
+        updateAdminUi();
+        await renderList();
+        if (!silent && wasLocalEmergency) {
+          setStatus(authStatus, "ok", "로컬 비상 모드를 해제했습니다. 관리자 모드가 꺼졌습니다.");
+        }
+      }
+
       if (!window.supabase || !window.SUPABASE_URL || !window.SUPABASE_ANON_KEY) {
         setStatus(authStatus, "", "Supabase가 없으면 아래 「로컬 비상 모드」만 사용할 수 있습니다.");
       } else {
         client = window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY);
         var sessionRes = await client.auth.getSession();
         currentSession = sessionRes.data.session;
+        if (currentSession) {
+          await client.auth.signOut();
+          currentSession = null;
+        }
       }
       updateAdminUi();
       await renderList();
+
+      window.addEventListener("pagehide", function () {
+        if (!isAdmin()) return;
+        if (client && currentSession) {
+          client.auth.signOut();
+        }
+        currentSession = null;
+        localAdmin = false;
+        authSectionOpen = false;
+      });
+
+      window.addEventListener("pageshow", async function (e) {
+        if (e && e.persisted && isAdmin()) {
+          await deactivateAdminMode({ silent: true });
+        }
+      });
 
       if (btnAuthToggle) {
         btnAuthToggle.addEventListener("click", async function () {
           var nextOpen = !authSectionOpen;
           if (!nextOpen && isAdmin()) {
-            btnLogout.click();
-            authSectionOpen = false;
-            updateAdminUi();
+            await deactivateAdminMode({ silent: false });
             return;
           }
           authSectionOpen = nextOpen;
@@ -1056,24 +1096,12 @@
         if (!isAdmin()) {
           if (adminPassSupabase) adminPassSupabase.value = "";
           if (adminPassLocal) adminPassLocal.value = "";
+          authSectionOpen = false;
           updateAdminUi();
           setStatus(authStatus, "", "관리자 모드가 꺼져 있습니다.");
           return;
         }
-        var wasLocalEmergency = localAdmin;
-        if (client && currentSession) {
-          await client.auth.signOut();
-        }
-        currentSession = null;
-        localAdmin = false;
-        authSectionOpen = false;
-        if (adminPassSupabase) adminPassSupabase.value = "";
-        if (adminPassLocal) adminPassLocal.value = "";
-        updateAdminUi();
-        await renderList();
-        if (wasLocalEmergency) {
-          setStatus(authStatus, "ok", "로컬 비상 모드를 해제했습니다. 관리자 모드가 꺼졌습니다.");
-        }
+        await deactivateAdminMode({ silent: false });
       });
 
       btnTestConn.addEventListener("click", async function () {

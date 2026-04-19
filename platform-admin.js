@@ -24,6 +24,8 @@
   var currentSession = null;
   var localAdmin = false;
   var showLoginForm = false;
+  var adminRootOpen = false;
+  var adminToggleBtn = null;
   var ADMIN_OFF_FLAG_KEY = "platform-admin-force-off";
 
   var INJECT_HTML =
@@ -193,6 +195,46 @@
       return;
     }
 
+    function syncAdminRootVisibility() {
+      if (!root) return;
+      root.style.display = adminRootOpen ? "" : "none";
+      if (adminToggleBtn) {
+        adminToggleBtn.textContent = adminRootOpen ? "관리자 모드 닫기" : "관리자 모드";
+        adminToggleBtn.setAttribute("aria-expanded", adminRootOpen ? "true" : "false");
+      }
+    }
+
+    function ensureAdminToggleButton() {
+      if (adminToggleBtn) return;
+      var heading = document.querySelector("article h1");
+      if (!heading || !heading.parentNode) return;
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.id = "platform-admin-toggle-btn";
+      btn.className = "btn btn-ghost";
+      btn.style.margin = "0.55rem 0 0.85rem";
+      btn.textContent = "관리자 모드";
+      btn.setAttribute("aria-expanded", "false");
+      btn.addEventListener("click", async function () {
+        var nextOpen = !adminRootOpen;
+        if (!nextOpen && isAdmin()) {
+          await deactivateAdminMode({ silent: false });
+          adminRootOpen = false;
+          syncAdminRootVisibility();
+          return;
+        }
+        adminRootOpen = nextOpen;
+        if (adminRootOpen && !isAdmin()) {
+          showLoginForm = true;
+          setStatus(authStatus, "", "비밀번호를 입력한 뒤 「관리자 모드 켜기」를 눌러 로그인하세요.");
+        }
+        updateAdminUi();
+      });
+      heading.insertAdjacentElement("afterend", btn);
+      adminToggleBtn = btn;
+      syncAdminRootVisibility();
+    }
+
     function applyAuthModeIndicator() {
       if (!authMode) return;
       if (isAdmin()) {
@@ -209,6 +251,7 @@
 
     function updateAdminUi() {
       var on = isAdmin();
+      if (on) adminRootOpen = true;
       document.body.classList.toggle("platform-admin-on", !!on);
       if (editorPanel) editorPanel.style.display = on ? "block" : "none";
       if (adminPass) {
@@ -234,6 +277,7 @@
       } else if (!showLoginForm) {
         setStatus(authStatus, "", "관리자 모드가 꺼져 있습니다.");
       }
+      syncAdminRootVisibility();
     }
 
     async function deactivateAdminMode(opts) {
@@ -246,6 +290,7 @@
       currentSession = null;
       localAdmin = false;
       showLoginForm = false;
+      adminRootOpen = false;
       if (adminPass) adminPass.value = "";
       updateAdminUi();
       clearEditors();
@@ -264,6 +309,7 @@
       currentSession = null;
       localAdmin = false;
       showLoginForm = false;
+      adminRootOpen = false;
     }
 
     async function loadFromCloud() {
@@ -334,9 +380,13 @@
     init()
       .then(function () {
         clearEditors();
+        ensureAdminToggleButton();
+        syncAdminRootVisibility();
       })
       .catch(function () {
         clearEditors();
+        ensureAdminToggleButton();
+        syncAdminRootVisibility();
       });
 
     var forcedOffByNavigation = false;

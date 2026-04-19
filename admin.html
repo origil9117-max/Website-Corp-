@@ -641,6 +641,7 @@
       var localAdmin = false;
       var ADMIN_EMAIL = "lkc@daum.net";
       var showLoginForm = false;
+      var ADMIN_OFF_FLAG_KEY = "notice-admin-force-off";
       var savedEditorRange = null;
       var editingNoticeId = "";
       var composeZoomed = false;
@@ -1779,16 +1780,87 @@
         }
       }
 
+      async function deactivateAdminMode(opts) {
+        var silent = !!(opts && opts.silent);
+        if (client && currentSession) {
+          try {
+            await client.auth.signOut();
+          } catch (e) {}
+        }
+        currentSession = null;
+        localAdmin = false;
+        showLoginForm = false;
+        if (passInput) passInput.value = "";
+        updateAdminUi();
+        await renderList();
+        if (!silent) {
+          setStatus(authStatus, "", "관리자 모드가 꺼져 있습니다.");
+        }
+      }
+
+      function clearAdminStateOnLeave() {
+        try {
+          sessionStorage.setItem(ADMIN_OFF_FLAG_KEY, "1");
+        } catch (e) {}
+        if (client && currentSession) {
+          client.auth.signOut();
+        }
+        currentSession = null;
+        localAdmin = false;
+        showLoginForm = false;
+      }
+
       if (!window.supabase || !window.SUPABASE_URL || !window.SUPABASE_ANON_KEY) {
         setStatus(authStatus, "err", "Supabase 설정이 없으면 로컬 비상 모드로만 동작합니다. 비상 암호는 SUPABASE_SETUP 안내를 참고하세요.");
       } else {
-        client = window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY);
+        client = window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY, {
+          auth: {
+            persistSession: false,
+            autoRefreshToken: false,
+            detectSessionInUrl: false
+          }
+        });
         var sessionRes = await client.auth.getSession();
         currentSession = sessionRes.data.session;
+        if (currentSession) {
+          await client.auth.signOut();
+          currentSession = null;
+        }
         await migrateLocalNoticesToCloud();
       }
+      var forcedOffByNavigation = false;
+      try {
+        forcedOffByNavigation = sessionStorage.getItem(ADMIN_OFF_FLAG_KEY) === "1";
+        sessionStorage.removeItem(ADMIN_OFF_FLAG_KEY);
+      } catch (e) {}
       updateAdminUi();
       await renderList();
+      if (forcedOffByNavigation || isAdmin()) {
+        await deactivateAdminMode({ silent: true });
+      }
+
+      window.addEventListener("pagehide", function () {
+        clearAdminStateOnLeave();
+      });
+      window.addEventListener("beforeunload", function () {
+        clearAdminStateOnLeave();
+      });
+      document.addEventListener("visibilitychange", function () {
+        if (document.visibilityState === "hidden") {
+          clearAdminStateOnLeave();
+        }
+      });
+      window.addEventListener("pageshow", function (e) {
+        var persisted = !!(e && e.persisted);
+        var forceOff = false;
+        try {
+          forceOff = sessionStorage.getItem(ADMIN_OFF_FLAG_KEY) === "1";
+          if (forceOff) sessionStorage.removeItem(ADMIN_OFF_FLAG_KEY);
+        } catch (err) {}
+        if (persisted || forceOff || isAdmin()) {
+          deactivateAdminMode({ silent: true });
+        }
+      });
 
       btnLogin.addEventListener("click", async function () {
         var email = ADMIN_EMAIL;
@@ -1856,14 +1928,7 @@
           setStatus(authStatus, "", "관리자 모드가 꺼져 있습니다.");
           return;
         }
-        if (client && currentSession) {
-          await client.auth.signOut();
-        }
-        currentSession = null;
-        localAdmin = false;
-        showLoginForm = false;
-        updateAdminUi();
-        await renderList();
+        await deactivateAdminMode({ silent: false });
       });
 
       btnTestConn.addEventListener("click", async function () {

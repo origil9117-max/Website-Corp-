@@ -190,9 +190,24 @@
     .platform-card {
       border: 1px solid var(--line);
       border-radius: 4px;
-      background: #fff;
+      background: linear-gradient(165deg, #ffffff 0%, #f8f3fb 100%);
       padding: 1rem 0.95rem 1.05rem;
       box-shadow: 0 1px 0 rgba(36, 48, 64, 0.04);
+      transition: transform 180ms ease, box-shadow 220ms ease, border-color 220ms ease, background 220ms ease;
+      will-change: transform;
+    }
+
+    .platform-card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(124, 93, 147, 0.35);
+      box-shadow: 0 10px 22px rgba(36, 48, 64, 0.12);
+      background: linear-gradient(165deg, #ffffff 0%, #f3eaf8 100%);
+    }
+
+    .platform-card:focus-within {
+      transform: translateY(-2px);
+      border-color: rgba(124, 93, 147, 0.42);
+      box-shadow: 0 8px 20px rgba(36, 48, 64, 0.1);
     }
 
     .platform-card h3 {
@@ -367,6 +382,13 @@
     @media (prefers-reduced-motion: reduce) {
       html {
         scroll-behavior: auto;
+      }
+      .platform-card {
+        transition: none;
+      }
+      .platform-card:hover,
+      .platform-card:focus-within {
+        transform: none;
       }
     }
 

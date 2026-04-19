@@ -325,15 +325,9 @@
       max-width: none;
       margin: 0;
       border-bottom: 1px solid rgba(180, 155, 125, 0.14);
-      min-height: min(56vw, 320px);
+      min-height: unset;
       background: linear-gradient(140deg, #d9d1ea 0%, #ccdbee 52%, #ead8cc 100%);
       -webkit-font-smoothing: antialiased;
-    }
-
-    @media (min-width: 900px) {
-      .hero {
-        min-height: min(28vh, 280px);
-      }
     }
 
     .hero-vignette {
@@ -363,18 +357,17 @@
       z-index: 3;
       max-width: var(--max);
       margin: 0 auto;
-      padding: 0.8rem 1.25rem 0.9rem;
+      padding: 0.8rem 1.25rem 0.65rem;
       color: #2b3448;
       display: grid;
       grid-template-columns: 1fr;
-      align-content: center;
+      align-content: start;
       gap: 1.1rem;
-      min-height: inherit;
     }
 
     @media (min-width: 768px) {
       .hero-inner {
-        padding: 0.9rem 1.5rem 1rem;
+        padding: 0.9rem 1.5rem 0.75rem;
         grid-template-columns: minmax(0, 1.12fr) minmax(0, 0.88fr);
         gap: 1.35rem;
         align-items: center;
@@ -505,12 +498,6 @@
       margin: 0 0.22em;
     }
 
-    @media (max-width: 767px) {
-      .hero {
-        min-height: unset;
-      }
-    }
-
     .visually-hidden {
       position: absolute;
       width: 1px;
@@ -636,8 +623,8 @@
       position: relative;
       z-index: 3;
       max-width: var(--max);
-      margin: 1rem auto 0;
-      padding: 1rem 1.25rem 1rem;
+      margin: 0.55rem auto 0;
+      padding: 0.65rem 1.25rem 0.45rem;
       width: 100%;
       box-sizing: border-box;
       border-top: 1px solid rgba(124, 93, 147, 0.12);
@@ -645,8 +632,8 @@
 
     @media (min-width: 768px) {
       .hero-platform-cats-wrap {
-        margin-top: 1.35rem;
-        padding: 1.15rem 1.5rem 1.15rem;
+        margin-top: 0.7rem;
+        padding: 0.7rem 1.5rem 0.5rem;
       }
     }
 
@@ -662,13 +649,13 @@
       display: block;
       font-weight: 700;
       color: rgba(47, 58, 80, 0.85);
-      margin-bottom: 0.4rem;
+      margin-bottom: 0.3rem;
     }
 
     .hero-platform-cats-grid {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 0.5rem;
+      gap: 0.42rem;
       max-width: 22rem;
     }
 
@@ -755,12 +742,12 @@
     .trust-strip {
       max-width: none;
       margin: 0;
-      padding: 0 1.25rem 1.35rem;
+      padding: 0 1.25rem 1.1rem;
     }
 
     @media (min-width: 768px) {
       .trust-strip {
-        padding: 0 1.5rem 1.5rem;
+        padding: 0 1.5rem 1.2rem;
       }
     }
 

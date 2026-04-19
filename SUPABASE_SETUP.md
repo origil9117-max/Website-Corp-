@@ -28,8 +28,16 @@ create table if not exists public.resources (
   file_name text,
   file_path text,
   file_size bigint,
+  download_allowed boolean not null default true,
   created_at timestamptz not null default now()
 );
+```
+
+기존 프로젝트에 테이블이 이미 있는 경우, 아래로 컬럼만 추가할 수 있습니다.
+
+```sql
+alter table public.resources
+  add column if not exists download_allowed boolean not null default true;
 ```
 
 6. Create storage bucket:

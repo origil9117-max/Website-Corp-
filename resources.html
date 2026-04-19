@@ -326,10 +326,63 @@
       box-shadow: 0 1px 0 rgba(20, 24, 32, 0.04);
     }
 
+    .item-heading {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      gap: 0.35rem 0.6rem;
+      margin: 0;
+    }
+
     .item h3 {
       margin: 0;
       font-size: 0.96rem;
       line-height: 1.35;
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+
+    .download-badge {
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 0.12rem 0.45rem;
+      border-radius: 2px;
+      border: 1px solid var(--line);
+      white-space: nowrap;
+    }
+
+    .download-badge.dl-ok {
+      color: var(--ok);
+      border-color: rgba(13, 122, 63, 0.35);
+      background: rgba(13, 122, 63, 0.06);
+    }
+
+    .download-badge.dl-no {
+      color: var(--muted);
+      border-color: rgba(90, 98, 112, 0.35);
+      background: rgba(90, 98, 112, 0.06);
+    }
+
+    .admin-dl-radios {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.45rem 0.75rem;
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+
+    .admin-dl-radios label {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      margin: 0;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .admin-dl-radios input {
+      margin: 0;
     }
 
     .meta {
@@ -485,6 +538,18 @@
         <label for="resource-content">내용</label>
         <textarea id="resource-content" required placeholder="자료 설명 또는 본문을 입력해 주세요."></textarea>
 
+        <p class="meta" style="margin: 0.65rem 0 0.25rem">첨부 다운로드(방문자에게)</p>
+        <div class="row" style="margin-top: 0.15rem">
+          <label class="row" style="margin: 0; font-weight: 600">
+            <input type="radio" name="resource-dl" id="resource-dl-yes" value="1" checked />
+            다운가능
+          </label>
+          <label class="row" style="margin: 0; font-weight: 600">
+            <input type="radio" name="resource-dl" id="resource-dl-no" value="0" />
+            다운제한
+          </label>
+        </div>
+
         <p class="attachment-notice" role="note">
           첨부파일(선택)
           <span class="sub">Supabase에 <strong>관리자로 로그인</strong>한 경우 Storage에 저장되며, <strong>한 파일당 최대 5MB</strong>까지 업로드할 수 있습니다. 로컬 비상 모드만 켜진 경우 약 450KB 이하로 제한됩니다.</span>
@@ -605,6 +670,13 @@
           .replaceAll("'", "&#39;");
       }
 
+      /** true: 다운가능, false: 다운제한 (DB·로컬 모두, null/undefined는 허용으로 간주) */
+      function isDownloadAllowed(item) {
+        if (!item) return true;
+        if (item.download_allowed === false || item.download_allowed === 0) return false;
+        return true;
+      }
+
       function asSafeUrl(text) {
         var val = String(text || "").trim();
         if (!val) return "";
@@ -617,6 +689,10 @@
         document.getElementById("resource-id").value = "";
         fileCurrent.textContent = "첨부된 파일 없음";
         fileRemove.checked = false;
+        var rdYes = document.getElementById("resource-dl-yes");
+        var rdNo = document.getElementById("resource-dl-no");
+        if (rdYes) rdYes.checked = true;
+        if (rdNo) rdNo.checked = false;
       }
 
       function formatBytes(n) {
@@ -654,7 +730,7 @@
         if (client) {
           var res = await client
             .from("resources")
-            .select("id, title, url, content, file_name, file_path, file_size, created_at")
+            .select("id, title, url, content, file_name, file_path, file_size, download_allowed, created_at")
             .order("created_at", { ascending: false });
           if (!res.error) {
             items = res.data || [];
@@ -675,33 +751,104 @@
           var safeBody = escapeHtml(item.content);
           var safeDate = escapeHtml(String(item.created_at || "").slice(0, 10));
           var safeUrl = asSafeUrl(item.url);
+          var allowed = isDownloadAllowed(item);
+          var idAttr = escapeHtml(String(item.id));
+          var badge =
+            '<span class="download-badge ' + (allowed ? "dl-ok" : "dl-no") + '">' +
+            (allowed ? "다운가능" : "다운제한") +
+            "</span>";
           var link = safeUrl
             ? '<p class="meta"><a href="' + safeUrl + '" target="_blank" rel="noopener noreferrer">자료 링크 열기</a></p>'
             : "";
+          var showAttachmentLink = allowed || adminOn;
           var fileLink = "";
           if (item.file_data && item.file_name) {
             var safeFileNameLocal = escapeHtml(item.file_name || "첨부파일");
             var safeSizeLocal = escapeHtml(formatBytes(item.file_size));
-            fileLink = '<p class="meta"><a href="' + item.file_data + '" download="' + safeFileNameLocal + '">첨부파일 다운로드: ' + safeFileNameLocal + '</a>' + (safeSizeLocal ? " (" + safeSizeLocal + ")" : "") + "</p>";
+            if (showAttachmentLink) {
+              fileLink =
+                '<p class="meta"><a href="' +
+                item.file_data +
+                '" download="' +
+                safeFileNameLocal +
+                '">첨부파일 다운로드: ' +
+                safeFileNameLocal +
+                "</a>" +
+                (safeSizeLocal ? " (" + safeSizeLocal + ")" : "") +
+                "</p>";
+            } else {
+              fileLink =
+                '<p class="meta">' +
+                "첨부파일: " +
+                safeFileNameLocal +
+                (safeSizeLocal ? " (" + safeSizeLocal + ")" : "") +
+                " — <strong>다운로드 제한</strong>" +
+                "</p>";
+            }
           } else if (item.file_path && item.file_name && client) {
             var safeFileName = escapeHtml(item.file_name || "첨부파일");
             var safeSize = escapeHtml(formatBytes(item.file_size));
             var pub = client.storage.from(STORAGE_BUCKET).getPublicUrl(item.file_path);
             var publicUrl = pub && pub.data ? pub.data.publicUrl : "";
             if (publicUrl) {
-              fileLink = '<p class="meta"><a href="' + publicUrl + '" download="' + safeFileName + '">첨부파일 다운로드: ' + safeFileName + '</a>' + (safeSize ? " (" + safeSize + ")" : "") + "</p>";
+              if (showAttachmentLink) {
+                fileLink =
+                  '<p class="meta"><a href="' +
+                  publicUrl +
+                  '" download="' +
+                  safeFileName +
+                  '">첨부파일 다운로드: ' +
+                  safeFileName +
+                  "</a>" +
+                  (safeSize ? " (" + safeSize + ")" : "") +
+                  "</p>";
+              } else {
+                fileLink =
+                  '<p class="meta">' +
+                  "첨부파일: " +
+                  safeFileName +
+                  (safeSize ? " (" + safeSize + ")" : "") +
+                  " — <strong>다운로드 제한</strong>" +
+                  "</p>";
+              }
             }
           }
           var adminBtns = adminOn
-            ? '<div class="row" style="margin-top:0.55rem;">' +
-              '<button type="button" class="btn btn-ghost" data-act="edit" data-id="' + item.id + '">수정</button>' +
-              '<button type="button" class="btn btn-ghost" data-act="del" data-id="' + item.id + '">삭제</button>' +
+            ? '<div class="row" style="margin-top:0.55rem;align-items:center;">' +
+              '<div class="admin-dl-radios" role="group" aria-label="첨부 다운로드">' +
+              "<span>첨부</span>" +
+              '<label><input type="radio" name="dl-' +
+              idAttr +
+              '" data-field="dl" data-id="' +
+              idAttr +
+              '" value="1"' +
+              (allowed ? " checked" : "") +
+              "> 다운가능</label>" +
+              '<label><input type="radio" name="dl-' +
+              idAttr +
+              '" data-field="dl" data-id="' +
+              idAttr +
+              '" value="0"' +
+              (!allowed ? " checked" : "") +
+              "> 다운제한</label>" +
+              "</div>" +
+              '<button type="button" class="btn btn-ghost" data-act="edit" data-id="' +
+              idAttr +
+              '">수정</button>' +
+              '<button type="button" class="btn btn-ghost" data-act="del" data-id="' +
+              idAttr +
+              '">삭제</button>' +
               "</div>"
             : "";
 
           return (
             '<article class="item">' +
-            "<h3>" + safeTitle + "</h3>" +
+            '<div class="item-heading">' +
+            "<h3>" +
+            safeTitle +
+            "</h3>" +
+            badge +
+            "</div>" +
             '<p class="meta">등록일: ' + safeDate + "</p>" +
             link +
             fileLink +
@@ -951,6 +1098,9 @@
           var title = (document.getElementById("resource-title").value || "").trim();
           var url = (document.getElementById("resource-url").value || "").trim();
           var content = (document.getElementById("resource-content").value || "").trim();
+          var dlAllowed = !!(
+            document.getElementById("resource-dl-yes") && document.getElementById("resource-dl-yes").checked
+          );
           var pickedFile = fileInput.files && fileInput.files[0] ? fileInput.files[0] : null;
 
           if (!title || !content) {
@@ -1017,7 +1167,7 @@
           var res;
           if (currentSession && client && id) {
             var one = await client.from("resources").select("file_path").eq("id", id).maybeSingle();
-            var payload = { title: title, url: url, content: content };
+            var payload = { title: title, url: url, content: content, download_allowed: dlAllowed };
             if (attachment) {
               payload.file_name = attachment.file_name;
               payload.file_path = attachment.file_path;
@@ -1040,6 +1190,7 @@
               title: title,
               url: url,
               content: content,
+              download_allowed: dlAllowed,
               file_name: attachment ? attachment.file_name : null,
               file_path: attachment ? attachment.file_path : null,
               file_size: attachment ? attachment.file_size : null
@@ -1053,6 +1204,7 @@
                 item.title = title;
                 item.url = url;
                 item.content = content;
+                item.download_allowed = dlAllowed;
                 if (attachment) {
                   item.file_name = attachment.file_name || null;
                   item.file_size = attachment.file_size || null;
@@ -1075,6 +1227,7 @@
                 title: title,
                 url: url,
                 content: content,
+                download_allowed: dlAllowed,
                 file_name: attachment ? (attachment.file_name || null) : null,
                 file_size: attachment ? (attachment.file_size || null) : null,
                 file_data: attachment ? (attachment.file_data || null) : null,
@@ -1124,7 +1277,7 @@
           if (currentSession && client) {
             var one = await client
               .from("resources")
-              .select("id, title, url, content, file_name, file_size")
+              .select("id, title, url, content, file_name, file_size, download_allowed")
               .eq("id", id)
               .maybeSingle();
             if (one.error || !one.data) return;
@@ -1132,6 +1285,11 @@
             document.getElementById("resource-title").value = one.data.title;
             document.getElementById("resource-url").value = one.data.url || "";
             document.getElementById("resource-content").value = one.data.content;
+            var rdYes = document.getElementById("resource-dl-yes");
+            var rdNo = document.getElementById("resource-dl-no");
+            var da = isDownloadAllowed(one.data);
+            if (rdYes) rdYes.checked = da;
+            if (rdNo) rdNo.checked = !da;
             if (one.data.file_name) {
               fileCurrent.textContent = "현재 첨부: " + one.data.file_name + (one.data.file_size ? " (" + formatBytes(one.data.file_size) + ")" : "");
             } else {
@@ -1149,6 +1307,11 @@
             } else {
               fileCurrent.textContent = "첨부된 파일 없음";
             }
+            var rdYesL = document.getElementById("resource-dl-yes");
+            var rdNoL = document.getElementById("resource-dl-no");
+            var daL = isDownloadAllowed(oneLocal);
+            if (rdYesL) rdYesL.checked = daL;
+            if (rdNoL) rdNoL.checked = !daL;
           }
           fileInput.value = "";
           fileRemove.checked = false;
@@ -1175,6 +1338,54 @@
           setStatus(formStatus, "ok", "자료를 삭제했습니다.");
           await renderList();
         }
+      });
+
+      list.addEventListener("change", async function (e) {
+        var t = e.target;
+        if (!t || t.type !== "radio" || t.getAttribute("data-field") !== "dl") return;
+        if (!isAdmin()) return;
+        var id = t.getAttribute("data-id");
+        if (!id) return;
+        var allowed = t.value === "1";
+
+        if (currentSession && client) {
+          setStatus(formStatus, "", "다운로드 설정 저장 중...");
+          var upd = await client.from("resources").update({ download_allowed: allowed }).eq("id", id);
+          if (upd.error) {
+            setStatus(formStatus, "err", "설정 저장 실패: " + upd.error.message);
+            await renderList();
+            return;
+          }
+          setStatus(formStatus, "ok", "첨부 다운로드 설정을 저장했습니다.");
+          await renderList();
+          return;
+        }
+
+        var localItems = loadLocalResources();
+        var found = false;
+        var next = localItems.map(function (item) {
+          if (String(item.id) !== String(id)) return item;
+          found = true;
+          return Object.assign({}, item, { download_allowed: allowed });
+        });
+        if (!found) {
+          setStatus(
+            formStatus,
+            "err",
+            "이 자료는 Supabase에 저장되어 있습니다. 다운로드 설정을 바꾸려면 「일반 로그인」하세요."
+          );
+          await renderList();
+          return;
+        }
+        try {
+          saveLocalResources(next);
+        } catch (err) {
+          setStatus(formStatus, "err", "저장에 실패했습니다.");
+          await renderList();
+          return;
+        }
+        setStatus(formStatus, "ok", "첨부 다운로드 설정을 저장했습니다.");
+        await renderList();
       });
 
       resetForm();

@@ -971,8 +971,15 @@
       await renderList();
 
       if (btnAuthToggle) {
-        btnAuthToggle.addEventListener("click", function () {
-          authSectionOpen = !authSectionOpen;
+        btnAuthToggle.addEventListener("click", async function () {
+          var nextOpen = !authSectionOpen;
+          if (!nextOpen && isAdmin()) {
+            btnLogout.click();
+            authSectionOpen = false;
+            updateAdminUi();
+            return;
+          }
+          authSectionOpen = nextOpen;
           updateAdminUi();
         });
       }
@@ -1059,6 +1066,7 @@
         }
         currentSession = null;
         localAdmin = false;
+        authSectionOpen = false;
         if (adminPassSupabase) adminPassSupabase.value = "";
         if (adminPassLocal) adminPassLocal.value = "";
         updateAdminUi();

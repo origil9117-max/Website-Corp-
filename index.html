@@ -394,23 +394,6 @@
       }
     }
 
-    .hero-aside-column {
-      display: flex;
-      flex-direction: column;
-      gap: 0.38rem;
-      width: 100%;
-      max-width: 380px;
-      margin: 0.45rem auto 0;
-      align-self: start;
-      box-sizing: border-box;
-    }
-
-    @media (min-width: 768px) {
-      .hero-aside-column {
-        margin: 0 0 0 auto;
-      }
-    }
-
     .hero-aside {
       display: flex;
       flex-direction: column;
@@ -419,7 +402,8 @@
       gap: 0.4rem;
       padding: 0.58rem 0.92rem;
       width: 100%;
-      margin: 0;
+      max-width: 380px;
+      margin: 0.45rem auto 0;
       background: linear-gradient(152deg, rgba(124, 93, 147, 0.14) 0%, rgba(188, 211, 232, 0.26) 100%);
       border: 1px solid rgba(124, 93, 147, 0.34);
       border-radius: 4px;
@@ -436,8 +420,18 @@
       .hero-aside {
         align-items: flex-end;
         text-align: right;
+        margin: 0 0 0 auto;
         padding: 0.62rem 0.98rem;
       }
+    }
+
+    .hero-bottom-stack {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.42rem;
+      width: 100%;
+      max-width: 38rem;
     }
 
     .hero-update-panel {
@@ -447,6 +441,8 @@
       padding: 0.38rem 0.52rem 0.42rem;
       box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.62);
       box-sizing: border-box;
+      width: 100%;
+      max-width: 22rem;
     }
 
     .hero-update-label {
@@ -454,7 +450,7 @@
       font-size: 0.66rem;
       font-weight: 700;
       letter-spacing: 0.08em;
-      text-align: center;
+      text-align: left;
       color: rgba(47, 58, 80, 0.82);
       line-height: 1.25;
     }
@@ -1833,18 +1829,20 @@
             <a class="btn btn-ghost" href="platform.html">지능형 행정 플랫폼</a>
           </div>
         </div>
-        <div class="hero-aside-column">
-          <aside class="hero-aside" aria-label="업무 분야 바로가기">
-            <p class="hero-tagline">Administrative Agent Office</p>
-            <div class="hero-mini">
-              <a data-service="nonprofit" href="service-nonprofit.html" aria-label="비영리법인설립업무 게시 페이지로 이동">비영리법인</a>
-              <a data-service="immigration" href="service-immigration.html" aria-label="출입국민원업무 게시 페이지로 이동">출입국민원</a>
-              <a data-service="investment" href="service-investment.html" aria-label="기업투자·법인설립 게시 페이지로 이동">기업투자 · 법인</a>
-              <a data-service="patriot" href="service-patriot.html" aria-label="국가유공자보훈업무 게시 페이지로 이동">국가유공자보훈</a>
-              <a data-service="permit" href="service-permit.html" aria-label="인허가 민원 업무 게시 페이지로 이동">인허가 민원</a>
-              <a data-service="appeal" href="service-appeal.html" aria-label="행정심판 업무 게시 페이지로 이동">행정심판</a>
-            </div>
-          </aside>
+        <aside class="hero-aside" aria-label="업무 분야 바로가기">
+          <p class="hero-tagline">Administrative Agent Office</p>
+          <div class="hero-mini">
+            <a data-service="nonprofit" href="service-nonprofit.html" aria-label="비영리법인설립업무 게시 페이지로 이동">비영리법인</a>
+            <a data-service="immigration" href="service-immigration.html" aria-label="출입국민원업무 게시 페이지로 이동">출입국민원</a>
+            <a data-service="investment" href="service-investment.html" aria-label="기업투자·법인설립 게시 페이지로 이동">기업투자 · 법인</a>
+            <a data-service="patriot" href="service-patriot.html" aria-label="국가유공자보훈업무 게시 페이지로 이동">국가유공자보훈</a>
+            <a data-service="permit" href="service-permit.html" aria-label="인허가 민원 업무 게시 페이지로 이동">인허가 민원</a>
+            <a data-service="appeal" href="service-appeal.html" aria-label="행정심판 업무 게시 페이지로 이동">행정심판</a>
+          </div>
+        </aside>
+      </div>
+      <div class="hero-bottom">
+        <div class="hero-bottom-stack">
           <div class="hero-update-panel" role="region" aria-label="업데이트 예정 작업 영역">
             <p class="hero-update-label">업데이트 예정</p>
             <div class="hero-update-slots">
@@ -1852,19 +1850,17 @@
               <span class="hero-update-slot" aria-hidden="true"></span>
             </div>
           </div>
-        </div>
-      </div>
-      <div class="hero-bottom">
-        <div class="hero-platform-cats-wrap">
-          <nav class="hero-platform-cats" aria-label="지능형 행정 플랫폼 카테고리 바로가기">
-            <span class="hero-platform-cats-label">지능형 행정 플랫폼 카테고리</span>
-            <div class="hero-platform-cats-grid">
-              <a href="minwon-roadmap.html">민원 로드맵</a>
-              <a href="platform-check.html">서류·준비 체크</a>
-              <a href="platform-faq.html">자주 묻는 질문</a>
-              <a href="platform-hub.html">공지·자료실 연동</a>
-            </div>
-          </nav>
+          <div class="hero-platform-cats-wrap">
+            <nav class="hero-platform-cats" aria-label="지능형 행정 플랫폼 카테고리 바로가기">
+              <span class="hero-platform-cats-label">지능형 행정 플랫폼 카테고리</span>
+              <div class="hero-platform-cats-grid">
+                <a href="minwon-roadmap.html">민원 로드맵</a>
+                <a href="platform-check.html">서류·준비 체크</a>
+                <a href="platform-faq.html">자주 묻는 질문</a>
+                <a href="platform-hub.html">공지·자료실 연동</a>
+              </div>
+            </nav>
+          </div>
         </div>
       </div>
     </section>

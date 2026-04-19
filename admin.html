@@ -690,7 +690,11 @@
         if (!s) return false;
         if (/^javascript:/i.test(s) || /^vbscript:/i.test(s)) return false;
         if (/^data:/i.test(s)) {
-          if (/^data:image\/(png|jpe?g|gif|webp|bmp);base64,/i.test(s)) return s.length <= 2500000;
+          if (/^data:image\/(png|jpe?g|gif|webp|bmp);base64,/i.test(s)) {
+            /* base64 팽창(약 4/3) 여유를 감안해 5MB 파일에 맞는 data URL 상한 */
+            var maxDataUrlChars = Math.ceil(MAX_NOTICE_IMAGE_BYTES * 1.45) + 2048;
+            return s.length <= maxDataUrlChars;
+          }
           return false;
         }
         try {
@@ -924,7 +928,10 @@
         }
         try {
           var dataUrl = await fileToDataURL(file);
-          if (!isSafeImgSrc(dataUrl)) return;
+          if (!isSafeImgSrc(dataUrl)) {
+            setStatus(formStatus, "err", "이미지 데이터가 허용 범위를 초과했습니다. 다른 이미지로 시도해 주세요.");
+            return;
+          }
           var html =
             '<img src="' +
             escapeAttr(dataUrl) +

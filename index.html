@@ -368,9 +368,6 @@
     @media (min-width: 768px) {
       .hero-inner {
         padding: 0.9rem 1.5rem 0.75rem;
-        grid-template-columns: minmax(0, 1.12fr) minmax(0, 0.88fr);
-        gap: 1.35rem;
-        align-items: start;
       }
     }
 
@@ -386,11 +383,31 @@
       padding: 0.35rem 1.25rem 0.45rem;
       box-sizing: border-box;
       width: 100%;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0.5rem;
+      align-items: start;
+      justify-items: start;
     }
 
     @media (min-width: 768px) {
       .hero-bottom {
         padding: 0.4rem 1.5rem 0.5rem;
+        grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+        gap: 0.75rem 1.5rem;
+        align-items: start;
+        justify-items: stretch;
+      }
+
+      .hero-platform-cats-wrap {
+        justify-self: start;
+      }
+
+      .hero-aside {
+        margin: 0;
+        margin-left: auto;
+        margin-right: 0;
+        justify-self: end;
       }
     }
 
@@ -400,10 +417,10 @@
       align-items: stretch;
       justify-content: flex-start;
       gap: 0.3rem;
-      padding: 0.55rem 0.7rem 0.55rem;
+      padding: 0 0.65rem 0.5rem;
       width: 100%;
       max-width: 22rem;
-      margin: 0.75rem auto 0;
+      margin: 0.5rem auto 0;
       background: linear-gradient(152deg, rgba(124, 93, 147, 0.14) 0%, rgba(188, 211, 232, 0.26) 100%);
       border: 1px solid rgba(124, 93, 147, 0.34);
       border-radius: 4px;
@@ -413,27 +430,20 @@
         inset 0 0 0 1px rgba(255, 255, 255, 0.5);
       backdrop-filter: blur(14px);
       align-self: start;
-    }
-
-    @media (min-width: 768px) {
-      .hero-aside {
-        margin: 0;
-        margin-left: auto;
-        padding: 0.65rem 0.85rem 0.65rem;
-      }
+      box-sizing: border-box;
     }
 
     .hero-tagline {
-      font-family: "Noto Serif KR", Georgia, serif;
-      font-size: clamp(0.78rem, 1.6vw, 0.88rem);
-      font-weight: 600;
-      letter-spacing: 0.14em;
-      color: rgba(43, 52, 72, 0.92);
-      line-height: 1.5;
+      font-family: "Noto Sans KR", system-ui, sans-serif;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      color: rgba(47, 58, 80, 0.85);
+      line-height: 1.55;
       margin: 0;
       text-shadow: none;
       align-self: stretch;
-      text-align: center;
+      text-align: left;
       width: 100%;
     }
 
@@ -1777,17 +1787,6 @@
             <a class="btn btn-ghost" href="platform.html">지능형 행정 플랫폼</a>
           </div>
         </div>
-        <aside class="hero-aside" aria-label="업무 분야 바로가기">
-          <p class="hero-tagline">Administrative Agent Office</p>
-          <div class="hero-mini">
-            <a data-service="nonprofit" href="service-nonprofit.html" aria-label="비영리법인설립업무 게시 페이지로 이동">비영리법인</a>
-            <a data-service="immigration" href="service-immigration.html" aria-label="출입국민원업무 게시 페이지로 이동">출입국민원</a>
-            <a data-service="investment" href="service-investment.html" aria-label="기업투자·법인설립 게시 페이지로 이동">기업투자 · 법인</a>
-            <a data-service="patriot" href="service-patriot.html" aria-label="국가유공자보훈업무 게시 페이지로 이동">국가유공자보훈</a>
-            <a data-service="permit" href="service-permit.html" aria-label="인허가 민원 업무 게시 페이지로 이동">인허가 민원</a>
-            <a data-service="appeal" href="service-appeal.html" aria-label="행정심판 업무 게시 페이지로 이동">행정심판</a>
-          </div>
-        </aside>
       </div>
       <div class="hero-bottom">
         <div class="hero-platform-cats-wrap">
@@ -1801,6 +1800,17 @@
             </div>
           </nav>
         </div>
+        <aside class="hero-aside" aria-label="업무 분야 바로가기">
+          <p class="hero-tagline">Administrative Agent Office</p>
+          <div class="hero-mini">
+            <a data-service="nonprofit" href="service-nonprofit.html" aria-label="비영리법인설립업무 게시 페이지로 이동">비영리법인</a>
+            <a data-service="immigration" href="service-immigration.html" aria-label="출입국민원업무 게시 페이지로 이동">출입국민원</a>
+            <a data-service="investment" href="service-investment.html" aria-label="기업투자·법인설립 게시 페이지로 이동">기업투자 · 법인</a>
+            <a data-service="patriot" href="service-patriot.html" aria-label="국가유공자보훈업무 게시 페이지로 이동">국가유공자보훈</a>
+            <a data-service="permit" href="service-permit.html" aria-label="인허가 민원 업무 게시 페이지로 이동">인허가 민원</a>
+            <a data-service="appeal" href="service-appeal.html" aria-label="행정심판 업무 게시 페이지로 이동">행정심판</a>
+          </div>
+        </aside>
       </div>
     </section>
 

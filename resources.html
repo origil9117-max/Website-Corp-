@@ -683,7 +683,9 @@
         if (authModeIndicator) {
           if (on) {
             authModeIndicator.setAttribute("data-mode", "admin");
-            authModeIndicator.textContent = "현재: 관리자 모드 (로그인됨)";
+            authModeIndicator.textContent = localAdmin
+              ? "현재: 로컬 비상 관리자 모드 — 「관리자 모드 끄기」로 해제"
+              : "현재: 관리자 모드 (Supabase 로그인됨)";
           } else if (showLoginForm) {
             authModeIndicator.setAttribute("data-mode", "login");
             authModeIndicator.textContent = "현재: 로그인 입력 중 — 비밀번호 입력 후 「관리자 모드 켜기」";
@@ -716,7 +718,11 @@
         applyAuthButtonStyles();
 
         if (localAdmin) {
-          setStatus(authStatus, "ok", "로컬 비상 관리자 모드가 켜졌습니다.");
+          setStatus(
+            authStatus,
+            "ok",
+            "로컬 비상 관리자 모드입니다. 해제하려면 아래 「관리자 모드 끄기」를 누르세요."
+          );
         } else if (on) {
           setStatus(authStatus, "ok", "관리자 모드가 켜졌습니다.");
         } else if (!showLoginForm) {
@@ -809,6 +815,7 @@
           setStatus(authStatus, "", "관리자 모드가 꺼져 있습니다.");
           return;
         }
+        var wasLocalEmergency = localAdmin;
         if (client && currentSession) {
           await client.auth.signOut();
         }
@@ -817,6 +824,9 @@
         showLoginForm = false;
         updateAdminUi();
         await renderList();
+        if (wasLocalEmergency) {
+          setStatus(authStatus, "ok", "로컬 비상 모드를 해제했습니다. 관리자 모드가 꺼졌습니다.");
+        }
       });
 
       btnTestConn.addEventListener("click", async function () {

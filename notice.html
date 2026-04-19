@@ -247,6 +247,7 @@
   <script>
     (async function () {
       var LOCAL_NOTICE_KEY = "websiteCorpNotices";
+      var NOTICE_IMAGE_MAX_BYTES = 5 * 1024 * 1024;
       var noticeList = document.getElementById("notice-list");
       if (!noticeList) return;
 
@@ -305,7 +306,10 @@
         if (!s) return false;
         if (/^javascript:/i.test(s) || /^vbscript:/i.test(s)) return false;
         if (/^data:/i.test(s)) {
-          if (/^data:image\/(png|jpe?g|gif|webp|bmp);base64,/i.test(s)) return s.length <= 2500000;
+          if (/^data:image\/(png|jpe?g|gif|webp|bmp);base64,/i.test(s)) {
+            var maxDataUrlChars = Math.ceil(NOTICE_IMAGE_MAX_BYTES * 1.45) + 2048;
+            return s.length <= maxDataUrlChars;
+          }
           return false;
         }
         try {

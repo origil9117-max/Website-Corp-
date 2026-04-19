@@ -201,18 +201,43 @@
       border-color: var(--line);
     }
 
-    #auth-login-row .btn.btn-primary {
+    #auth-supabase-row .btn.btn-primary {
       box-shadow: 0 2px 10px rgba(62, 36, 46, 0.38);
       outline: 2px solid rgba(90, 53, 64, 0.35);
       outline-offset: 1px;
     }
-    #auth-login-row .btn.btn-ghost {
-      opacity: 0.78;
+    #auth-supabase-row .btn.btn-ghost {
+      opacity: 0.88;
       border-style: dashed;
     }
-    #auth-login-row .btn:disabled {
+    #auth-supabase-row .btn:disabled {
       opacity: 0.5;
       cursor: not-allowed;
+    }
+
+    .auth-supabase-block {
+      margin: 0.5rem 0 0.75rem;
+      padding: 0.65rem 0.75rem;
+      border: 1px solid rgba(90, 53, 64, 0.18);
+      border-radius: 4px;
+      background: linear-gradient(180deg, #fff 0%, #faf8f6 100%);
+    }
+
+    .auth-block-title {
+      margin: 0 0 0.45rem;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--ink);
+    }
+
+    .auth-panel-admin {
+      margin-top: 0.35rem;
+    }
+
+    .auth-local-details .row input[type="password"] {
+      max-width: 16rem;
+      flex: 1;
+      min-width: 8rem;
     }
 
     .auth-mode-indicator {
@@ -231,9 +256,9 @@
       border-style: dashed;
     }
     .auth-mode-indicator[data-mode="login"] {
-      color: var(--maroon-dark);
-      border-color: rgba(90, 53, 64, 0.35);
-      background: rgba(90, 53, 64, 0.06);
+      color: var(--muted);
+      border-color: rgba(90, 53, 64, 0.2);
+      background: rgba(250, 248, 244, 0.9);
     }
     .auth-mode-indicator[data-mode="admin"] {
       color: var(--ok);
@@ -391,7 +416,7 @@
         <ol>
           <li>배포된 사이트 주소(<strong>https://</strong>)로 접속합니다. (<code>file://</code> 로 열면 연결이 실패할 수 있습니다.)</li>
           <li>필요하면 「<strong>연결 테스트</strong>」로 Supabase와 통신이 되는지 확인합니다.</li>
-          <li>「<strong>관리자 모드 켜기</strong>」를 누른 뒤, Supabase에 등록된 관리자 계정 비밀번호로 로그인합니다.</li>
+          <li>「<strong>일반 로그인</strong>」에 Supabase에 등록된 관리자 계정 비밀번호를 입력해 로그인합니다.</li>
           <li>아래 양식에서 제목·내용을 입력하고, <strong>한 파일당 최대 5MB</strong>까지 첨부한 다음 「저장」합니다.</li>
         </ol>
         <p class="notice-foot">
@@ -402,21 +427,47 @@
 
     <section class="panel" aria-label="관리자 인증">
       <h2>관리자 인증</h2>
-      <p class="helper" style="margin-bottom:0.45rem;">관리자 계정으로 로그인한 경우에만 자료를 등록·수정·삭제할 수 있습니다.</p>
-      <details class="auth-details">
-        <summary>비상 모드(로컬 저장) 안내 — 펼치기</summary>
-        <div class="auth-details-body">
-          <p>Supabase에 연결되지 않을 때만 쓰는 임시 방식입니다. 첨부는 작은 용량만 가능하고 브라우저 저장 한도가 있습니다.</p>
-          <p>연결 설정·비상 암호는 사이트 프로젝트의 <strong>SUPABASE_SETUP</strong> 안내를 참고하세요.</p>
-        </div>
-      </details>
+      <p class="helper" style="margin-bottom: 0.45rem">
+        자료 등록·수정·삭제는 로그인 후에만 가능합니다. <strong>첨부 최대 5MB</strong>는 <strong>일반 로그인(Supabase)</strong>을 이용하세요. 로컬 비상 모드는 첨부 약 450KB로 제한됩니다.
+      </p>
       <p id="auth-mode-indicator" class="auth-mode-indicator" data-mode="view" role="status" aria-live="polite">현재: 일반 보기</p>
-      <div class="row" id="auth-login-row">
-        <input id="admin-pass" type="password" autocomplete="current-password" placeholder="관리자 비밀번호" />
-        <button id="btn-login" class="btn btn-ghost" type="button">관리자 모드 켜기</button>
-        <button id="btn-logout" class="btn btn-primary" type="button">관리자 모드 끄기</button>
-        <button id="btn-test-conn" class="btn btn-ghost" type="button">연결 테스트</button>
+
+      <div id="auth-panel-logged-out">
+        <div id="auth-supabase-block" class="auth-supabase-block">
+          <p class="auth-block-title">일반 관리자 (Supabase · 첨부 최대 5MB)</p>
+          <div class="row" id="auth-supabase-row">
+            <input
+              id="admin-pass-supabase"
+              type="password"
+              autocomplete="current-password"
+              placeholder="Supabase 관리자 비밀번호"
+              style="max-width: 18rem; flex: 1; min-width: 10rem"
+            />
+            <button id="btn-login-supabase" type="button" class="btn btn-primary">일반 로그인</button>
+            <button id="btn-test-conn" type="button" class="btn btn-ghost">연결 테스트</button>
+          </div>
+          <p class="meta" id="auth-supabase-hint" style="margin-top: 0.45rem"></p>
+        </div>
+
+        <details class="auth-details auth-local-details" id="auth-local-details">
+          <summary>Supabase 연결 불가 시 · 로컬 비상 모드 (첨부 약 450KB)</summary>
+          <div class="auth-details-body">
+            <p>
+              브라우저 저장소에만 기록되는 임시 방식입니다. 큰 파일은 올릴 수 없습니다. 연결 설정·비상 암호는 프로젝트
+              <strong>SUPABASE_SETUP</strong> 안내를 참고하세요.
+            </p>
+            <div class="row" style="margin-top: 0.5rem">
+              <input id="admin-pass-local" type="password" autocomplete="off" placeholder="비상 모드 비밀번호" />
+              <button id="btn-login-local" type="button" class="btn btn-ghost">로컬 비상 모드 로그인</button>
+            </div>
+          </div>
+        </details>
       </div>
+
+      <div id="auth-panel-admin" class="auth-panel-admin" style="display: none">
+        <button id="btn-logout" type="button" class="btn btn-primary">관리자 모드 끄기</button>
+      </div>
+
       <p id="auth-status" class="status" role="status" aria-live="polite"></p>
     </section>
 
@@ -489,12 +540,16 @@
       /** 로컬(비상) 모드: 첨부를 localStorage에 Base64로 넣으므로 브라우저 한도(약 5MB) 초과 방지 */
       var LOCAL_ATTACHMENT_MAX_BYTES = 450 * 1024;
 
-      var adminPassInput = document.getElementById("admin-pass");
-      var loginRow = document.getElementById("auth-login-row");
-      var btnLogin = document.getElementById("btn-login");
+      var adminPassSupabase = document.getElementById("admin-pass-supabase");
+      var adminPassLocal = document.getElementById("admin-pass-local");
+      var btnLoginSupabase = document.getElementById("btn-login-supabase");
+      var btnLoginLocal = document.getElementById("btn-login-local");
       var btnLogout = document.getElementById("btn-logout");
       var btnTestConn = document.getElementById("btn-test-conn");
       var authStatus = document.getElementById("auth-status");
+      var authSupabaseHint = document.getElementById("auth-supabase-hint");
+      var authPanelLoggedOut = document.getElementById("auth-panel-logged-out");
+      var authPanelAdmin = document.getElementById("auth-panel-admin");
 
       var editor = document.getElementById("resource-editor");
       var form = document.getElementById("resource-form");
@@ -508,7 +563,6 @@
       var currentSession = null;
       var ADMIN_EMAIL = "lkc@daum.net";
       var localAdmin = false;
-      var showLoginForm = false;
 
       function isAdmin() {
         return !!(localAdmin || (currentSession && currentSession.user));
@@ -659,81 +713,86 @@
 
       var authModeIndicator = document.getElementById("auth-mode-indicator");
 
-      function applyAuthButtonStyles() {
-        var on = isAdmin();
-        btnLogin.classList.remove("btn-primary", "btn-ghost");
-        btnLogout.classList.remove("btn-primary", "btn-ghost");
-        btnTestConn.classList.remove("btn-primary", "btn-ghost");
-        btnTestConn.classList.add("btn-ghost");
-        btnLogin.setAttribute("aria-pressed", "false");
-        btnLogout.setAttribute("aria-pressed", "false");
-        if (on) {
-          btnLogin.classList.add("btn-ghost");
-          btnLogout.classList.add("btn-primary");
-          btnLogout.setAttribute("aria-pressed", "true");
-        } else if (showLoginForm) {
-          btnLogin.classList.add("btn-primary");
-          btnLogout.classList.add("btn-ghost");
-          btnLogin.setAttribute("aria-pressed", "true");
+      function updateSupabaseHint() {
+        if (!authSupabaseHint) return;
+        if (!client) {
+          authSupabaseHint.textContent =
+            "Supabase URL/키(supabase-config.js)가 없어 일반 로그인을 사용할 수 없습니다. 아래 로컬 비상 모드만 이용할 수 있습니다.";
         } else {
-          btnLogin.classList.add("btn-ghost");
-          btnLogout.classList.add("btn-primary");
-          btnLogout.setAttribute("aria-pressed", "true");
-        }
-        if (authModeIndicator) {
-          if (on) {
-            authModeIndicator.setAttribute("data-mode", "admin");
-            authModeIndicator.textContent = localAdmin
-              ? "현재: 로컬 비상 관리자 모드 — 「관리자 모드 끄기」로 해제"
-              : "현재: 관리자 모드 (Supabase 로그인됨)";
-          } else if (showLoginForm) {
-            authModeIndicator.setAttribute("data-mode", "login");
-            authModeIndicator.textContent = "현재: 로그인 입력 중 — 비밀번호 입력 후 「관리자 모드 켜기」";
-          } else {
-            authModeIndicator.setAttribute("data-mode", "view");
-            authModeIndicator.textContent = "현재: 일반 보기 — 「관리자 모드 켜기」로 로그인 화면 열기";
-          }
+          authSupabaseHint.textContent =
+            "등록 이메일 " +
+            ADMIN_EMAIL +
+            " 계정 비밀번호로 로그인하면 Storage에 첨부·저장할 수 있습니다(파일당 최대 5MB).";
         }
       }
 
       function updateAdminUi() {
         var on = isAdmin();
         editor.style.display = on ? "block" : "none";
-        adminPassInput.disabled = on;
-        btnLogin.disabled = on;
-        btnLogout.disabled = false;
-        btnLogin.textContent = "관리자 모드 켜기";
-        btnLogout.textContent = "관리자 모드 끄기";
-        loginRow.style.display = "flex";
-        if (!on && showLoginForm) {
-          adminPassInput.style.display = "";
-          btnTestConn.style.display = "";
-        } else if (on) {
-          adminPassInput.style.display = "none";
-          btnTestConn.style.display = "";
-        } else {
-          adminPassInput.style.display = "none";
-          btnTestConn.style.display = "none";
-        }
-        applyAuthButtonStyles();
+        if (authPanelLoggedOut) authPanelLoggedOut.style.display = on ? "none" : "block";
+        if (authPanelAdmin) authPanelAdmin.style.display = on ? "block" : "none";
 
-        if (localAdmin) {
-          setStatus(
-            authStatus,
-            "ok",
-            "로컬 비상 관리자 모드입니다. 해제하려면 아래 「관리자 모드 끄기」를 누르세요."
-          );
-        } else if (on) {
-          setStatus(authStatus, "ok", "관리자 모드가 켜졌습니다.");
-        } else if (!showLoginForm) {
+        if (adminPassSupabase) {
+          adminPassSupabase.disabled = on || !client;
+        }
+        if (btnLoginSupabase) {
+          btnLoginSupabase.disabled = on || !client;
+        }
+        if (btnTestConn) {
+          btnTestConn.disabled = on;
+          btnTestConn.style.display = on ? "none" : "inline-flex";
+        }
+        if (adminPassLocal) {
+          adminPassLocal.disabled = on;
+        }
+        if (btnLoginLocal) {
+          btnLoginLocal.disabled = on;
+        }
+        if (btnLogout) {
+          btnLogout.disabled = false;
+        }
+
+        updateSupabaseHint();
+
+        if (authModeIndicator) {
+          if (on) {
+            authModeIndicator.setAttribute("data-mode", "admin");
+            authModeIndicator.textContent = localAdmin
+              ? "현재: 로컬 비상 관리자 (첨부 약 450KB) — 「관리자 모드 끄기」로 해제"
+              : "현재: 일반 관리자 (Supabase · 첨부 최대 5MB)";
+          } else {
+            authModeIndicator.setAttribute("data-mode", "view");
+            authModeIndicator.textContent = client
+              ? "현재: 일반 보기 — 「일반 로그인」으로 5MB 첨부, 또는 아래 비상 모드(450KB)"
+              : "현재: 일반 보기 — Supabase 미연결 시 비상 모드만 가능";
+          }
+        }
+
+        if (on) {
+          if (localAdmin) {
+            setStatus(
+              authStatus,
+              "ok",
+              "로컬 비상 관리자입니다. 「관리자 모드 끄기」로 해제할 수 있습니다."
+            );
+          } else {
+            setStatus(
+              authStatus,
+              "ok",
+              "일반 관리자(Supabase)로 로그인되었습니다. 첨부는 파일당 최대 5MB입니다."
+            );
+          }
+        } else {
           setStatus(authStatus, "", "관리자 모드가 꺼져 있습니다.");
           setStatus(formStatus, "", "");
           resetForm();
+          if (adminPassSupabase) adminPassSupabase.value = "";
+          if (adminPassLocal) adminPassLocal.value = "";
         }
       }
 
       if (!window.supabase || !window.SUPABASE_URL || !window.SUPABASE_ANON_KEY) {
-        setStatus(authStatus, "", "위의 「비상 모드 안내」를 펼치면 로컬 저장 시 유의사항이 나옵니다.");
+        setStatus(authStatus, "", "Supabase가 없으면 아래 「로컬 비상 모드」만 사용할 수 있습니다.");
       } else {
         client = window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY);
         var sessionRes = await client.auth.getSession();
@@ -742,40 +801,24 @@
       updateAdminUi();
       await renderList();
 
-      btnLogin.addEventListener("click", async function () {
-        if (!isAdmin() && !showLoginForm) {
-          showLoginForm = true;
-          adminPassInput.value = "";
-          updateAdminUi();
-          setStatus(authStatus, "", "비밀번호를 입력한 뒤 `관리자 모드 켜기`를 눌러 로그인하세요.");
-          return;
-        }
-        var email = ADMIN_EMAIL;
-        var val = (adminPassInput.value || "").trim();
-        if (!val) {
-          setStatus(authStatus, "err", "비밀번호를 입력해 주세요.");
-          return;
-        }
-        if (val === "admin1234") {
-          localAdmin = true;
-          currentSession = null;
-          adminPassInput.value = "";
-          updateAdminUi();
-          await renderList();
-          return;
-        }
+      btnLoginSupabase.addEventListener("click", async function () {
         if (!client) {
-          setStatus(authStatus, "err", "Supabase가 연결되지 않았습니다. 비상 모드 암호는 설정 안내(SUPABASE_SETUP)를 참고하세요.");
+          setStatus(authStatus, "err", "Supabase가 연결되지 않았습니다. supabase-config.js를 확인하거나 아래 비상 모드를 이용하세요.");
+          return;
+        }
+        var val = (adminPassSupabase && adminPassSupabase.value ? adminPassSupabase.value : "").trim();
+        if (!val) {
+          setStatus(authStatus, "err", "Supabase 관리자 비밀번호를 입력해 주세요.");
           return;
         }
         var loginRes;
         try {
-          loginRes = await client.auth.signInWithPassword({ email: email, password: val });
+          loginRes = await client.auth.signInWithPassword({ email: ADMIN_EMAIL, password: val });
         } catch (err) {
           setStatus(
             authStatus,
             "err",
-            "로그인 연결 실패(Failed to fetch). 네트워크·URL 확인 또는 비상 모드(설정 안내 참고)로 시도하세요."
+            "로그인 연결 실패(Failed to fetch). 네트워크·URL(https) 확인 후 재시도하세요."
           );
           return;
         }
@@ -793,7 +836,7 @@
             setStatus(
               authStatus,
               "err",
-              "로그인 실패: 계정 또는 비밀번호가 다릅니다. Supabase에서 확인하거나 비상 모드(설정 안내)를 이용하세요."
+              "로그인 실패: 이메일 또는 비밀번호가 다릅니다. Supabase 대시보드에서 계정을 확인하세요."
             );
             return;
           }
@@ -802,15 +845,34 @@
         }
         currentSession = loginRes.data.session;
         localAdmin = false;
+        if (adminPassSupabase) adminPassSupabase.value = "";
+        if (adminPassLocal) adminPassLocal.value = "";
         updateAdminUi();
-        adminPassInput.value = "";
+        await renderList();
+      });
+
+      btnLoginLocal.addEventListener("click", async function () {
+        var val = (adminPassLocal && adminPassLocal.value ? adminPassLocal.value : "").trim();
+        if (!val) {
+          setStatus(authStatus, "err", "비상 모드 비밀번호를 입력해 주세요.");
+          return;
+        }
+        if (val !== "admin1234") {
+          setStatus(authStatus, "err", "비상 모드 비밀번호가 올바르지 않습니다. SUPABASE_SETUP 안내를 참고하세요.");
+          return;
+        }
+        localAdmin = true;
+        currentSession = null;
+        if (adminPassLocal) adminPassLocal.value = "";
+        if (adminPassSupabase) adminPassSupabase.value = "";
+        updateAdminUi();
         await renderList();
       });
 
       btnLogout.addEventListener("click", async function () {
         if (!isAdmin()) {
-          showLoginForm = false;
-          adminPassInput.value = "";
+          if (adminPassSupabase) adminPassSupabase.value = "";
+          if (adminPassLocal) adminPassLocal.value = "";
           updateAdminUi();
           setStatus(authStatus, "", "관리자 모드가 꺼져 있습니다.");
           return;
@@ -821,7 +883,8 @@
         }
         currentSession = null;
         localAdmin = false;
-        showLoginForm = false;
+        if (adminPassSupabase) adminPassSupabase.value = "";
+        if (adminPassLocal) adminPassLocal.value = "";
         updateAdminUi();
         await renderList();
         if (wasLocalEmergency) {

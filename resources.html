@@ -650,7 +650,8 @@
 
       async function renderList() {
         var items = [];
-        if (client && currentSession) {
+        /* 목록은 비로그인 방문자도 볼 수 있게: Supabase 클라이언트만 있으면 anon으로 SELECT (RLS에서 읽기 허용 필요) */
+        if (client) {
           var res = await client
             .from("resources")
             .select("id, title, url, content, file_name, file_path, file_size, created_at")

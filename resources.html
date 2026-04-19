@@ -233,6 +233,9 @@
     .auth-panel-admin {
       margin-top: 0.35rem;
     }
+    .auth-panel-admin .meta {
+      margin: 0.5rem 0 0;
+    }
 
     .auth-local-details .row input[type="password"] {
       max-width: 16rem;
@@ -507,10 +510,6 @@
 
         <div class="auth-details auth-local-details" id="auth-local-details">
           <div class="auth-details-body">
-            <p>
-              브라우저 저장소에만 기록되는 임시 방식입니다. 큰 파일은 올릴 수 없습니다. 연결 설정·비상 암호는 프로젝트
-              <strong>SUPABASE_SETUP</strong> 안내를 참고하세요.
-            </p>
             <div class="row" style="margin-top: 0.5rem">
               <input id="admin-pass-local" type="password" autocomplete="off" placeholder="비상 모드 비밀번호" />
               <button id="btn-login-local" type="button" class="btn btn-ghost">로컬 비상 모드 로그인</button>
@@ -521,6 +520,11 @@
 
       <div id="auth-panel-admin" class="auth-panel-admin" style="display: none">
         <button id="btn-logout" type="button" class="btn btn-primary">관리자 모드 끄기</button>
+        <p class="meta">등록 이메일 <strong>lkc@daum.net</strong> 계정 비밀번호로 로그인하면 Storage에 첨부·저장할 수 있습니다.</p>
+        <p class="meta">
+          브라우저 저장소에만 기록되는 임시 방식입니다. 큰 파일은 올릴 수 없습니다. 연결 설정·비상 암호는 프로젝트
+          <strong>SUPABASE_SETUP</strong> 안내를 참고하세요.
+        </p>
       </div>
 
       <p id="auth-status" class="status" role="status" aria-live="polite"></p>

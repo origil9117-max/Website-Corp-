@@ -985,7 +985,13 @@
       if (!window.supabase || !window.SUPABASE_URL || !window.SUPABASE_ANON_KEY) {
         setStatus(authStatus, "", "Supabase가 없으면 아래 「로컬 비상 모드」만 사용할 수 있습니다.");
       } else {
-        client = window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY);
+        client = window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY, {
+          auth: {
+            persistSession: false,
+            autoRefreshToken: false,
+            detectSessionInUrl: false
+          }
+        });
         var sessionRes = await client.auth.getSession();
         currentSession = sessionRes.data.session;
         if (currentSession) {
@@ -997,6 +1003,16 @@
       await renderList();
 
       window.addEventListener("pagehide", function () {
+        if (!isAdmin()) return;
+        if (client && currentSession) {
+          client.auth.signOut();
+        }
+        currentSession = null;
+        localAdmin = false;
+        authSectionOpen = false;
+      });
+
+      window.addEventListener("beforeunload", function () {
         if (!isAdmin()) return;
         if (client && currentSession) {
           client.auth.signOut();

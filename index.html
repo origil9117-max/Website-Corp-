@@ -1169,6 +1169,18 @@
       font-weight: 500;
     }
 
+    @keyframes blog-cta-initial-blink {
+      0%,
+      100% {
+        background-color: #03c75a;
+        box-shadow: 0 2px 8px rgba(3, 199, 90, 0.35);
+      }
+      50% {
+        background-color: #05d965;
+        box-shadow: 0 3px 14px rgba(3, 199, 90, 0.45);
+      }
+    }
+
     .blog-cta a {
       display: inline-flex;
       align-items: center;
@@ -1182,6 +1194,7 @@
       text-decoration: none;
       box-shadow: 0 2px 8px rgba(3, 199, 90, 0.35);
       transition: background 0.15s, box-shadow 0.15s, transform 0.1s;
+      animation: blog-cta-initial-blink 2s ease-in-out 15;
     }
 
     .blog-cta-mouse-icon {
@@ -1205,6 +1218,12 @@
       text-decoration: none;
       box-shadow: 0 3px 12px rgba(3, 199, 90, 0.45);
       transform: translateY(-1px);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .blog-cta a {
+        animation: none;
+      }
     }
 
     .section-head a {

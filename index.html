@@ -367,7 +367,7 @@
 
     @media (min-width: 768px) {
       .hero-inner {
-        padding: 0.52rem 1.5rem 0.48rem;
+        padding: 0.52rem 1.5rem 0.32rem;
         grid-template-columns: minmax(0, 1.12fr) minmax(0, 0.88fr);
         gap: 0.95rem;
         align-items: start;
@@ -383,14 +383,31 @@
       z-index: 3;
       max-width: var(--max);
       margin: 0 auto;
-      padding: 0.2rem 1.25rem 0.32rem;
+      padding: 0.12rem 1.25rem 0.22rem;
       box-sizing: border-box;
       width: 100%;
     }
 
     @media (min-width: 768px) {
       .hero-bottom {
-        padding: 0.22rem 1.5rem 0.35rem;
+        padding: 0.14rem 1.5rem 0.22rem;
+      }
+    }
+
+    .hero-aside-column {
+      display: flex;
+      flex-direction: column;
+      gap: 0.38rem;
+      width: 100%;
+      max-width: 380px;
+      margin: 0.45rem auto 0;
+      align-self: start;
+      box-sizing: border-box;
+    }
+
+    @media (min-width: 768px) {
+      .hero-aside-column {
+        margin: 0 0 0 auto;
       }
     }
 
@@ -399,11 +416,10 @@
       flex-direction: column;
       align-items: stretch;
       justify-content: center;
-      gap: 0.55rem;
-      padding: 0.72rem 1rem;
+      gap: 0.4rem;
+      padding: 0.58rem 0.92rem;
       width: 100%;
-      max-width: 380px;
-      margin: 0.45rem auto 0;
+      margin: 0;
       background: linear-gradient(152deg, rgba(124, 93, 147, 0.14) 0%, rgba(188, 211, 232, 0.26) 100%);
       border: 1px solid rgba(124, 93, 147, 0.34);
       border-radius: 4px;
@@ -420,9 +436,42 @@
       .hero-aside {
         align-items: flex-end;
         text-align: right;
-        margin: 0 0 0 auto;
-        padding: 0.82rem 1.05rem;
+        padding: 0.62rem 0.98rem;
       }
+    }
+
+    .hero-update-panel {
+      border: 1px solid rgba(124, 93, 147, 0.38);
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.4);
+      padding: 0.38rem 0.52rem 0.42rem;
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.62);
+      box-sizing: border-box;
+    }
+
+    .hero-update-label {
+      margin: 0 0 0.32rem;
+      font-size: 0.66rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-align: center;
+      color: rgba(47, 58, 80, 0.82);
+      line-height: 1.25;
+    }
+
+    .hero-update-slots {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.32rem;
+    }
+
+    .hero-update-slot {
+      display: block;
+      min-height: 1.68rem;
+      border: 1px dashed rgba(124, 93, 147, 0.48);
+      border-radius: 2px;
+      background: rgba(255, 255, 255, 0.55);
+      box-sizing: border-box;
     }
 
     .hero-tagline {
@@ -431,7 +480,7 @@
       font-weight: 600;
       letter-spacing: 0.14em;
       color: rgba(43, 52, 72, 0.92);
-      line-height: 1.5;
+      line-height: 1.35;
       margin: 0;
       text-shadow: none;
       align-self: center;
@@ -475,6 +524,11 @@
       display: flex;
       align-items: center;
       justify-content: center;
+    }
+
+    .hero-aside .hero-mini a {
+      min-height: 2.15rem;
+      padding: 0.42rem 0.32rem;
     }
 
     .hero-mini a:hover,
@@ -1779,17 +1833,26 @@
             <a class="btn btn-ghost" href="platform.html">지능형 행정 플랫폼</a>
           </div>
         </div>
-        <aside class="hero-aside" aria-label="업무 분야 바로가기">
-          <p class="hero-tagline">Administrative Agent Office</p>
-          <div class="hero-mini">
-            <a data-service="nonprofit" href="service-nonprofit.html" aria-label="비영리법인설립업무 게시 페이지로 이동">비영리법인</a>
-            <a data-service="immigration" href="service-immigration.html" aria-label="출입국민원업무 게시 페이지로 이동">출입국민원</a>
-            <a data-service="investment" href="service-investment.html" aria-label="기업투자·법인설립 게시 페이지로 이동">기업투자 · 법인</a>
-            <a data-service="patriot" href="service-patriot.html" aria-label="국가유공자보훈업무 게시 페이지로 이동">국가유공자보훈</a>
-            <a data-service="permit" href="service-permit.html" aria-label="인허가 민원 업무 게시 페이지로 이동">인허가 민원</a>
-            <a data-service="appeal" href="service-appeal.html" aria-label="행정심판 업무 게시 페이지로 이동">행정심판</a>
+        <div class="hero-aside-column">
+          <aside class="hero-aside" aria-label="업무 분야 바로가기">
+            <p class="hero-tagline">Administrative Agent Office</p>
+            <div class="hero-mini">
+              <a data-service="nonprofit" href="service-nonprofit.html" aria-label="비영리법인설립업무 게시 페이지로 이동">비영리법인</a>
+              <a data-service="immigration" href="service-immigration.html" aria-label="출입국민원업무 게시 페이지로 이동">출입국민원</a>
+              <a data-service="investment" href="service-investment.html" aria-label="기업투자·법인설립 게시 페이지로 이동">기업투자 · 법인</a>
+              <a data-service="patriot" href="service-patriot.html" aria-label="국가유공자보훈업무 게시 페이지로 이동">국가유공자보훈</a>
+              <a data-service="permit" href="service-permit.html" aria-label="인허가 민원 업무 게시 페이지로 이동">인허가 민원</a>
+              <a data-service="appeal" href="service-appeal.html" aria-label="행정심판 업무 게시 페이지로 이동">행정심판</a>
+            </div>
+          </aside>
+          <div class="hero-update-panel" role="region" aria-label="업데이트 예정 작업 영역">
+            <p class="hero-update-label">업데이트 예정</p>
+            <div class="hero-update-slots">
+              <span class="hero-update-slot" aria-hidden="true"></span>
+              <span class="hero-update-slot" aria-hidden="true"></span>
+            </div>
           </div>
-        </aside>
+        </div>
       </div>
       <div class="hero-bottom">
         <div class="hero-platform-cats-wrap">

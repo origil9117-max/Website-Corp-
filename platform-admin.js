@@ -208,11 +208,24 @@
       if (adminToggleBtn) return;
       var heading = document.querySelector("article h1");
       if (!heading || !heading.parentNode) return;
+      var row = null;
+      if (
+        heading.parentNode &&
+        heading.parentNode.classList &&
+        heading.parentNode.classList.contains("platform-title-row")
+      ) {
+        row = heading.parentNode;
+      } else {
+        row = document.createElement("div");
+        row.className = "platform-title-row";
+        heading.parentNode.insertBefore(row, heading);
+        row.appendChild(heading);
+      }
       var btn = document.createElement("button");
       btn.type = "button";
       btn.id = "platform-admin-toggle-btn";
       btn.className = "btn btn-ghost";
-      btn.style.margin = "0.55rem 0 0.85rem";
+      btn.style.margin = "0";
       btn.textContent = "관리자 모드";
       btn.setAttribute("aria-expanded", "false");
       btn.addEventListener("click", async function () {
@@ -230,7 +243,7 @@
         }
         updateAdminUi();
       });
-      heading.insertAdjacentElement("afterend", btn);
+      row.appendChild(btn);
       adminToggleBtn = btn;
       syncAdminRootVisibility();
     }

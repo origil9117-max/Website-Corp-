@@ -140,6 +140,19 @@ h1 {
   margin-bottom: 0.75rem;
 }
 
+.platform-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.7rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.55rem;
+}
+
+.platform-title-row h1 {
+  margin-bottom: 0;
+}
+
 .lead {
   color: var(--ink-soft);
   font-size: 0.95rem;

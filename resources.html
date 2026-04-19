@@ -496,7 +496,7 @@
 
     <section id="auth-section" class="panel" aria-label="관리자 인증" hidden>
       <h2>관리자 인증</h2>
-      <p class="helper" style="margin-bottom: 0.45rem">
+      <p id="auth-helper-text" class="helper" style="margin-bottom: 0.45rem">
         자료 등록·수정·삭제는 로그인 후에만 가능합니다. <strong>첨부 최대 5MB</strong>는 <strong>일반 로그인(Supabase)</strong>을 이용하세요. 로컬 비상 모드는 첨부 약 450KB로 제한됩니다.
       </p>
       <p id="auth-mode-indicator" class="auth-mode-indicator" data-mode="view" role="status" aria-live="polite">현재: 일반 보기</p>
@@ -627,6 +627,7 @@
       var authSupabaseHint = document.getElementById("auth-supabase-hint");
       var authPanelLoggedOut = document.getElementById("auth-panel-logged-out");
       var authPanelAdmin = document.getElementById("auth-panel-admin");
+      var authHelperText = document.getElementById("auth-helper-text");
       var authSection = document.getElementById("auth-section");
 
       var editor = document.getElementById("resource-editor");
@@ -914,6 +915,13 @@
         }
 
         updateSupabaseHint();
+
+        if (authHelperText) {
+          authHelperText.style.display = on ? "block" : "none";
+        }
+        if (authModeIndicator) {
+          authModeIndicator.style.display = on ? "inline-block" : "none";
+        }
 
         if (authModeIndicator) {
           if (on) {

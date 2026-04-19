@@ -631,6 +631,7 @@
       var ADMIN_EMAIL = "lkc@daum.net";
       var localAdmin = false;
       var authSectionOpen = false;
+      var wasAdmin = false;
 
       function isAdmin() {
         return !!(localAdmin || (currentSession && currentSession.user));
@@ -947,7 +948,7 @@
           if (adminPassLocal) adminPassLocal.value = "";
         }
 
-        if (on) authSectionOpen = true;
+        if (on && !wasAdmin) authSectionOpen = true;
         if (authSection) {
           if (authSectionOpen) authSection.removeAttribute("hidden");
           else authSection.setAttribute("hidden", "");
@@ -956,6 +957,7 @@
           btnAuthToggle.textContent = authSectionOpen ? "관리자 모드 닫기" : "관리자 모드";
           btnAuthToggle.setAttribute("aria-expanded", authSectionOpen ? "true" : "false");
         }
+        wasAdmin = on;
       }
 
       if (!window.supabase || !window.SUPABASE_URL || !window.SUPABASE_ANON_KEY) {

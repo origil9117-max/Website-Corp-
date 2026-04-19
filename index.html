@@ -368,10 +368,11 @@
     @media (min-width: 768px) {
       .hero-inner {
         padding: 0.52rem 1.5rem 0.32rem;
-        /* 왼쪽 본문 | 가운데 AAO | 오른쪽 여백(대칭) — 상하 높이는 2열 때와 동일(한 행 max) */
-        grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
-        gap: 0.75rem 1rem;
+        /* 본문·버튼 아래, 가로 중앙에 AAO (플랫폼 카테고리는 hero-bottom) */
+        grid-template-columns: 1fr;
+        gap: 0.55rem;
         align-items: start;
+        justify-items: stretch;
       }
     }
 
@@ -421,7 +422,7 @@
       .hero-aside {
         align-items: stretch;
         text-align: center;
-        margin: 0;
+        margin: 0.12rem auto 0;
         justify-self: center;
         padding: 0.62rem 0.98rem;
       }

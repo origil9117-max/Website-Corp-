@@ -632,6 +632,7 @@
       var localAdmin = false;
       var authSectionOpen = false;
       var wasAdmin = false;
+      var ADMIN_OFF_FLAG_KEY = "resources-admin-force-off";
 
       function isAdmin() {
         return !!(localAdmin || (currentSession && currentSession.user));
@@ -983,6 +984,9 @@
       }
 
       function clearAdminStateOnLeave() {
+        try {
+          sessionStorage.setItem(ADMIN_OFF_FLAG_KEY, "1");
+        } catch (e) {}
         if (!isAdmin()) return;
         if (client && currentSession) {
           client.auth.signOut();
@@ -1009,8 +1013,16 @@
           currentSession = null;
         }
       }
+      var forcedOffByNavigation = false;
+      try {
+        forcedOffByNavigation = sessionStorage.getItem(ADMIN_OFF_FLAG_KEY) === "1";
+        sessionStorage.removeItem(ADMIN_OFF_FLAG_KEY);
+      } catch (e) {}
       updateAdminUi();
       await renderList();
+      if (forcedOffByNavigation) {
+        await deactivateAdminMode({ silent: true });
+      }
 
       window.addEventListener("pagehide", function () {
         clearAdminStateOnLeave();
@@ -1027,7 +1039,13 @@
       });
 
       window.addEventListener("pageshow", async function (e) {
-        if (e && e.persisted && isAdmin()) {
+        var persisted = !!(e && e.persisted);
+        var forceOff = false;
+        try {
+          forceOff = sessionStorage.getItem(ADMIN_OFF_FLAG_KEY) === "1";
+          if (forceOff) sessionStorage.removeItem(ADMIN_OFF_FLAG_KEY);
+        } catch (err) {}
+        if (persisted || forceOff || isAdmin()) {
           await deactivateAdminMode({ silent: true });
         }
       });

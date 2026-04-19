@@ -368,8 +368,9 @@
     @media (min-width: 768px) {
       .hero-inner {
         padding: 0.52rem 1.5rem 0.32rem;
-        grid-template-columns: minmax(0, 1.12fr) minmax(0, 0.88fr);
-        gap: 0.95rem;
+        /* 왼쪽 본문 | 가운데 AAO | 오른쪽 여백(대칭) — 상하 높이는 2열 때와 동일(한 행 max) */
+        grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+        gap: 0.75rem 1rem;
         align-items: start;
       }
     }
@@ -418,9 +419,10 @@
 
     @media (min-width: 768px) {
       .hero-aside {
-        align-items: flex-end;
-        text-align: right;
-        margin: 0 0 0 auto;
+        align-items: stretch;
+        text-align: center;
+        margin: 0;
+        justify-self: center;
         padding: 0.62rem 0.98rem;
       }
     }

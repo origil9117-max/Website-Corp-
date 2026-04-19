@@ -10,20 +10,22 @@
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700&family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --ink: #243040;
-      --ink-soft: #3a4658;
-      --paper: #f7f5f8;
-      --paper-dark: #ece7ef;
-      --navy: #2b3448;
-      --navy-mid: #3b4760;
+      --ink: #1a2330;
+      --ink-soft: #334056;
+      --paper: #f4f5f9;
+      --paper-dark: #e8eaef;
+      --navy: #222b3a;
+      --navy-mid: #354058;
       --maroon: #7c5d93;
       --maroon-dark: #5f466f;
       --gold: #b89478;
       --gold-light: #d8bea6;
       --champagne: #e5d7c8;
-      --muted: #667086;
-      --line: rgba(36, 48, 64, 0.1);
+      --muted: #5c6578;
+      --line: rgba(28, 38, 52, 0.09);
       --max: 100%;
+      --read-max: min(70rem, 100%);
+      --radius-soft: 6px;
     }
 
     * {
@@ -43,6 +45,9 @@
       color: var(--ink);
       font-size: 16px;
       line-height: 1.65;
+      letter-spacing: -0.01em;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
 
     main {
@@ -69,15 +74,16 @@
       position: sticky;
       top: 0;
       z-index: 100;
-      background: rgba(250, 249, 246, 0.94);
-      backdrop-filter: blur(8px);
-      border-bottom: 1px solid var(--line);
+      background: rgba(248, 249, 252, 0.9);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(30, 40, 55, 0.07);
     }
 
     .nav-inner {
       max-width: var(--max);
       margin: 0 auto;
-      padding: 0.52rem 1.25rem;
+      padding: 0.58rem 1.25rem;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -143,7 +149,7 @@
       font-weight: 600;
       color: #fff;
       background: linear-gradient(180deg, var(--maroon) 0%, var(--maroon-dark) 100%);
-      border-radius: 2px;
+      border-radius: 4px;
       text-decoration: none;
       white-space: nowrap;
       border: 1px solid rgba(0, 0, 0, 0.06);
@@ -159,7 +165,7 @@
       color: #fff;
       border: 1px solid rgba(10, 95, 165, 0.45);
       background: linear-gradient(180deg, #1d8bf1 0%, #1267b8 100%);
-      border-radius: 2px;
+      border-radius: 4px;
       text-decoration: none;
       white-space: nowrap;
       box-shadow: 0 2px 8px rgba(18, 103, 184, 0.28);
@@ -324,9 +330,14 @@
       overflow: hidden;
       max-width: none;
       margin: 0;
-      border-bottom: 1px solid rgba(180, 155, 125, 0.14);
+      border-bottom: 1px solid rgba(140, 150, 175, 0.16);
       min-height: unset;
-      background: linear-gradient(140deg, #d9d1ea 0%, #ccdbee 52%, #ead8cc 100%);
+      background: linear-gradient(
+        132deg,
+        #d2d6e8 0%,
+        #cad6ea 46%,
+        #e0dcd8 100%
+      );
       -webkit-font-smoothing: antialiased;
     }
 
@@ -337,8 +348,8 @@
       pointer-events: none;
       background: radial-gradient(
         ellipse 88% 68% at 76% 12%,
-        rgba(160, 126, 194, 0.26) 0%,
-        transparent 56%
+        rgba(125, 118, 165, 0.17) 0%,
+        transparent 58%
       );
     }
 
@@ -513,7 +524,7 @@
     }
 
     .pillars {
-      background: linear-gradient(180deg, #ebe6dc 0%, var(--paper) 55%);
+      background: linear-gradient(180deg, #e6e9f0 0%, var(--paper) 58%);
       padding: 1.05rem 1.25rem 1.2rem;
       border-bottom: 1px solid var(--line);
       max-width: none;
@@ -527,7 +538,7 @@
     }
 
     .pillars-inner {
-      max-width: var(--max);
+      max-width: var(--read-max);
       margin: 0 auto;
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
@@ -538,11 +549,11 @@
       display: flex;
       gap: 0.55rem;
       align-items: flex-start;
-      padding: 0.72rem 0.85rem;
+      padding: 0.78rem 0.92rem;
       background: #fff;
-      border: 1px solid var(--line);
-      border-radius: 3px;
-      box-shadow: 0 3px 14px rgba(20, 24, 32, 0.06);
+      border: 1px solid rgba(28, 38, 52, 0.08);
+      border-radius: var(--radius-soft);
+      box-shadow: 0 2px 12px rgba(24, 32, 48, 0.05);
     }
 
     .pillar-icon {
@@ -569,7 +580,8 @@
       margin: 0;
       font-size: 0.78rem;
       color: var(--muted);
-      line-height: 1.5;
+      line-height: 1.58;
+      letter-spacing: -0.01em;
     }
 
     .hero-badge {
@@ -589,10 +601,11 @@
       font-family: "Noto Sans KR", system-ui, sans-serif;
       font-size: clamp(1.5rem, 3.8vw, 2.05rem);
       font-weight: 800;
-      line-height: 1.2;
+      line-height: 1.18;
+      letter-spacing: -0.03em;
       margin-bottom: 0.22rem;
       max-width: 22ch;
-      color: #273245;
+      color: var(--ink);
       text-shadow: none;
     }
 
@@ -664,7 +677,7 @@
       padding: 0.5rem 1.05rem;
       font-size: 0.84rem;
       font-weight: 600;
-      border-radius: 2px;
+      border-radius: 4px;
       text-decoration: none;
       transition: background 0.22s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.22s ease;
     }
@@ -750,15 +763,16 @@
       flex-wrap: wrap;
       align-items: center;
       gap: 0.48rem 1rem;
-      max-width: var(--max);
+      max-width: var(--read-max);
       margin: 0 auto;
       padding: 0.62rem 0.95rem;
       background: #fff;
-      border: 1px solid var(--line);
-      border-radius: 2px;
+      border: 1px solid rgba(28, 38, 52, 0.08);
+      border-radius: var(--radius-soft);
       font-size: 0.78rem;
       color: var(--muted);
-      line-height: 1.5;
+      line-height: 1.55;
+      box-shadow: 0 1px 0 rgba(255, 255, 255, 0.9) inset;
     }
 
     .trust-inner strong {
@@ -774,7 +788,7 @@
     section {
       max-width: var(--max);
       margin: 0 auto;
-      padding: 2.15rem 1.25rem;
+      padding: 2rem 1.25rem;
     }
 
     section + section {
@@ -790,30 +804,35 @@
     }
 
     .section-head {
-      margin-bottom: 1.2rem;
+      margin-bottom: 1.15rem;
     }
 
     .section-label {
-      font-size: 0.7rem;
-      letter-spacing: 0.16em;
+      font-size: 0.66rem;
+      letter-spacing: 0.22em;
       text-transform: uppercase;
       color: var(--maroon);
       font-weight: 600;
-      margin-bottom: 0.32rem;
+      margin-bottom: 0.38rem;
+      opacity: 0.92;
     }
 
     .section-head h2 {
       font-family: "Noto Serif KR", serif;
-      font-size: clamp(1.4rem, 3vw, 1.75rem);
+      font-size: clamp(1.38rem, 2.85vw, 1.72rem);
       font-weight: 700;
       color: var(--ink);
+      letter-spacing: -0.03em;
+      line-height: 1.28;
     }
 
     .section-head p {
-      margin-top: 0.42rem;
+      margin-top: 0.45rem;
       color: var(--muted);
-      max-width: 40rem;
-      font-size: 0.94rem;
+      max-width: 38rem;
+      font-size: 0.92rem;
+      line-height: 1.68;
+      letter-spacing: -0.01em;
     }
 
     #contact {
@@ -956,8 +975,16 @@
     #services {
       position: relative;
       overflow: hidden;
-      background: linear-gradient(180deg, #f9f7f4 0%, #ffffff 42%);
-      box-shadow: inset 0 1px 0 rgba(20, 24, 32, 0.06);
+      background: linear-gradient(180deg, #f2f4f8 0%, #ffffff 46%);
+      box-shadow: inset 0 1px 0 rgba(28, 38, 52, 0.05);
+    }
+
+    #services > .section-head,
+    #services > .services-grid,
+    #services > .services-footer-row {
+      max-width: var(--read-max);
+      margin-left: auto;
+      margin-right: auto;
     }
 
     .services-bg {
@@ -989,23 +1016,23 @@
 
     .service-card {
       background: #fff;
-      border: 1px solid var(--line);
-      border-radius: 2px;
+      border: 1px solid rgba(28, 38, 52, 0.09);
+      border-radius: var(--radius-soft);
       overflow: hidden;
-      box-shadow: 0 1px 0 rgba(24, 32, 51, 0.05);
+      box-shadow: 0 2px 10px rgba(24, 32, 48, 0.06);
       cursor: pointer;
       transition: transform 0.14s ease, box-shadow 0.18s ease, border-color 0.18s ease;
     }
 
     .service-card:hover {
       transform: translateY(-2px);
-      box-shadow: 0 12px 24px rgba(24, 32, 51, 0.14);
-      border-color: rgba(93, 74, 114, 0.35);
+      box-shadow: 0 14px 28px rgba(24, 32, 51, 0.12);
+      border-color: rgba(93, 74, 114, 0.32);
     }
 
     .service-card.selected {
-      border-color: rgba(93, 74, 114, 0.58);
-      box-shadow: 0 0 0 3px rgba(93, 74, 114, 0.14), 0 14px 28px rgba(24, 32, 51, 0.2);
+      border-color: rgba(93, 74, 114, 0.55);
+      box-shadow: 0 0 0 2px rgba(93, 74, 114, 0.12), 0 16px 32px rgba(24, 32, 51, 0.16);
     }
 
     /* 이중 레이어 유지, 대비는 살짝만 (광택·중간색 튀는 정도 완화) */

@@ -982,6 +982,16 @@
         }
       }
 
+      function clearAdminStateOnLeave() {
+        if (!isAdmin()) return;
+        if (client && currentSession) {
+          client.auth.signOut();
+        }
+        currentSession = null;
+        localAdmin = false;
+        authSectionOpen = false;
+      }
+
       if (!window.supabase || !window.SUPABASE_URL || !window.SUPABASE_ANON_KEY) {
         setStatus(authStatus, "", "Supabase가 없으면 아래 「로컬 비상 모드」만 사용할 수 있습니다.");
       } else {
@@ -1003,23 +1013,17 @@
       await renderList();
 
       window.addEventListener("pagehide", function () {
-        if (!isAdmin()) return;
-        if (client && currentSession) {
-          client.auth.signOut();
-        }
-        currentSession = null;
-        localAdmin = false;
-        authSectionOpen = false;
+        clearAdminStateOnLeave();
       });
 
       window.addEventListener("beforeunload", function () {
-        if (!isAdmin()) return;
-        if (client && currentSession) {
-          client.auth.signOut();
+        clearAdminStateOnLeave();
+      });
+
+      document.addEventListener("visibilitychange", function () {
+        if (document.visibilityState === "hidden") {
+          clearAdminStateOnLeave();
         }
-        currentSession = null;
-        localAdmin = false;
-        authSectionOpen = false;
       });
 
       window.addEventListener("pageshow", async function (e) {

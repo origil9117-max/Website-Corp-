@@ -962,7 +962,15 @@
               var path = makeSafeStoragePath(currentSession.user.id, pickedFile.name);
               var up = await client.storage.from(STORAGE_BUCKET).upload(path, pickedFile, { upsert: true });
               if (up.error) {
-                setStatus(formStatus, "err", "첨부파일 업로드 실패: " + up.error.message);
+                var errMsg = String(up.error.message || "");
+                var extra = "";
+                if (/bucket not found/i.test(errMsg)) {
+                  extra =
+                    " Supabase 대시보드 → Storage → New bucket에서 이름을 정확히 「" +
+                    STORAGE_BUCKET +
+                    "」로 만들고(공개 권장), Storage 정책(RLS)을 설정하세요. 프로젝트의 SUPABASE_SETUP.md 6·10절을 참고하세요.";
+                }
+                setStatus(formStatus, "err", "첨부파일 업로드 실패: " + errMsg + extra);
                 return;
               }
               attachment = {

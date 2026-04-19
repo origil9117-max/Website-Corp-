@@ -81,6 +81,14 @@
       display: block;
       margin-bottom: 1rem;
     }
+    .head-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.65rem;
+      flex-wrap: wrap;
+      margin-bottom: 0.2rem;
+    }
 
     h1 {
       margin: 0;
@@ -187,6 +195,23 @@
       color: var(--maroon);
       font-weight: 700;
     }
+    .admin-shortcut {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--maroon-dark);
+      font-weight: 700;
+      text-decoration: none;
+      font-size: 0.82rem;
+      border: 1px solid rgba(90, 53, 64, 0.28);
+      border-radius: 2px;
+      background: #fff;
+      padding: 0.35rem 0.62rem;
+    }
+    .admin-shortcut:hover {
+      text-decoration: none;
+      background: #f7f1eb;
+    }
   </style>
 </head>
 <body>
@@ -199,14 +224,16 @@
       <div class="links">
         <a href="index.html">메인으로</a>
         <a href="platform.html">지능형 행정 플랫폼</a>
-        <a href="admin.html">관리자 모드</a>
       </div>
     </div>
   </header>
 
   <div class="wrap">
     <header class="head">
-      <p class="section-label">Notice</p>
+      <div class="head-top">
+        <p class="section-label">Notice</p>
+        <a class="admin-shortcut" href="admin.html">관리자 모드</a>
+      </div>
       <h1>공지사항</h1>
     </header>
 

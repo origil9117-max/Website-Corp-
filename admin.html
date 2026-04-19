@@ -647,7 +647,7 @@
       var composeZoomed = false;
       var selectedNoticeImg = null;
       var imageAlignDragSession = null;
-      var MAX_NOTICE_IMAGE_BYTES = 1024 * 1024;
+      var MAX_NOTICE_IMAGE_BYTES = 5 * 1024 * 1024;
 
       function setStatus(el, type, msg) {
         el.classList.remove("ok", "err");
@@ -919,7 +919,7 @@
       async function insertNoticeInlineImageFile(file) {
         if (!file || !isLikelyImageFile(file)) return;
         if (file.size > MAX_NOTICE_IMAGE_BYTES) {
-          setStatus(formStatus, "err", "이미지 용량이 1MB를 초과합니다. (" + (file.name || "이미지") + ")");
+          setStatus(formStatus, "err", "이미지 용량이 5MB를 초과합니다. (" + (file.name || "이미지") + ")");
           return;
         }
         try {
@@ -951,13 +951,13 @@
               type: blob.type && /^image\//i.test(blob.type) ? blob.type : "image/png"
             });
             if (file.size > MAX_NOTICE_IMAGE_BYTES) {
-              throw new Error("이미지가 1MB를 초과합니다.");
+              throw new Error("이미지가 5MB를 초과합니다.");
             }
             var dataUrl = await fileToDataURL(file);
             if (!isSafeImgSrc(dataUrl)) continue;
             img.setAttribute("src", dataUrl);
           } catch (err) {
-            if (err && err.message && /1MB|초과/.test(err.message)) throw err;
+            if (err && err.message && /5MB|초과/.test(err.message)) throw err;
           }
         }
       }

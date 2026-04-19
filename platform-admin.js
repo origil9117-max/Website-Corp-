@@ -24,6 +24,7 @@
   var currentSession = null;
   var localAdmin = false;
   var showLoginForm = false;
+  var ADMIN_OFF_FLAG_KEY = "platform-admin-force-off";
 
   var INJECT_HTML =
     '<section class="platform-panel platform-auth" aria-label="관리자 인증">' +
@@ -235,6 +236,36 @@
       }
     }
 
+    async function deactivateAdminMode(opts) {
+      var silent = !!(opts && opts.silent);
+      if (client && currentSession) {
+        try {
+          await client.auth.signOut();
+        } catch (e) {}
+      }
+      currentSession = null;
+      localAdmin = false;
+      showLoginForm = false;
+      if (adminPass) adminPass.value = "";
+      updateAdminUi();
+      clearEditors();
+      if (!silent) {
+        setStatus(authStatus, "", "관리자 모드가 꺼져 있습니다.");
+      }
+    }
+
+    function clearAdminStateOnLeave() {
+      try {
+        sessionStorage.setItem(ADMIN_OFF_FLAG_KEY, "1");
+      } catch (e) {}
+      if (client && currentSession) {
+        client.auth.signOut();
+      }
+      currentSession = null;
+      localAdmin = false;
+      showLoginForm = false;
+    }
+
     async function loadFromCloud() {
       if (!client) return null;
       var res = await client.from("platform_pages").select("lead, body_html").eq("slug", slug).maybeSingle();
@@ -249,9 +280,19 @@
       var supaUrl = String(window.SUPABASE_URL || "").trim();
       var supaKey = String(window.SUPABASE_ANON_KEY || "").trim();
       if (window.supabase && supaUrl && supaKey) {
-        client = window.supabase.createClient(supaUrl, supaKey);
+        client = window.supabase.createClient(supaUrl, supaKey, {
+          auth: {
+            persistSession: false,
+            autoRefreshToken: false,
+            detectSessionInUrl: false
+          }
+        });
         var sessionRes = await client.auth.getSession();
         currentSession = sessionRes.data.session;
+        if (currentSession) {
+          await client.auth.signOut();
+          currentSession = null;
+        }
       }
 
       var skip = shouldSkipPersistedContent();
@@ -297,6 +338,38 @@
       .catch(function () {
         clearEditors();
       });
+
+    var forcedOffByNavigation = false;
+    try {
+      forcedOffByNavigation = sessionStorage.getItem(ADMIN_OFF_FLAG_KEY) === "1";
+      sessionStorage.removeItem(ADMIN_OFF_FLAG_KEY);
+    } catch (e) {}
+    if (forcedOffByNavigation) {
+      deactivateAdminMode({ silent: true });
+    }
+
+    window.addEventListener("pagehide", function () {
+      clearAdminStateOnLeave();
+    });
+    window.addEventListener("beforeunload", function () {
+      clearAdminStateOnLeave();
+    });
+    document.addEventListener("visibilitychange", function () {
+      if (document.visibilityState === "hidden") {
+        clearAdminStateOnLeave();
+      }
+    });
+    window.addEventListener("pageshow", function (e) {
+      var persisted = !!(e && e.persisted);
+      var forceOff = false;
+      try {
+        forceOff = sessionStorage.getItem(ADMIN_OFF_FLAG_KEY) === "1";
+        if (forceOff) sessionStorage.removeItem(ADMIN_OFF_FLAG_KEY);
+      } catch (err) {}
+      if (persisted || forceOff || isAdmin()) {
+        deactivateAdminMode({ silent: true });
+      }
+    });
 
     var btnLoadFromPage = document.getElementById("platform-btn-load-from-page");
     if (btnLoadFromPage) {
@@ -363,14 +436,7 @@
         setStatus(authStatus, "", "관리자 모드가 꺼져 있습니다.");
         return;
       }
-      if (client && currentSession) {
-        await client.auth.signOut();
-      }
-      currentSession = null;
-      localAdmin = false;
-      showLoginForm = false;
-      updateAdminUi();
-      clearEditors();
+      await deactivateAdminMode({ silent: false });
     });
 
     btnTest.addEventListener("click", async function () {

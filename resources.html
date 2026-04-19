@@ -327,6 +327,41 @@
       padding: 0.85rem;
       font-size: 0.86rem;
     }
+
+    .notice-box {
+      margin: 0.85rem 0 1.15rem;
+      padding: 0.9rem 1rem 1rem;
+      border: 1px solid rgba(90, 53, 64, 0.2);
+      border-radius: 4px;
+      background: linear-gradient(180deg, #fff 0%, #faf7f4 100%);
+      font-size: 0.86rem;
+      line-height: 1.58;
+      color: var(--ink);
+    }
+
+    .notice-box strong {
+      display: block;
+      margin-bottom: 0.35rem;
+      font-size: 0.88rem;
+      color: var(--ink);
+    }
+
+    .notice-box ol {
+      margin: 0.35rem 0 0;
+      padding-left: 1.25rem;
+    }
+
+    .notice-box li {
+      margin-bottom: 0.38rem;
+    }
+
+    .notice-box .notice-foot {
+      margin: 0.6rem 0 0;
+      padding-top: 0.55rem;
+      border-top: 1px dashed var(--line);
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
   </style>
 </head>
 <body>
@@ -348,7 +383,21 @@
     <header class="head">
       <p class="section-label">Resource Center</p>
       <h1 id="resources-title">자료실</h1>
-      <p class="helper" id="resources-helper">등록된 자료를 확인할 수 있습니다. 관리자 인증 후 등록/수정/삭제가 가능합니다.</p>
+      <p class="helper" id="resources-helper">
+        등록된 자료를 확인할 수 있습니다. 첨부파일(5MB 이하)을 올리려면 아래 권장 절차대로 Supabase에 관리자 로그인 후 저장하세요.
+      </p>
+      <div class="notice-box" role="region" aria-label="5MB 이하 첨부 권장 절차">
+        <strong>5MB 이하 파일 첨부 · 권장 절차</strong>
+        <ol>
+          <li>배포된 사이트 주소(<strong>https://</strong>)로 접속합니다. (<code>file://</code> 로 열면 연결이 실패할 수 있습니다.)</li>
+          <li>필요하면 「<strong>연결 테스트</strong>」로 Supabase와 통신이 되는지 확인합니다.</li>
+          <li>「<strong>관리자 모드 켜기</strong>」를 누른 뒤, Supabase에 등록된 관리자 계정 비밀번호로 로그인합니다.</li>
+          <li>아래 양식에서 제목·내용을 입력하고, <strong>한 파일당 최대 5MB</strong>까지 첨부한 다음 「저장」합니다.</li>
+        </ol>
+        <p class="notice-foot">
+          Supabase에 연결되지 않을 때만 쓰는 <strong>로컬 비상 모드</strong>는 첨부가 약 450KB 이하로 제한됩니다. 큰 파일은 반드시 위 절차(클라우드 로그인)를 이용하세요.
+        </p>
+      </div>
     </header>
 
     <section class="panel" aria-label="관리자 인증">
@@ -386,8 +435,8 @@
         <textarea id="resource-content" required placeholder="자료 설명 또는 본문을 입력해 주세요."></textarea>
 
         <p class="attachment-notice" role="note">
-          큰 첨부는 Supabase 로그인 필요
-          <span class="sub">관리자로 로그인하면 파일이 클라우드(Storage)에 저장되어 용량 제한 없이 가깝게 이용할 수 있습니다.</span>
+          첨부파일(선택)
+          <span class="sub">Supabase에 <strong>관리자로 로그인</strong>한 경우 Storage에 저장되며, <strong>한 파일당 최대 5MB</strong>까지 업로드할 수 있습니다. 로컬 비상 모드만 켜진 경우 약 450KB 이하로 제한됩니다.</span>
         </p>
 
         <label for="resource-file">파일 첨부(선택)</label>
@@ -429,7 +478,10 @@
         var titleEl = document.getElementById("resources-title");
         var helperEl = document.getElementById("resources-helper");
         if (titleEl) titleEl.textContent = serviceMap[service] + " · 자료실";
-        if (helperEl) helperEl.textContent = serviceMap[service] + " 관련 자료를 확인할 수 있습니다. 관리자 인증 후 등록/수정/삭제가 가능합니다.";
+        if (helperEl)
+          helperEl.textContent =
+            serviceMap[service] +
+            " 관련 자료를 확인할 수 있습니다. 첨부(5MB 이하)는 Supabase 관리자 로그인 후 저장하세요.";
       }
 
       var STORAGE_BUCKET = "resource-files";

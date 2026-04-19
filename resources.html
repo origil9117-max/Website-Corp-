@@ -480,18 +480,6 @@
         <button id="btn-auth-toggle" type="button" class="btn btn-ghost">관리자 모드</button>
       </div>
       <h1 id="resources-title">자료실</h1>
-      <div id="resources-upload-guide" class="notice-box" role="region" aria-label="5MB 이하 첨부 권장 절차" hidden>
-        <strong>5MB 이하 파일 첨부 · 권장 절차</strong>
-        <ol>
-          <li>배포된 사이트 주소(<strong>https://</strong>)로 접속합니다. (<code>file://</code> 로 열면 연결이 실패할 수 있습니다.)</li>
-          <li>필요하면 「<strong>연결 테스트</strong>」로 Supabase와 통신이 되는지 확인합니다.</li>
-          <li>「<strong>일반 로그인</strong>」에 Supabase에 등록된 관리자 계정 비밀번호를 입력해 로그인합니다.</li>
-          <li>아래 양식에서 제목·내용을 입력하고, <strong>한 파일당 최대 5MB</strong>까지 첨부한 다음 「저장」합니다.</li>
-        </ol>
-        <p class="notice-foot">
-          Supabase에 연결되지 않을 때만 쓰는 <strong>로컬 비상 모드</strong>는 첨부가 약 450KB 이하로 제한됩니다. 큰 파일은 반드시 위 절차(클라우드 로그인)를 이용하세요.
-        </p>
-      </div>
     </header>
 
     <section id="auth-section" class="panel" aria-label="관리자 인증" hidden>
@@ -957,15 +945,6 @@
           resetForm();
           if (adminPassSupabase) adminPassSupabase.value = "";
           if (adminPassLocal) adminPassLocal.value = "";
-        }
-
-        var uploadGuide = document.getElementById("resources-upload-guide");
-        if (uploadGuide) {
-          if (on) {
-            uploadGuide.removeAttribute("hidden");
-          } else {
-            uploadGuide.setAttribute("hidden", "");
-          }
         }
 
         if (on) authSectionOpen = true;

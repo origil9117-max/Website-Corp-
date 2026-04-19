@@ -2278,6 +2278,23 @@
       var statusEl = document.getElementById("consult-status");
       if (!form || !statusEl) return;
 
+      function buildMailtoLink(name, phone, msg) {
+        var subject = "[상담요청] 대한민국행정사사무소 — " + (name || "");
+        var body =
+          "성명: " +
+          (name || "") +
+          "\n연락처: " +
+          (phone || "") +
+          "\n\n메시지:\n" +
+          (msg || "");
+        return (
+          "mailto:lkc@daum.net?subject=" +
+          encodeURIComponent(subject) +
+          "&body=" +
+          encodeURIComponent(body)
+        );
+      }
+
       form.addEventListener("submit", function (e) {
         e.preventDefault();
         statusEl.textContent = "";
@@ -2362,8 +2379,13 @@
             } else if (m) {
               line += m + " ";
             }
-            line += "직접 lkc@daum.net 으로 메일을 보내셔도 됩니다.";
-            statusEl.textContent = line;
+            var mailtoHref = buildMailtoLink(name, phone, msg);
+            line += '아래 링크로 메일앱에서 바로 보낼 수 있습니다.';
+            statusEl.innerHTML =
+              line +
+              ' <a href="' +
+              mailtoHref +
+              '" style="text-decoration:underline;">메일앱으로 보내기</a>';
           })
           .finally(function () {
             btn.disabled = false;

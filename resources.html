@@ -864,13 +864,12 @@
       function updateSupabaseHint() {
         if (!authSupabaseHint) return;
         if (!client) {
+          authSupabaseHint.style.display = "";
           authSupabaseHint.textContent =
             "Supabase URL/키(supabase-config.js)가 없어 일반 로그인을 사용할 수 없습니다. 아래 로컬 비상 모드만 이용할 수 있습니다.";
         } else {
-          authSupabaseHint.textContent =
-            "등록 이메일 " +
-            ADMIN_EMAIL +
-            " 계정 비밀번호로 로그인하면 Storage에 첨부·저장할 수 있습니다(파일당 최대 5MB).";
+          authSupabaseHint.textContent = "";
+          authSupabaseHint.style.display = "none";
         }
       }
 

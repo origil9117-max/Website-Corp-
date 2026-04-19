@@ -1703,6 +1703,25 @@
       user-select: none;
     }
 
+    .footer-meta {
+      margin-top: 0.75rem;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      gap: 0.35rem 1.25rem;
+    }
+
+    .footer-meta a {
+      color: rgba(245, 242, 235, 0.88);
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+
+    .footer-meta a:hover,
+    .footer-meta a:focus-visible {
+      color: #fff;
+    }
+
     @media (max-width: 640px) {
       nav ul {
         gap: 0.65rem;
@@ -2094,7 +2113,10 @@
         <p style="margin-top: 0.5rem;">
           <a href="https://blog.naver.com/visainasia" rel="noopener noreferrer" style="color: rgba(245, 242, 235, 0.85);">공식 블로그 (네이버)</a>
         </p>
-        <p style="margin-top: 0.75rem;">© <span id="y"></span> 대한민국행정사사무소. All rights reserved.</p>
+        <p class="footer-meta">
+          <span>© <span id="y"></span> 대한민국행정사사무소. All rights reserved.</span>
+          <span>사업자번호: 189-25-00359, <a href="disclaimer.html">면책공고</a></span>
+        </p>
       </div>
       <div class="footer-logos" aria-label="관련 기관 링크">
         <a class="footer-logo-link" href="https://daaa.or.kr/vtMain.html" target="_blank" rel="noopener noreferrer" aria-label="대한행정사회 새 창 열기">

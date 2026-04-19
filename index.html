@@ -632,8 +632,25 @@
       align-items: center;
     }
 
+    .hero-platform-cats-wrap {
+      position: relative;
+      z-index: 3;
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 0.85rem 1.25rem 1rem;
+      width: 100%;
+      box-sizing: border-box;
+      border-top: 1px solid rgba(124, 93, 147, 0.12);
+    }
+
+    @media (min-width: 768px) {
+      .hero-platform-cats-wrap {
+        padding: 1rem 1.5rem 1.15rem;
+      }
+    }
+
     .hero-platform-cats {
-      margin-top: 0.7rem;
+      margin-top: 0;
       max-width: 38rem;
       font-size: 0.78rem;
       line-height: 1.55;
@@ -1781,15 +1798,6 @@
             <a class="btn btn-ghost" href="#services">업무 분야</a>
             <a class="btn btn-ghost" href="platform.html">지능형 행정 플랫폼</a>
           </div>
-          <nav class="hero-platform-cats" aria-label="지능형 행정 플랫폼 카테고리 바로가기">
-            <span class="hero-platform-cats-label">지능형 행정 플랫폼 카테고리</span>
-            <div class="hero-platform-cats-grid">
-              <a href="minwon-roadmap.html">민원 로드맵</a>
-              <a href="platform-check.html">서류·준비 체크</a>
-              <a href="platform-faq.html">자주 묻는 질문</a>
-              <a href="platform-hub.html">공지·자료실 연동</a>
-            </div>
-          </nav>
         </div>
         <div class="hero-aside">
           <p class="hero-tagline">Administrative Agent Office</p>
@@ -1802,6 +1810,17 @@
             <a data-service="appeal" href="service-appeal.html" aria-label="행정심판 업무 게시 페이지로 이동">행정심판</a>
           </div>
         </div>
+      </div>
+      <div class="hero-platform-cats-wrap">
+        <nav class="hero-platform-cats" aria-label="지능형 행정 플랫폼 카테고리 바로가기">
+          <span class="hero-platform-cats-label">지능형 행정 플랫폼 카테고리</span>
+          <div class="hero-platform-cats-grid">
+            <a href="minwon-roadmap.html">민원 로드맵</a>
+            <a href="platform-check.html">서류·준비 체크</a>
+            <a href="platform-faq.html">자주 묻는 질문</a>
+            <a href="platform-hub.html">공지·자료실 연동</a>
+          </div>
+        </nav>
       </div>
     </section>
 

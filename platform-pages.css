@@ -189,7 +189,7 @@ h1 {
 }
 
 .platform-sibling-nav {
-  margin-top: 0.95rem;
+  margin-top: 1.65rem;
   padding-top: 1rem;
   border-top: 1px solid var(--line);
   font-size: 0.8rem;
@@ -198,7 +198,7 @@ h1 {
 
 .platform-middle-box {
   margin-top: 1.25rem;
-  min-height: 120px;
+  min-height: 260px;
   border: 1px solid rgba(36, 48, 64, 0.18);
   border-radius: 6px;
   background: rgba(255, 255, 255, 0.62);

@@ -18,6 +18,7 @@ drop policy if exists "platform_pages_write_auth" on public.platform_pages;
 -- 읽기: 비로그인(anon) 포함 전체 허용
 create policy "platform_pages_read_all" on public.platform_pages
   for select
+  to anon, authenticated
   using (true);
 
 -- 쓰기: 로그인 사용자만 허용(관리자 로그인 후 저장/수정/삭제)
@@ -28,5 +29,6 @@ create policy "platform_pages_write_auth" on public.platform_pages
   with check (true);
 
 -- 권한 부여 (RLS 정책과 별개로 필요)
+grant usage on schema public to anon, authenticated;
 grant select on table public.platform_pages to anon;
 grant select, insert, update, delete on table public.platform_pages to authenticated;

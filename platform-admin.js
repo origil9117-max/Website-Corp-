@@ -30,6 +30,7 @@
   var adminRootOpen = false;
   var adminToggleBtn = null;
   var ADMIN_OFF_FLAG_KEY = "platform-admin-force-off";
+  var lastCloudLoadError = "";
 
   var INJECT_HTML =
     '<section class="platform-panel platform-auth" aria-label="관리자 인증">' +
@@ -757,9 +758,11 @@
       if (!client) return null;
       var res = await client.from("platform_pages").select("lead, body_html").eq("slug", slug).maybeSingle();
       if (res.error) {
-        console.warn("platform_pages:", res.error.message);
+        lastCloudLoadError = String(res.error.message || "unknown");
+        console.warn("platform_pages:", lastCloudLoadError);
         return null;
       }
+      lastCloudLoadError = "";
       return res.data;
     }
 
@@ -774,10 +777,10 @@
         };
         return currentPersistedRecord;
       }
-    if (STRICT_CLOUD_SYNC_WHEN_AVAILABLE) {
-      currentPersistedRecord = null;
-      return null;
-    }
+      if (STRICT_CLOUD_SYNC_WHEN_AVAILABLE) {
+        currentPersistedRecord = null;
+        return null;
+      }
       var loc = loadLocal();
       if (loc) {
         currentPersistedRecord = {
@@ -837,6 +840,13 @@
         persistHint.innerHTML =
           "예전에 저장한 안내 문구가 그대로 보이면, 주소 끝에 <strong>?resetplatform=1</strong>을 붙여 한 번 열면 HTML 기본 문구로 돌아갑니다. Supabase에 옛 데이터가 남아 있으면 대시보드에서 해당 행을 삭제하거나 저장으로 덮어쓰면 됩니다.";
         root.insertBefore(persistHint, root.firstChild);
+      }
+      if (persistHint && STRICT_CLOUD_SYNC_WHEN_AVAILABLE && !applied && lastCloudLoadError) {
+        persistHint.style.color = "#b02135";
+        persistHint.innerHTML =
+          "클라우드 데이터 로드 실패: <strong>" +
+          escapeHtmlText(lastCloudLoadError) +
+          "</strong><br>Supabase SQL Editor에서 platform_pages.sql을 실행하고, anon 권한(select)과 RLS 정책을 확인해 주세요.";
       }
     }
 

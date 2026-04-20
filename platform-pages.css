@@ -36,6 +36,13 @@ a:hover {
   text-decoration: underline;
 }
 
+.brand:hover,
+.brand:focus-visible,
+.brand:hover span,
+.brand:focus-visible span {
+  text-decoration: none;
+}
+
 .topbar {
   position: sticky;
   top: 0;

@@ -327,7 +327,7 @@
 
   function loadEditorsFromPage() {
     var entries = parseEntriesFromInput(bodyEl.innerHTML.trim());
-    syncEditors(leadEl.textContent.trim(), buildEditorText(entries, true));
+    syncEditors(leadEl.textContent.trim(), buildEditorText(entries, false));
   }
 
   try {
@@ -664,7 +664,7 @@
         }
         syncEditors(
           currentPersistedRecord.lead,
-          buildEditorText(parseEntriesFromInput(currentPersistedRecord.body_html), true)
+          buildEditorText(parseEntriesFromInput(currentPersistedRecord.body_html), false)
         );
         setStatus(formStatus, "ok", "등록본을 편집창으로 불러왔습니다. 수정 후 저장하세요.");
       }
@@ -762,7 +762,7 @@
         return;
       }
       applyToPage(initialLead, initialBodyHtml);
-      syncEditors(initialLead, buildEditorText(parseEntriesFromInput(initialBodyHtml), true));
+      syncEditors(initialLead, buildEditorText(parseEntriesFromInput(initialBodyHtml), false));
       setStatus(formStatus, "ok", "편집창을 이 파일에 넣은 기본 문구로 되돌렸습니다. 저장하면 반영됩니다.");
     });
 

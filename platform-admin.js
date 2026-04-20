@@ -278,15 +278,15 @@
     }
     if (!entries.length) return "";
     return entries
-      .map(function (one) {
+      .map(function (one, idx) {
         return (
           '<div class="platform-entry">' +
           '<p class="platform-entry-heading">' +
           '<span class="platform-entry-title-text">' + escapeHtmlText(one.title || "") + "</span>" +
           '<span class="platform-entry-actions">' +
-          '<button type="button" class="btn btn-ghost" data-entry-act="edit" data-entry-idx="' + 0 + '">수정</button>' +
-          '<button type="button" class="btn btn-ghost" data-entry-act="delete" data-entry-idx="' + 0 + '">삭제</button>' +
-          '<button type="button" class="btn btn-ghost" data-entry-act="save" data-entry-idx="' + 0 + '">저장</button>' +
+          '<button type="button" class="btn btn-ghost" data-entry-act="edit" data-entry-idx="' + idx + '">수정</button>' +
+          '<button type="button" class="btn btn-ghost" data-entry-act="delete" data-entry-idx="' + idx + '">삭제</button>' +
+          '<button type="button" class="btn btn-ghost" data-entry-act="save" data-entry-idx="' + idx + '">저장</button>' +
           "</span>" +
           "</p>" +
           '<div class="platform-entry-body">' + (one.desc ? one.desc : "&nbsp;") + "</div>" +

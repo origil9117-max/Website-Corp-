@@ -221,7 +221,10 @@
           .replace(/^\(\d+\)\s*/, "")
           .replace(/^자료명:\s*/i, "")
           .trim();
-        var desc = String(descNode ? descNode.textContent : "").replace(/^설명:\s*/i, "").trim();
+        var desc = String(descNode ? descNode.innerHTML : "")
+          .replace(/^\s*<strong>\s*설명:\s*<\/strong>\s*/i, "")
+          .replace(/^\s*설명:\s*/i, "")
+          .trim();
         pushCompletedEntry(entries, title, desc);
       });
       return entries;

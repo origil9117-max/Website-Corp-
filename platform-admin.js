@@ -32,7 +32,7 @@
   var ADMIN_OFF_FLAG_KEY = "platform-admin-force-off";
   var lastCloudLoadError = "";
   var cloudBodyColumn = "body_html";
-  var CLOUD_BODY_CANDIDATE_COLUMNS = ["body_html", "body", "content", "contents", "detail_html"];
+  var CLOUD_BODY_CANDIDATE_COLUMNS = ["body_html", "body", "content", "contents"];
 
   var INJECT_HTML =
     '<section class="platform-panel platform-auth" aria-label="관리자 인증">' +
@@ -339,26 +339,22 @@
       renderSavedManager();
       return { ok: true, source: "local" };
     }
-    var upsertRes = null;
-    var cols = [cloudBodyColumn].concat(
-      CLOUD_BODY_CANDIDATE_COLUMNS.filter(function (c) {
-        return c !== cloudBodyColumn;
-      })
-    );
-    for (var i = 0; i < cols.length; i += 1) {
-      var col = cols[i];
-      var payload = {
-        slug: slug,
-        lead: lead,
-        updated_at: new Date().toISOString()
+    var resolvedCol = await resolveCloudBodyColumn();
+    if (!resolvedCol) {
+      return {
+        ok: false,
+        source: "cloud",
+        message:
+          "platform_pages 본문 컬럼을 찾지 못했습니다. Supabase SQL Editor에서 platform_pages.sql을 실행해 body_html 컬럼을 생성해 주세요."
       };
-      payload[col] = mergedBodyHtml;
-      upsertRes = await client.from("platform_pages").upsert(payload, { onConflict: "slug" });
-      if (!upsertRes.error) {
-        cloudBodyColumn = col;
-        break;
-      }
     }
+    var payload = {
+      slug: slug,
+      lead: lead,
+      updated_at: new Date().toISOString()
+    };
+    payload[resolvedCol] = mergedBodyHtml;
+    var upsertRes = await client.from("platform_pages").upsert(payload, { onConflict: "slug" });
     if (upsertRes.error) {
       return { ok: false, source: "cloud", message: String(upsertRes.error.message || "") };
     }
@@ -794,6 +790,23 @@
         body_html: bodyValue,
         updated_at: row.updated_at
       };
+    }
+
+    async function resolveCloudBodyColumn() {
+      var cols = [cloudBodyColumn].concat(
+        CLOUD_BODY_CANDIDATE_COLUMNS.filter(function (c) {
+          return c !== cloudBodyColumn;
+        })
+      );
+      for (var i = 0; i < cols.length; i += 1) {
+        var col = cols[i];
+        var probe = await client.from("platform_pages").select("slug,lead," + col).limit(1);
+        if (!probe.error) {
+          cloudBodyColumn = col;
+          return col;
+        }
+      }
+      return null;
     }
 
     async function refreshPersistedRecord() {

@@ -222,6 +222,16 @@ body.platform-admin-on .platform-sub-body .platform-entry-actions {
   padding: 0.22rem 0.48rem;
   font-size: 0.72rem;
   line-height: 1.15;
+  background: #fff;
+  border-color: var(--line);
+  color: var(--ink);
+}
+
+.platform-sub-body .platform-entry-actions .btn:focus,
+.platform-sub-body .platform-entry-actions .btn:active {
+  background: #fff;
+  border-color: var(--line);
+  color: var(--ink);
 }
 
 .platform-sub-body .platform-entry-body {

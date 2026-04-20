@@ -280,10 +280,9 @@
           '<p class="platform-entry-heading">' +
           '<span class="platform-entry-title-text">' + escapeHtmlText(one.title || "") + "</span>" +
           '<span class="platform-entry-actions">' +
-          '<button type="button" class="btn btn-ghost" data-entry-act="load" data-entry-idx="' + 0 + '">불러오기</button>' +
           '<button type="button" class="btn btn-ghost" data-entry-act="edit" data-entry-idx="' + 0 + '">수정</button>' +
           '<button type="button" class="btn btn-ghost" data-entry-act="delete" data-entry-idx="' + 0 + '">삭제</button>' +
-          '<button type="button" class="btn btn-primary" data-entry-act="save" data-entry-idx="' + 0 + '">저장</button>' +
+          '<button type="button" class="btn btn-ghost" data-entry-act="save" data-entry-idx="' + 0 + '">저장</button>' +
           "</span>" +
           "</p>" +
           '<div class="platform-entry-body">' + (one.desc ? one.desc : "&nbsp;") + "</div>" +
@@ -303,10 +302,9 @@
           '<p class="platform-entry-heading">' +
           '<span class="platform-entry-title-text">' + escapeHtmlText(one.title || "") + "</span>" +
           '<span class="platform-entry-actions">' +
-          '<button type="button" class="btn btn-ghost" data-entry-act="load" data-entry-idx="' + idx + '">불러오기</button>' +
           '<button type="button" class="btn btn-ghost" data-entry-act="edit" data-entry-idx="' + idx + '">수정</button>' +
           '<button type="button" class="btn btn-ghost" data-entry-act="delete" data-entry-idx="' + idx + '">삭제</button>' +
-          '<button type="button" class="btn btn-primary" data-entry-act="save" data-entry-idx="' + idx + '">저장</button>' +
+          '<button type="button" class="btn btn-ghost" data-entry-act="save" data-entry-idx="' + idx + '">저장</button>' +
           "</span>" +
           "</p>" +
           '<div class="platform-entry-body">' + (one.desc ? one.desc : "&nbsp;") + "</div>" +
@@ -935,7 +933,7 @@
       var entries = parseEntriesFromInput(bodyEl.innerHTML);
       if (idx < 0 || idx >= entries.length) return;
 
-      if (act === "load" || act === "edit") {
+      if (act === "edit") {
         selectedEntryIndex = idx;
         syncEditors(entries[idx].title || "", entries[idx].desc || "");
         setStatus(formStatus, "ok", "항목 (" + (idx + 1) + ")을 편집창으로 불러왔습니다.");

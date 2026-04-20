@@ -952,22 +952,8 @@
       updateAdminUi();
 
       var persistHint = document.getElementById("platform-persist-hint");
-      if (!persistHint && root) {
-        persistHint = document.createElement("p");
-        persistHint.id = "platform-persist-hint";
-        persistHint.className = "platform-hint";
-        persistHint.style.fontSize = "0.76rem";
-        persistHint.style.color = "var(--muted, #667086)";
-        persistHint.innerHTML =
-          "예전에 저장한 안내 문구가 그대로 보이면, 주소 끝에 <strong>?resetplatform=1</strong>을 붙여 한 번 열면 HTML 기본 문구로 돌아갑니다. Supabase에 옛 데이터가 남아 있으면 대시보드에서 해당 행을 삭제하거나 저장으로 덮어쓰면 됩니다.";
-        root.insertBefore(persistHint, root.firstChild);
-      }
-      if (persistHint && STRICT_CLOUD_SYNC_WHEN_AVAILABLE && !applied && lastCloudLoadError) {
-        persistHint.style.color = "#b02135";
-        persistHint.innerHTML =
-          "클라우드 데이터 로드 실패: <strong>" +
-          escapeHtmlText(lastCloudLoadError) +
-          "</strong><br>Supabase SQL Editor에서 platform_pages.sql을 실행하고, anon 권한(select)과 RLS 정책을 확인해 주세요.";
+      if (persistHint && persistHint.parentNode) {
+        persistHint.parentNode.removeChild(persistHint);
       }
     }
 

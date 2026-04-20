@@ -32,6 +32,7 @@
   var ADMIN_OFF_FLAG_KEY = "platform-admin-force-off";
   var lastCloudLoadError = "";
   var cloudBodyColumn = "body_html";
+  var CLOUD_BODY_CANDIDATE_COLUMNS = ["body_html", "body", "content", "contents", "detail_html"];
 
   var INJECT_HTML =
     '<section class="platform-panel platform-auth" aria-label="관리자 인증">' +
@@ -338,26 +339,25 @@
       renderSavedManager();
       return { ok: true, source: "local" };
     }
-    var payload = {
-      slug: slug,
-      lead: lead,
-      updated_at: new Date().toISOString()
-    };
-    payload[cloudBodyColumn] = mergedBodyHtml;
-    var upsertRes = await client.from("platform_pages").upsert(payload, { onConflict: "slug" });
-    if (
-      upsertRes.error &&
-      /column\s+platform_pages\.body_html\s+does not exist/i.test(String(upsertRes.error.message || "")) &&
-      cloudBodyColumn === "body_html"
-    ) {
-      cloudBodyColumn = "body";
-      payload = {
+    var upsertRes = null;
+    var cols = [cloudBodyColumn].concat(
+      CLOUD_BODY_CANDIDATE_COLUMNS.filter(function (c) {
+        return c !== cloudBodyColumn;
+      })
+    );
+    for (var i = 0; i < cols.length; i += 1) {
+      var col = cols[i];
+      var payload = {
         slug: slug,
         lead: lead,
         updated_at: new Date().toISOString()
       };
-      payload[cloudBodyColumn] = mergedBodyHtml;
+      payload[col] = mergedBodyHtml;
       upsertRes = await client.from("platform_pages").upsert(payload, { onConflict: "slug" });
+      if (!upsertRes.error) {
+        cloudBodyColumn = col;
+        break;
+      }
     }
     if (upsertRes.error) {
       return { ok: false, source: "cloud", message: String(upsertRes.error.message || "") };
@@ -771,15 +771,7 @@
 
     async function loadFromCloud() {
       if (!client) return null;
-      var res = await client.from("platform_pages").select("lead, body_html, updated_at").eq("slug", slug).maybeSingle();
-      if (
-        res.error &&
-        /column\s+platform_pages\.body_html\s+does not exist/i.test(String(res.error.message || "")) &&
-        cloudBodyColumn === "body_html"
-      ) {
-        cloudBodyColumn = "body";
-        res = await client.from("platform_pages").select("lead, body, updated_at").eq("slug", slug).maybeSingle();
-      }
+      var res = await client.from("platform_pages").select("*").eq("slug", slug).maybeSingle();
       if (res.error) {
         lastCloudLoadError = String(res.error.message || "unknown");
         console.warn("platform_pages:", lastCloudLoadError);
@@ -788,9 +780,18 @@
       lastCloudLoadError = "";
       var row = res.data || null;
       if (!row) return null;
+      var bodyValue = "";
+      for (var i = 0; i < CLOUD_BODY_CANDIDATE_COLUMNS.length; i += 1) {
+        var oneCol = CLOUD_BODY_CANDIDATE_COLUMNS[i];
+        if (row[oneCol] !== undefined) {
+          bodyValue = row[oneCol];
+          cloudBodyColumn = oneCol;
+          break;
+        }
+      }
       return {
         lead: row.lead,
-        body_html: row.body_html !== undefined ? row.body_html : row.body,
+        body_html: bodyValue,
         updated_at: row.updated_at
       };
     }

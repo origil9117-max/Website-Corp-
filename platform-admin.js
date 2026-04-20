@@ -166,6 +166,22 @@
     syncEditors("", ENTRY_TEMPLATE_TEXT);
   }
 
+  function forceTextareaNewlineOnEnter(textarea) {
+    if (!textarea || textarea.__platformEnterBound) return;
+    textarea.__platformEnterBound = true;
+    textarea.addEventListener("keydown", function (e) {
+      if (e.key !== "Enter" || e.isComposing) return;
+      var start = typeof textarea.selectionStart === "number" ? textarea.selectionStart : textarea.value.length;
+      var end = typeof textarea.selectionEnd === "number" ? textarea.selectionEnd : start;
+      var v = String(textarea.value || "");
+      textarea.value = v.slice(0, start) + "\n" + v.slice(end);
+      textarea.selectionStart = textarea.selectionEnd = start + 1;
+      e.preventDefault();
+      e.stopPropagation();
+      textarea.dispatchEvent(new Event("input", { bubbles: true }));
+    });
+  }
+
   function parseEntriesFromInput(input) {
     var html = String(input || "").trim();
     if (!html) return [];
@@ -368,6 +384,8 @@
     var formStatus = document.getElementById("platform-form-status");
     var btnSave = document.getElementById("platform-btn-save");
     var btnRevert = document.getElementById("platform-btn-revert");
+    var editorLead = document.getElementById("platform-edit-lead");
+    var editorBody = document.getElementById("platform-edit-body");
 
     if (!btnLoginSupabase || !btnLoginLocal || !btnLogout || !btnSave) {
       root.insertAdjacentHTML(
@@ -376,6 +394,9 @@
       );
       return;
     }
+
+    forceTextareaNewlineOnEnter(editorLead);
+    forceTextareaNewlineOnEnter(editorBody);
 
     function syncAdminRootVisibility() {
       if (!root) return;

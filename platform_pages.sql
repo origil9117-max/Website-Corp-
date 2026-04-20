@@ -10,9 +10,23 @@ create table if not exists public.platform_pages (
 
 alter table public.platform_pages enable row level security;
 
+-- 기존 통합 정책 제거
 drop policy if exists "platform_pages_all" on public.platform_pages;
+drop policy if exists "platform_pages_read_all" on public.platform_pages;
+drop policy if exists "platform_pages_write_auth" on public.platform_pages;
 
-create policy "platform_pages_all" on public.platform_pages
+-- 읽기: 비로그인(anon) 포함 전체 허용
+create policy "platform_pages_read_all" on public.platform_pages
+  for select
+  using (true);
+
+-- 쓰기: 로그인 사용자만 허용(관리자 로그인 후 저장/수정/삭제)
+create policy "platform_pages_write_auth" on public.platform_pages
   for all
+  to authenticated
   using (true)
   with check (true);
+
+-- 권한 부여 (RLS 정책과 별개로 필요)
+grant select on table public.platform_pages to anon;
+grant select, insert, update, delete on table public.platform_pages to authenticated;

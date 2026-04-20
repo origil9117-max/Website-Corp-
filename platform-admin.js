@@ -13,6 +13,7 @@
     (document.querySelector && document.querySelector("article .platform-sub-body"));
 
   var ADMIN_EMAIL = "lkc@daum.net";
+  var STRICT_CLOUD_SYNC_WHEN_AVAILABLE = true;
   /** v3: v1/v2 로컬 캐시 무시(예전 문구가 계속 보이는 문제 방지) */
   var LOCAL_KEY_PREFIX = "platformPageLocal:v3:";
   var LOCAL_SCHEMA_VERSION = 3;
@@ -317,6 +318,13 @@
   async function persistEntries(lead, entries) {
     var mergedBodyHtml = buildStructuredBodyHtmlFromEntries(entries);
     if (!client) {
+      if (STRICT_CLOUD_SYNC_WHEN_AVAILABLE) {
+        return {
+          ok: false,
+          source: "cloud",
+          message: "Supabase가 연결되지 않아 저장할 수 없습니다. supabase-config.js와 배포 주소(HTTPS)를 확인하세요."
+        };
+      }
       saveLocal(lead, mergedBodyHtml);
       applyToPage(lead, mergedBodyHtml);
       currentPersistedRecord = {
@@ -336,16 +344,7 @@
     };
     var upsertRes = await client.from("platform_pages").upsert(payload, { onConflict: "slug" });
     if (upsertRes.error) {
-      saveLocal(lead, mergedBodyHtml);
-      applyToPage(lead, mergedBodyHtml);
-      currentPersistedRecord = {
-        source: "local",
-        lead: lead,
-        body_html: mergedBodyHtml,
-        saved_at: new Date().toISOString()
-      };
-      renderSavedManager();
-      return { ok: false, source: "local", message: String(upsertRes.error.message || "") };
+      return { ok: false, source: "cloud", message: String(upsertRes.error.message || "") };
     }
     applyToPage(lead, mergedBodyHtml);
     try {
@@ -697,14 +696,15 @@
       if (authPanelAdmin) authPanelAdmin.style.display = on ? "block" : "none";
       if (adminPassSupabase) adminPassSupabase.disabled = on || !client;
       if (btnLoginSupabase) btnLoginSupabase.disabled = on || !client;
-      if (adminPassLocal) adminPassLocal.disabled = on;
-      if (btnLoginLocal) btnLoginLocal.disabled = on;
+      if (adminPassLocal) adminPassLocal.disabled = on || STRICT_CLOUD_SYNC_WHEN_AVAILABLE;
+      if (btnLoginLocal) btnLoginLocal.disabled = on || STRICT_CLOUD_SYNC_WHEN_AVAILABLE;
       if (btnTest) btnTest.disabled = on;
       if (authSupabaseHint) {
         if (!client) {
           authSupabaseHint.style.display = "";
-          authSupabaseHint.textContent =
-            "Supabase URL/키(supabase-config.js)가 없어 일반 로그인을 사용할 수 없습니다. 아래 로컬 비상 모드만 이용할 수 있습니다.";
+          authSupabaseHint.textContent = STRICT_CLOUD_SYNC_WHEN_AVAILABLE
+            ? "현재는 클라우드 전용 모드입니다. Supabase URL/키(supabase-config.js)를 설정해야 저장됩니다."
+            : "Supabase URL/키(supabase-config.js)가 없어 일반 로그인을 사용할 수 없습니다. 아래 로컬 비상 모드만 이용할 수 있습니다.";
         } else {
           authSupabaseHint.style.display = "none";
           authSupabaseHint.textContent = "";
@@ -774,6 +774,10 @@
         };
         return currentPersistedRecord;
       }
+    if (STRICT_CLOUD_SYNC_WHEN_AVAILABLE) {
+      currentPersistedRecord = null;
+      return null;
+    }
       var loc = loadLocal();
       if (loc) {
         currentPersistedRecord = {
@@ -967,7 +971,7 @@
           var saveRowRes = await persistEntries(leadKeep2, entries);
           selectedEntryIndex = idx;
           if (!saveRowRes.ok) {
-            setStatus(formStatus, "err", "클라우드 저장 실패로 로컬에 반영했습니다.");
+            setStatus(formStatus, "err", "클라우드 저장 실패: " + String(saveRowRes.message || ""));
           } else {
             setStatus(formStatus, "ok", "항목 (" + (idx + 1) + ")을 저장했습니다.");
           }
@@ -1009,6 +1013,10 @@
     });
 
     btnLoginLocal.addEventListener("click", function () {
+      if (STRICT_CLOUD_SYNC_WHEN_AVAILABLE) {
+        setStatus(authStatus, "err", "클라우드 전용 모드에서는 로컬 비상 모드를 사용할 수 없습니다.");
+        return;
+      }
       var val = (adminPassLocal && adminPassLocal.value ? adminPassLocal.value : "").trim();
       if (!val) {
         setStatus(authStatus, "err", "비상 모드 비밀번호를 입력해 주세요.");
@@ -1157,48 +1165,14 @@
         selectedEntryIndex = 0;
         if (!persistRes.ok) {
           var msg2 = String(persistRes.message || "");
-          if (/relation|does not exist|schema cache/i.test(msg2)) {
-            setStatus(
-              formStatus,
-              "ok",
-              "클라우드 테이블이 없어 로컬에 저장하고 화면에 반영했습니다. Supabase에서 platform_pages.sql을 실행하세요."
-            );
-          } else {
-            setStatus(formStatus, "err", "클라우드 저장 실패: " + msg2 + " — 로컬에만 반영했습니다.");
-          }
+          setStatus(formStatus, "err", "클라우드 저장 실패: " + msg2);
         } else if (persistRes.source === "local") {
           setStatus(formStatus, "ok", "브라우저(로컬)에 저장했습니다. Supabase를 연결하면 다른 기기에서도 동일하게 볼 수 있습니다.");
         } else {
           setStatus(formStatus, "ok", "저장되었습니다(Supabase).");
         }
       } catch (e) {
-        try {
-          var vv = readEditors();
-          var fallbackTitle = String(vv.lead || "").trim();
-          var fallbackDesc = String(vv.body_html || "").trim();
-          var fallbackEntries = [{ title: fallbackTitle, desc: fallbackDesc }].concat(
-            existingEntries.filter(function (one) {
-              return !(
-                String(one.title || "").trim() === fallbackTitle &&
-                String(one.desc || "").trim() === fallbackDesc
-              );
-            })
-          );
-          var fallbackBody = buildStructuredBodyHtmlFromEntries(fallbackEntries);
-          saveLocal(vv.lead, fallbackBody);
-          applyToPage(vv.lead, fallbackBody);
-          currentPersistedRecord = {
-            source: "local",
-            lead: vv.lead,
-            body_html: fallbackBody,
-            saved_at: new Date().toISOString()
-          };
-          renderSavedManager();
-        } catch (e2) {
-          setStatus(formStatus, "err", "저장 중 오류: " + (e && e.message ? e.message : String(e)));
-          return;
-        }
-        setStatus(formStatus, "err", "저장 중 오류가 났습니다. 로컬에만 반영했습니다.");
+        setStatus(formStatus, "err", "저장 중 오류: " + (e && e.message ? e.message : String(e)));
       } finally {
         btnSave.disabled = false;
         btnSave.textContent = "저장";

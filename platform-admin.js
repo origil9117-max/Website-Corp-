@@ -1217,14 +1217,17 @@
 
       try {
         var persistRes = await persistEntries(v.lead, mergedEntries);
-        selectedEntryIndex = 0;
         if (!persistRes.ok) {
           var msg2 = String(persistRes.message || "");
           setStatus(formStatus, "err", "클라우드 저장 실패: " + msg2);
         } else if (persistRes.source === "local") {
           setStatus(formStatus, "ok", "브라우저(로컬)에 저장했습니다. Supabase를 연결하면 다른 기기에서도 동일하게 볼 수 있습니다.");
+          selectedEntryIndex = -1;
+          clearEditors();
         } else {
           setStatus(formStatus, "ok", "저장되었습니다(Supabase).");
+          selectedEntryIndex = -1;
+          clearEditors();
         }
       } catch (e) {
         setStatus(formStatus, "err", "저장 중 오류: " + (e && e.message ? e.message : String(e)));

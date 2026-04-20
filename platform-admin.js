@@ -351,6 +351,7 @@
     var payload = {
       slug: slug,
       lead: lead,
+      title: lead,
       updated_at: new Date().toISOString()
     };
     payload[resolvedCol] = mergedBodyHtml;
@@ -804,7 +805,7 @@
         }
       }
       return {
-        lead: row.lead,
+        lead: row.lead !== undefined ? row.lead : row.title,
         body_html: bodyValue,
         updated_at: row.updated_at
       };

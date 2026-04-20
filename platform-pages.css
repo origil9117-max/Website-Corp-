@@ -407,7 +407,7 @@ h1 {
   border: 1px solid var(--line);
   border-radius: 2px;
   resize: vertical;
-  min-height: 4rem;
+  min-height: 2.1rem;
 }
 
 .platform-hint {
@@ -573,4 +573,38 @@ h1 {
 
 body.platform-admin-on .platform-editor textarea {
   border-color: rgba(124, 93, 147, 0.35);
+}
+
+.platform-edit-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  align-items: center;
+  margin: 0.45rem 0 0.45rem;
+}
+
+.platform-edit-toolbar .btn {
+  padding: 0.34rem 0.62rem;
+  font-size: 0.76rem;
+}
+
+#platform-edit-file-input {
+  font-size: 0.78rem;
+}
+
+.platform-edit-body-editor {
+  min-height: 9rem;
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  background: #fff;
+  padding: 0.55rem 0.6rem;
+  line-height: 1.6;
+}
+
+.platform-entry-desc-body p {
+  margin: 0 0 0.5rem;
+}
+
+.platform-entry-desc-body p:last-child {
+  margin-bottom: 0;
 }

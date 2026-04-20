@@ -138,27 +138,26 @@
 
   function applyToPage(lead, bodyHtml) {
     leadEl.textContent = lead;
-    var entries = parseEntriesFromInput(bodyHtml);
-    bodyEl.innerHTML = buildEntriesHtml(entries);
+    bodyEl.innerHTML = buildStructuredBodyHtml(lead, bodyHtml);
   }
 
   function syncEditors(editLead, editBody) {
     var a = document.getElementById("platform-edit-lead");
     var b = document.getElementById("platform-edit-body");
+    var rich = document.getElementById("platform-edit-body-editor");
     if (a) a.value = editLead;
     if (b) b.value = editBody;
+    if (rich) rich.innerHTML = String(editBody || "");
   }
 
   function readEditors() {
     var a = document.getElementById("platform-edit-lead");
     var b = document.getElementById("platform-edit-body");
     var rawBody = b ? String(b.value || "").trim() : "";
-    var entries = parseEntriesFromInput(rawBody);
     return {
       lead: a ? String(a.value || "").trim() : "",
-      body_html: buildEntriesHtml(entries),
-      editor_text: buildEditorText(entries, true),
-      entries: entries
+      body_html: rawBody,
+      editor_text: rawBody
     };
   }
 
@@ -245,6 +244,38 @@
       }
     }
     return entries;
+  }
+
+  function buildStructuredBodyHtml(lead, bodyHtml) {
+    var rawLead = String(lead || "").trim();
+    var rawBody = String(bodyHtml || "").trim();
+    if (!rawLead && !rawBody) return "";
+    if (/class\s*=\s*["'][^"']*platform-entry/i.test(rawBody)) return rawBody;
+    return (
+      '<div class="platform-entry">' +
+      '<p class="platform-entry-title"><strong>자료명:</strong> ' + escapeHtmlText(rawLead) + "</p>" +
+      '<div class="platform-entry-desc"><strong>설명:</strong><div class="platform-entry-desc-body">' +
+      (rawBody || "&nbsp;") +
+      "</div></div>" +
+      "</div>"
+    );
+  }
+
+  function extractBodyEditorContent(renderedHtml) {
+    var html = String(renderedHtml || "").trim();
+    if (!html) return "";
+    var box = document.createElement("div");
+    box.innerHTML = html;
+    var bodies = box.querySelectorAll(".platform-entry-desc-body");
+    if (bodies.length) {
+      var out = [];
+      Array.prototype.forEach.call(bodies, function (one) {
+        var seg = String(one.innerHTML || "").trim();
+        if (seg) out.push(seg);
+      });
+      return out.join("<p><br></p>");
+    }
+    return html;
   }
 
   function escapeHtmlText(str) {
@@ -345,8 +376,87 @@
   }
 
   function loadEditorsFromPage() {
-    var entries = parseEntriesFromInput(bodyEl.innerHTML.trim());
-    syncEditors(leadEl.textContent.trim(), buildEditorText(entries, false));
+    syncEditors(leadEl.textContent.trim(), extractBodyEditorContent(bodyEl.innerHTML.trim()));
+  }
+
+  function insertImageIntoBodyEditor(src, altText) {
+    var editor = document.getElementById("platform-edit-body-editor");
+    if (!editor || !src) return;
+    editor.focus();
+    var sel = window.getSelection();
+    if (!sel || !sel.rangeCount) {
+      editor.innerHTML += '<p><img src="' + src + '" alt="' + (altText || "") + '" style="max-width:100%;height:auto;" /></p>';
+      editor.dispatchEvent(new Event("input", { bubbles: true }));
+      return;
+    }
+    var range = sel.getRangeAt(0);
+    var img = document.createElement("img");
+    img.src = src;
+    img.alt = altText || "";
+    img.style.maxWidth = "100%";
+    img.style.height = "auto";
+    range.deleteContents();
+    range.insertNode(img);
+    range.setStartAfter(img);
+    range.collapse(true);
+    sel.removeAllRanges();
+    sel.addRange(range);
+    editor.dispatchEvent(new Event("input", { bubbles: true }));
+  }
+
+  function ensureBodyRichEditor(textarea) {
+    if (!textarea || document.getElementById("platform-edit-body-editor")) return;
+    var toolbar = document.createElement("div");
+    toolbar.id = "platform-edit-toolbar";
+    toolbar.className = "platform-edit-toolbar";
+    toolbar.innerHTML =
+      '<button type="button" class="btn btn-ghost" data-cmd="bold">진하게</button>' +
+      '<button type="button" class="btn btn-ghost" data-cmd="underline">밑줄</button>' +
+      '<button type="button" class="btn btn-ghost" data-cmd="justifyLeft">왼쪽</button>' +
+      '<button type="button" class="btn btn-ghost" data-cmd="justifyCenter">가운데</button>' +
+      '<button type="button" class="btn btn-ghost" data-cmd="justifyRight">오른쪽</button>' +
+      '<input id="platform-edit-file-input" type="file" accept="image/*" multiple />';
+    var editor = document.createElement("div");
+    editor.id = "platform-edit-body-editor";
+    editor.className = "platform-edit-body-editor";
+    editor.contentEditable = "true";
+    editor.innerHTML = textarea.value || "";
+    textarea.style.display = "none";
+    textarea.parentNode.insertBefore(toolbar, textarea);
+    textarea.parentNode.insertBefore(editor, textarea);
+
+    toolbar.addEventListener("click", function (e) {
+      var t = e.target;
+      if (!t || !t.getAttribute) return;
+      var cmd = t.getAttribute("data-cmd");
+      if (!cmd) return;
+      e.preventDefault();
+      editor.focus();
+      try {
+        document.execCommand(cmd, false, null);
+      } catch (err) {}
+      editor.dispatchEvent(new Event("input", { bubbles: true }));
+    });
+
+    var fileInput = document.getElementById("platform-edit-file-input");
+    if (fileInput) {
+      fileInput.addEventListener("change", function () {
+        var files = fileInput.files || [];
+        Array.prototype.forEach.call(files, function (file) {
+          if (!file || !/^image\//i.test(String(file.type || ""))) return;
+          var reader = new FileReader();
+          reader.onload = function () {
+            insertImageIntoBodyEditor(String(reader.result || ""), file.name || "");
+          };
+          reader.readAsDataURL(file);
+        });
+        fileInput.value = "";
+      });
+    }
+
+    editor.addEventListener("input", function () {
+      textarea.value = editor.innerHTML.trim();
+    });
   }
 
   try {
@@ -389,6 +499,8 @@
     var btnRevert = document.getElementById("platform-btn-revert");
     var editorLead = document.getElementById("platform-edit-lead");
     var editorBody = document.getElementById("platform-edit-body");
+    var leadLabel = document.querySelector('label[for="platform-edit-lead"]');
+    var bodyLabel = document.querySelector('label[for="platform-edit-body"]');
 
     if (!btnLoginSupabase || !btnLoginLocal || !btnLogout || !btnSave) {
       root.insertAdjacentHTML(
@@ -400,6 +512,11 @@
 
     forceTextareaNewlineOnEnter(editorLead);
     forceTextareaNewlineOnEnter(editorBody);
+    ensureBodyRichEditor(editorBody);
+    if (leadLabel) leadLabel.textContent = "자료명";
+    if (bodyLabel) bodyLabel.textContent = "세부 내용 및 사용방법";
+    if (editorLead) editorLead.rows = 2;
+    if (editorBody) editorBody.rows = 7;
 
     function syncAdminRootVisibility() {
       if (!root) return;
@@ -688,7 +805,7 @@
         }
         syncEditors(
           currentPersistedRecord.lead,
-          buildEditorText(parseEntriesFromInput(currentPersistedRecord.body_html), false)
+          extractBodyEditorContent(currentPersistedRecord.body_html)
         );
         setStatus(formStatus, "ok", "등록본을 편집창으로 불러왔습니다. 수정 후 저장하세요.");
       }
@@ -786,7 +903,7 @@
         return;
       }
       applyToPage(initialLead, initialBodyHtml);
-      syncEditors(initialLead, buildEditorText(parseEntriesFromInput(initialBodyHtml), false));
+      syncEditors(initialLead, extractBodyEditorContent(initialBodyHtml));
       setStatus(formStatus, "ok", "편집창을 이 파일에 넣은 기본 문구로 되돌렸습니다. 저장하면 반영됩니다.");
     });
 

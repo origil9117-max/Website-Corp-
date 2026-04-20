@@ -20,6 +20,7 @@
   var initialLead = "";
   var initialBodyHtml = "";
   var currentPersistedRecord = null;
+  var ENTRY_TEMPLATE_TEXT = "자료명:\n설명:";
 
   var client = null;
   var currentSession = null;
@@ -137,7 +138,8 @@
 
   function applyToPage(lead, bodyHtml) {
     leadEl.textContent = lead;
-    bodyEl.innerHTML = bodyHtml;
+    var entries = parseEntriesFromInput(bodyHtml);
+    bodyEl.innerHTML = buildEntriesHtml(entries);
   }
 
   function syncEditors(editLead, editBody) {
@@ -150,14 +152,118 @@
   function readEditors() {
     var a = document.getElementById("platform-edit-lead");
     var b = document.getElementById("platform-edit-body");
+    var rawBody = b ? String(b.value || "").trim() : "";
+    var entries = parseEntriesFromInput(rawBody);
     return {
       lead: a ? String(a.value || "").trim() : "",
-      body_html: b ? String(b.value || "").trim() : ""
+      body_html: buildEntriesHtml(entries),
+      editor_text: buildEditorText(entries, true),
+      entries: entries
     };
   }
 
   function clearEditors() {
-    syncEditors("", "");
+    syncEditors("", ENTRY_TEMPLATE_TEXT);
+  }
+
+  function parseEntriesFromInput(input) {
+    var html = String(input || "").trim();
+    if (!html) return [];
+    var box = document.createElement("div");
+    box.innerHTML = html;
+    var fromBlocks = box.querySelectorAll(".platform-entry");
+    var entries = [];
+    if (fromBlocks.length) {
+      Array.prototype.forEach.call(fromBlocks, function (node) {
+        var titleNode = node.querySelector(".platform-entry-title");
+        var descNode = node.querySelector(".platform-entry-desc");
+        var title = String(titleNode ? titleNode.textContent : "").replace(/^자료명:\s*/i, "").trim();
+        var desc = String(descNode ? descNode.textContent : "").replace(/^설명:\s*/i, "").trim();
+        if (title || desc) entries.push({ title: title, desc: desc });
+      });
+      return entries;
+    }
+    var text = String(box.textContent || "").replace(/\r/g, "");
+    var lines = text
+      .split("\n")
+      .map(function (line) { return line.trim(); })
+      .filter(function (line) { return !!line; });
+    if (!lines.length) return [];
+    var curTitle = "";
+    var curDesc = "";
+    var hasLabel = lines.some(function (line) {
+      return /^자료명\s*:/i.test(line) || /^설명\s*:/i.test(line);
+    });
+    if (hasLabel) {
+      lines.forEach(function (line) {
+        if (/^자료명\s*:/i.test(line)) {
+          if (curTitle || curDesc) {
+            entries.push({ title: curTitle, desc: curDesc });
+            curTitle = "";
+            curDesc = "";
+          }
+          curTitle = line.replace(/^자료명\s*:/i, "").trim();
+        } else if (/^설명\s*:/i.test(line)) {
+          curDesc = line.replace(/^설명\s*:/i, "").trim();
+          entries.push({ title: curTitle, desc: curDesc });
+          curTitle = "";
+          curDesc = "";
+        } else if (!curTitle) {
+          curTitle = line;
+        } else {
+          curDesc = line;
+          entries.push({ title: curTitle, desc: curDesc });
+          curTitle = "";
+          curDesc = "";
+        }
+      });
+      if (curTitle || curDesc) entries.push({ title: curTitle, desc: curDesc });
+    } else {
+      for (var i = 0; i < lines.length; i += 2) {
+        entries.push({
+          title: lines[i] || "",
+          desc: lines[i + 1] || ""
+        });
+      }
+    }
+    return entries.filter(function (one) { return one.title || one.desc; });
+  }
+
+  function escapeHtmlText(str) {
+    return String(str || "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;");
+  }
+
+  function buildEntriesHtml(entries) {
+    var list = Array.isArray(entries) ? entries : [];
+    if (!list.length) return "";
+    return list
+      .map(function (one) {
+        return (
+          '<div class="platform-entry">' +
+          '<p class="platform-entry-title"><strong>자료명:</strong> ' + escapeHtmlText(one.title || "") + "</p>" +
+          '<p class="platform-entry-desc"><strong>설명:</strong> ' + escapeHtmlText(one.desc || "") + "</p>" +
+          "</div>"
+        );
+      })
+      .join("");
+  }
+
+  function buildEditorText(entries, withTemplateTail) {
+    var list = Array.isArray(entries) ? entries : [];
+    var body = list
+      .map(function (one) {
+        return "자료명: " + String(one.title || "") + "\n설명: " + String(one.desc || "");
+      })
+      .join("\n\n")
+      .trim();
+    if (!withTemplateTail) return body;
+    if (!body) return ENTRY_TEMPLATE_TEXT;
+    return body + "\n\n" + ENTRY_TEMPLATE_TEXT;
   }
 
   function stripHtmlForPreview(html) {
@@ -220,7 +326,8 @@
   }
 
   function loadEditorsFromPage() {
-    syncEditors(leadEl.textContent.trim(), bodyEl.innerHTML.trim());
+    var entries = parseEntriesFromInput(bodyEl.innerHTML.trim());
+    syncEditors(leadEl.textContent.trim(), buildEditorText(entries, true));
   }
 
   try {
@@ -555,7 +662,10 @@
           setStatus(formStatus, "err", "불러올 등록본이 없습니다.");
           return;
         }
-        syncEditors(currentPersistedRecord.lead, currentPersistedRecord.body_html);
+        syncEditors(
+          currentPersistedRecord.lead,
+          buildEditorText(parseEntriesFromInput(currentPersistedRecord.body_html), true)
+        );
         setStatus(formStatus, "ok", "등록본을 편집창으로 불러왔습니다. 수정 후 저장하세요.");
       }
       if (t.id === "platform-btn-delete-saved") {
@@ -652,7 +762,7 @@
         return;
       }
       applyToPage(initialLead, initialBodyHtml);
-      syncEditors(initialLead, initialBodyHtml);
+      syncEditors(initialLead, buildEditorText(parseEntriesFromInput(initialBodyHtml), true));
       setStatus(formStatus, "ok", "편집창을 이 파일에 넣은 기본 문구로 되돌렸습니다. 저장하면 반영됩니다.");
     });
 

@@ -205,7 +205,7 @@ h1 {
 .platform-sibling-nav {
   margin-top: 0.35rem;
   padding-top: 0.45rem;
-  border-top: 1px solid var(--line);
+  border-top: none;
   font-size: 0.8rem;
   color: var(--muted);
 }

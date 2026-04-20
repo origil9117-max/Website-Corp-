@@ -80,7 +80,6 @@
     }
     .label { font-size: 0.72rem; color: var(--maroon); letter-spacing: 0.14em; text-transform: uppercase; font-weight: 700; }
     h1 { margin: 0.2rem 0 0.25rem; font-size: clamp(1.2rem, 2.7vw, 1.7rem); }
-    .helper { margin: 0.42rem 0 0; color: var(--muted); font-size: 0.9rem; }
     .panel {
       border: 1px solid var(--line);
       border-radius: 4px;
@@ -434,7 +433,6 @@
       </div>
       <div>
         <h1 id="page-title">업무 게시</h1>
-        <p class="helper" id="page-helper">해당 업무 전용 게시글을 작성하고 관리할 수 있습니다.</p>
       </div>
     </section>
     <p id="cloud-warning" class="cloud-warning"></p>
@@ -555,7 +553,6 @@
       var STORAGE_KEY = "service-posts:" + service;
 
       var pageTitle = document.getElementById("page-title");
-      var pageHelper = document.getElementById("page-helper");
       var adminPass = document.getElementById("admin-pass");
       var btnLogin = document.getElementById("btn-login");
       var btnLogout = document.getElementById("btn-logout");
@@ -625,7 +622,6 @@
       }
 
       pageTitle.textContent = SERVICE_MAP[service] + " · 게시";
-      pageHelper.textContent = SERVICE_MAP[service] + " 전용 게시글을 작성/수정/삭제할 수 있습니다.";
 
       if (window.supabase && window.SUPABASE_URL && window.SUPABASE_ANON_KEY) {
         client = window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY);

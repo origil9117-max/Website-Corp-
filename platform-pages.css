@@ -506,9 +506,9 @@ body.platform-admin-on .platform-sub-body .platform-entry-actions {
   border-radius: 2px;
 }
 
-#platform-auth-panel-logged-out {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+.platform-auth #platform-auth-panel-logged-out {
+  display: flex;
+  flex-wrap: nowrap;
   gap: 0.55rem;
   align-items: stretch;
 }
@@ -519,6 +519,8 @@ body.platform-admin-on .platform-sub-body .platform-entry-actions {
   border: 1px solid rgba(90, 53, 64, 0.18);
   border-radius: 4px;
   background: linear-gradient(180deg, #fff 0%, #faf8f6 100%);
+  flex: 1 1 0;
+  min-width: 0;
 }
 
 .platform-auth-block-title {
@@ -540,6 +542,8 @@ body.platform-admin-on .platform-sub-body .platform-entry-actions {
   border-radius: 4px;
   padding: 0.45rem 0.65rem 0.55rem;
   background: rgba(250, 248, 244, 0.95);
+  flex: 1 1 0;
+  min-width: 0;
 }
 
 #platform-auth-supabase-row,
@@ -555,8 +559,8 @@ body.platform-admin-on .platform-sub-body .platform-entry-actions {
 }
 
 @media (max-width: 900px) {
-  #platform-auth-panel-logged-out {
-    grid-template-columns: 1fr;
+  .platform-auth #platform-auth-panel-logged-out {
+    display: block;
   }
 
   .platform-auth-supabase-block,

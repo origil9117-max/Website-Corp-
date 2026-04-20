@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700&family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="platform-pages.css?v=20260420b" />
+  <link rel="stylesheet" href="platform-pages.css?v=20260420c" />
 </head>
 <body data-platform-slug="platform-check">
   <header class="topbar">
@@ -60,7 +60,7 @@
             <p class="platform-hint" id="platform-auth-supabase-hint" style="margin-top: 0.45rem"></p>
           </div>
           <div id="platform-auth-local-block" class="platform-auth-local-block">
-            <div class="platform-auth-row">
+            <p class="platform-auth-block-title">비상 모드</p>`r`n            <div class="platform-auth-row" id="platform-auth-local-row">
               <input
                 id="platform-admin-pass-local"
                 type="password"
@@ -132,6 +132,6 @@
     if (typeof window.SUPABASE_URL === "undefined") window.SUPABASE_URL = "";
     if (typeof window.SUPABASE_ANON_KEY === "undefined") window.SUPABASE_ANON_KEY = "";
   </script>
-  <script src="platform-admin.js?v=20260420n" defer></script>
+  <script src="platform-admin.js?v=20260420o" defer></script>
 </body>
 </html>

@@ -506,23 +506,26 @@ body.platform-admin-on .platform-sub-body .platform-entry-actions {
   border-radius: 2px;
 }
 
+#platform-auth-panel-logged-out {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 0.55rem;
+  align-items: stretch;
+}
+
 .platform-auth-supabase-block {
-  margin: 0.45rem 0 0.7rem;
+  margin: 0.45rem 0 0.2rem;
   padding: 0.65rem 0.75rem;
   border: 1px solid rgba(90, 53, 64, 0.18);
   border-radius: 4px;
   background: linear-gradient(180deg, #fff 0%, #faf8f6 100%);
-  display: flex;
-  align-items: center;
-  gap: 0.65rem;
 }
 
 .platform-auth-block-title {
-  margin: 0;
-  font-size: 0.92rem;
+  margin: 0 0 0.4rem;
+  font-size: 0.86rem;
   font-weight: 800;
   color: var(--ink);
-  flex: 0 0 auto;
 }
 
 #platform-auth-supabase-row .btn.btn-primary {
@@ -532,14 +535,11 @@ body.platform-admin-on .platform-sub-body .platform-entry-actions {
 }
 
 .platform-auth-local-block {
-  margin: 0.5rem 0 0.2rem;
+  margin: 0.45rem 0 0.2rem;
   border: 1px dashed var(--line);
   border-radius: 4px;
   padding: 0.45rem 0.65rem 0.55rem;
   background: rgba(250, 248, 244, 0.95);
-  display: flex;
-  align-items: center;
-  gap: 0.65rem;
 }
 
 #platform-auth-supabase-row,
@@ -555,6 +555,10 @@ body.platform-admin-on .platform-sub-body .platform-entry-actions {
 }
 
 @media (max-width: 900px) {
+  #platform-auth-panel-logged-out {
+    grid-template-columns: 1fr;
+  }
+
   .platform-auth-supabase-block,
   .platform-auth-local-block {
     display: block;

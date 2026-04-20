@@ -50,7 +50,8 @@
     '<p class="platform-hint" id="platform-auth-supabase-hint" style="margin-top:0.45rem"></p>' +
     "</div>" +
     '<div id="platform-auth-local-block" class="platform-auth-local-block">' +
-    '<div class="platform-auth-row">' +
+    '<p class="platform-auth-block-title">비상 모드</p>' +
+    '<div class="platform-auth-row" id="platform-auth-local-row">' +
     '<input id="platform-admin-pass-local" type="password" autocomplete="off" placeholder="비상 모드 비밀번호" />' +
     '<button type="button" class="btn btn-ghost" id="platform-btn-login-local">로컬 비상 모드 로그인</button>' +
     "</div></div></div>" +

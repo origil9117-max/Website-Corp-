@@ -8,6 +8,29 @@ create table if not exists public.platform_pages (
   updated_at timestamptz not null default now()
 );
 
+-- 구버전 스키마 호환: body 컬럼만 있는 경우를 body_html로 승격
+alter table public.platform_pages
+  add column if not exists body_html text not null default '';
+
+do $$
+begin
+  if exists (
+    select 1
+    from information_schema.columns
+    where table_schema = 'public'
+      and table_name = 'platform_pages'
+      and column_name = 'body'
+  ) then
+    execute $sql$
+      update public.platform_pages
+      set body_html = case
+        when coalesce(body_html, '') = '' then coalesce(body, '')
+        else body_html
+      end
+    $sql$;
+  end if;
+end $$;
+
 alter table public.platform_pages enable row level security;
 
 -- 기존 통합 정책 제거

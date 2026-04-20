@@ -31,6 +31,7 @@
   var adminToggleBtn = null;
   var ADMIN_OFF_FLAG_KEY = "platform-admin-force-off";
   var lastCloudLoadError = "";
+  var cloudBodyColumn = "body_html";
 
   var INJECT_HTML =
     '<section class="platform-panel platform-auth" aria-label="관리자 인증">' +
@@ -340,10 +341,24 @@
     var payload = {
       slug: slug,
       lead: lead,
-      body_html: mergedBodyHtml,
       updated_at: new Date().toISOString()
     };
+    payload[cloudBodyColumn] = mergedBodyHtml;
     var upsertRes = await client.from("platform_pages").upsert(payload, { onConflict: "slug" });
+    if (
+      upsertRes.error &&
+      /column\s+platform_pages\.body_html\s+does not exist/i.test(String(upsertRes.error.message || "")) &&
+      cloudBodyColumn === "body_html"
+    ) {
+      cloudBodyColumn = "body";
+      payload = {
+        slug: slug,
+        lead: lead,
+        updated_at: new Date().toISOString()
+      };
+      payload[cloudBodyColumn] = mergedBodyHtml;
+      upsertRes = await client.from("platform_pages").upsert(payload, { onConflict: "slug" });
+    }
     if (upsertRes.error) {
       return { ok: false, source: "cloud", message: String(upsertRes.error.message || "") };
     }
@@ -756,14 +771,28 @@
 
     async function loadFromCloud() {
       if (!client) return null;
-      var res = await client.from("platform_pages").select("lead, body_html").eq("slug", slug).maybeSingle();
+      var res = await client.from("platform_pages").select("lead, body_html, updated_at").eq("slug", slug).maybeSingle();
+      if (
+        res.error &&
+        /column\s+platform_pages\.body_html\s+does not exist/i.test(String(res.error.message || "")) &&
+        cloudBodyColumn === "body_html"
+      ) {
+        cloudBodyColumn = "body";
+        res = await client.from("platform_pages").select("lead, body, updated_at").eq("slug", slug).maybeSingle();
+      }
       if (res.error) {
         lastCloudLoadError = String(res.error.message || "unknown");
         console.warn("platform_pages:", lastCloudLoadError);
         return null;
       }
       lastCloudLoadError = "";
-      return res.data;
+      var row = res.data || null;
+      if (!row) return null;
+      return {
+        lead: row.lead,
+        body_html: row.body_html !== undefined ? row.body_html : row.body,
+        updated_at: row.updated_at
+      };
     }
 
     async function refreshPersistedRecord() {

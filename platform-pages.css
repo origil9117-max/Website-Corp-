@@ -463,6 +463,28 @@ h1 {
   margin-top: 0.35rem;
 }
 
+.platform-saved-manager {
+  margin-bottom: 0.75rem;
+  padding: 0.7rem 0.8rem;
+  border: 1px solid rgba(36, 48, 64, 0.12);
+  border-radius: 4px;
+  background: #fcfcfd;
+}
+
+.platform-saved-manager h3 {
+  margin: 0;
+  font-size: 0.86rem;
+  font-weight: 800;
+  color: var(--ink);
+}
+
+.platform-saved-preview {
+  margin: 0.35rem 0 0;
+  font-size: 0.8rem;
+  color: var(--ink-soft);
+  line-height: 1.5;
+}
+
 .platform-auth-details {
   margin: 0.45rem 0 0.65rem;
   border: 1px dashed var(--line);

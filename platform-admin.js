@@ -19,6 +19,7 @@
 
   var initialLead = "";
   var initialBodyHtml = "";
+  var currentPersistedRecord = null;
 
   var client = null;
   var currentSession = null;
@@ -87,7 +88,11 @@
       var o = JSON.parse(raw);
       if (!o || typeof o !== "object") return null;
       if (Number(o.schemaVersion) !== LOCAL_SCHEMA_VERSION) return null;
-      return { lead: String(o.lead || ""), body_html: String(o.body_html || "") };
+      return {
+        lead: String(o.lead || ""),
+        body_html: String(o.body_html || ""),
+        saved_at: String(o.saved_at || "")
+      };
     } catch (e) {
       return null;
     }
@@ -153,6 +158,65 @@
 
   function clearEditors() {
     syncEditors("", "");
+  }
+
+  function stripHtmlForPreview(html) {
+    var text = String(html || "").replace(/<[^>]*>/g, " ");
+    return text.replace(/\s+/g, " ").trim();
+  }
+
+  function getSavedManagerElements() {
+    return {
+      host: document.getElementById("platform-saved-manager"),
+      meta: document.getElementById("platform-saved-meta"),
+      preview: document.getElementById("platform-saved-preview"),
+      btnLoad: document.getElementById("platform-btn-load-saved"),
+      btnDelete: document.getElementById("platform-btn-delete-saved")
+    };
+  }
+
+  function ensureSavedManagerUi() {
+    if (!editorPanel) return;
+    if (document.getElementById("platform-saved-manager")) return;
+    var html =
+      '<section id="platform-saved-manager" class="platform-saved-manager" aria-label="등록본 관리">' +
+      "<h3>등록본 관리</h3>" +
+      '<p id="platform-saved-meta" class="platform-hint" style="margin-top:0.25rem">등록된 저장본이 없습니다.</p>' +
+      '<p id="platform-saved-preview" class="platform-saved-preview"></p>' +
+      '<div class="cta-row" style="margin-top:0.55rem">' +
+      '<button type="button" class="btn btn-ghost" id="platform-btn-load-saved">등록본 불러오기</button>' +
+      '<button type="button" class="btn btn-ghost" id="platform-btn-delete-saved">등록본 삭제</button>' +
+      "</div>" +
+      "</section>";
+    editorPanel.insertAdjacentHTML("afterbegin", html);
+  }
+
+  function renderSavedManager() {
+    var els = getSavedManagerElements();
+    if (!els.host || !els.meta || !els.preview || !els.btnLoad || !els.btnDelete) return;
+    var on = isAdmin();
+    if (!on) {
+      els.host.style.display = "none";
+      return;
+    }
+    els.host.style.display = "";
+    var rec = currentPersistedRecord;
+    if (!rec) {
+      els.meta.textContent = "등록된 저장본이 없습니다. 아래 편집창에서 입력 후 저장해 주세요.";
+      els.preview.textContent = "";
+      els.btnLoad.disabled = true;
+      els.btnDelete.disabled = true;
+      return;
+    }
+    var srcLabel = rec.source === "cloud" ? "Supabase" : "로컬";
+    var dateLabel = rec.saved_at ? " (" + String(rec.saved_at).slice(0, 16).replace("T", " ") + ")" : "";
+    var plain = stripHtmlForPreview(rec.body_html);
+    var preview = plain || String(rec.lead || "").trim();
+    if (preview.length > 120) preview = preview.slice(0, 120) + "...";
+    els.meta.textContent = srcLabel + " 저장본이 등록되어 있습니다" + dateLabel + ".";
+    els.preview.textContent = preview ? "미리보기: " + preview : "";
+    els.btnLoad.disabled = false;
+    els.btnDelete.disabled = false;
   }
 
   function loadEditorsFromPage() {
@@ -302,6 +366,7 @@
         setStatus(authStatus, "", "관리자 모드가 꺼져 있습니다.");
       }
       syncAdminRootVisibility();
+      renderSavedManager();
     }
 
     async function deactivateAdminMode(opts) {
@@ -345,6 +410,31 @@
       return res.data;
     }
 
+    async function refreshPersistedRecord() {
+      var cloud = await loadFromCloud();
+      if (cloud && (cloud.lead !== undefined || cloud.body_html !== undefined)) {
+        currentPersistedRecord = {
+          source: "cloud",
+          lead: String(cloud.lead || ""),
+          body_html: String(cloud.body_html || ""),
+          saved_at: String(cloud.updated_at || "")
+        };
+        return currentPersistedRecord;
+      }
+      var loc = loadLocal();
+      if (loc) {
+        currentPersistedRecord = {
+          source: "local",
+          lead: String(loc.lead || ""),
+          body_html: String(loc.body_html || ""),
+          saved_at: String(loc.saved_at || "")
+        };
+        return currentPersistedRecord;
+      }
+      currentPersistedRecord = null;
+      return null;
+    }
+
     async function init() {
       var supaUrl = String(window.SUPABASE_URL || "").trim();
       var supaKey = String(window.SUPABASE_ANON_KEY || "").trim();
@@ -371,17 +461,10 @@
 
       var applied = false;
       if (!skip) {
-        var cloud = await loadFromCloud();
-        if (cloud && (cloud.lead !== undefined || cloud.body_html !== undefined)) {
-          applyToPage(String(cloud.lead || ""), String(cloud.body_html || ""));
+        var saved = await refreshPersistedRecord();
+        if (saved) {
+          applyToPage(saved.lead, saved.body_html);
           applied = true;
-        }
-        if (!applied) {
-          var loc = loadLocal();
-          if (loc) {
-            applyToPage(loc.lead, loc.body_html);
-            applied = true;
-          }
         }
       }
 
@@ -404,11 +487,15 @@
       .then(function () {
         clearEditors();
         ensureAdminToggleButton();
+        ensureSavedManagerUi();
+        renderSavedManager();
         syncAdminRootVisibility();
       })
       .catch(function () {
         clearEditors();
         ensureAdminToggleButton();
+        ensureSavedManagerUi();
+        renderSavedManager();
         syncAdminRootVisibility();
       });
 
@@ -455,6 +542,31 @@
         setStatus(formStatus, "ok", "현재 화면에 보이는 안내를 편집창에 넣었습니다. 수정 후 저장하세요.");
       });
     }
+
+    document.addEventListener("click", function (e) {
+      var t = e.target;
+      if (!t || !t.id) return;
+      if (t.id === "platform-btn-load-saved") {
+        if (!isAdmin()) {
+          setStatus(formStatus, "err", "관리자 모드에서만 불러올 수 있습니다.");
+          return;
+        }
+        if (!currentPersistedRecord) {
+          setStatus(formStatus, "err", "불러올 등록본이 없습니다.");
+          return;
+        }
+        syncEditors(currentPersistedRecord.lead, currentPersistedRecord.body_html);
+        setStatus(formStatus, "ok", "등록본을 편집창으로 불러왔습니다. 수정 후 저장하세요.");
+      }
+      if (t.id === "platform-btn-delete-saved") {
+        if (!isAdmin()) {
+          setStatus(formStatus, "err", "관리자만 삭제할 수 있습니다.");
+          return;
+        }
+        var clearBtn = document.getElementById("platform-btn-clear-persisted");
+        if (clearBtn) clearBtn.click();
+      }
+    });
 
     btnLoginSupabase.addEventListener("click", async function () {
       var val = (adminPassSupabase && adminPassSupabase.value ? adminPassSupabase.value : "").trim();
@@ -579,6 +691,8 @@
           }
 
           applyToPage(initialLead, initialBodyHtml);
+          currentPersistedRecord = null;
+          renderSavedManager();
           clearEditors();
         } catch (e) {
           setStatus(formStatus, "err", "삭제 중 오류: " + (e && e.message ? e.message : String(e)));
@@ -609,6 +723,13 @@
             return;
           }
           applyToPage(v.lead, v.body_html);
+          currentPersistedRecord = {
+            source: "local",
+            lead: v.lead,
+            body_html: v.body_html,
+            saved_at: new Date().toISOString()
+          };
+          renderSavedManager();
           setStatus(formStatus, "ok", "브라우저(로컬)에 저장했습니다. Supabase를 연결하면 다른 기기에서도 동일하게 볼 수 있습니다.");
           return;
         }
@@ -625,6 +746,13 @@
           try {
             saveLocal(v.lead, v.body_html);
             applyToPage(v.lead, v.body_html);
+            currentPersistedRecord = {
+              source: "local",
+              lead: v.lead,
+              body_html: v.body_html,
+              saved_at: new Date().toISOString()
+            };
+            renderSavedManager();
           } catch (le) {
             setStatus(formStatus, "err", "저장 실패: " + msg);
             return;
@@ -645,12 +773,26 @@
         try {
           saveLocal(v.lead, v.body_html);
         } catch (e2) {}
+        currentPersistedRecord = {
+          source: "cloud",
+          lead: v.lead,
+          body_html: v.body_html,
+          saved_at: new Date().toISOString()
+        };
+        renderSavedManager();
         setStatus(formStatus, "ok", "저장되었습니다(Supabase).");
       } catch (e) {
         try {
           var vv = readEditors();
           saveLocal(vv.lead, vv.body_html);
           applyToPage(vv.lead, vv.body_html);
+          currentPersistedRecord = {
+            source: "local",
+            lead: vv.lead,
+            body_html: vv.body_html,
+            saved_at: new Date().toISOString()
+          };
+          renderSavedManager();
         } catch (e2) {
           setStatus(formStatus, "err", "저장 중 오류: " + (e && e.message ? e.message : String(e)));
           return;

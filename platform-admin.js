@@ -1009,11 +1009,21 @@
         setStatus(formStatus, "err", "자료명과 세부 내용 및 사용방법을 모두 입력해 주세요.");
         return;
       }
-      var existingEntries = parseEntriesFromInput(
+      try {
+        await refreshPersistedRecord();
+      } catch (e0) {}
+      var existingSourceHtml =
         currentPersistedRecord && currentPersistedRecord.body_html
           ? currentPersistedRecord.body_html
-          : bodyEl.innerHTML
-      );
+          : bodyEl.innerHTML;
+      var existingEntries = parseEntriesFromInput(existingSourceHtml);
+      if (!existingEntries.length && currentPersistedRecord) {
+        var legacyTitle = String(currentPersistedRecord.lead || "").trim();
+        var legacyDesc = String(currentPersistedRecord.body_html || "").trim();
+        if (legacyTitle && legacyDesc) {
+          existingEntries = [{ title: legacyTitle, desc: legacyDesc }];
+        }
+      }
       var mergedEntries = [{ title: newEntryTitle, desc: newEntryDesc }].concat(
         existingEntries.filter(function (one) {
           return !(

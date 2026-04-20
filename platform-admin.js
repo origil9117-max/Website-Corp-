@@ -592,6 +592,27 @@
     editor.addEventListener("input", function () {
       textarea.value = editor.innerHTML.trim();
     });
+    editor.addEventListener("keydown", function (e) {
+      if (e.key !== "Enter" || e.isComposing) return;
+      e.preventDefault();
+      var sel = window.getSelection();
+      if (!sel || !sel.rangeCount) {
+        editor.innerHTML += "<br><br>";
+        editor.dispatchEvent(new Event("input", { bubbles: true }));
+        return;
+      }
+      var range = sel.getRangeAt(0);
+      range.deleteContents();
+      var br1 = document.createElement("br");
+      var br2 = document.createElement("br");
+      range.insertNode(br2);
+      range.insertNode(br1);
+      range.setStartAfter(br2);
+      range.collapse(true);
+      sel.removeAllRanges();
+      sel.addRange(range);
+      editor.dispatchEvent(new Event("input", { bubbles: true }));
+    });
   }
 
   try {

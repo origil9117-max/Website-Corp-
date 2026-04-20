@@ -68,9 +68,47 @@
       }
     }
     .wrap { max-width: var(--max); margin: 0 auto; padding: 1.2rem 1rem 2rem; }
+    .page-head {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 0.7rem;
+      margin-bottom: 0.8rem;
+      align-items: start;
+    }
+    @media (min-width: 860px) {
+      .page-head {
+        grid-template-columns: minmax(0, 1fr) minmax(280px, 320px);
+        column-gap: 1rem;
+      }
+    }
     .label { font-size: 0.72rem; color: var(--maroon); letter-spacing: 0.14em; text-transform: uppercase; font-weight: 700; }
     h1 { margin: 0.2rem 0 0.25rem; font-size: clamp(1.2rem, 2.7vw, 1.7rem); }
-    .helper { margin: 0 0 0.9rem; color: var(--muted); font-size: 0.9rem; }
+    .helper { margin: 0; color: var(--muted); font-size: 0.9rem; }
+    .admin-dock {
+      margin: 0;
+      padding: 0.72rem;
+    }
+    .admin-dock h2 {
+      margin: 0 0 0.5rem;
+      font-size: 0.92rem;
+    }
+    .admin-dock .row {
+      gap: 0.42rem;
+    }
+    .admin-dock #admin-pass {
+      min-width: 0;
+      flex: 1 1 100%;
+    }
+    .admin-dock .btn {
+      flex: 1 1 auto;
+      min-width: 0;
+      padding: 0.42rem 0.56rem;
+      font-size: 0.78rem;
+    }
+    .admin-dock .status {
+      margin-top: 0.42rem;
+      font-size: 0.78rem;
+    }
     .panel {
       border: 1px solid var(--line);
       border-radius: 4px;
@@ -417,20 +455,23 @@
   </header>
 
   <main class="wrap">
-    <p class="label">Service Publishing</p>
-    <h1 id="page-title">업무 게시</h1>
-    <p class="helper" id="page-helper">해당 업무 전용 게시글을 작성하고 관리할 수 있습니다.</p>
-    <p id="cloud-warning" class="cloud-warning"></p>
-
-    <section class="panel">
-      <h2>관리자 인증</h2>
-      <div class="row">
-        <input id="admin-pass" type="password" placeholder="관리자 비밀번호" />
-        <button id="btn-login" class="btn btn-primary" type="button">관리자 모드 켜기</button>
-        <button id="btn-logout" class="btn btn-ghost" type="button">관리자 모드 끄기</button>
+    <section class="page-head" aria-label="게시 페이지 상단">
+      <div>
+        <p class="label">Service Publishing</p>
+        <h1 id="page-title">업무 게시</h1>
+        <p class="helper" id="page-helper">해당 업무 전용 게시글을 작성하고 관리할 수 있습니다.</p>
       </div>
-      <p class="status" id="auth-status">현재: 일반 보기</p>
+      <section class="panel admin-dock">
+        <h2>관리자 인증</h2>
+        <div class="row">
+          <input id="admin-pass" type="password" placeholder="관리자 비밀번호" />
+          <button id="btn-login" class="btn btn-primary" type="button">관리자 모드 켜기</button>
+          <button id="btn-logout" class="btn btn-ghost" type="button">관리자 모드 끄기</button>
+        </div>
+        <p class="status" id="auth-status">현재: 일반 보기</p>
+      </section>
     </section>
+    <p id="cloud-warning" class="cloud-warning"></p>
 
     <section class="panel" id="editor-panel" style="display:none;">
       <h2>글 작성 / 수정 (관리자 전용)</h2>

@@ -23,7 +23,6 @@
   var client = null;
   var currentSession = null;
   var localAdmin = false;
-  var showLoginForm = false;
   var adminRootOpen = false;
   var adminToggleBtn = null;
   var ADMIN_OFF_FLAG_KEY = "platform-admin-force-off";
@@ -31,18 +30,25 @@
   var INJECT_HTML =
     '<section class="platform-panel platform-auth" aria-label="관리자 인증">' +
     "<h2>관리자 인증</h2>" +
-    '<p class="platform-hint" style="margin-top:0">관리자로 로그인한 경우에만 아래 안내 본문을 편집·저장할 수 있습니다. 자료실·공지와 동일한 방식입니다.</p>' +
-    '<details class="platform-auth-details">' +
-    "<summary>비상 모드(로컬 저장) 안내 — 펼치기</summary>" +
-    '<div class="platform-auth-details-body">' +
-    "<p>Supabase에 연결되지 않거나 <code>platform_pages</code> 테이블이 없을 때는 브라우저에만 저장됩니다. 다른 PC와 공유하려면 SQL로 테이블을 만든 뒤 클라우드에 저장하세요.</p>" +
-    "</div></details>" +
+    '<p id="platform-auth-helper" class="platform-hint" style="margin-top:0">관리자로 로그인한 경우에만 아래 안내 본문을 편집·저장할 수 있습니다. 자료실·공지와 동일한 방식입니다.</p>' +
     '<p id="platform-auth-mode" class="platform-auth-mode" data-mode="view" role="status">현재: 일반 보기</p>' +
-    '<div class="platform-auth-row" id="platform-auth-login-row">' +
-    '<input id="platform-admin-pass" type="password" autocomplete="current-password" placeholder="관리자 비밀번호" />' +
-    '<button type="button" class="btn btn-ghost" id="platform-btn-login">관리자 모드 켜기</button>' +
-    '<button type="button" class="btn btn-primary" id="platform-btn-logout">관리자 모드 끄기</button>' +
+    '<div id="platform-auth-panel-logged-out">' +
+    '<div id="platform-auth-supabase-block" class="platform-auth-supabase-block">' +
+    '<p class="platform-auth-block-title">일반 관리자 (Supabase)</p>' +
+    '<div class="platform-auth-row" id="platform-auth-supabase-row">' +
+    '<input id="platform-admin-pass-supabase" type="password" autocomplete="current-password" placeholder="Supabase 관리자 비밀번호" />' +
+    '<button type="button" class="btn btn-primary" id="platform-btn-login-supabase">일반 로그인</button>' +
     '<button type="button" class="btn btn-ghost" id="platform-btn-test">연결 테스트</button>' +
+    "</div>" +
+    '<p class="platform-hint" id="platform-auth-supabase-hint" style="margin-top:0.45rem"></p>' +
+    "</div>" +
+    '<div id="platform-auth-local-block" class="platform-auth-local-block">' +
+    '<div class="platform-auth-row">' +
+    '<input id="platform-admin-pass-local" type="password" autocomplete="off" placeholder="비상 모드 비밀번호" />' +
+    '<button type="button" class="btn btn-ghost" id="platform-btn-login-local">로컬 비상 모드 로그인</button>' +
+    "</div></div></div>" +
+    '<div id="platform-auth-panel-admin" class="platform-auth-panel-admin" style="display:none">' +
+    '<button type="button" class="btn btn-primary" id="platform-btn-logout">관리자 모드 끄기</button>' +
     "</div>" +
     '<p id="platform-auth-status" class="platform-status" role="status"></p>' +
     "</section>" +
@@ -160,7 +166,7 @@
       return;
     }
 
-    if (!document.getElementById("platform-btn-login")) {
+    if (!document.getElementById("platform-btn-login-supabase")) {
       root.innerHTML = INJECT_HTML;
     }
 
@@ -176,18 +182,23 @@
     initialBodyHtml = bodyEl.innerHTML.trim();
     removeLegacyLocalKeys();
 
-    var adminPass = document.getElementById("platform-admin-pass");
-    var btnLogin = document.getElementById("platform-btn-login");
+    var adminPassSupabase = document.getElementById("platform-admin-pass-supabase");
+    var adminPassLocal = document.getElementById("platform-admin-pass-local");
+    var btnLoginSupabase = document.getElementById("platform-btn-login-supabase");
+    var btnLoginLocal = document.getElementById("platform-btn-login-local");
     var btnLogout = document.getElementById("platform-btn-logout");
     var btnTest = document.getElementById("platform-btn-test");
     var authStatus = document.getElementById("platform-auth-status");
     var authMode = document.getElementById("platform-auth-mode");
+    var authSupabaseHint = document.getElementById("platform-auth-supabase-hint");
+    var authPanelLoggedOut = document.getElementById("platform-auth-panel-logged-out");
+    var authPanelAdmin = document.getElementById("platform-auth-panel-admin");
     var editorPanel = document.getElementById("platform-editor-panel");
     var formStatus = document.getElementById("platform-form-status");
     var btnSave = document.getElementById("platform-btn-save");
     var btnRevert = document.getElementById("platform-btn-revert");
 
-    if (!btnLogin || !btnLogout || !btnSave) {
+    if (!btnLoginSupabase || !btnLoginLocal || !btnLogout || !btnSave) {
       root.insertAdjacentHTML(
         "afterbegin",
         '<p class="platform-panel" style="border-color:#b02135;">관리자 UI 버튼을 찾을 수 없습니다. platform-admin.js 배포 여부를 확인하세요.</p>'
@@ -238,8 +249,7 @@
         }
         adminRootOpen = nextOpen;
         if (adminRootOpen && !isAdmin()) {
-          showLoginForm = true;
-          setStatus(authStatus, "", "비밀번호를 입력한 뒤 「관리자 모드 켜기」를 눌러 로그인하세요.");
+          setStatus(authStatus, "", "일반 로그인 또는 로컬 비상 모드 로그인을 선택해 주세요.");
         }
         updateAdminUi();
       });
@@ -252,13 +262,12 @@
       if (!authMode) return;
       if (isAdmin()) {
         authMode.setAttribute("data-mode", "admin");
-        authMode.textContent = "현재: 관리자 모드 (로그인됨)";
-      } else if (showLoginForm) {
-        authMode.setAttribute("data-mode", "login");
-        authMode.textContent = "현재: 로그인 입력 중 — 비밀번호 입력 후 「관리자 모드 켜기」";
+        authMode.textContent = localAdmin
+          ? "현재: 로컬 비상 관리자 (브라우저 저장)"
+          : "현재: 일반 관리자 (Supabase)";
       } else {
         authMode.setAttribute("data-mode", "view");
-        authMode.textContent = "현재: 일반 보기 — 「관리자 모드 켜기」로 로그인";
+        authMode.textContent = "현재: 일반 보기";
       }
     }
 
@@ -267,27 +276,29 @@
       if (on) adminRootOpen = true;
       document.body.classList.toggle("platform-admin-on", !!on);
       if (editorPanel) editorPanel.style.display = on ? "block" : "none";
-      if (adminPass) {
-        adminPass.disabled = !!on;
-        if (!on && showLoginForm) {
-          adminPass.style.display = "";
-        } else if (on) {
-          adminPass.style.display = "none";
+      if (authPanelLoggedOut) authPanelLoggedOut.style.display = on ? "none" : "block";
+      if (authPanelAdmin) authPanelAdmin.style.display = on ? "block" : "none";
+      if (adminPassSupabase) adminPassSupabase.disabled = on || !client;
+      if (btnLoginSupabase) btnLoginSupabase.disabled = on || !client;
+      if (adminPassLocal) adminPassLocal.disabled = on;
+      if (btnLoginLocal) btnLoginLocal.disabled = on;
+      if (btnTest) btnTest.disabled = on;
+      if (authSupabaseHint) {
+        if (!client) {
+          authSupabaseHint.style.display = "";
+          authSupabaseHint.textContent =
+            "Supabase URL/키(supabase-config.js)가 없어 일반 로그인을 사용할 수 없습니다. 아래 로컬 비상 모드만 이용할 수 있습니다.";
         } else {
-          adminPass.style.display = "none";
+          authSupabaseHint.style.display = "none";
+          authSupabaseHint.textContent = "";
         }
-      }
-      if (btnTest) {
-        if (!on && showLoginForm) btnTest.style.display = "";
-        else if (on) btnTest.style.display = "";
-        else btnTest.style.display = "none";
       }
       applyAuthModeIndicator();
       if (localAdmin) {
         setStatus(authStatus, "ok", "로컬 비상 관리자 모드가 켜졌습니다.");
       } else if (on) {
-        setStatus(authStatus, "ok", "관리자 모드가 켜졌습니다.");
-      } else if (!showLoginForm) {
+        setStatus(authStatus, "ok", "일반 관리자(Supabase) 모드가 켜졌습니다.");
+      } else {
         setStatus(authStatus, "", "관리자 모드가 꺼져 있습니다.");
       }
       syncAdminRootVisibility();
@@ -302,9 +313,9 @@
       }
       currentSession = null;
       localAdmin = false;
-      showLoginForm = false;
       adminRootOpen = false;
-      if (adminPass) adminPass.value = "";
+      if (adminPassSupabase) adminPassSupabase.value = "";
+      if (adminPassLocal) adminPassLocal.value = "";
       updateAdminUi();
       clearEditors();
       if (!silent) {
@@ -321,7 +332,6 @@
       }
       currentSession = null;
       localAdmin = false;
-      showLoginForm = false;
       adminRootOpen = false;
     }
 
@@ -446,28 +456,14 @@
       });
     }
 
-    btnLogin.addEventListener("click", async function () {
-      if (!isAdmin() && !showLoginForm) {
-        showLoginForm = true;
-        if (adminPass) adminPass.value = "";
-        updateAdminUi();
-        setStatus(authStatus, "", "비밀번호를 입력한 뒤 「관리자 모드 켜기」를 다시 눌러 로그인하세요.");
-        return;
-      }
-      var val = (adminPass && adminPass.value ? adminPass.value : "").trim();
+    btnLoginSupabase.addEventListener("click", async function () {
+      var val = (adminPassSupabase && adminPassSupabase.value ? adminPassSupabase.value : "").trim();
       if (!val) {
-        setStatus(authStatus, "err", "비밀번호를 입력해 주세요.");
-        return;
-      }
-      if (val === "admin1234") {
-        localAdmin = true;
-        currentSession = null;
-        if (adminPass) adminPass.value = "";
-        updateAdminUi();
+        setStatus(authStatus, "err", "Supabase 관리자 비밀번호를 입력해 주세요.");
         return;
       }
       if (!client) {
-        setStatus(authStatus, "err", "Supabase가 연결되지 않았습니다. 비상 모드( admin1234 ) 또는 설정을 확인하세요.");
+        setStatus(authStatus, "err", "Supabase가 연결되지 않았습니다. 설정을 확인하거나 로컬 비상 모드를 이용하세요.");
         return;
       }
       try {
@@ -483,17 +479,35 @@
         }
         currentSession = loginRes.data.session;
         localAdmin = false;
-        if (adminPass) adminPass.value = "";
+        if (adminPassSupabase) adminPassSupabase.value = "";
+        if (adminPassLocal) adminPassLocal.value = "";
         updateAdminUi();
       } catch (err) {
         setStatus(authStatus, "err", "로그인 연결 실패. 네트워크·HTTPS 배포 주소를 확인하세요.");
       }
     });
 
+    btnLoginLocal.addEventListener("click", function () {
+      var val = (adminPassLocal && adminPassLocal.value ? adminPassLocal.value : "").trim();
+      if (!val) {
+        setStatus(authStatus, "err", "비상 모드 비밀번호를 입력해 주세요.");
+        return;
+      }
+      if (val !== "admin1234") {
+        setStatus(authStatus, "err", "비상 모드 비밀번호가 올바르지 않습니다.");
+        return;
+      }
+      localAdmin = true;
+      currentSession = null;
+      if (adminPassLocal) adminPassLocal.value = "";
+      if (adminPassSupabase) adminPassSupabase.value = "";
+      updateAdminUi();
+    });
+
     btnLogout.addEventListener("click", async function () {
       if (!isAdmin()) {
-        showLoginForm = false;
-        if (adminPass) adminPass.value = "";
+        if (adminPassSupabase) adminPassSupabase.value = "";
+        if (adminPassLocal) adminPassLocal.value = "";
         updateAdminUi();
         clearEditors();
         setStatus(authStatus, "", "관리자 모드가 꺼져 있습니다.");

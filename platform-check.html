@@ -40,19 +40,39 @@
     <div id="platform-admin-root" class="platform-admin-mount">
       <section class="platform-panel platform-auth" aria-label="관리자 인증">
         <h2>관리자 인증</h2>
-        <p class="platform-hint" style="margin-top: 0">관리자로 로그인한 경우에만 아래 안내 본문을 편집·저장할 수 있습니다. 자료실·공지와 동일한 방식입니다.</p>
-        <details class="platform-auth-details">
-          <summary>비상 모드(로컬 저장) 안내 — 펼치기</summary>
-          <div class="platform-auth-details-body">
-            <p>Supabase에 연결되지 않거나 <code>platform_pages</code> 테이블이 없을 때는 브라우저에만 저장됩니다. 다른 PC와 공유하려면 SQL로 테이블을 만든 뒤 클라우드에 저장하세요.</p>
-          </div>
-        </details>
+        <p id="platform-auth-helper" class="platform-hint" style="margin-top: 0">
+          관리자로 로그인한 경우에만 아래 안내 본문을 편집·저장할 수 있습니다. 자료실·공지와 동일한 방식입니다.
+        </p>
         <p id="platform-auth-mode" class="platform-auth-mode" data-mode="view" role="status">현재: 일반 보기</p>
-        <div class="platform-auth-row" id="platform-auth-login-row">
-          <input id="platform-admin-pass" type="password" autocomplete="current-password" placeholder="관리자 비밀번호" />
-          <button type="button" class="btn btn-ghost" id="platform-btn-login">관리자 모드 켜기</button>
+        <div id="platform-auth-panel-logged-out">
+          <div id="platform-auth-supabase-block" class="platform-auth-supabase-block">
+            <p class="platform-auth-block-title">일반 관리자 (Supabase)</p>
+            <div class="platform-auth-row" id="platform-auth-supabase-row">
+              <input
+                id="platform-admin-pass-supabase"
+                type="password"
+                autocomplete="current-password"
+                placeholder="Supabase 관리자 비밀번호"
+              />
+              <button type="button" class="btn btn-primary" id="platform-btn-login-supabase">일반 로그인</button>
+              <button type="button" class="btn btn-ghost" id="platform-btn-test">연결 테스트</button>
+            </div>
+            <p class="platform-hint" id="platform-auth-supabase-hint" style="margin-top: 0.45rem"></p>
+          </div>
+          <div id="platform-auth-local-block" class="platform-auth-local-block">
+            <div class="platform-auth-row">
+              <input
+                id="platform-admin-pass-local"
+                type="password"
+                autocomplete="off"
+                placeholder="비상 모드 비밀번호"
+              />
+              <button type="button" class="btn btn-ghost" id="platform-btn-login-local">로컬 비상 모드 로그인</button>
+            </div>
+          </div>
+        </div>
+        <div id="platform-auth-panel-admin" class="platform-auth-panel-admin" style="display: none">
           <button type="button" class="btn btn-primary" id="platform-btn-logout">관리자 모드 끄기</button>
-          <button type="button" class="btn btn-ghost" id="platform-btn-test">연결 테스트</button>
         </div>
         <p id="platform-auth-status" class="platform-status" role="status"></p>
       </section>

@@ -939,12 +939,25 @@
       color: inherit;
     }
 
-    #contact .contact-openchat-row {
-      grid-column: 1 / -1;
+    #contact .contact-email-inline {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      column-gap: 0.85rem;
+      row-gap: 0.45rem;
     }
 
-    #contact .contact-openchat-row dd {
-      margin-top: 0.15rem;
+    #contact .contact-email-inline .contact-kakao-inline {
+      flex: 0 0 auto;
+    }
+
+    #contact .contact-kakao-inline img {
+      display: block;
+      height: 34px;
+      width: auto;
+      max-width: 88px;
+      object-fit: contain;
+      object-position: center;
     }
 
     #contact .consult-form-wrap h3 {
@@ -2139,20 +2152,22 @@
               <dt>팩스</dt>
               <dd>051-516-5459</dd>
             </dl>
-            <dl class="contact-block contact-openchat-row">
-              <dt>카카오톡 오픈채팅</dt>
-              <dd>
+            <dl class="contact-block">
+              <dt>이메일</dt>
+              <dd class="contact-email-inline">
+                <a href="mailto:lkc@daum.net">lkc@daum.net</a>
                 <a
-                  class="footer-logo-link"
+                  class="footer-logo-link contact-kakao-inline"
                   href="https://open.kakao.com/o/skTYPyac"
                   rel="noopener noreferrer"
                   aria-label="카카오톡 오픈채팅방으로 이동"
-                  ><img src="images/kakao-openchat.svg" alt="카카오톡 오픈채팅" width="200" height="34" /></a>
+                  ><img
+                    src="images/kakao-openchat-photo.png"
+                    alt="카카오톡 오픈채팅"
+                    width="88"
+                    height="34"
+                /></a>
               </dd>
-            </dl>
-            <dl class="contact-block">
-              <dt>이메일</dt>
-              <dd><a href="mailto:lkc@daum.net">lkc@daum.net</a></dd>
             </dl>
           </div>
 

@@ -283,6 +283,21 @@
       .join("");
   }
 
+  function buildStructuredBodyHtmlFromEntries(entries) {
+    var list = Array.isArray(entries) ? entries : [];
+    if (!list.length) return "";
+    return list
+      .map(function (one) {
+        return (
+          '<div class="platform-entry">' +
+          '<p class="platform-entry-heading">' + escapeHtmlText(one.title || "") + "</p>" +
+          '<div class="platform-entry-body">' + (one.desc ? one.desc : "&nbsp;") + "</div>" +
+          "</div>"
+        );
+      })
+      .join("");
+  }
+
   function extractBodyEditorContent(renderedHtml) {
     var html = String(renderedHtml || "").trim();
     if (!html) return "";
@@ -988,6 +1003,26 @@
         return;
       }
       var v = readEditors();
+      var newEntryTitle = String(v.lead || "").trim();
+      var newEntryDesc = String(v.body_html || "").trim();
+      if (!newEntryTitle || !newEntryDesc) {
+        setStatus(formStatus, "err", "자료명과 세부 내용 및 사용방법을 모두 입력해 주세요.");
+        return;
+      }
+      var existingEntries = parseEntriesFromInput(
+        currentPersistedRecord && currentPersistedRecord.body_html
+          ? currentPersistedRecord.body_html
+          : bodyEl.innerHTML
+      );
+      var mergedEntries = [{ title: newEntryTitle, desc: newEntryDesc }].concat(
+        existingEntries.filter(function (one) {
+          return !(
+            String(one.title || "").trim() === newEntryTitle &&
+            String(one.desc || "").trim() === newEntryDesc
+          );
+        })
+      );
+      var mergedBodyHtml = buildStructuredBodyHtmlFromEntries(mergedEntries);
       setStatus(formStatus, "", "저장 중...");
       btnSave.disabled = true;
       btnSave.textContent = "저장 중...";
@@ -995,16 +1030,16 @@
       try {
         if (!client) {
           try {
-            saveLocal(v.lead, v.body_html);
+            saveLocal(v.lead, mergedBodyHtml);
           } catch (le) {
             setStatus(formStatus, "err", "로컬 저장 실패: " + (le && le.message ? le.message : String(le)));
             return;
           }
-          applyToPage(v.lead, v.body_html);
+          applyToPage(v.lead, mergedBodyHtml);
           currentPersistedRecord = {
             source: "local",
             lead: v.lead,
-            body_html: v.body_html,
+            body_html: mergedBodyHtml,
             saved_at: new Date().toISOString()
           };
           renderSavedManager();
@@ -1015,19 +1050,19 @@
         var payload = {
           slug: slug,
           lead: v.lead,
-          body_html: v.body_html,
+          body_html: mergedBodyHtml,
           updated_at: new Date().toISOString()
         };
         var res = await client.from("platform_pages").upsert(payload, { onConflict: "slug" });
         if (res.error) {
           var msg = String(res.error.message || "");
           try {
-            saveLocal(v.lead, v.body_html);
-            applyToPage(v.lead, v.body_html);
+            saveLocal(v.lead, mergedBodyHtml);
+            applyToPage(v.lead, mergedBodyHtml);
             currentPersistedRecord = {
               source: "local",
               lead: v.lead,
-              body_html: v.body_html,
+              body_html: mergedBodyHtml,
               saved_at: new Date().toISOString()
             };
             renderSavedManager();
@@ -1047,14 +1082,14 @@
           return;
         }
 
-        applyToPage(v.lead, v.body_html);
+        applyToPage(v.lead, mergedBodyHtml);
         try {
-          saveLocal(v.lead, v.body_html);
+          saveLocal(v.lead, mergedBodyHtml);
         } catch (e2) {}
         currentPersistedRecord = {
           source: "cloud",
           lead: v.lead,
-          body_html: v.body_html,
+          body_html: mergedBodyHtml,
           saved_at: new Date().toISOString()
         };
         renderSavedManager();
@@ -1062,12 +1097,23 @@
       } catch (e) {
         try {
           var vv = readEditors();
-          saveLocal(vv.lead, vv.body_html);
-          applyToPage(vv.lead, vv.body_html);
+          var fallbackTitle = String(vv.lead || "").trim();
+          var fallbackDesc = String(vv.body_html || "").trim();
+          var fallbackEntries = [{ title: fallbackTitle, desc: fallbackDesc }].concat(
+            existingEntries.filter(function (one) {
+              return !(
+                String(one.title || "").trim() === fallbackTitle &&
+                String(one.desc || "").trim() === fallbackDesc
+              );
+            })
+          );
+          var fallbackBody = buildStructuredBodyHtmlFromEntries(fallbackEntries);
+          saveLocal(vv.lead, fallbackBody);
+          applyToPage(vv.lead, fallbackBody);
           currentPersistedRecord = {
             source: "local",
             lead: vv.lead,
-            body_html: vv.body_html,
+            body_html: fallbackBody,
             saved_at: new Date().toISOString()
           };
           renderSavedManager();

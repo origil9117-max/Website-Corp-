@@ -165,13 +165,24 @@ h1 {
   font-size: 0.9rem;
   color: var(--ink-soft);
   line-height: 1.65;
-  padding-bottom: 0.72rem;
   margin-bottom: 0.95rem;
-  border-bottom: 3px solid var(--maroon);
+}
+
+.platform-sub-body > * {
+  margin: 0 0 0.62rem;
+  padding: 0.68rem 0.74rem;
+  border: 1px solid rgba(124, 93, 147, 0.42);
+  border-radius: 2px;
+  background: #fff;
+  box-shadow: 0 1px 0 rgba(20, 24, 32, 0.04);
+}
+
+.platform-sub-body > *:last-child {
+  margin-bottom: 0;
 }
 
 .platform-sub-body p {
-  margin-bottom: 0.85rem;
+  margin-bottom: 0;
 }
 
 .platform-sub-body strong {

@@ -189,13 +189,19 @@
     box.innerHTML = html;
     var fromBlocks = box.querySelectorAll(".platform-entry");
     var entries = [];
+    function pushCompletedEntry(target, title, desc) {
+      var t = String(title || "").trim();
+      var d = String(desc || "").trim();
+      if (!t || !d) return;
+      target.push({ title: t, desc: d });
+    }
     if (fromBlocks.length) {
       Array.prototype.forEach.call(fromBlocks, function (node) {
         var titleNode = node.querySelector(".platform-entry-title");
         var descNode = node.querySelector(".platform-entry-desc");
         var title = String(titleNode ? titleNode.textContent : "").replace(/^자료명:\s*/i, "").trim();
         var desc = String(descNode ? descNode.textContent : "").replace(/^설명:\s*/i, "").trim();
-        if (title || desc) entries.push({ title: title, desc: desc });
+        pushCompletedEntry(entries, title, desc);
       });
       return entries;
     }
@@ -213,36 +219,31 @@
     if (hasLabel) {
       lines.forEach(function (line) {
         if (/^자료명\s*:/i.test(line)) {
-          if (curTitle || curDesc) {
-            entries.push({ title: curTitle, desc: curDesc });
-            curTitle = "";
-            curDesc = "";
-          }
+          pushCompletedEntry(entries, curTitle, curDesc);
+          curTitle = "";
+          curDesc = "";
           curTitle = line.replace(/^자료명\s*:/i, "").trim();
         } else if (/^설명\s*:/i.test(line)) {
           curDesc = line.replace(/^설명\s*:/i, "").trim();
-          entries.push({ title: curTitle, desc: curDesc });
+          pushCompletedEntry(entries, curTitle, curDesc);
           curTitle = "";
           curDesc = "";
         } else if (!curTitle) {
           curTitle = line;
         } else {
           curDesc = line;
-          entries.push({ title: curTitle, desc: curDesc });
+          pushCompletedEntry(entries, curTitle, curDesc);
           curTitle = "";
           curDesc = "";
         }
       });
-      if (curTitle || curDesc) entries.push({ title: curTitle, desc: curDesc });
+      pushCompletedEntry(entries, curTitle, curDesc);
     } else {
       for (var i = 0; i < lines.length; i += 2) {
-        entries.push({
-          title: lines[i] || "",
-          desc: lines[i + 1] || ""
-        });
+        pushCompletedEntry(entries, lines[i] || "", lines[i + 1] || "");
       }
     }
-    return entries.filter(function (one) { return one.title || one.desc; });
+    return entries;
   }
 
   function escapeHtmlText(str) {

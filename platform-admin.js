@@ -372,6 +372,24 @@
     return { ok: true, source: "cloud" };
   }
 
+  async function resolveCloudBodyColumn() {
+    if (!client) return null;
+    var cols = [cloudBodyColumn].concat(
+      CLOUD_BODY_CANDIDATE_COLUMNS.filter(function (c) {
+        return c !== cloudBodyColumn;
+      })
+    );
+    for (var i = 0; i < cols.length; i += 1) {
+      var col = cols[i];
+      var probe = await client.from("platform_pages").select("slug,lead," + col).limit(1);
+      if (!probe.error) {
+        cloudBodyColumn = col;
+        return col;
+      }
+    }
+    return null;
+  }
+
   function extractBodyEditorContent(renderedHtml) {
     var html = String(renderedHtml || "").trim();
     if (!html) return "";
@@ -790,23 +808,6 @@
         body_html: bodyValue,
         updated_at: row.updated_at
       };
-    }
-
-    async function resolveCloudBodyColumn() {
-      var cols = [cloudBodyColumn].concat(
-        CLOUD_BODY_CANDIDATE_COLUMNS.filter(function (c) {
-          return c !== cloudBodyColumn;
-        })
-      );
-      for (var i = 0; i < cols.length; i += 1) {
-        var col = cols[i];
-        var probe = await client.from("platform_pages").select("slug,lead," + col).limit(1);
-        if (!probe.error) {
-          cloudBodyColumn = col;
-          return col;
-        }
-      }
-      return null;
     }
 
     async function refreshPersistedRecord() {

@@ -167,27 +167,41 @@ h1 {
   color: var(--ink-soft);
   line-height: 1.65;
   margin-bottom: 0.95rem;
+  counter-reset: platformEntry;
 }
 
 .platform-sub-body > * {
-  margin: 0 0 0.62rem;
-  padding: 0.68rem 0.74rem;
-  border: 1px solid rgba(124, 93, 147, 0.42);
-  border-radius: 2px;
-  background: #fff;
-  box-shadow: 0 1px 0 rgba(20, 24, 32, 0.04);
+  margin: 0 0 0.68rem;
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
 }
 
 .platform-sub-body > *:last-child {
   margin-bottom: 0;
 }
 
-.platform-sub-body p {
-  margin-bottom: 0;
+.platform-sub-body .platform-entry-heading {
+  margin: 0 0 0.34rem;
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--ink);
+  line-height: 1.45;
+  counter-increment: platformEntry;
 }
 
-.platform-sub-body strong {
-  color: var(--ink);
+.platform-sub-body .platform-entry-heading::before {
+  content: "(" counter(platformEntry) ") ";
+}
+
+.platform-sub-body .platform-entry-body {
+  padding: 0.68rem 0.74rem;
+  border: 1px solid rgba(124, 93, 147, 0.42);
+  border-radius: 2px;
+  background: #fff;
+  box-shadow: 0 1px 0 rgba(20, 24, 32, 0.04);
 }
 
 .platform-category-links {
@@ -601,15 +615,12 @@ body.platform-admin-on .platform-editor textarea {
   line-height: 1.6;
 }
 
-.platform-entry-desc-body p {
+.platform-entry-desc-body p,
+.platform-sub-body .platform-entry-body p {
   margin: 0 0 0.5rem;
 }
 
-.platform-entry-desc-body p:last-child {
+.platform-entry-desc-body p:last-child,
+.platform-sub-body .platform-entry-body p:last-child {
   margin-bottom: 0;
-}
-
-.platform-sub-body .platform-entry-title strong,
-.platform-sub-body .platform-entry-desc > strong {
-  display: none;
 }

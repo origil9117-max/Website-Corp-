@@ -137,8 +137,15 @@
   }
 
   function applyToPage(lead, bodyHtml) {
-    leadEl.textContent = lead;
-    bodyEl.innerHTML = buildStructuredBodyHtml(lead, bodyHtml);
+    var rendered = buildStructuredBodyHtml(lead, bodyHtml);
+    if (rendered) {
+      leadEl.textContent = "";
+      leadEl.style.display = "none";
+    } else {
+      leadEl.textContent = String(lead || "");
+      leadEl.style.display = "";
+    }
+    bodyEl.innerHTML = rendered;
   }
 
   function syncEditors(editLead, editBody) {
@@ -197,9 +204,17 @@
     }
     if (fromBlocks.length) {
       Array.prototype.forEach.call(fromBlocks, function (node) {
-        var titleNode = node.querySelector(".platform-entry-title");
-        var descNode = node.querySelector(".platform-entry-desc");
-        var title = String(titleNode ? titleNode.textContent : "").replace(/^자료명:\s*/i, "").trim();
+        var titleNode =
+          node.querySelector(".platform-entry-heading") ||
+          node.querySelector(".platform-entry-title");
+        var descNode =
+          node.querySelector(".platform-entry-body") ||
+          node.querySelector(".platform-entry-desc-body") ||
+          node.querySelector(".platform-entry-desc");
+        var title = String(titleNode ? titleNode.textContent : "")
+          .replace(/^\(\d+\)\s*/, "")
+          .replace(/^자료명:\s*/i, "")
+          .trim();
         var desc = String(descNode ? descNode.textContent : "").replace(/^설명:\s*/i, "").trim();
         pushCompletedEntry(entries, title, desc);
       });
@@ -249,16 +264,23 @@
   function buildStructuredBodyHtml(lead, bodyHtml) {
     var rawLead = String(lead || "").trim();
     var rawBody = String(bodyHtml || "").trim();
-    if (!rawLead && !rawBody) return "";
-    if (/class\s*=\s*["'][^"']*platform-entry/i.test(rawBody)) return rawBody;
-    return (
-      '<div class="platform-entry">' +
-      '<p class="platform-entry-title"><strong>자료명:</strong> ' + escapeHtmlText(rawLead) + "</p>" +
-      '<div class="platform-entry-desc"><strong>설명:</strong><div class="platform-entry-desc-body">' +
-      (rawBody || "&nbsp;") +
-      "</div></div>" +
-      "</div>"
-    );
+    var entries = [];
+    if (/class\s*=\s*["'][^"']*platform-entry/i.test(rawBody)) {
+      entries = parseEntriesFromInput(rawBody);
+    } else if (rawLead || rawBody) {
+      entries = [{ title: rawLead, desc: rawBody }];
+    }
+    if (!entries.length) return "";
+    return entries
+      .map(function (one) {
+        return (
+          '<div class="platform-entry">' +
+          '<p class="platform-entry-heading">' + escapeHtmlText(one.title || "") + "</p>" +
+          '<div class="platform-entry-body">' + (one.desc ? one.desc : "&nbsp;") + "</div>" +
+          "</div>"
+        );
+      })
+      .join("");
   }
 
   function extractBodyEditorContent(renderedHtml) {
@@ -376,7 +398,12 @@
   }
 
   function loadEditorsFromPage() {
-    syncEditors(leadEl.textContent.trim(), extractBodyEditorContent(bodyEl.innerHTML.trim()));
+    var leadText = String(leadEl.textContent || "").trim();
+    if (!leadText) {
+      var entries = parseEntriesFromInput(bodyEl.innerHTML.trim());
+      if (entries.length) leadText = String(entries[0].title || "").trim();
+    }
+    syncEditors(leadText, extractBodyEditorContent(bodyEl.innerHTML.trim()));
   }
 
   function insertImageIntoBodyEditor(src, altText) {

@@ -161,7 +161,8 @@ h1 {
 }
 
 .platform-sub-body {
-  max-width: 52em;
+  max-width: none;
+  width: 100%;
   font-size: 0.9rem;
   color: var(--ink-soft);
   line-height: 1.65;

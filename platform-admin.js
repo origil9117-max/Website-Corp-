@@ -641,7 +641,7 @@
       e.preventDefault();
       var sel = window.getSelection();
       if (!sel || !sel.rangeCount) {
-        editor.innerHTML += "<br><br>";
+        editor.innerHTML = linkifyHtmlUrls(editor.innerHTML) + "<br><br>";
         editor.dispatchEvent(new Event("input", { bubbles: true }));
         return;
       }
@@ -649,12 +649,23 @@
       range.deleteContents();
       var br1 = document.createElement("br");
       var br2 = document.createElement("br");
+      var caret = document.createElement("span");
+      caret.setAttribute("data-platform-caret", "1");
+      caret.style.display = "inline-block";
+      caret.style.width = "0";
       range.insertNode(br2);
       range.insertNode(br1);
-      range.setStartAfter(br2);
-      range.collapse(true);
-      sel.removeAllRanges();
-      sel.addRange(range);
+      range.insertNode(caret);
+      editor.innerHTML = linkifyHtmlUrls(editor.innerHTML);
+      var after = editor.querySelector("span[data-platform-caret='1']");
+      if (after) {
+        var nextRange = document.createRange();
+        nextRange.setStartAfter(after);
+        nextRange.collapse(true);
+        after.parentNode.removeChild(after);
+        sel.removeAllRanges();
+        sel.addRange(nextRange);
+      }
       editor.dispatchEvent(new Event("input", { bubbles: true }));
     });
   }
@@ -985,27 +996,8 @@
       deactivateAdminMode({ silent: true });
     }
 
-    window.addEventListener("pagehide", function () {
-      clearAdminStateOnLeave();
-    });
     window.addEventListener("beforeunload", function () {
       clearAdminStateOnLeave();
-    });
-    document.addEventListener("visibilitychange", function () {
-      if (document.visibilityState === "hidden") {
-        clearAdminStateOnLeave();
-      }
-    });
-    window.addEventListener("pageshow", function (e) {
-      var persisted = !!(e && e.persisted);
-      var forceOff = false;
-      try {
-        forceOff = sessionStorage.getItem(ADMIN_OFF_FLAG_KEY) === "1";
-        if (forceOff) sessionStorage.removeItem(ADMIN_OFF_FLAG_KEY);
-      } catch (err) {}
-      if (persisted || forceOff || isAdmin()) {
-        deactivateAdminMode({ silent: true });
-      }
     });
 
     var btnLoadFromPage = document.getElementById("platform-btn-load-from-page");

@@ -249,6 +249,12 @@ body.platform-admin-on .platform-sub-body .platform-entry-actions {
   box-shadow: 0 1px 0 rgba(20, 24, 32, 0.04);
 }
 
+.platform-sub-body .platform-entry-body a,
+.platform-edit-body-editor a {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
 .platform-category-links {
   margin-top: 1rem;
   display: flex;

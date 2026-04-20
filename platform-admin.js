@@ -37,7 +37,6 @@
   var INJECT_HTML =
     '<section class="platform-panel platform-auth" aria-label="관리자 인증">' +
     "<h2>관리자 인증</h2>" +
-    '<p id="platform-auth-helper" class="platform-hint" style="margin-top:0">관리자로 로그인한 경우에만 아래 안내 본문을 편집·저장할 수 있습니다. 자료실·공지와 동일한 방식입니다.</p>' +
     '<p id="platform-auth-mode" class="platform-auth-mode" data-mode="view" role="status">현재: 일반 보기</p>' +
     '<div id="platform-auth-panel-logged-out">' +
     '<div id="platform-auth-supabase-block" class="platform-auth-supabase-block">' +

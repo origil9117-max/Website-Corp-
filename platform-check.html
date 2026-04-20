@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700&family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="platform-pages.css?v=20260420c" />
+  <link rel="stylesheet" href="platform-pages.css?v=20260420d" />
 </head>
 <body data-platform-slug="platform-check">
   <header class="topbar">
@@ -40,9 +40,6 @@
     <div id="platform-admin-root" class="platform-admin-mount">
       <section class="platform-panel platform-auth" aria-label="관리자 인증">
         <h2>관리자 인증</h2>
-        <p id="platform-auth-helper" class="platform-hint" style="margin-top: 0">
-          관리자로 로그인한 경우에만 아래 안내 본문을 편집·저장할 수 있습니다. 자료실·공지와 동일한 방식입니다.
-        </p>
         <p id="platform-auth-mode" class="platform-auth-mode" data-mode="view" role="status">현재: 일반 보기</p>
         <div id="platform-auth-panel-logged-out">
           <div id="platform-auth-supabase-block" class="platform-auth-supabase-block">
@@ -60,7 +57,8 @@
             <p class="platform-hint" id="platform-auth-supabase-hint" style="margin-top: 0.45rem"></p>
           </div>
           <div id="platform-auth-local-block" class="platform-auth-local-block">
-            <p class="platform-auth-block-title">비상 모드</p>`r`n            <div class="platform-auth-row" id="platform-auth-local-row">
+            <p class="platform-auth-block-title">비상 모드</p>
+            <div class="platform-auth-row" id="platform-auth-local-row">
               <input
                 id="platform-admin-pass-local"
                 type="password"
@@ -132,6 +130,6 @@
     if (typeof window.SUPABASE_URL === "undefined") window.SUPABASE_URL = "";
     if (typeof window.SUPABASE_ANON_KEY === "undefined") window.SUPABASE_ANON_KEY = "";
   </script>
-  <script src="platform-admin.js?v=20260420o" defer></script>
+  <script src="platform-admin.js?v=20260420p" defer></script>
 </body>
 </html>

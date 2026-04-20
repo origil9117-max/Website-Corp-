@@ -166,6 +166,7 @@ h1 {
   font-size: 0.9rem;
   color: var(--ink-soft);
   line-height: 1.65;
+  margin-top: 0.95rem;
   margin-bottom: 0.95rem;
   counter-reset: platformEntry;
 }

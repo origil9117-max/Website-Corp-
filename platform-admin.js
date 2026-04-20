@@ -20,7 +20,7 @@
   var initialLead = "";
   var initialBodyHtml = "";
   var currentPersistedRecord = null;
-  var ENTRY_TEMPLATE_TEXT = "자료명:\n설명:";
+  var ENTRY_TEMPLATE_TEXT = "";
 
   var client = null;
   var currentSession = null;
@@ -279,6 +279,7 @@
       .join("\n\n")
       .trim();
     if (!withTemplateTail) return body;
+    if (!ENTRY_TEMPLATE_TEXT) return body;
     if (!body) return ENTRY_TEMPLATE_TEXT;
     return body + "\n\n" + ENTRY_TEMPLATE_TEXT;
   }

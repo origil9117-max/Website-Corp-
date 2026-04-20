@@ -621,7 +621,7 @@
         return m ? m[1] : "";
       }
 
-      pageTitle.textContent = SERVICE_MAP[service] + " · 게시";
+      pageTitle.textContent = SERVICE_MAP[service];
 
       if (window.supabase && window.SUPABASE_URL && window.SUPABASE_ANON_KEY) {
         client = window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY);

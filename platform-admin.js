@@ -292,7 +292,7 @@
           '<button type="button" class="btn btn-ghost" data-entry-act="save" data-entry-idx="' + idx + '">저장</button>' +
           "</span>" +
           "</p>" +
-          '<div class="platform-entry-body">' + (one.desc ? one.desc : "&nbsp;") + "</div>" +
+          '<div class="platform-entry-body">' + (one.desc ? linkifyHtmlUrls(one.desc) : "&nbsp;") + "</div>" +
           "</div>"
         );
       })
@@ -314,7 +314,7 @@
           '<button type="button" class="btn btn-ghost" data-entry-act="save" data-entry-idx="' + idx + '">저장</button>' +
           "</span>" +
           "</p>" +
-          '<div class="platform-entry-body">' + (one.desc ? one.desc : "&nbsp;") + "</div>" +
+          '<div class="platform-entry-body">' + (one.desc ? linkifyHtmlUrls(one.desc) : "&nbsp;") + "</div>" +
           "</div>"
         );
       })
@@ -418,6 +418,47 @@
       .replace(/>/g, "&gt;")
       .replace(/"/g, "&quot;")
       .replace(/'/g, "&#39;");
+  }
+
+  function linkifyHtmlUrls(html) {
+    var raw = String(html || "").trim();
+    if (!raw) return "";
+    var box = document.createElement("div");
+    box.innerHTML = raw;
+    var walker = document.createTreeWalker(box, NodeFilter.SHOW_TEXT, null);
+    var textNodes = [];
+    while (walker.nextNode()) {
+      var node = walker.currentNode;
+      if (!node || !node.nodeValue) continue;
+      if (!String(node.nodeValue || "").trim()) continue;
+      var parent = node.parentNode;
+      if (parent && parent.nodeName && String(parent.nodeName).toLowerCase() === "a") continue;
+      textNodes.push(node);
+    }
+    var urlRe = /(https?:\/\/[^\s<>"']+)/gi;
+    textNodes.forEach(function (node) {
+      var text = String(node.nodeValue || "");
+      if (!urlRe.test(text)) return;
+      urlRe.lastIndex = 0;
+      var frag = document.createDocumentFragment();
+      var last = 0;
+      var m;
+      while ((m = urlRe.exec(text)) !== null) {
+        var start = m.index;
+        var url = m[1];
+        if (start > last) frag.appendChild(document.createTextNode(text.slice(last, start)));
+        var a = document.createElement("a");
+        a.href = url;
+        a.textContent = url;
+        a.target = "_blank";
+        a.rel = "noopener noreferrer";
+        frag.appendChild(a);
+        last = start + url.length;
+      }
+      if (last < text.length) frag.appendChild(document.createTextNode(text.slice(last)));
+      node.parentNode.replaceChild(frag, node);
+    });
+    return box.innerHTML.trim();
   }
 
   function buildEntriesHtml(entries) {

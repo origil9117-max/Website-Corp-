@@ -193,6 +193,7 @@
       var t = String(title || "").trim();
       var d = String(desc || "").trim();
       if (!t || !d) return;
+      if (t === "자료명칭" && d === "세부설명") return;
       target.push({ title: t, desc: d });
     }
     if (fromBlocks.length) {

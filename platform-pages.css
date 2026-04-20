@@ -191,10 +191,37 @@ h1 {
   color: var(--ink);
   line-height: 1.45;
   counter-increment: platformEntry;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  flex-wrap: wrap;
 }
 
 .platform-sub-body .platform-entry-heading::before {
   content: "(" counter(platformEntry) ") ";
+}
+
+.platform-sub-body .platform-entry-title-text {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.platform-sub-body .platform-entry-actions {
+  display: none;
+  align-items: center;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+}
+
+body.platform-admin-on .platform-sub-body .platform-entry-actions {
+  display: inline-flex;
+}
+
+.platform-sub-body .platform-entry-actions .btn {
+  padding: 0.22rem 0.48rem;
+  font-size: 0.72rem;
+  line-height: 1.15;
 }
 
 .platform-sub-body .platform-entry-body {

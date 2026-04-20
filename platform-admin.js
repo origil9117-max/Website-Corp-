@@ -21,6 +21,7 @@
   var initialBodyHtml = "";
   var currentPersistedRecord = null;
   var ENTRY_TEMPLATE_TEXT = "";
+  var selectedEntryIndex = -1;
 
   var client = null;
   var currentSession = null;
@@ -205,6 +206,7 @@
     if (fromBlocks.length) {
       Array.prototype.forEach.call(fromBlocks, function (node) {
         var titleNode =
+          node.querySelector(".platform-entry-title-text") ||
           node.querySelector(".platform-entry-heading") ||
           node.querySelector(".platform-entry-title");
         var descNode =
@@ -275,7 +277,15 @@
       .map(function (one) {
         return (
           '<div class="platform-entry">' +
-          '<p class="platform-entry-heading">' + escapeHtmlText(one.title || "") + "</p>" +
+          '<p class="platform-entry-heading">' +
+          '<span class="platform-entry-title-text">' + escapeHtmlText(one.title || "") + "</span>" +
+          '<span class="platform-entry-actions">' +
+          '<button type="button" class="btn btn-ghost" data-entry-act="load" data-entry-idx="' + 0 + '">불러오기</button>' +
+          '<button type="button" class="btn btn-ghost" data-entry-act="edit" data-entry-idx="' + 0 + '">수정</button>' +
+          '<button type="button" class="btn btn-ghost" data-entry-act="delete" data-entry-idx="' + 0 + '">삭제</button>' +
+          '<button type="button" class="btn btn-primary" data-entry-act="save" data-entry-idx="' + 0 + '">저장</button>' +
+          "</span>" +
+          "</p>" +
           '<div class="platform-entry-body">' + (one.desc ? one.desc : "&nbsp;") + "</div>" +
           "</div>"
         );
@@ -287,15 +297,70 @@
     var list = Array.isArray(entries) ? entries : [];
     if (!list.length) return "";
     return list
-      .map(function (one) {
+      .map(function (one, idx) {
         return (
           '<div class="platform-entry">' +
-          '<p class="platform-entry-heading">' + escapeHtmlText(one.title || "") + "</p>" +
+          '<p class="platform-entry-heading">' +
+          '<span class="platform-entry-title-text">' + escapeHtmlText(one.title || "") + "</span>" +
+          '<span class="platform-entry-actions">' +
+          '<button type="button" class="btn btn-ghost" data-entry-act="load" data-entry-idx="' + idx + '">불러오기</button>' +
+          '<button type="button" class="btn btn-ghost" data-entry-act="edit" data-entry-idx="' + idx + '">수정</button>' +
+          '<button type="button" class="btn btn-ghost" data-entry-act="delete" data-entry-idx="' + idx + '">삭제</button>' +
+          '<button type="button" class="btn btn-primary" data-entry-act="save" data-entry-idx="' + idx + '">저장</button>' +
+          "</span>" +
+          "</p>" +
           '<div class="platform-entry-body">' + (one.desc ? one.desc : "&nbsp;") + "</div>" +
           "</div>"
         );
       })
       .join("");
+  }
+
+  async function persistEntries(lead, entries) {
+    var mergedBodyHtml = buildStructuredBodyHtmlFromEntries(entries);
+    if (!client) {
+      saveLocal(lead, mergedBodyHtml);
+      applyToPage(lead, mergedBodyHtml);
+      currentPersistedRecord = {
+        source: "local",
+        lead: lead,
+        body_html: mergedBodyHtml,
+        saved_at: new Date().toISOString()
+      };
+      renderSavedManager();
+      return { ok: true, source: "local" };
+    }
+    var payload = {
+      slug: slug,
+      lead: lead,
+      body_html: mergedBodyHtml,
+      updated_at: new Date().toISOString()
+    };
+    var upsertRes = await client.from("platform_pages").upsert(payload, { onConflict: "slug" });
+    if (upsertRes.error) {
+      saveLocal(lead, mergedBodyHtml);
+      applyToPage(lead, mergedBodyHtml);
+      currentPersistedRecord = {
+        source: "local",
+        lead: lead,
+        body_html: mergedBodyHtml,
+        saved_at: new Date().toISOString()
+      };
+      renderSavedManager();
+      return { ok: false, source: "local", message: String(upsertRes.error.message || "") };
+    }
+    applyToPage(lead, mergedBodyHtml);
+    try {
+      saveLocal(lead, mergedBodyHtml);
+    } catch (e) {}
+    currentPersistedRecord = {
+      source: "cloud",
+      lead: lead,
+      body_html: mergedBodyHtml,
+      saved_at: new Date().toISOString()
+    };
+    renderSavedManager();
+    return { ok: true, source: "cloud" };
   }
 
   function extractBodyEditorContent(renderedHtml) {
@@ -833,9 +898,9 @@
       });
     }
 
-    document.addEventListener("click", function (e) {
+    document.addEventListener("click", async function (e) {
       var t = e.target;
-      if (!t || !t.id) return;
+      if (!t) return;
       if (t.id === "platform-btn-load-saved") {
         if (!isAdmin()) {
           setStatus(formStatus, "err", "관리자 모드에서만 불러올 수 있습니다.");
@@ -858,6 +923,59 @@
         }
         var clearBtn = document.getElementById("platform-btn-clear-persisted");
         if (clearBtn) clearBtn.click();
+      }
+    });
+
+    bodyEl.addEventListener("click", async function (e) {
+      var btn = e.target && e.target.closest ? e.target.closest("[data-entry-act]") : null;
+      if (!btn || !isAdmin()) return;
+      var act = String(btn.getAttribute("data-entry-act") || "");
+      var idx = Number(btn.getAttribute("data-entry-idx"));
+      if (Number.isNaN(idx)) return;
+      var entries = parseEntriesFromInput(bodyEl.innerHTML);
+      if (idx < 0 || idx >= entries.length) return;
+
+      if (act === "load" || act === "edit") {
+        selectedEntryIndex = idx;
+        syncEditors(entries[idx].title || "", entries[idx].desc || "");
+        setStatus(formStatus, "ok", "항목 (" + (idx + 1) + ")을 편집창으로 불러왔습니다.");
+        return;
+      }
+      if (act === "delete") {
+        var okDel = window.confirm("항목 (" + (idx + 1) + ")을 삭제할까요?");
+        if (!okDel) return;
+        var nextEntries = entries.filter(function (_, i) { return i !== idx; });
+        var leadKeep = nextEntries.length ? String(nextEntries[0].title || "").trim() : "";
+        try {
+          await persistEntries(leadKeep, nextEntries);
+          selectedEntryIndex = -1;
+          setStatus(formStatus, "ok", "항목을 삭제했습니다.");
+        } catch (errDel) {
+          setStatus(formStatus, "err", "삭제 중 오류: " + (errDel && errDel.message ? errDel.message : String(errDel)));
+        }
+        return;
+      }
+      if (act === "save") {
+        var current = readEditors();
+        var tTitle = String(current.lead || "").trim();
+        var tDesc = String(current.body_html || "").trim();
+        if (!tTitle || !tDesc) {
+          setStatus(formStatus, "err", "자료명과 세부 내용 및 사용방법을 모두 입력해 주세요.");
+          return;
+        }
+        entries[idx] = { title: tTitle, desc: tDesc };
+        var leadKeep2 = entries.length ? String(entries[0].title || "").trim() : "";
+        try {
+          var saveRowRes = await persistEntries(leadKeep2, entries);
+          selectedEntryIndex = idx;
+          if (!saveRowRes.ok) {
+            setStatus(formStatus, "err", "클라우드 저장 실패로 로컬에 반영했습니다.");
+          } else {
+            setStatus(formStatus, "ok", "항목 (" + (idx + 1) + ")을 저장했습니다.");
+          }
+        } catch (errSaveRow) {
+          setStatus(formStatus, "err", "저장 중 오류: " + (errSaveRow && errSaveRow.message ? errSaveRow.message : String(errSaveRow)));
+        }
       }
     });
 
@@ -1032,78 +1150,29 @@
           );
         })
       );
-      var mergedBodyHtml = buildStructuredBodyHtmlFromEntries(mergedEntries);
       setStatus(formStatus, "", "저장 중...");
       btnSave.disabled = true;
       btnSave.textContent = "저장 중...";
 
       try {
-        if (!client) {
-          try {
-            saveLocal(v.lead, mergedBodyHtml);
-          } catch (le) {
-            setStatus(formStatus, "err", "로컬 저장 실패: " + (le && le.message ? le.message : String(le)));
-            return;
-          }
-          applyToPage(v.lead, mergedBodyHtml);
-          currentPersistedRecord = {
-            source: "local",
-            lead: v.lead,
-            body_html: mergedBodyHtml,
-            saved_at: new Date().toISOString()
-          };
-          renderSavedManager();
-          setStatus(formStatus, "ok", "브라우저(로컬)에 저장했습니다. Supabase를 연결하면 다른 기기에서도 동일하게 볼 수 있습니다.");
-          return;
-        }
-
-        var payload = {
-          slug: slug,
-          lead: v.lead,
-          body_html: mergedBodyHtml,
-          updated_at: new Date().toISOString()
-        };
-        var res = await client.from("platform_pages").upsert(payload, { onConflict: "slug" });
-        if (res.error) {
-          var msg = String(res.error.message || "");
-          try {
-            saveLocal(v.lead, mergedBodyHtml);
-            applyToPage(v.lead, mergedBodyHtml);
-            currentPersistedRecord = {
-              source: "local",
-              lead: v.lead,
-              body_html: mergedBodyHtml,
-              saved_at: new Date().toISOString()
-            };
-            renderSavedManager();
-          } catch (le) {
-            setStatus(formStatus, "err", "저장 실패: " + msg);
-            return;
-          }
-          if (/relation|does not exist|schema cache/i.test(msg)) {
+        var persistRes = await persistEntries(v.lead, mergedEntries);
+        selectedEntryIndex = 0;
+        if (!persistRes.ok) {
+          var msg2 = String(persistRes.message || "");
+          if (/relation|does not exist|schema cache/i.test(msg2)) {
             setStatus(
               formStatus,
               "ok",
               "클라우드 테이블이 없어 로컬에 저장하고 화면에 반영했습니다. Supabase에서 platform_pages.sql을 실행하세요."
             );
           } else {
-            setStatus(formStatus, "err", "클라우드 저장 실패: " + msg + " — 로컬에만 반영했습니다.");
+            setStatus(formStatus, "err", "클라우드 저장 실패: " + msg2 + " — 로컬에만 반영했습니다.");
           }
-          return;
+        } else if (persistRes.source === "local") {
+          setStatus(formStatus, "ok", "브라우저(로컬)에 저장했습니다. Supabase를 연결하면 다른 기기에서도 동일하게 볼 수 있습니다.");
+        } else {
+          setStatus(formStatus, "ok", "저장되었습니다(Supabase).");
         }
-
-        applyToPage(v.lead, mergedBodyHtml);
-        try {
-          saveLocal(v.lead, mergedBodyHtml);
-        } catch (e2) {}
-        currentPersistedRecord = {
-          source: "cloud",
-          lead: v.lead,
-          body_html: mergedBodyHtml,
-          saved_at: new Date().toISOString()
-        };
-        renderSavedManager();
-        setStatus(formStatus, "ok", "저장되었습니다(Supabase).");
       } catch (e) {
         try {
           var vv = readEditors();

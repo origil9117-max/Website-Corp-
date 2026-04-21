@@ -1246,14 +1246,22 @@
           existingEntries = [{ title: legacyTitle, desc: legacyDesc }];
         }
       }
-      var mergedEntries = [{ title: newEntryTitle, desc: newEntryDesc }].concat(
-        existingEntries.filter(function (one) {
-          return !(
-            String(one.title || "").trim() === newEntryTitle &&
-            String(one.desc || "").trim() === newEntryDesc
-          );
-        })
-      );
+      var mergedEntries = [];
+      if (selectedEntryIndex >= 0 && selectedEntryIndex < existingEntries.length) {
+        // 수정 모드: 기존 항목을 교체(신규 추가 금지)
+        mergedEntries = existingEntries.slice();
+        mergedEntries[selectedEntryIndex] = { title: newEntryTitle, desc: newEntryDesc };
+      } else {
+        // 신규 모드: 최신 항목을 상단에 추가
+        mergedEntries = [{ title: newEntryTitle, desc: newEntryDesc }].concat(
+          existingEntries.filter(function (one) {
+            return !(
+              String(one.title || "").trim() === newEntryTitle &&
+              String(one.desc || "").trim() === newEntryDesc
+            );
+          })
+        );
+      }
       setStatus(formStatus, "", "저장 중...");
       btnSave.disabled = true;
       btnSave.textContent = "저장 중...";

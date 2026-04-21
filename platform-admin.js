@@ -321,6 +321,22 @@
       .join("");
   }
 
+  function dedupeEntries(entries) {
+    var list = Array.isArray(entries) ? entries : [];
+    var seen = Object.create(null);
+    var out = [];
+    list.forEach(function (one) {
+      var t = String(one && one.title ? one.title : "").trim();
+      var d = String(one && one.desc ? one.desc : "").trim();
+      if (!t || !d) return;
+      var key = t + "\u241f" + d;
+      if (seen[key]) return;
+      seen[key] = true;
+      out.push({ title: t, desc: d });
+    });
+    return out;
+  }
+
   async function persistEntries(lead, entries) {
     var mergedBodyHtml = buildStructuredBodyHtmlFromEntries(entries);
     if (!client) {
@@ -1262,6 +1278,7 @@
           })
         );
       }
+      mergedEntries = dedupeEntries(mergedEntries);
       setStatus(formStatus, "", "저장 중...");
       btnSave.disabled = true;
       btnSave.textContent = "저장 중...";

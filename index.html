@@ -1849,6 +1849,17 @@
       text-decoration: none;
     }
 
+    .footer-biz-meta {
+      display: inline-flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      gap: 0.28rem 0.9rem;
+    }
+
+    .footer-meta-sep {
+      color: rgba(255, 255, 255, 0.65);
+    }
+
     @media (max-width: 640px) {
       nav ul {
         gap: 0.65rem;
@@ -2256,7 +2267,13 @@
         </p>
         <p class="footer-meta">
           <span>© <span id="y"></span> 대한민국행정사사무소. All rights reserved.</span>
-          <span>광고책임행정사 : 이근철 · 사업자번호: 189-25-00359, <a href="disclaimer.html">면책공고</a></span>
+          <span class="footer-biz-meta">
+            <span>광고책임행정사 : 이근철</span>
+            <span class="footer-meta-sep" aria-hidden="true">·</span>
+            <span>사업자번호: 189-25-00359</span>
+            <span class="footer-meta-sep" aria-hidden="true">·</span>
+            <span><a href="disclaimer.html">면책공고</a></span>
+          </span>
         </p>
       </div>
       <div class="footer-logos" aria-label="관련 기관 링크">

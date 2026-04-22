@@ -291,11 +291,10 @@
 
     .top-notice-title {
       font-weight: 700;
-      color: var(--ink);
+      color: #111;
     }
 
-    .top-notice-title.is-live {
-      color: #a63f1f;
+    .top-notice-label.is-live {
       animation: noticeTitleBlink 1.1s ease-in-out infinite;
     }
 
@@ -310,7 +309,7 @@
     }
 
     @media (prefers-reduced-motion: reduce) {
-      .top-notice-title.is-live {
+      .top-notice-label.is-live {
         animation: none;
       }
     }
@@ -1908,7 +1907,7 @@
     <section class="top-notice" aria-label="최신 공지">
       <div class="top-notice-inner">
         <a class="top-notice-link" href="notice.html" target="_blank" rel="noopener noreferrer" aria-label="최신 공지 새 창에서 열기">
-          <span class="top-notice-label">공지</span>
+          <span class="top-notice-label" id="top-notice-label">공지</span>
           <span class="top-notice-title" id="top-notice-title">등록된 공지사항이 없습니다.</span>
         </a>
         <a href="notice.html" style="margin-left:auto; font-weight:700;">전체 공지 보기</a>
@@ -2301,8 +2300,9 @@
     (async function () {
       var LOCAL_NOTICE_KEY = "websiteCorpNotices";
       var topTitle = document.getElementById("top-notice-title");
+      var topLabel = document.getElementById("top-notice-label");
       var topBodyLegacy = document.getElementById("top-notice-body");
-      if (!topTitle) return;
+      if (!topTitle || !topLabel) return;
       if (topBodyLegacy) {
         topBodyLegacy.textContent = "";
         topBodyLegacy.style.display = "none";
@@ -2344,11 +2344,11 @@
       }
 
       if (!top) {
-        topTitle.classList.remove("is-live");
+        topLabel.classList.remove("is-live");
         return;
       }
       topTitle.textContent = String(top.title || "공지사항");
-      topTitle.classList.add("is-live");
+      topLabel.classList.add("is-live");
     })();
 
     (function () {

@@ -391,12 +391,16 @@
     }
 
     .hero-promo-link {
-      display: block;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       overflow: hidden;
       border-radius: 4px;
       line-height: 0;
       border: 1px solid rgba(124, 93, 147, 0.38);
       box-shadow: 0 2px 10px rgba(24, 32, 48, 0.1);
+      background: linear-gradient(180deg, rgba(12, 18, 32, 0.07) 0%, rgba(248, 249, 252, 0.55) 100%);
+      padding: 0.22rem 0.32rem;
       transition: box-shadow 0.16s ease, transform 0.12s ease, border-color 0.12s ease;
     }
 
@@ -410,16 +414,18 @@
 
     .hero-promo-img {
       display: block;
-      width: 100%;
-      height: clamp(2.65rem, 7vw, 3.85rem);
-      object-fit: cover;
-      object-position: 50% 40%;
+      margin: 0 auto;
+      max-width: 100%;
+      max-height: clamp(5.25rem, 20vw, 9.25rem);
+      width: auto;
+      height: auto;
+      object-fit: contain;
+      border-radius: 3px;
     }
 
     @media (max-width: 640px) {
       .hero-promo-img {
-        height: clamp(2.85rem, 16vw, 3.5rem);
-        object-position: 50% 36%;
+        max-height: clamp(4.75rem, 42vw, 7rem);
       }
     }
 

@@ -334,6 +334,49 @@
       gap: 0.7rem;
     }
 
+    .resource-search {
+      margin: 0.8rem 0 0.9rem;
+      padding: 0.75rem 0.82rem;
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      background: #fcfcfc;
+    }
+
+    .resource-search-row {
+      display: flex;
+      align-items: center;
+      gap: 0.48rem;
+      flex-wrap: wrap;
+    }
+
+    .resource-search-row select,
+    .resource-search-row input[type="search"] {
+      border: 1px solid var(--line);
+      border-radius: 2px;
+      background: #fff;
+      color: var(--ink);
+      font: inherit;
+      padding: 0.45rem 0.55rem;
+      margin: 0;
+    }
+
+    .resource-search-row select {
+      flex: 0 0 auto;
+      min-width: 8.2rem;
+    }
+
+    .resource-search-row input[type="search"] {
+      flex: 1 1 14rem;
+      min-width: 11rem;
+    }
+
+    .resource-search-help {
+      margin: 0.45rem 0 0;
+      font-size: 0.76rem;
+      color: var(--muted);
+      min-height: 1.1rem;
+    }
+
     .item {
       border: 1px solid var(--line);
       border-radius: 4px;
@@ -480,6 +523,24 @@
       </div>
       <h1 id="resources-title">자료실</h1>
     </header>
+    <div class="resource-search" aria-label="자료 검색">
+      <div class="resource-search-row">
+        <select id="resource-search-scope" aria-label="검색 대상">
+          <option value="title">자료명</option>
+          <option value="title-content">자료명 + 내용</option>
+        </select>
+        <input
+          id="resource-search-input"
+          type="search"
+          inputmode="search"
+          autocomplete="off"
+          placeholder="예: 체류, 혼인신고서, 안내 매뉴얼"
+          aria-label="자료 검색어"
+        />
+        <button id="resource-search-btn" type="button" class="btn btn-ghost">검색</button>
+      </div>
+      <p id="resource-search-status" class="resource-search-help">검색어를 입력하면 등록된 자료를 빠르게 찾을 수 있습니다.</p>
+    </div>
 
     <section id="auth-section" class="panel" aria-label="관리자 인증" hidden>
       <h2>관리자 인증</h2>
@@ -622,6 +683,10 @@
       var formStatus = document.getElementById("form-status");
       var btnSaveResource = document.getElementById("btn-save-resource");
       var list = document.getElementById("resource-list");
+      var resourceSearchScope = document.getElementById("resource-search-scope");
+      var resourceSearchInput = document.getElementById("resource-search-input");
+      var resourceSearchBtn = document.getElementById("resource-search-btn");
+      var resourceSearchStatus = document.getElementById("resource-search-status");
       var fileInput = document.getElementById("resource-file");
       var fileCurrent = document.getElementById("resource-file-current");
       var fileRemove = document.getElementById("resource-file-remove");
@@ -632,6 +697,7 @@
       var authSectionOpen = false;
       var wasAdmin = false;
       var ADMIN_OFF_FLAG_KEY = "resources-admin-force-off";
+      var currentResourceItems = [];
 
       function isAdmin() {
         return !!(localAdmin || (currentSession && currentSession.user));
@@ -688,62 +754,42 @@
         return "";
       }
 
-      function resetForm() {
-        form.reset();
-        document.getElementById("resource-id").value = "";
-        fileCurrent.textContent = "첨부된 파일 없음";
-        fileRemove.checked = false;
-        var rdYes = document.getElementById("resource-dl-yes");
-        var rdNo = document.getElementById("resource-dl-no");
-        if (rdYes) rdYes.checked = true;
-        if (rdNo) rdNo.checked = false;
+      function normalizeSearchTokens(text) {
+        return String(text || "")
+          .toLowerCase()
+          .replace(/[^\w\u3131-\u318e\uac00-\ud7a3\s]/g, " ")
+          .split(/\s+/)
+          .filter(Boolean);
       }
 
-      function formatBytes(n) {
-        var size = Number(n || 0);
-        if (!size) return "";
-        if (size < 1024) return size + "B";
-        if (size < 1024 * 1024) return Math.round(size / 1024) + "KB";
-        return (size / (1024 * 1024)).toFixed(1) + "MB";
+      function getSearchStatusText(filteredCount, totalCount, query) {
+        if (!query) {
+          return "검색어를 입력하면 등록된 자료를 빠르게 찾을 수 있습니다.";
+        }
+        if (!filteredCount) {
+          return "검색 결과가 없습니다. 다른 검색어로 시도해 주세요.";
+        }
+        return "총 " + totalCount + "건 중 " + filteredCount + "건이 검색되었습니다.";
       }
 
-      function readFileAsDataUrl(file) {
-        return new Promise(function (resolve, reject) {
-          var reader = new FileReader();
-          reader.onload = function () {
-            resolve(String(reader.result || ""));
-          };
-          reader.onerror = function () {
-            reject(new Error("file-read-failed"));
-          };
-          reader.readAsDataURL(file);
+      function filterResourceItems(items, query, scope) {
+        var terms = normalizeSearchTokens(query);
+        if (!terms.length) return items.slice();
+        return items.filter(function (item) {
+          var source =
+            scope === "title-content"
+              ? String(item.title || "") + " " + String(item.content || "")
+              : String(item.title || "");
+          var bag = normalizeSearchTokens(source);
+          return terms.every(function (term) {
+            return bag.some(function (token) {
+              return token.indexOf(term) !== -1;
+            });
+          });
         });
       }
 
-      function makeSafeStoragePath(userId, originalName) {
-        var name = String(originalName || "upload.bin");
-        var extIdx = name.lastIndexOf(".");
-        var ext = extIdx > -1 ? name.slice(extIdx).toLowerCase().replace(/[^.a-z0-9]/g, "") : "";
-        if (!ext) ext = ".bin";
-        return String(userId || "anon") + "/" + Date.now() + "-" + Math.random().toString(36).slice(2, 8) + ext;
-      }
-
-      async function renderList() {
-        var items = [];
-        /* 목록은 비로그인 방문자도 볼 수 있게: Supabase 클라이언트만 있으면 anon으로 SELECT (RLS에서 읽기 허용 필요) */
-        if (client) {
-          var res = await client
-            .from("resources")
-            .select("id, title, url, content, file_name, file_path, file_size, download_allowed, created_at")
-            .order("created_at", { ascending: false });
-          if (!res.error) {
-            items = res.data || [];
-          } else {
-            items = loadLocalResources();
-          }
-        } else {
-          items = loadLocalResources();
-        }
+      function renderItems(items) {
         var adminOn = isAdmin();
         if (items.length === 0) {
           list.innerHTML = '<p class="empty">등록된 자료가 없습니다.</p>';
@@ -861,6 +907,82 @@
             "</article>"
           );
         }).join("");
+      }
+
+      function applyResourceSearch() {
+        if (!resourceSearchInput || !resourceSearchScope || !resourceSearchStatus) {
+          renderItems(currentResourceItems);
+          return;
+        }
+        var query = (resourceSearchInput.value || "").trim();
+        var scope = resourceSearchScope.value === "title-content" ? "title-content" : "title";
+        var filtered = filterResourceItems(currentResourceItems, query, scope);
+        resourceSearchStatus.textContent = getSearchStatusText(filtered.length, currentResourceItems.length, query);
+        if (query && filtered.length === 0) {
+          list.innerHTML = '<p class="empty">검색 결과가 없습니다.</p>';
+          return;
+        }
+        renderItems(filtered);
+      }
+
+      function resetForm() {
+        form.reset();
+        document.getElementById("resource-id").value = "";
+        fileCurrent.textContent = "첨부된 파일 없음";
+        fileRemove.checked = false;
+        var rdYes = document.getElementById("resource-dl-yes");
+        var rdNo = document.getElementById("resource-dl-no");
+        if (rdYes) rdYes.checked = true;
+        if (rdNo) rdNo.checked = false;
+      }
+
+      function formatBytes(n) {
+        var size = Number(n || 0);
+        if (!size) return "";
+        if (size < 1024) return size + "B";
+        if (size < 1024 * 1024) return Math.round(size / 1024) + "KB";
+        return (size / (1024 * 1024)).toFixed(1) + "MB";
+      }
+
+      function readFileAsDataUrl(file) {
+        return new Promise(function (resolve, reject) {
+          var reader = new FileReader();
+          reader.onload = function () {
+            resolve(String(reader.result || ""));
+          };
+          reader.onerror = function () {
+            reject(new Error("file-read-failed"));
+          };
+          reader.readAsDataURL(file);
+        });
+      }
+
+      function makeSafeStoragePath(userId, originalName) {
+        var name = String(originalName || "upload.bin");
+        var extIdx = name.lastIndexOf(".");
+        var ext = extIdx > -1 ? name.slice(extIdx).toLowerCase().replace(/[^.a-z0-9]/g, "") : "";
+        if (!ext) ext = ".bin";
+        return String(userId || "anon") + "/" + Date.now() + "-" + Math.random().toString(36).slice(2, 8) + ext;
+      }
+
+      async function renderList() {
+        var items = [];
+        /* 목록은 비로그인 방문자도 볼 수 있게: Supabase 클라이언트만 있으면 anon으로 SELECT (RLS에서 읽기 허용 필요) */
+        if (client) {
+          var res = await client
+            .from("resources")
+            .select("id, title, url, content, file_name, file_path, file_size, download_allowed, created_at")
+            .order("created_at", { ascending: false });
+          if (!res.error) {
+            items = res.data || [];
+          } else {
+            items = loadLocalResources();
+          }
+        } else {
+          items = loadLocalResources();
+        }
+        currentResourceItems = Array.isArray(items) ? items.slice() : [];
+        applyResourceSearch();
       }
 
       var authModeIndicator = document.getElementById("auth-mode-indicator");
@@ -1172,6 +1294,19 @@
           fileCurrent.textContent = "첨부된 파일 없음";
         }
       });
+
+      if (resourceSearchBtn && resourceSearchInput) {
+        resourceSearchBtn.addEventListener("click", applyResourceSearch);
+        resourceSearchInput.addEventListener("keydown", function (e) {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            applyResourceSearch();
+          }
+        });
+      }
+      if (resourceSearchScope) {
+        resourceSearchScope.addEventListener("change", applyResourceSearch);
+      }
 
       form.addEventListener("submit", async function (e) {
         e.preventDefault();

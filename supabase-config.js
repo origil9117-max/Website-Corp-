@@ -25,10 +25,10 @@ window.SUPABASE_ANON_KEY = "sb_publishable_00brCPgc_AQYc8YFtbliKA_Os4EdlrP";
       "justify-content: center;",
       "padding: 0.52rem 0.76rem;",
       "border-radius: 999px;",
-      "border: 1px solid rgba(82, 61, 103, 0.44);",
-      "background: linear-gradient(180deg, #745b93 0%, #5a4678 100%);",
+      "border: 1px solid rgba(74, 58, 98, 0.5);",
+      "background: linear-gradient(180deg, #6f568c 0%, #4f3e71 100%);",
       "color: #fff;",
-      "font: 800 0.75rem/1 'Noto Sans KR', system-ui, sans-serif;",
+      "font: 800 0.7rem/1 'Noto Sans KR', system-ui, sans-serif;",
       "text-decoration: none;",
       "box-shadow: 0 8px 18px rgba(58, 48, 76, 0.28);",
       "}",
@@ -38,7 +38,7 @@ window.SUPABASE_ANON_KEY = "sb_publishable_00brCPgc_AQYc8YFtbliKA_Os4EdlrP";
       "color: #fff;",
       "}",
       "@media (max-width: 640px) {",
-      "#global-integrated-search-btn { right: 0.7rem; top: 3.8rem; padding: 0.48rem 0.7rem; font-size: 0.72rem; }",
+      "#global-integrated-search-btn { right: 0.7rem; top: 3.8rem; padding: 0.48rem 0.7rem; font-size: 0.68rem; }",
       "}"
     ].join("");
     document.head.appendChild(style);
@@ -68,10 +68,10 @@ window.SUPABASE_ANON_KEY = "sb_publishable_00brCPgc_AQYc8YFtbliKA_Os4EdlrP";
       "justify-content: center;",
       "padding: 0.58rem 0.82rem;",
       "border-radius: 999px;",
-      "border: 1px solid rgba(82, 61, 103, 0.38);",
-      "background: linear-gradient(180deg, #745b93 0%, #5a4678 100%);",
+      "border: 1px solid rgba(74, 58, 98, 0.5);",
+      "background: linear-gradient(180deg, #6f568c 0%, #4f3e71 100%);",
       "color: #fff;",
-      "font: 700 0.8rem/1 'Noto Sans KR', system-ui, sans-serif;",
+      "font: 700 0.74rem/1 'Noto Sans KR', system-ui, sans-serif;",
       "text-decoration: none;",
       "box-shadow: 0 8px 18px rgba(58, 48, 76, 0.28);",
       "}",
@@ -81,7 +81,7 @@ window.SUPABASE_ANON_KEY = "sb_publishable_00brCPgc_AQYc8YFtbliKA_Os4EdlrP";
       "color: #fff;",
       "}",
       "@media (max-width: 640px) {",
-      "#integrated-search-back-btn { right: 0.7rem; bottom: 0.7rem; padding: 0.54rem 0.75rem; }",
+      "#integrated-search-back-btn { right: 0.7rem; bottom: 0.7rem; padding: 0.54rem 0.75rem; font-size: 0.7rem; }",
       "}"
     ].join("");
     document.head.appendChild(style);

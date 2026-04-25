@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>통합검색 | 대한민국행정사사무소</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@500;700&family=Noto+Sans+KR:wght@400;500;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --ink: #182130;
+      --muted: #576179;
+      --line: rgba(24, 33, 48, 0.16);
+      --bg: #f1f4fb;
+      --brand: #5c4778;
+      --brand-2: #435f98;
+      --max: 1040px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Noto Sans KR", system-ui, sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(1200px 520px at 8% -10%, rgba(148, 114, 180, 0.16), transparent 55%),
+        radial-gradient(1050px 480px at 100% -15%, rgba(79, 118, 188, 0.14), transparent 56%),
+        var(--bg);
+    }
+
+    .topbar {
+      border-bottom: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.75);
+      backdrop-filter: blur(8px);
+    }
+
+    .topbar-inner {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 0.82rem 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.8rem;
+      flex-wrap: wrap;
+    }
+
+    .brand {
+      text-decoration: none;
+      color: var(--ink);
+      font-weight: 800;
+      font-size: 1rem;
+    }
+
+    .brand span {
+      display: block;
+      margin-top: 0.16rem;
+      color: var(--muted);
+      font-size: 0.68rem;
+      font-weight: 500;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      flex-wrap: wrap;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: #2e3b53;
+      font-size: 0.8rem;
+      font-weight: 700;
+      border: 1px solid rgba(62, 80, 117, 0.24);
+      border-radius: 999px;
+      padding: 0.38rem 0.7rem;
+      background: #fff;
+    }
+
+    .wrap {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 1.1rem 1rem 2rem;
+    }
+
+    .hero {
+      border: 1px solid rgba(91, 72, 126, 0.24);
+      border-radius: 12px;
+      background: linear-gradient(130deg, #fff 0%, #f7f4fd 46%, #eff4ff 100%);
+      box-shadow: 0 16px 44px rgba(56, 76, 118, 0.14);
+      padding: 1rem;
+    }
+
+    .hero p.label {
+      margin: 0 0 0.24rem;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: #5b4f74;
+      font-size: 0.68rem;
+      font-weight: 800;
+    }
+
+    .hero h1 {
+      margin: 0;
+      font-family: "Noto Serif KR", serif;
+      font-size: clamp(1.25rem, 2.9vw, 1.74rem);
+    }
+
+    .hero p.desc {
+      margin: 0.45rem 0 0;
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.65;
+    }
+
+    .search-box {
+      margin-top: 0.8rem;
+      border: 1px solid rgba(65, 85, 122, 0.2);
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.92);
+      padding: 0.72rem;
+    }
+
+    .search-row {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .search-row input {
+      flex: 1 1 16rem;
+      min-width: 12rem;
+      margin: 0;
+      border: 1px solid rgba(61, 79, 112, 0.25);
+      border-radius: 8px;
+      background: #fff;
+      padding: 0.62rem 0.72rem;
+      font: inherit;
+    }
+
+    .search-row button {
+      border: 1px solid rgba(74, 58, 98, 0.36);
+      border-radius: 8px;
+      background: linear-gradient(180deg, #6f568c 0%, #4f3e71 100%);
+      color: #fff;
+      font-weight: 800;
+      font-size: 0.84rem;
+      padding: 0.64rem 0.98rem;
+      cursor: pointer;
+    }
+
+    .status {
+      margin: 0.48rem 0 0;
+      min-height: 1.2rem;
+      color: var(--muted);
+      font-size: 0.8rem;
+    }
+
+    .chips {
+      margin-top: 0.4rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+    }
+
+    .chip {
+      font-size: 0.73rem;
+      color: #334766;
+      background: #eef3ff;
+      border: 1px solid rgba(70, 92, 130, 0.2);
+      border-radius: 999px;
+      padding: 0.22rem 0.56rem;
+      font-weight: 700;
+    }
+
+    .results {
+      margin-top: 0.88rem;
+      display: grid;
+      gap: 0.58rem;
+    }
+
+    .result-card {
+      border: 1px solid rgba(65, 84, 119, 0.2);
+      border-radius: 10px;
+      background: #fff;
+      padding: 0.72rem 0.8rem;
+      box-shadow: 0 4px 14px rgba(52, 74, 113, 0.08);
+    }
+
+    .result-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+    }
+
+    .badge {
+      font-size: 0.72rem;
+      color: #fff;
+      background: linear-gradient(180deg, #6e558c 0%, #4f3f71 100%);
+      border-radius: 999px;
+      padding: 0.18rem 0.5rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .result-card a.title {
+      color: #1f2a40;
+      text-decoration: none;
+      font-size: 0.95rem;
+      font-weight: 800;
+      line-height: 1.45;
+    }
+
+    .result-card p {
+      margin: 0.36rem 0 0;
+      color: var(--muted);
+      font-size: 0.83rem;
+      line-height: 1.55;
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand" href="index.html">
+        대한민국행정사사무소
+        <span>Republic of Korea Administrative Scrivener Office</span>
+      </a>
+      <nav class="nav-links" aria-label="빠른 이동">
+        <a href="index.html">메인</a>
+        <a href="resources.html">자료실</a>
+        <a href="platform.html">플랫폼</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="hero" aria-label="통합검색">
+      <p class="label">Integrated Search</p>
+      <h1>통합검색</h1>
+      <p class="desc">자료실 등록 자료, 주요업무분야, 지능형 행정 플랫폼 카테고리를 한 번에 검색합니다.</p>
+
+      <div class="search-box">
+        <div class="search-row">
+          <input id="q" type="search" inputmode="search" autocomplete="off" placeholder="예: 체류, 국가유공자, 체크리스트, FAQ" aria-label="통합검색어 입력" />
+          <button id="search-btn" type="button">검색</button>
+        </div>
+        <p id="status" class="status">키워드를 입력하면 통합검색 결과를 보여드립니다.</p>
+        <div class="chips" aria-hidden="true">
+          <span class="chip">자료실</span>
+          <span class="chip">주요업무분야</span>
+          <span class="chip">지능형 행정 플랫폼 카테고리</span>
+        </div>
+      </div>
+    </section>
+
+    <section id="results" class="results" aria-live="polite"></section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+  <script>
+    (async function () {
+      var inputEl = document.getElementById("q");
+      var buttonEl = document.getElementById("search-btn");
+      var statusEl = document.getElementById("status");
+      var resultsEl = document.getElementById("results");
+      if (!inputEl || !buttonEl || !statusEl || !resultsEl) return;
+
+      function tokenize(text) {
+        return String(text || "")
+          .toLowerCase()
+          .replace(/[^\w\u3131-\u318e\uac00-\ud7a3\s]/g, " ")
+          .split(/\s+/)
+          .filter(Boolean);
+      }
+
+      function escapeHtml(str) {
+        return String(str || "")
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll("\"", "&quot;")
+          .replaceAll("'", "&#39;");
+      }
+
+      var STATIC_ITEMS = [
+        { source: "주요업무분야", title: "비영리법인설립업무", desc: "비영리법인(사단·재단), 협동조합 설립 및 정관 변경, 해산 절차 안내.", href: "service-nonprofit.html", tags: "비영리 법인 사단 재단 협동조합 정관 변경 해산" },
+        { source: "주요업무분야", title: "출입국민원업무", desc: "재외동포(F4), 영주권(F5), 비자·체류, 국적 관련 행정 업무.", href: "service-immigration.html", tags: "출입국 비자 체류 재외동포 영주권 국적" },
+        { source: "주요업무분야", title: "기업투자·법인설립", desc: "외국인투자기업 설립, 국내 법인·지점 설립, 인허가 절차 안내.", href: "service-investment.html", tags: "기업투자 법인설립 외국인투자 fdi 지점 인허가" },
+        { source: "주요업무분야", title: "국가유공자보훈업무", desc: "국가유공자·보훈 등록, 국가배상 및 불복 절차 상담.", href: "service-patriot.html", tags: "국가유공자 보훈 국가배상 불복" },
+        { source: "주요업무분야", title: "인허가 민원", desc: "식품접객업, 개발행위, 폐기물처리업 등 각종 인허가 업무.", href: "service-permit.html", tags: "인허가 민원 허가 신고 개발행위" },
+        { source: "주요업무분야", title: "행정심판", desc: "행정심판 청구, 집행정지 신청, 재결 후속 절차 지원.", href: "service-appeal.html", tags: "행정심판 처분취소 집행정지 재결" },
+        { source: "지능형 행정 플랫폼 카테고리", title: "민원 로드맵", desc: "민원 절차를 단계별로 안내하는 로드맵 페이지.", href: "minwon-roadmap.html", tags: "민원 로드맵 절차 단계 안내" },
+        { source: "지능형 행정 플랫폼 카테고리", title: "서류·준비 체크", desc: "자주 필요한 서류와 준비 항목 점검.", href: "platform-check.html", tags: "서류 준비 체크 체크리스트" },
+        { source: "지능형 행정 플랫폼 카테고리", title: "자주 묻는 질문", desc: "FAQ 형식의 빠른 답변 모음.", href: "platform-faq.html", tags: "faq 질문 답변 자주묻는질문" },
+        { source: "지능형 행정 플랫폼 카테고리", title: "공지·자료실 연동", desc: "최신 공지와 자료실 링크 허브.", href: "platform-hub.html", tags: "공지 자료실 연동 허브" }
+      ];
+
+      async function loadResourceItems() {
+        var list = [];
+        if (window.supabase && window.SUPABASE_URL && window.SUPABASE_ANON_KEY) {
+          try {
+            var client = window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY, {
+              auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false }
+            });
+            var res = await client
+              .from("resources")
+              .select("title, content, created_at")
+              .order("created_at", { ascending: false })
+              .limit(300);
+            if (!res.error && Array.isArray(res.data)) {
+              list = res.data.map(function (x) {
+                return {
+                  source: "자료실",
+                  title: String(x.title || "자료"),
+                  desc: String(x.content || "").slice(0, 240),
+                  href: "resources.html",
+                  tags: String(x.title || "") + " " + String(x.content || "")
+                };
+              });
+            }
+          } catch (e) {}
+        }
+        if (!list.length) {
+          try {
+            var localRaw = localStorage.getItem("websiteCorpResources");
+            var localItems = localRaw ? JSON.parse(localRaw) : [];
+            if (Array.isArray(localItems)) {
+              list = localItems.map(function (x) {
+                return {
+                  source: "자료실",
+                  title: String(x.title || "자료"),
+                  desc: String(x.content || "").slice(0, 240),
+                  href: "resources.html",
+                  tags: String(x.title || "") + " " + String(x.content || "")
+                };
+              });
+            }
+          } catch (e) {}
+        }
+        return list;
+      }
+
+      var ALL_ITEMS = STATIC_ITEMS.concat(await loadResourceItems());
+
+      function runSearch() {
+        var query = (inputEl.value || "").trim();
+        var terms = tokenize(query);
+        resultsEl.innerHTML = "";
+        if (!terms.length) {
+          statusEl.textContent = "키워드를 입력하면 통합검색 결과를 보여드립니다.";
+          return;
+        }
+
+        var matched = ALL_ITEMS.filter(function (item) {
+          var bag = tokenize(item.title + " " + item.desc + " " + item.tags + " " + item.source);
+          return terms.every(function (term) {
+            return bag.some(function (token) { return token.indexOf(term) !== -1; });
+          });
+        });
+
+        statusEl.textContent = "총 " + matched.length + "건의 결과를 찾았습니다.";
+        if (!matched.length) return;
+
+        matched.forEach(function (item) {
+          var card = document.createElement("article");
+          card.className = "result-card";
+          card.innerHTML =
+            '<div class="result-top">' +
+            '<span class="badge">' + escapeHtml(item.source) + "</span>" +
+            '<a class="title" href="' + escapeHtml(item.href) + '">' + escapeHtml(item.title) + "</a>" +
+            "</div>" +
+            "<p>" + escapeHtml(item.desc || "설명 없음") + "</p>";
+          resultsEl.appendChild(card);
+        });
+      }
+
+      buttonEl.addEventListener("click", runSearch);
+      inputEl.addEventListener("keydown", function (e) {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          runSearch();
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

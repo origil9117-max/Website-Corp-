@@ -961,7 +961,7 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 0;
+      gap: 0.34rem;
       font-weight: 800;
       font-size: 0.7rem;
       color: #14110e;
@@ -973,7 +973,17 @@
     }
 
     .hero-platform-cats-grid a.integrated-search-link::before {
-      content: none;
+      content: "";
+      width: 0.9rem;
+      height: 0.9rem;
+      border-radius: 999px;
+      background-color: #f89a2b;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 28 28'%3E%3Ccircle cx='12' cy='12' r='5.4' fill='none' stroke='%23fff' stroke-width='2.2'/%3E%3Crect x='16.7' y='16.1' width='6' height='4' rx='1.1' transform='rotate(45 16.7 16.1)' fill='%23ffe07a'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: 76% 76%;
+      box-shadow: 0 1px 3px rgba(116, 70, 11, 0.28);
+      flex: 0 0 auto;
     }
 
     .hero-platform-cats-grid a.integrated-search-link::after {

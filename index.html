@@ -2006,6 +2006,104 @@
       user-select: none;
     }
 
+    .registered-search {
+      margin-top: 0.7rem;
+      padding: 0.72rem 0.78rem;
+      border: 1px solid rgba(55, 66, 92, 0.2);
+      border-radius: 2px;
+      background: #fff;
+    }
+
+    .registered-search label {
+      margin: 0 0 0.35rem;
+      display: block;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--ink-soft);
+    }
+
+    .registered-search-row {
+      display: flex;
+      gap: 0.45rem;
+      align-items: center;
+    }
+
+    .registered-search-row input[type="search"] {
+      flex: 1 1 auto;
+      min-width: 0;
+      margin: 0;
+      padding: 0.48rem 0.58rem;
+      font-size: 0.83rem;
+      border: 1px solid rgba(55, 66, 92, 0.26);
+      border-radius: 2px;
+      background: #fdfdfd;
+    }
+
+    .registered-search-row button {
+      flex: 0 0 auto;
+      border: 1px solid rgba(74, 54, 88, 0.35);
+      border-radius: 2px;
+      background: linear-gradient(180deg, #7a5a90 0%, #64487b 100%);
+      color: #fff;
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 0.5rem 0.62rem;
+      cursor: pointer;
+    }
+
+    .registered-search-row button:hover,
+    .registered-search-row button:focus-visible {
+      filter: brightness(1.04);
+      text-decoration: none;
+    }
+
+    .registered-search-status {
+      margin: 0.42rem 0 0;
+      font-size: 0.74rem;
+      color: var(--muted);
+    }
+
+    .registered-search-results {
+      margin: 0.48rem 0 0;
+      padding: 0;
+      list-style: none;
+      display: grid;
+      gap: 0.3rem;
+      max-height: 12.5rem;
+      overflow: auto;
+    }
+
+    .registered-search-results li a {
+      display: block;
+      border: 1px solid rgba(55, 66, 92, 0.14);
+      border-radius: 2px;
+      background: #fbfcff;
+      padding: 0.45rem 0.56rem;
+      color: var(--ink);
+      text-decoration: none;
+    }
+
+    .registered-search-results li a:hover,
+    .registered-search-results li a:focus-visible {
+      border-color: rgba(95, 70, 111, 0.34);
+      background: #f5f2fb;
+      text-decoration: none;
+    }
+
+    .registered-search-results strong {
+      display: block;
+      font-size: 0.8rem;
+      line-height: 1.4;
+    }
+
+    .registered-search-results span {
+      display: block;
+      margin-top: 0.1rem;
+      font-size: 0.72rem;
+      line-height: 1.35;
+      color: var(--muted);
+    }
+
     footer {
       background: var(--navy);
       color: rgba(245, 242, 235, 0.65);
@@ -2505,6 +2603,22 @@
                   >다음</a>
               </span>
             </div>
+            <div class="registered-search" aria-label="등록 자료 검색">
+              <label for="registered-search-input">등록된 자료 검색</label>
+              <div class="registered-search-row">
+                <input
+                  id="registered-search-input"
+                  type="search"
+                  inputmode="search"
+                  autocomplete="off"
+                  placeholder="예: 출입국, 보훈, FAQ, 로드맵"
+                  aria-label="등록된 자료 검색어 입력"
+                />
+                <button type="button" id="registered-search-btn">검색</button>
+              </div>
+              <p id="registered-search-status" class="registered-search-status">키워드를 입력하면 등록된 자료 페이지를 바로 찾을 수 있습니다.</p>
+              <ul id="registered-search-results" class="registered-search-results" aria-live="polite"></ul>
+            </div>
           </div>
         </div>
 
@@ -2806,6 +2920,88 @@
           window.setTimeout(focusConsultNameInput, 280);
         });
       }
+    })();
+
+    (function () {
+      var inputEl = document.getElementById("registered-search-input");
+      var buttonEl = document.getElementById("registered-search-btn");
+      var statusEl = document.getElementById("registered-search-status");
+      var resultsEl = document.getElementById("registered-search-results");
+      if (!inputEl || !buttonEl || !statusEl || !resultsEl) return;
+
+      var SEARCH_ITEMS = [
+        { title: "공지·자료실 연동", desc: "최신 공지와 자료 링크를 확인합니다.", href: "platform-hub.html", tags: "공지 자료실 허브 공지사항 연동" },
+        { title: "자료실", desc: "등록된 자료를 모아 보는 전용 페이지입니다.", href: "resources.html", tags: "자료 자료실 문서 파일 안내" },
+        { title: "공지사항", desc: "사무소 공지와 업데이트를 확인합니다.", href: "notice.html", tags: "공지 알림 새소식 업데이트" },
+        { title: "민원 로드맵", desc: "행정 민원 절차를 단계별로 확인합니다.", href: "minwon-roadmap.html", tags: "민원 로드맵 절차 단계 준비" },
+        { title: "서류·준비 체크", desc: "자주 필요한 준비 항목을 점검합니다.", href: "platform-check.html", tags: "서류 준비 체크리스트 점검" },
+        { title: "자주 묻는 질문", desc: "FAQ로 기본 궁금증을 빠르게 확인합니다.", href: "platform-faq.html", tags: "faq 질문 답변 자주" },
+        { title: "지능형 행정 플랫폼", desc: "플랫폼 메인 소개 페이지입니다.", href: "platform.html", tags: "플랫폼 통합 안내 소개" },
+        { title: "비영리법인 업무", desc: "비영리법인 설립·운영 관련 안내입니다.", href: "service-nonprofit.html", tags: "비영리 법인 설립 운영" },
+        { title: "출입국민원 업무", desc: "체류·비자 등 출입국 관련 업무 안내입니다.", href: "service-immigration.html", tags: "출입국 비자 체류 민원" },
+        { title: "기업투자·법인 업무", desc: "기업투자와 법인 관련 업무 안내입니다.", href: "service-investment.html", tags: "기업투자 법인 투자 설립" },
+        { title: "국가유공자 보훈 업무", desc: "보훈 관련 행정 업무를 안내합니다.", href: "service-patriot.html", tags: "보훈 국가유공자 보상" },
+        { title: "인허가 민원 업무", desc: "인허가 관련 절차와 준비사항을 안내합니다.", href: "service-permit.html", tags: "인허가 허가 신고 민원" },
+        { title: "행정심판 업무", desc: "행정심판 청구와 절차를 안내합니다.", href: "service-appeal.html", tags: "행정심판 불복 처분 취소" }
+      ];
+
+      function tokenize(text) {
+        return String(text || "")
+          .toLowerCase()
+          .replace(/[^\w\u3131-\u318e\uac00-\ud7a3\s]/g, " ")
+          .split(/\s+/)
+          .filter(Boolean);
+      }
+
+      function renderResults(items, query) {
+        resultsEl.innerHTML = "";
+        if (!query) {
+          statusEl.textContent = "키워드를 입력하면 등록된 자료 페이지를 바로 찾을 수 있습니다.";
+          return;
+        }
+        if (!items.length) {
+          statusEl.textContent = "검색 결과가 없습니다. 다른 키워드로 시도해 주세요.";
+          return;
+        }
+        statusEl.textContent = "총 " + items.length + "건의 자료를 찾았습니다.";
+        items.forEach(function (item) {
+          var li = document.createElement("li");
+          var a = document.createElement("a");
+          var title = document.createElement("strong");
+          var desc = document.createElement("span");
+          a.href = item.href;
+          title.textContent = item.title;
+          desc.textContent = item.desc;
+          a.appendChild(title);
+          a.appendChild(desc);
+          li.appendChild(a);
+          resultsEl.appendChild(li);
+        });
+      }
+
+      function runSearch() {
+        var query = (inputEl.value || "").trim();
+        var terms = tokenize(query);
+        if (!terms.length) {
+          renderResults([], "");
+          return;
+        }
+        var matched = SEARCH_ITEMS.filter(function (item) {
+          var bag = tokenize(item.title + " " + item.desc + " " + item.tags);
+          return terms.every(function (term) {
+            return bag.some(function (token) { return token.indexOf(term) !== -1; });
+          });
+        });
+        renderResults(matched, query);
+      }
+
+      buttonEl.addEventListener("click", runSearch);
+      inputEl.addEventListener("keydown", function (e) {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          runSearch();
+        }
+      });
     })();
 
     (function () {

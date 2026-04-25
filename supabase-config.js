@@ -11,16 +11,25 @@ window.SUPABASE_ANON_KEY = "sb_publishable_00brCPgc_AQYc8YFtbliKA_Os4EdlrP";
   function mountGlobalIntegratedSearchButton() {
     if (isIntegratedSearchPage) return;
     if (/\/(?:index\.html)?(?:\?|#|$)/i.test(window.location.pathname + window.location.search + window.location.hash)) return;
+    if (/\/platform\.html(?:\?|#|$)/i.test(window.location.pathname + window.location.search + window.location.hash)) return;
     if (document.getElementById("global-integrated-search-btn")) return;
 
     var style = document.createElement("style");
     style.textContent = [
+      ".integrated-search-title-row {",
+      "display: flex;",
+      "align-items: center;",
+      "gap: 0.45rem;",
+      "flex-wrap: wrap;",
+      "}",
+      ".integrated-search-title-row > h1 {",
+      "margin: 0;",
+      "}",
       "#global-integrated-search-btn {",
       "display: inline-flex;",
       "align-items: center;",
       "justify-content: center;",
       "padding: 0.44rem 0.7rem;",
-      "margin-left: 0.4rem;",
       "border-radius: 4px;",
       "border: 1px solid rgba(74, 58, 98, 0.5);",
       "background: linear-gradient(180deg, #6f568c 0%, #4f3e71 100%);",
@@ -35,7 +44,7 @@ window.SUPABASE_ANON_KEY = "sb_publishable_00brCPgc_AQYc8YFtbliKA_Os4EdlrP";
       "color: #fff;",
       "}",
       "@media (max-width: 640px) {",
-      "#global-integrated-search-btn { padding: 0.4rem 0.64rem; margin-left: 0.3rem; font-size: 0.66rem; }",
+      "#global-integrated-search-btn { padding: 0.4rem 0.64rem; font-size: 0.66rem; }",
       "}"
     ].join("");
     document.head.appendChild(style);
@@ -45,12 +54,22 @@ window.SUPABASE_ANON_KEY = "sb_publishable_00brCPgc_AQYc8YFtbliKA_Os4EdlrP";
     btn.href = "integrated-search.html";
     btn.textContent = "통합검색";
     btn.setAttribute("aria-label", "통합검색 페이지로 이동");
-    var anchor =
-      document.querySelector("#btn-auth-toggle") ||
-      document.querySelector("#platform-btn-auth-toggle") ||
-      document.querySelector(".admin-shortcut");
-    if (anchor && anchor.parentElement) {
-      anchor.insertAdjacentElement("afterend", btn);
+
+    var heading =
+      document.querySelector("#page-title") ||
+      document.querySelector("#resources-title") ||
+      document.querySelector("main h1") ||
+      document.querySelector("h1");
+    if (heading && heading.parentElement) {
+      if (heading.parentElement.classList.contains("integrated-search-title-row")) {
+        heading.parentElement.appendChild(btn);
+      } else {
+        var row = document.createElement("div");
+        row.className = "integrated-search-title-row";
+        heading.parentElement.insertBefore(row, heading);
+        row.appendChild(heading);
+        row.appendChild(btn);
+      }
       return;
     }
 

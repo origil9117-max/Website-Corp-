@@ -444,6 +444,21 @@
       width: auto;
       height: auto;
       object-fit: contain;
+      animation: heroPromoFlash 3.2s ease-in-out infinite;
+    }
+
+    @keyframes heroPromoFlash {
+      0%,
+      86%,
+      100% {
+        filter: brightness(1);
+      }
+      90% {
+        filter: brightness(1.28);
+      }
+      93% {
+        filter: brightness(1);
+      }
     }
 
     .hero-promo-link {
@@ -503,6 +518,10 @@
     }
 
     @media (prefers-reduced-motion: reduce) {
+      .hero-promo-frame .hero-promo-img {
+        animation: none;
+      }
+
       .hero-promo-link:hover,
       .hero-promo-link:focus-visible {
         opacity: 1;

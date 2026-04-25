@@ -238,10 +238,14 @@
 
     /* 히어로의 전화상담 툴팁은 위로 띄워 카테고리 라벨과 겹침 방지 */
     .hero-cta a.tel-tooltip[data-tooltip]::after {
+      left: 62%;
+      transform: translateX(-38%);
       top: auto;
       bottom: calc(100% + 10px);
     }
     .hero-cta a.tel-tooltip[data-tooltip]::before {
+      left: 62%;
+      transform: translateX(-38%);
       top: auto;
       bottom: calc(100% + 4px);
       border-bottom-color: transparent;

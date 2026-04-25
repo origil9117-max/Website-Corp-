@@ -49,6 +49,45 @@ window.SUPABASE_ANON_KEY = "sb_publishable_00brCPgc_AQYc8YFtbliKA_Os4EdlrP";
     btn.textContent = "통합검색";
     btn.setAttribute("aria-label", "통합검색 페이지로 이동");
     document.body.appendChild(btn);
+
+    function getAdminAnchor() {
+      var direct =
+        document.querySelector("#btn-auth-toggle") ||
+        document.querySelector("#platform-btn-auth-toggle") ||
+        document.querySelector(".admin-shortcut");
+      if (direct) return direct;
+
+      var candidates = Array.prototype.slice.call(document.querySelectorAll("button, a"));
+      for (var i = 0; i < candidates.length; i += 1) {
+        var el = candidates[i];
+        var txt = String(el.textContent || "").trim();
+        if (!txt) continue;
+        if (txt.indexOf("관리자 모드") === -1) continue;
+        var rect = el.getBoundingClientRect();
+        if (rect.width <= 0 || rect.height <= 0) continue;
+        return el;
+      }
+      return null;
+    }
+
+    function positionGlobalButton() {
+      var anchor = getAdminAnchor();
+      if (!anchor) {
+        btn.style.top = "4.3rem";
+        btn.style.right = "1rem";
+        return;
+      }
+      var rect = anchor.getBoundingClientRect();
+      var top = rect.bottom + 8;
+      var right = Math.max(8, window.innerWidth - rect.right);
+      btn.style.top = top + "px";
+      btn.style.right = right + "px";
+    }
+
+    positionGlobalButton();
+    window.addEventListener("resize", positionGlobalButton);
+    window.setTimeout(positionGlobalButton, 300);
+    window.setTimeout(positionGlobalButton, 900);
   }
 
   function mountBackButton() {

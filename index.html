@@ -1246,11 +1246,38 @@
     }
 
     .visit-map-block {
-      border: 1px solid rgba(36, 48, 64, 0.15);
+      border: 1px solid rgba(84, 103, 142, 0.34);
       border-radius: 8px;
       background: #fff;
       overflow: hidden;
-      box-shadow: 0 3px 12px rgba(24, 32, 48, 0.08);
+      box-shadow:
+        0 4px 16px rgba(28, 40, 64, 0.12),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.58);
+      position: relative;
+      isolation: isolate;
+    }
+
+    .visit-map-block::after {
+      content: "";
+      position: absolute;
+      inset: -1px;
+      border-radius: 8px;
+      pointer-events: none;
+      background: linear-gradient(
+        120deg,
+        rgba(124, 93, 147, 0.36) 0%,
+        rgba(118, 157, 219, 0.2) 32%,
+        rgba(255, 255, 255, 0.06) 52%,
+        rgba(121, 175, 215, 0.22) 74%,
+        rgba(124, 93, 147, 0.3) 100%
+      );
+      mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      mask-composite: exclude;
+      -webkit-mask-composite: xor;
+      padding: 1.1px;
+      opacity: 0.85;
+      animation: visitMapPearl 3.4s ease-in-out infinite;
     }
 
     .visit-map-head {
@@ -1280,6 +1307,18 @@
       border: 0;
       display: block;
       background: #eef2f8;
+    }
+
+    @keyframes visitMapPearl {
+      0%,
+      100% {
+        opacity: 0.62;
+        filter: saturate(0.92) brightness(0.98);
+      }
+      50% {
+        opacity: 0.95;
+        filter: saturate(1.08) brightness(1.05);
+      }
     }
 
     #contact .search-mock {

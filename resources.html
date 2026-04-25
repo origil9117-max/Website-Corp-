@@ -652,8 +652,8 @@
           <span class="sub">Supabase에 <strong>관리자로 로그인</strong>한 경우 Storage에 저장되며, <strong>한 파일당 최대 5MB</strong>까지 업로드할 수 있습니다. 로컬 비상 모드만 켜진 경우 약 450KB 이하로 제한됩니다.</span>
         </p>
 
-        <label for="resource-file">파일 첨부(선택)</label>
-        <input id="resource-file" type="file" />
+        <label for="resource-file">파일 첨부(선택, 여러 개 가능)</label>
+        <input id="resource-file" type="file" multiple />
         <p id="resource-file-current" class="meta"></p>
         <label class="row">
           <input id="resource-file-remove" type="checkbox" />
@@ -886,56 +886,40 @@
             : "";
           var showAttachmentLink = allowed || adminOn;
           var fileLink = "";
-          if (item.file_data && item.file_name) {
-            var safeFileNameLocal = escapeHtml(item.file_name || "첨부파일");
-            var safeSizeLocal = escapeHtml(formatBytes(item.file_size));
-            if (showAttachmentLink) {
-              fileLink =
-                '<p class="meta"><a href="' +
-                item.file_data +
-                '" download="' +
-                safeFileNameLocal +
-                '">첨부파일 다운로드: ' +
-                safeFileNameLocal +
-                "</a>" +
-                (safeSizeLocal ? " (" + safeSizeLocal + ")" : "") +
-                "</p>";
-            } else {
-              fileLink =
-                '<p class="meta">' +
-                "첨부파일: " +
-                safeFileNameLocal +
-                (safeSizeLocal ? " (" + safeSizeLocal + ")" : "") +
-                " — <strong>다운로드 제한</strong>" +
-                "</p>";
-            }
-          } else if (item.file_path && item.file_name && client) {
-            var safeFileName = escapeHtml(item.file_name || "첨부파일");
-            var safeSize = escapeHtml(formatBytes(item.file_size));
-            var pub = client.storage.from(STORAGE_BUCKET).getPublicUrl(item.file_path);
-            var publicUrl = pub && pub.data ? pub.data.publicUrl : "";
-            if (publicUrl) {
-              if (showAttachmentLink) {
-                fileLink =
+          var attachments = getAttachmentDisplayList(item);
+          if (attachments.length) {
+            fileLink = attachments.map(function (att) {
+              var safeName = escapeHtml(att.name || "첨부파일");
+              var safeSize = escapeHtml(formatBytes(att.size));
+              var href = "";
+              if (att.data) {
+                href = att.data;
+              } else if (att.path && client) {
+                var pub = client.storage.from(STORAGE_BUCKET).getPublicUrl(att.path);
+                href = pub && pub.data ? String(pub.data.publicUrl || "") : "";
+              }
+              if (showAttachmentLink && href) {
+                return (
                   '<p class="meta"><a href="' +
-                  publicUrl +
+                  href +
                   '" download="' +
-                  safeFileName +
+                  safeName +
                   '">첨부파일 다운로드: ' +
-                  safeFileName +
+                  safeName +
                   "</a>" +
                   (safeSize ? " (" + safeSize + ")" : "") +
-                  "</p>";
-              } else {
-                fileLink =
-                  '<p class="meta">' +
-                  "첨부파일: " +
-                  safeFileName +
-                  (safeSize ? " (" + safeSize + ")" : "") +
-                  " — <strong>다운로드 제한</strong>" +
-                  "</p>";
+                  "</p>"
+                );
               }
-            }
+              return (
+                '<p class="meta">' +
+                "첨부파일: " +
+                safeName +
+                (safeSize ? " (" + safeSize + ")" : "") +
+                " — <strong>다운로드 제한</strong>" +
+                "</p>"
+              );
+            }).join("");
           }
           var adminBtns = adminOn
             ? '<div class="row" style="margin-top:0.55rem;align-items:center;">' +
@@ -1042,6 +1026,82 @@
           };
           reader.readAsDataURL(file);
         });
+      }
+
+      function parseAttachmentArrayText(raw) {
+        try {
+          var parsed = JSON.parse(String(raw || "[]"));
+          return Array.isArray(parsed) ? parsed : [];
+        } catch (e) {
+          return [];
+        }
+      }
+
+      function getStoragePaths(filePath) {
+        if (!filePath) return [];
+        var raw = String(filePath || "").trim();
+        if (!raw) return [];
+        if (/^\s*\[/.test(raw)) {
+          return parseAttachmentArrayText(raw)
+            .map(function (x) { return x && x.path ? String(x.path) : ""; })
+            .filter(Boolean);
+        }
+        return [raw];
+      }
+
+      function getAttachmentDisplayList(item) {
+        if (!item) return [];
+        var files = [];
+        var isMultiFlag = String(item.file_name || "") === "__MULTI__";
+
+        if (item.file_data) {
+          if (isMultiFlag) {
+            parseAttachmentArrayText(item.file_data).forEach(function (x) {
+              if (!x) return;
+              files.push({
+                name: String(x.name || "첨부파일"),
+                size: Number(x.size || 0),
+                data: String(x.data || "")
+              });
+            });
+          } else if (item.file_name) {
+            files.push({
+              name: String(item.file_name || "첨부파일"),
+              size: Number(item.file_size || 0),
+              data: String(item.file_data || "")
+            });
+          }
+          return files.filter(function (x) { return !!x.data; });
+        }
+
+        if (item.file_path) {
+          if (isMultiFlag || /^\s*\[/.test(String(item.file_path || ""))) {
+            parseAttachmentArrayText(item.file_path).forEach(function (x) {
+              if (!x || !x.path) return;
+              files.push({
+                name: String(x.name || "첨부파일"),
+                size: Number(x.size || 0),
+                path: String(x.path)
+              });
+            });
+          } else if (item.file_name) {
+            files.push({
+              name: String(item.file_name || "첨부파일"),
+              size: Number(item.file_size || 0),
+              path: String(item.file_path || "")
+            });
+          }
+        }
+        return files.filter(function (x) { return !!x.path; });
+      }
+
+      function getAttachmentCurrentText(item) {
+        var files = getAttachmentDisplayList(item);
+        if (!files.length) return "첨부된 파일 없음";
+        if (files.length === 1) {
+          return "현재 첨부: " + files[0].name + (files[0].size ? " (" + formatBytes(files[0].size) + ")" : "");
+        }
+        return "현재 첨부: " + files.length + "개 파일";
       }
 
       function makeSafeStoragePath(userId, originalName) {
@@ -1374,9 +1434,12 @@
       });
 
       fileInput.addEventListener("change", function () {
-        var f = fileInput.files && fileInput.files[0];
-        if (f) {
+        var files = fileInput.files ? Array.prototype.slice.call(fileInput.files) : [];
+        if (files.length === 1) {
+          var f = files[0];
           fileCurrent.textContent = "선택한 파일: " + f.name + (f.size ? " (" + formatBytes(f.size) + ")" : "");
+        } else if (files.length > 1) {
+          fileCurrent.textContent = "선택한 파일: 총 " + files.length + "개";
         } else {
           fileCurrent.textContent = "첨부된 파일 없음";
         }
@@ -1437,7 +1500,7 @@
           var dlAllowed = !!(
             document.getElementById("resource-dl-yes") && document.getElementById("resource-dl-yes").checked
           );
-          var pickedFile = fileInput.files && fileInput.files[0] ? fileInput.files[0] : null;
+          var pickedFiles = fileInput.files ? Array.prototype.slice.call(fileInput.files) : [];
 
           if (!title || !content) {
             setStatus(formStatus, "err", "제목과 내용을 입력해 주세요.");
@@ -1447,56 +1510,98 @@
             setStatus(formStatus, "err", "자료 링크는 http:// 또는 https:// 로 시작해야 합니다.");
             return;
           }
-          if (pickedFile && pickedFile.size > 5 * 1024 * 1024) {
-            setStatus(formStatus, "err", "첨부파일은 5MB 이하만 업로드할 수 있습니다.");
-            return;
+          for (var pf = 0; pf < pickedFiles.length; pf += 1) {
+            if (pickedFiles[pf].size > 5 * 1024 * 1024) {
+              setStatus(formStatus, "err", "첨부파일은 5MB 이하만 업로드할 수 있습니다.");
+              return;
+            }
           }
 
           var attachment = null;
-          if (pickedFile) {
+          if (pickedFiles.length) {
             if (currentSession && client) {
-              var path = makeSafeStoragePath(currentSession.user.id, pickedFile.name);
-              var up = await client.storage.from(STORAGE_BUCKET).upload(path, pickedFile, { upsert: true });
-              if (up.error) {
-                var errMsg = String(up.error.message || "");
-                var extra = "";
-                if (/bucket not found/i.test(errMsg)) {
-                  extra =
-                    " Supabase 대시보드 → Storage → New bucket에서 이름을 정확히 「" +
-                    STORAGE_BUCKET +
-                    "」로 만들고(공개 권장), Storage 정책(RLS)을 설정하세요. 프로젝트의 SUPABASE_SETUP.md 6·10절을 참고하세요.";
+              var uploaded = [];
+              for (var sf = 0; sf < pickedFiles.length; sf += 1) {
+                var pickedSupa = pickedFiles[sf];
+                var path = makeSafeStoragePath(currentSession.user.id, pickedSupa.name);
+                var up = await client.storage.from(STORAGE_BUCKET).upload(path, pickedSupa, { upsert: true });
+                if (up.error) {
+                  var errMsg = String(up.error.message || "");
+                  var extra = "";
+                  if (/bucket not found/i.test(errMsg)) {
+                    extra =
+                      " Supabase 대시보드 → Storage → New bucket에서 이름을 정확히 「" +
+                      STORAGE_BUCKET +
+                      "」로 만들고(공개 권장), Storage 정책(RLS)을 설정하세요. 프로젝트의 SUPABASE_SETUP.md 6·10절을 참고하세요.";
+                  }
+                  setStatus(formStatus, "err", "첨부파일 업로드 실패: " + errMsg + extra);
+                  return;
                 }
-                setStatus(formStatus, "err", "첨부파일 업로드 실패: " + errMsg + extra);
-                return;
+                uploaded.push({
+                  name: pickedSupa.name,
+                  path: path,
+                  size: pickedSupa.size || 0
+                });
               }
-              attachment = {
-                file_name: pickedFile.name,
-                file_path: path,
-                file_size: pickedFile.size || 0
-              };
+              if (uploaded.length === 1) {
+                attachment = {
+                  file_name: uploaded[0].name,
+                  file_path: uploaded[0].path,
+                  file_size: uploaded[0].size || 0
+                };
+              } else {
+                var totalSupaSize = uploaded.reduce(function (sum, x) {
+                  return sum + Number(x.size || 0);
+                }, 0);
+                attachment = {
+                  file_name: "__MULTI__",
+                  file_path: JSON.stringify(uploaded),
+                  file_size: totalSupaSize
+                };
+              }
             } else {
-              if (pickedFile.size > LOCAL_ATTACHMENT_MAX_BYTES) {
-                setStatus(
-                  formStatus,
-                  "err",
-                  "로컬(비상) 모드에서는 첨부가 " +
-                    formatBytes(LOCAL_ATTACHMENT_MAX_BYTES) +
-                    " 이하인 파일만 저장할 수 있습니다. 큰 파일은 Supabase에 관리자로 로그인한 뒤 저장하세요."
-                );
-                return;
+              var localUploaded = [];
+              for (var lf = 0; lf < pickedFiles.length; lf += 1) {
+                var pickedLocal = pickedFiles[lf];
+                if (pickedLocal.size > LOCAL_ATTACHMENT_MAX_BYTES) {
+                  setStatus(
+                    formStatus,
+                    "err",
+                    "로컬(비상) 모드에서는 첨부가 " +
+                      formatBytes(LOCAL_ATTACHMENT_MAX_BYTES) +
+                      " 이하인 파일만 저장할 수 있습니다. 큰 파일은 Supabase에 관리자로 로그인한 뒤 저장하세요."
+                  );
+                  return;
+                }
+                var dataUrl = "";
+                try {
+                  dataUrl = await readFileAsDataUrl(pickedLocal);
+                } catch (e) {
+                  setStatus(formStatus, "err", "첨부파일 처리에 실패했습니다.");
+                  return;
+                }
+                localUploaded.push({
+                  name: pickedLocal.name,
+                  size: pickedLocal.size || 0,
+                  data: dataUrl
+                });
               }
-              var dataUrl = "";
-              try {
-                dataUrl = await readFileAsDataUrl(pickedFile);
-              } catch (e) {
-                setStatus(formStatus, "err", "첨부파일 처리에 실패했습니다.");
-                return;
+              if (localUploaded.length === 1) {
+                attachment = {
+                  file_name: localUploaded[0].name,
+                  file_size: localUploaded[0].size || 0,
+                  file_data: localUploaded[0].data
+                };
+              } else {
+                var totalLocalSize = localUploaded.reduce(function (sum, x) {
+                  return sum + Number(x.size || 0);
+                }, 0);
+                attachment = {
+                  file_name: "__MULTI__",
+                  file_size: totalLocalSize,
+                  file_data: JSON.stringify(localUploaded)
+                };
               }
-              attachment = {
-                file_name: pickedFile.name,
-                file_size: pickedFile.size || 0,
-                file_data: dataUrl
-              };
             }
           }
 
@@ -1509,14 +1614,20 @@
               payload.file_path = attachment.file_path;
               payload.file_size = attachment.file_size;
               if (one.data && one.data.file_path) {
-                await client.storage.from(STORAGE_BUCKET).remove([one.data.file_path]);
+                var oldPaths = getStoragePaths(one.data.file_path);
+                if (oldPaths.length) {
+                  await client.storage.from(STORAGE_BUCKET).remove(oldPaths);
+                }
               }
             } else if (fileRemove.checked) {
               payload.file_name = null;
               payload.file_path = null;
               payload.file_size = null;
               if (one.data && one.data.file_path) {
-                await client.storage.from(STORAGE_BUCKET).remove([one.data.file_path]);
+                var removePaths = getStoragePaths(one.data.file_path);
+                if (removePaths.length) {
+                  await client.storage.from(STORAGE_BUCKET).remove(removePaths);
+                }
               }
             }
             res = await client.from("resources").update(payload).eq("id", id);
@@ -1613,7 +1724,7 @@
           if (currentSession && client) {
             var one = await client
               .from("resources")
-              .select("id, title, url, content, file_name, file_size, download_allowed")
+              .select("id, title, url, content, file_name, file_path, file_size, download_allowed")
               .eq("id", id)
               .maybeSingle();
             if (one.error || !one.data) return;
@@ -1626,11 +1737,7 @@
             var da = isDownloadAllowed(one.data);
             if (rdYes) rdYes.checked = da;
             if (rdNo) rdNo.checked = !da;
-            if (one.data.file_name) {
-              fileCurrent.textContent = "현재 첨부: " + one.data.file_name + (one.data.file_size ? " (" + formatBytes(one.data.file_size) + ")" : "");
-            } else {
-              fileCurrent.textContent = "첨부된 파일 없음";
-            }
+            fileCurrent.textContent = getAttachmentCurrentText(one.data);
           } else {
             var oneLocal = loadLocalResources().find(function (x) { return String(x.id) === String(id); });
             if (!oneLocal) return;
@@ -1638,11 +1745,7 @@
             document.getElementById("resource-title").value = oneLocal.title || "";
             document.getElementById("resource-url").value = oneLocal.url || "";
             document.getElementById("resource-content").value = oneLocal.content || "";
-            if (oneLocal.file_name) {
-              fileCurrent.textContent = "현재 첨부: " + oneLocal.file_name + (oneLocal.file_size ? " (" + formatBytes(oneLocal.file_size) + ")" : "");
-            } else {
-              fileCurrent.textContent = "첨부된 파일 없음";
-            }
+            fileCurrent.textContent = getAttachmentCurrentText(oneLocal);
             var rdYesL = document.getElementById("resource-dl-yes");
             var rdNoL = document.getElementById("resource-dl-no");
             var daL = isDownloadAllowed(oneLocal);
@@ -1660,7 +1763,10 @@
           if (currentSession && client) {
             var oneDel = await client.from("resources").select("file_path").eq("id", id).maybeSingle();
             if (oneDel.data && oneDel.data.file_path) {
-              await client.storage.from(STORAGE_BUCKET).remove([oneDel.data.file_path]);
+              var delPaths = getStoragePaths(oneDel.data.file_path);
+              if (delPaths.length) {
+                await client.storage.from(STORAGE_BUCKET).remove(delPaths);
+              }
             }
             var del = await client.from("resources").delete().eq("id", id);
             if (del.error) {

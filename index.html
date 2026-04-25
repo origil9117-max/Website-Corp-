@@ -906,15 +906,74 @@
 
     .hero-platform-cats-grid {
       display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
+      grid-template-columns: repeat(5, minmax(0, 1fr));
       gap: 0.42rem;
       width: 100%;
       max-width: none;
     }
 
+    .hero-platform-cats-grid a.integrated-search-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.3rem;
+      font-weight: 800;
+      color: #294f1f;
+      border-color: rgba(81, 146, 33, 0.48);
+      background:
+        radial-gradient(circle at 24% 20%, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.28) 28%, transparent 42%),
+        linear-gradient(180deg, #a7ef5e 0%, #67c220 100%);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.7),
+        0 3px 10px rgba(65, 127, 35, 0.24);
+    }
+
+    .hero-platform-cats-grid a.integrated-search-link::before {
+      content: "";
+      width: 0.85rem;
+      height: 0.85rem;
+      border: 2px solid #fff;
+      border-radius: 50%;
+      box-shadow: inset 0 0 0 1px rgba(53, 114, 24, 0.35);
+      position: relative;
+    }
+
+    .hero-platform-cats-grid a.integrated-search-link::after {
+      content: "";
+      width: 0.38rem;
+      height: 0.12rem;
+      border-radius: 99px;
+      background: #fff;
+      transform: rotate(42deg) translate(-0.06rem, 0.19rem);
+      transform-origin: center;
+      margin-left: -0.78rem;
+      box-shadow: 0 0 0 1px rgba(53, 114, 24, 0.2);
+    }
+
+    .hero-platform-cats-grid a.integrated-search-link:hover,
+    .hero-platform-cats-grid a.integrated-search-link:focus-visible {
+      color: #203d1a;
+      border-color: rgba(66, 124, 27, 0.62);
+      background:
+        radial-gradient(circle at 24% 20%, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.34) 30%, transparent 44%),
+        linear-gradient(180deg, #96e847 0%, #5cb11e 100%);
+    }
+
     @media (max-width: 380px) {
       .hero-platform-cats-grid {
         gap: 0.38rem;
+      }
+    }
+
+    @media (max-width: 980px) {
+      .hero-platform-cats-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 640px) {
+      .hero-platform-cats-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
       }
     }
 
@@ -2231,7 +2290,7 @@
               <a href="platform-check.html">서류·준비 체크</a>
               <a href="platform-faq.html">자주 묻는 질문</a>
               <a href="platform-hub.html">공지·자료실 연동</a>
-              <a href="integrated-search.html">통합검색</a>
+              <a class="integrated-search-link" href="integrated-search.html">통합검색</a>
             </div>
           </nav>
         </div>

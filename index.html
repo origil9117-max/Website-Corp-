@@ -1239,87 +1239,6 @@
       }
     }
 
-    .visit-map-stack {
-      display: grid;
-      gap: 0.9rem;
-      margin: 0.15rem 0 1rem;
-    }
-
-    .visit-map-block {
-      border: 1px solid rgba(84, 103, 142, 0.34);
-      border-radius: 8px;
-      background: #fff;
-      overflow: hidden;
-      box-shadow:
-        0 4px 16px rgba(28, 40, 64, 0.12),
-        inset 0 0 0 1px rgba(255, 255, 255, 0.58);
-      position: relative;
-      isolation: isolate;
-    }
-
-    .visit-map-block::after {
-      content: "";
-      position: absolute;
-      inset: -1px;
-      border-radius: 8px;
-      pointer-events: none;
-      background: linear-gradient(
-        120deg,
-        rgba(124, 93, 147, 0.36) 0%,
-        rgba(118, 157, 219, 0.2) 32%,
-        rgba(255, 255, 255, 0.06) 52%,
-        rgba(121, 175, 215, 0.22) 74%,
-        rgba(124, 93, 147, 0.3) 100%
-      );
-      mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-      mask-composite: exclude;
-      -webkit-mask-composite: xor;
-      padding: 1.1px;
-      opacity: 0.85;
-      animation: visitMapPearl 3.4s ease-in-out infinite;
-    }
-
-    .visit-map-head {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 0.5rem;
-      padding: 0.55rem 0.7rem;
-      border-bottom: 1px solid rgba(36, 48, 64, 0.12);
-      background: linear-gradient(180deg, #f6f8fc 0%, #f0f3fa 100%);
-      font-size: 0.8rem;
-      font-weight: 700;
-      color: #2f3a50;
-    }
-
-    .visit-map-head a {
-      text-decoration: none;
-      color: #37527f;
-      font-weight: 700;
-      font-size: 0.76rem;
-      white-space: nowrap;
-    }
-
-    .visit-map-frame {
-      width: 100%;
-      height: 320px;
-      border: 0;
-      display: block;
-      background: #eef2f8;
-    }
-
-    @keyframes visitMapPearl {
-      0%,
-      100% {
-        opacity: 0.62;
-        filter: saturate(0.92) brightness(0.98);
-      }
-      50% {
-        opacity: 0.95;
-        filter: saturate(1.08) brightness(1.05);
-      }
-    }
 
     #contact .search-mock {
       margin-top: 0.55rem;
@@ -2346,7 +2265,7 @@
             <li><a href="platform.html">지능형 행정 플랫폼</a></li>
             <li><a href="#about">소개</a></li>
             <li>
-              <a href="#visit-maps">오시는 길</a>
+              <a href="https://map.kakao.com/link/search/%EB%8C%80%ED%95%9C%EB%AF%BC%EA%B5%AD%ED%96%89%EC%A0%95%EC%82%AC%EC%82%AC%EB%AC%B4%EC%86%8C" target="_blank" rel="noopener noreferrer">오시는 길</a>
             </li>
             <li><a href="notice.html">공지</a></li>
           </ul>
@@ -2626,44 +2545,16 @@
         <h2 id="contact-title" class="serif">
           <a
             class="title-map-link"
-            href="#visit-maps"
-            title="지도 영역으로 이동"
+            href="https://map.kakao.com/link/search/%EB%8C%80%ED%95%9C%EB%AF%BC%EA%B5%AD%ED%96%89%EC%A0%95%EC%82%AC%EC%82%AC%EB%AC%B4%EC%86%8C"
+            target="_blank"
+            rel="noopener noreferrer"
+            title="카카오맵에서 대한민국행정사사무소 위치 열기"
             >오시는 길</a
           ><span class="contact-title-sep"> · </span><span>연락처</span>
         </h2>
         <p>방문 전 연락 주시면 상담 가능 시간을 안내해 드립니다.</p>
       </div>
       <hr class="contact-divider" />
-
-      <section id="visit-maps" class="visit-map-stack" aria-label="오시는 길 지도">
-        <article class="visit-map-block" aria-label="카카오맵">
-          <div class="visit-map-head">
-            <span>카카오맵</span>
-            <a href="https://map.kakao.com/?q=%EB%8C%80%ED%95%9C%EB%AF%BC%EA%B5%AD%ED%96%89%EC%A0%95%EC%82%AC%EC%82%AC%EB%AC%B4%EC%86%8C" target="_blank" rel="noopener noreferrer">새 창으로 열기</a>
-          </div>
-          <iframe
-            class="visit-map-frame"
-            src="https://map.kakao.com/?q=%EB%8C%80%ED%95%9C%EB%AF%BC%EA%B5%AD%ED%96%89%EC%A0%95%EC%82%AC%EC%82%AC%EB%AC%B4%EC%86%8C"
-            title="카카오맵 - 대한민국행정사사무소"
-            loading="lazy"
-            referrerpolicy="no-referrer-when-downgrade"
-          ></iframe>
-        </article>
-
-        <article class="visit-map-block" aria-label="네이버지도">
-          <div class="visit-map-head">
-            <span>네이버지도</span>
-            <a href="https://map.naver.com/p/search/%EB%8C%80%ED%95%9C%EB%AF%BC%EA%B5%AD%ED%96%89%EC%A0%95%EC%82%AC%EC%82%AC%EB%AC%B4%EC%86%8C?c=15.00,0,0,0,dh" target="_blank" rel="noopener noreferrer">새 창으로 열기</a>
-          </div>
-          <iframe
-            class="visit-map-frame"
-            src="https://map.naver.com/p/search/%EB%8C%80%ED%95%9C%EB%AF%BC%EA%B5%AD%ED%96%89%EC%A0%95%EC%82%AC%EC%82%AC%EB%AC%B4%EC%86%8C?c=15.00,0,0,0,dh"
-            title="네이버지도 - 대한민국행정사사무소"
-            loading="lazy"
-            referrerpolicy="no-referrer-when-downgrade"
-          ></iframe>
-        </article>
-      </section>
 
       <div class="contact-layout">
         <div class="contact-main">

@@ -389,7 +389,43 @@
     @media (min-width: 768px) {
       .hero-promo-slot {
         align-items: flex-end;
+        margin-right: -0.85rem;
+        position: relative;
+        z-index: 1;
       }
+    }
+
+    /* 그라데이션 링 + 가장자리 페이드 */
+    .hero-promo-frame {
+      display: inline-block;
+      max-width: 100%;
+      max-height: 100%;
+      padding: 2px;
+      border-radius: 14px;
+      line-height: 0;
+      box-sizing: border-box;
+      background: linear-gradient(
+        132deg,
+        rgba(124, 93, 147, 0.55) 0%,
+        rgba(220, 226, 244, 0.95) 42%,
+        rgba(95, 70, 111, 0.52) 100%
+      );
+      -webkit-mask-image: radial-gradient(ellipse 105% 100% at 58% 50%, #000 78%, transparent 100%);
+      mask-image: radial-gradient(ellipse 105% 100% at 58% 50%, #000 78%, transparent 100%);
+      -webkit-mask-repeat: no-repeat;
+      mask-repeat: no-repeat;
+      -webkit-mask-size: 100% 100%;
+      mask-size: 100% 100%;
+    }
+
+    .hero-promo-frame .hero-promo-img {
+      display: block;
+      border-radius: 12px;
+      max-width: 100%;
+      max-height: 100%;
+      width: auto;
+      height: auto;
+      object-fit: contain;
     }
 
     .hero-promo-link {
@@ -424,17 +460,6 @@
       text-decoration: none;
     }
 
-    .hero-promo-img {
-      display: block;
-      margin: 0;
-      max-width: 100%;
-      max-height: 100%;
-      width: auto;
-      height: auto;
-      object-fit: contain;
-      border-radius: 0;
-    }
-
     @media (max-width: 767px) {
       .hero-promo-link {
         flex: 0 0 auto;
@@ -442,7 +467,12 @@
         justify-content: center;
       }
 
-      .hero-promo-img {
+      .hero-promo-frame {
+        -webkit-mask-image: radial-gradient(ellipse 100% 100% at 50% 50%, #000 82%, transparent 100%);
+        mask-image: radial-gradient(ellipse 100% 100% at 50% 50%, #000 82%, transparent 100%);
+      }
+
+      .hero-promo-frame .hero-promo-img {
         max-height: clamp(4.5rem, 36vw, 6.75rem);
         margin-inline: auto;
       }
@@ -509,8 +539,8 @@
     @media (min-width: 768px) {
       .hero-inner {
         padding: 0.52rem 1.5rem 0.58rem;
-        grid-template-columns: minmax(0, 1.02fr) minmax(9.5rem, 0.4fr) minmax(0, 0.92fr);
-        column-gap: 0.38rem;
+        grid-template-columns: minmax(0, 1.02fr) minmax(8.5rem, 0.36fr) minmax(0, 0.94fr);
+        column-gap: 0.28rem;
         row-gap: 0.55rem;
         align-items: stretch;
       }
@@ -568,6 +598,8 @@
         margin: 0 0 0 auto;
         padding: 0.62rem 0.98rem;
         justify-content: space-between;
+        position: relative;
+        z-index: 2;
       }
 
       .hero-aside .hero-mini {
@@ -2087,15 +2119,17 @@
             href="#services"
             aria-label="주요 업무 분야로 이동. 복잡한 행정, 한번에 해결"
           >
-            <img
-              class="hero-promo-img"
-              src="images/hero-promo-banner.png"
-              alt=""
-              width="1600"
-              height="420"
-              decoding="async"
-              loading="lazy"
-            />
+            <span class="hero-promo-frame">
+              <img
+                class="hero-promo-img"
+                src="images/hero-promo-banner.png"
+                alt=""
+                width="1600"
+                height="420"
+                decoding="async"
+                loading="lazy"
+              />
+            </span>
           </a>
         </div>
         <aside class="hero-aside" aria-label="업무 분야 바로가기">

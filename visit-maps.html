@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>오시는 길 | 대한민국행정사사무소</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@500;700&family=Noto+Sans+KR:wght@400;500;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --ink: #1d2739;
+      --muted: #5f6a80;
+      --line: rgba(29, 39, 57, 0.16);
+      --bg: #f0f3fa;
+      --card: #fff;
+      --brand: #5c4778;
+      --brand-2: #435f98;
+      --max: min(96vw, 1520px);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Noto Sans KR", system-ui, sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(1100px 520px at 10% -10%, rgba(124, 93, 147, 0.16), transparent 55%),
+        radial-gradient(980px 500px at 100% -12%, rgba(76, 122, 196, 0.12), transparent 56%),
+        var(--bg);
+    }
+
+    .topbar {
+      border-bottom: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.78);
+      backdrop-filter: blur(8px);
+    }
+
+    .topbar-inner {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 0.9rem 1.3rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.8rem;
+      flex-wrap: wrap;
+    }
+
+    .brand {
+      text-decoration: none;
+      color: var(--ink);
+      font-weight: 800;
+      font-size: 1rem;
+    }
+
+    .brand span {
+      display: block;
+      margin-top: 0.16rem;
+      color: var(--muted);
+      font-size: 0.68rem;
+      font-weight: 500;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      flex-wrap: wrap;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: #2e3b53;
+      font-size: 0.8rem;
+      font-weight: 700;
+      border: 1px solid rgba(62, 80, 117, 0.24);
+      border-radius: 999px;
+      padding: 0.38rem 0.7rem;
+      background: #fff;
+    }
+
+    .wrap {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 1.2rem 1.3rem 2.2rem;
+    }
+
+    .hero {
+      border: 1px solid rgba(91, 72, 126, 0.22);
+      border-radius: 14px;
+      background: linear-gradient(130deg, #fff 0%, #f7f4fd 46%, #eff4ff 100%);
+      box-shadow: 0 14px 34px rgba(56, 76, 118, 0.13);
+      padding: 1.1rem 1.2rem;
+      margin-bottom: 0.9rem;
+    }
+
+    .hero .label {
+      margin: 0 0 0.2rem;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: #5b4f74;
+      font-size: 0.68rem;
+      font-weight: 800;
+    }
+
+    .hero h1 {
+      margin: 0;
+      font-family: "Noto Serif KR", serif;
+      font-size: clamp(1.4rem, 2.4vw, 2rem);
+    }
+
+    .hero p {
+      margin: 0.42rem 0 0;
+      color: var(--muted);
+      line-height: 1.55;
+      font-size: 0.92rem;
+    }
+
+    .map-stack {
+      display: grid;
+      gap: 0.85rem;
+    }
+
+    .map-block {
+      border: 1px solid rgba(84, 103, 142, 0.34);
+      border-radius: 8px;
+      background: var(--card);
+      overflow: hidden;
+      box-shadow:
+        0 4px 16px rgba(28, 40, 64, 0.12),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.58);
+      position: relative;
+      isolation: isolate;
+    }
+
+    .map-block::after {
+      content: "";
+      position: absolute;
+      inset: -1px;
+      border-radius: 8px;
+      pointer-events: none;
+      background: linear-gradient(
+        120deg,
+        rgba(124, 93, 147, 0.36) 0%,
+        rgba(118, 157, 219, 0.2) 32%,
+        rgba(255, 255, 255, 0.06) 52%,
+        rgba(121, 175, 215, 0.22) 74%,
+        rgba(124, 93, 147, 0.3) 100%
+      );
+      mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      mask-composite: exclude;
+      -webkit-mask-composite: xor;
+      padding: 1.1px;
+      opacity: 0.85;
+      animation: mapPearl 3.4s ease-in-out infinite;
+    }
+
+    .map-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      padding: 0.54rem 0.7rem;
+      border-bottom: 1px solid rgba(36, 48, 64, 0.12);
+      background: linear-gradient(180deg, #f6f8fc 0%, #f0f3fa 100%);
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #2f3a50;
+    }
+
+    .map-head a {
+      text-decoration: none;
+      color: #37527f;
+      font-weight: 700;
+      font-size: 0.76rem;
+      white-space: nowrap;
+    }
+
+    iframe.map-frame {
+      width: 100%;
+      height: 380px;
+      border: 0;
+      display: block;
+      background: #eef2f8;
+    }
+
+    .fallback {
+      margin-top: 0.75rem;
+      font-size: 0.83rem;
+      color: var(--muted);
+    }
+
+    .fallback a { color: #385486; font-weight: 700; }
+
+    @keyframes mapPearl {
+      0%, 100% { opacity: 0.62; filter: saturate(0.92) brightness(0.98); }
+      50% { opacity: 0.95; filter: saturate(1.08) brightness(1.05); }
+    }
+
+    @media (max-width: 860px) {
+      .topbar-inner, .wrap { padding-left: 0.95rem; padding-right: 0.95rem; }
+      iframe.map-frame { height: 320px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand" href="index.html">
+        대한민국행정사사무소
+        <span>Republic of Korea Administrative Scrivener Office</span>
+      </a>
+      <nav class="nav-links" aria-label="빠른 이동">
+        <a href="index.html">메인</a>
+        <a href="resources.html">자료실</a>
+        <a href="integrated-search.html">통합검색</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="hero" aria-label="오시는 길 안내">
+      <p class="label">Directions</p>
+      <h1>오시는 길</h1>
+      <p>상단은 카카오맵, 하단은 네이버지도로 구성된 2단 지도 화면입니다.</p>
+    </section>
+
+    <section class="map-stack" aria-label="2단 지도 보기">
+      <article class="map-block" aria-label="카카오맵">
+        <div class="map-head">
+          <span>카카오맵</span>
+          <a href="https://map.kakao.com/?q=%EB%8C%80%ED%95%9C%EB%AF%BC%EA%B5%AD%ED%96%89%EC%A0%95%EC%82%AC%EC%82%AC%EB%AC%B4%EC%86%8C" target="_blank" rel="noopener noreferrer">새 창으로 열기</a>
+        </div>
+        <iframe
+          class="map-frame"
+          src="https://map.kakao.com/?q=%EB%8C%80%ED%95%9C%EB%AF%BC%EA%B5%AD%ED%96%89%EC%A0%95%EC%82%AC%EC%82%AC%EB%AC%B4%EC%86%8C"
+          title="카카오맵 - 대한민국행정사사무소"
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+        ></iframe>
+      </article>
+
+      <article class="map-block" aria-label="네이버지도">
+        <div class="map-head">
+          <span>네이버지도</span>
+          <a href="https://map.naver.com/p/search/%EB%8C%80%ED%95%9C%EB%AF%BC%EA%B5%AD%ED%96%89%EC%A0%95%EC%82%AC%EC%82%AC%EB%AC%B4%EC%86%8C?c=15.00,0,0,0,dh" target="_blank" rel="noopener noreferrer">새 창으로 열기</a>
+        </div>
+        <iframe
+          class="map-frame"
+          src="https://map.naver.com/p/search/%EB%8C%80%ED%95%9C%EB%AF%BC%EA%B5%AD%ED%96%89%EC%A0%95%EC%82%AC%EC%82%AC%EB%AC%B4%EC%86%8C?c=15.00,0,0,0,dh"
+          title="네이버지도 - 대한민국행정사사무소"
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+        ></iframe>
+      </article>
+    </section>
+
+    <p class="fallback">
+      브라우저 정책으로 지도가 비어 보일 경우:
+      <a href="https://map.kakao.com/?q=%EB%8C%80%ED%95%9C%EB%AF%BC%EA%B5%AD%ED%96%89%EC%A0%95%EC%82%AC%EC%82%AC%EB%AC%B4%EC%86%8C" target="_blank" rel="noopener noreferrer">카카오맵</a>,
+      <a href="https://map.naver.com/p/search/%EB%8C%80%ED%95%9C%EB%AF%BC%EA%B5%AD%ED%96%89%EC%A0%95%EC%82%AC%EC%82%AC%EB%AC%B4%EC%86%8C?c=15.00,0,0,0,dh" target="_blank" rel="noopener noreferrer">네이버지도</a>
+      를 새 창으로 열어 주세요.
+    </p>
+  </main>
+</body>
+</html>

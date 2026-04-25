@@ -306,12 +306,12 @@
       }
 
       var STATIC_ITEMS = [
-        { source: "주요업무분야", title: "비영리법인설립업무", desc: "비영리법인(사단·재단), 협동조합 설립 및 정관 변경, 해산 절차 안내.", href: "service-nonprofit.html", tags: "비영리 법인 사단 재단 협동조합 정관 변경 해산" },
-        { source: "주요업무분야", title: "출입국민원업무", desc: "재외동포(F4), 영주권(F5), 비자·체류, 국적 관련 행정 업무.", href: "service-immigration.html", tags: "출입국 비자 체류 재외동포 영주권 국적" },
-        { source: "주요업무분야", title: "기업투자·법인설립", desc: "외국인투자기업 설립, 국내 법인·지점 설립, 인허가 절차 안내.", href: "service-investment.html", tags: "기업투자 법인설립 외국인투자 fdi 지점 인허가" },
-        { source: "주요업무분야", title: "국가유공자보훈업무", desc: "국가유공자·보훈 등록, 국가배상 및 불복 절차 상담.", href: "service-patriot.html", tags: "국가유공자 보훈 국가배상 불복" },
-        { source: "주요업무분야", title: "인허가 민원", desc: "식품접객업, 개발행위, 폐기물처리업 등 각종 인허가 업무.", href: "service-permit.html", tags: "인허가 민원 허가 신고 개발행위" },
-        { source: "주요업무분야", title: "행정심판", desc: "행정심판 청구, 집행정지 신청, 재결 후속 절차 지원.", href: "service-appeal.html", tags: "행정심판 처분취소 집행정지 재결" },
+        { source: "주요업무분야", title: "비영리법인설립업무", desc: "비영리법인(사단·재단), 협동조합 설립 및 정관 변경, 해산 절차 안내.", href: "service-post.html?service=nonprofit", tags: "비영리 법인 사단 재단 협동조합 정관 변경 해산" },
+        { source: "주요업무분야", title: "출입국민원업무", desc: "재외동포(F4), 영주권(F5), 비자·체류, 국적 관련 행정 업무.", href: "service-post.html?service=immigration", tags: "출입국 비자 체류 재외동포 영주권 국적" },
+        { source: "주요업무분야", title: "기업투자·법인설립", desc: "외국인투자기업 설립, 국내 법인·지점 설립, 인허가 절차 안내.", href: "service-post.html?service=investment", tags: "기업투자 법인설립 외국인투자 fdi 지점 인허가" },
+        { source: "주요업무분야", title: "국가유공자보훈업무", desc: "국가유공자·보훈 등록, 국가배상 및 불복 절차 상담.", href: "service-post.html?service=patriot", tags: "국가유공자 보훈 국가배상 불복" },
+        { source: "주요업무분야", title: "인허가 민원", desc: "식품접객업, 개발행위, 폐기물처리업 등 각종 인허가 업무.", href: "service-post.html?service=permit", tags: "인허가 민원 허가 신고 개발행위" },
+        { source: "주요업무분야", title: "행정심판", desc: "행정심판 청구, 집행정지 신청, 재결 후속 절차 지원.", href: "service-post.html?service=appeal", tags: "행정심판 처분취소 집행정지 재결" },
         { source: "지능형 행정 플랫폼 카테고리", title: "민원 로드맵", desc: "민원 절차를 단계별로 안내하는 로드맵 페이지.", href: "minwon-roadmap.html", tags: "민원 로드맵 절차 단계 안내" },
         { source: "지능형 행정 플랫폼 카테고리", title: "서류·준비 체크", desc: "자주 필요한 서류와 준비 항목 점검.", href: "platform-check.html", tags: "서류 준비 체크 체크리스트" },
         { source: "지능형 행정 플랫폼 카테고리", title: "자주 묻는 질문", desc: "FAQ 형식의 빠른 답변 모음.", href: "platform-faq.html", tags: "faq 질문 답변 자주묻는질문" },
@@ -365,6 +365,19 @@
 
       var ALL_ITEMS = STATIC_ITEMS.concat(await loadResourceItems());
 
+      function withReturnParam(rawHref) {
+        try {
+          var url = new URL(String(rawHref || ""), window.location.href);
+          if (url.origin === window.location.origin) {
+            url.searchParams.set("from", "integrated-search");
+            url.searchParams.set("return_to", "integrated-search.html");
+          }
+          return url.href;
+        } catch (e) {
+          return String(rawHref || "");
+        }
+      }
+
       function runSearch() {
         var query = (inputEl.value || "").trim();
         var terms = tokenize(query);
@@ -387,10 +400,11 @@
         matched.forEach(function (item) {
           var card = document.createElement("article");
           card.className = "result-card";
+          var targetHref = withReturnParam(item.href);
           card.innerHTML =
             '<div class="result-top">' +
             '<span class="badge">' + escapeHtml(item.source) + "</span>" +
-            '<a class="title" href="' + escapeHtml(item.href) + '">' + escapeHtml(item.title) + "</a>" +
+            '<a class="title" href="' + escapeHtml(targetHref) + '">' + escapeHtml(item.title) + "</a>" +
             "</div>" +
             "<p>" + escapeHtml(item.desc || "설명 없음") + "</p>";
           resultsEl.appendChild(card);

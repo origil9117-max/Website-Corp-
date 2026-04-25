@@ -133,6 +133,40 @@
       margin-bottom: 0.65rem;
     }
 
+    .platform-title-row {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      flex-wrap: wrap;
+      margin-bottom: 0.65rem;
+    }
+
+    .platform-title-row h1 {
+      margin: 0;
+    }
+
+    .platform-inline-search-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.42rem 0.68rem;
+      border-radius: 4px;
+      border: 1px solid rgba(74, 58, 98, 0.5);
+      background: linear-gradient(180deg, #6f568c 0%, #4f3e71 100%);
+      color: #fff;
+      text-decoration: none;
+      font-size: 0.72rem;
+      font-weight: 800;
+      box-shadow: 0 4px 10px rgba(58, 48, 76, 0.22);
+    }
+
+    .platform-inline-search-btn:hover,
+    .platform-inline-search-btn:focus-visible {
+      color: #fff;
+      text-decoration: none;
+      filter: brightness(1.04);
+    }
+
     .lead {
       color: var(--ink-soft);
       font-size: 0.95rem;
@@ -480,7 +514,10 @@
   <div class="wrap">
     <div class="platform-prose">
     <p class="section-label">Intelligent Administrative Platform</p>
-    <h1 id="platform-page-title">지능형 행정 플랫폼</h1>
+    <div class="platform-title-row">
+      <h1 id="platform-page-title">지능형 행정 플랫폼</h1>
+      <a class="platform-inline-search-btn" href="integrated-search.html">통합검색</a>
+    </div>
     <p class="lead">
       AI 시대에 맞춰 복잡한 행정 민원 정보를 <strong>체계적으로 안내</strong>하고, 방문 상담 전에 절차와 준비 방향을 이해하실 수 있도록 하는 공간입니다.
       법률 자문이 아닌 <strong>일반 정보·절차 안내</strong>이며, 구체적인 사안은 반드시 상담을 통해 확인합니다.

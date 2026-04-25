@@ -1269,18 +1269,29 @@
     }
 
     #contact .contact-email-kakao {
-      display: inline-flex;
-      flex-wrap: nowrap;
+      display: flex;
       align-items: center;
       justify-content: flex-start;
-      column-gap: 0.15rem;
+      column-gap: 0.28rem;
       row-gap: 0;
-      padding: 0.2rem 0.36rem;
-      border: 1px solid rgba(77, 60, 96, 0.28);
+      padding: 0;
+      border: none;
+      background: transparent;
+      box-shadow: none;
+      width: fit-content;
+      max-width: 100%;
+      margin-top: -0.12rem;
+    }
+
+    #contact .contact-kakao-inline {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.08rem 0.16rem;
+      border: 1px solid rgba(77, 60, 96, 0.26);
       border-radius: 4px;
       background: #fff;
-      box-shadow: 0 1px 4px rgba(39, 48, 70, 0.08);
-      margin-top: -0.18rem;
+      box-shadow: 0 1px 3px rgba(39, 48, 70, 0.08);
     }
 
     #contact .contact-kakao-label {

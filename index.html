@@ -901,13 +901,21 @@
       font-size: 0.78rem;
       line-height: 1.55;
       color: rgba(59, 71, 96, 0.9);
+      display: flex;
+      flex-direction: column;
+      gap: 0.52rem;
     }
 
     .hero-platform-cats-label {
       display: block;
       font-weight: 700;
       color: rgba(47, 58, 80, 0.85);
-      margin-bottom: 0.52rem;
+      margin: 0;
+      line-height: 1.35;
+      position: relative;
+      z-index: 2;
+      white-space: normal;
+      overflow-wrap: anywhere;
     }
 
     .hero-platform-cats-grid {
@@ -916,6 +924,8 @@
       gap: 0.42rem;
       width: 100%;
       max-width: none;
+      position: relative;
+      z-index: 1;
     }
 
     .hero-platform-cats-grid a.integrated-search-link {

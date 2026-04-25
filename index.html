@@ -377,13 +377,19 @@
       overflow: hidden !important;
     }
 
-    /* 홍보 이미지: 데스크톱 3열에서 본문·업무 패널 사이 중앙 열에 배치 */
+    /* 홍보 이미지: 데스크톱 3열에서 본문·업무 패널 사이(오른쪽 정렬) */
     .hero-promo-slot {
       display: flex;
       flex-direction: column;
       min-width: 0;
       min-height: 0;
       width: 100%;
+    }
+
+    @media (min-width: 768px) {
+      .hero-promo-slot {
+        align-items: flex-end;
+      }
     }
 
     .hero-promo-link {
@@ -393,49 +399,59 @@
       flex: 1 1 auto;
       min-height: 0;
       width: 100%;
-      overflow: hidden;
-      border-radius: 4px;
+      overflow: visible;
       line-height: 0;
-      border: 1px solid rgba(124, 93, 147, 0.38);
-      box-shadow: 0 2px 10px rgba(24, 32, 48, 0.1);
-      background: linear-gradient(180deg, rgba(12, 18, 32, 0.07) 0%, rgba(248, 249, 252, 0.55) 100%);
-      padding: 0.18rem 0.28rem;
-      transition: box-shadow 0.16s ease, transform 0.12s ease, border-color 0.12s ease;
+      border: none;
+      border-radius: 0;
+      box-shadow: none;
+      background: transparent;
+      padding: 0;
+      transition: opacity 0.16s ease;
+    }
+
+    @media (min-width: 768px) {
+      .hero-promo-link {
+        justify-content: flex-end;
+        width: auto;
+        max-width: 100%;
+        align-self: stretch;
+      }
     }
 
     .hero-promo-link:hover,
     .hero-promo-link:focus-visible {
-      box-shadow: 0 4px 14px rgba(24, 32, 48, 0.14);
-      transform: translateY(-1px);
-      border-color: rgba(95, 70, 111, 0.55);
+      opacity: 0.93;
       text-decoration: none;
     }
 
     .hero-promo-img {
       display: block;
-      margin: 0 auto;
+      margin: 0;
       max-width: 100%;
       max-height: 100%;
       width: auto;
       height: auto;
       object-fit: contain;
-      border-radius: 3px;
+      border-radius: 0;
     }
 
     @media (max-width: 767px) {
       .hero-promo-link {
         flex: 0 0 auto;
+        width: 100%;
+        justify-content: center;
       }
 
       .hero-promo-img {
         max-height: clamp(4.5rem, 36vw, 6.75rem);
+        margin-inline: auto;
       }
     }
 
     @media (prefers-reduced-motion: reduce) {
       .hero-promo-link:hover,
       .hero-promo-link:focus-visible {
-        transform: none;
+        opacity: 1;
       }
     }
 
@@ -493,8 +509,8 @@
     @media (min-width: 768px) {
       .hero-inner {
         padding: 0.52rem 1.5rem 0.58rem;
-        grid-template-columns: minmax(0, 1.02fr) minmax(11rem, 0.48fr) minmax(0, 0.88fr);
-        column-gap: 0.55rem;
+        grid-template-columns: minmax(0, 1.02fr) minmax(9.5rem, 0.4fr) minmax(0, 0.92fr);
+        column-gap: 0.38rem;
         row-gap: 0.55rem;
         align-items: stretch;
       }

@@ -465,6 +465,39 @@
       font-size: 0.86rem;
     }
 
+    .resource-pagination {
+      margin-top: 0.85rem;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 0.38rem;
+    }
+
+    .resource-page-btn {
+      min-width: 2rem;
+      height: 2rem;
+      padding: 0 0.45rem;
+      border: 1px solid var(--line);
+      border-radius: 2px;
+      background: #fff;
+      color: var(--ink);
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .resource-page-btn[aria-current="page"] {
+      border-color: rgba(90, 53, 64, 0.45);
+      background: rgba(90, 53, 64, 0.08);
+      color: var(--maroon-dark);
+    }
+
+    .resource-page-btn:disabled {
+      opacity: 0.45;
+      cursor: default;
+    }
+
     .notice-box {
       margin: 0.85rem 0 1.15rem;
       padding: 0.9rem 1rem 1rem;
@@ -638,6 +671,7 @@
     <section class="panel" aria-label="자료 목록">
       <h2>등록된 자료</h2>
       <div id="resource-list" class="list"></div>
+      <div id="resource-pagination" class="resource-pagination" aria-label="자료 목록 페이지 이동"></div>
     </section>
   </main>
 
@@ -683,6 +717,7 @@
       var formStatus = document.getElementById("form-status");
       var btnSaveResource = document.getElementById("btn-save-resource");
       var list = document.getElementById("resource-list");
+      var paginationEl = document.getElementById("resource-pagination");
       var resourceSearchScope = document.getElementById("resource-search-scope");
       var resourceSearchInput = document.getElementById("resource-search-input");
       var resourceSearchBtn = document.getElementById("resource-search-btn");
@@ -697,6 +732,8 @@
       var authSectionOpen = false;
       var wasAdmin = false;
       var ADMIN_OFF_FLAG_KEY = "resources-admin-force-off";
+      var PAGE_SIZE = 5;
+      var currentPage = 1;
       var currentResourceItems = [];
 
       function isAdmin() {
@@ -787,6 +824,43 @@
             });
           });
         });
+      }
+
+      function renderPagination(totalItems, page, pageSize) {
+        if (!paginationEl) return;
+        var totalPages = Math.max(1, Math.ceil(totalItems / pageSize));
+        if (totalItems <= pageSize) {
+          paginationEl.innerHTML = "";
+          return;
+        }
+
+        var buttons = [];
+        buttons.push(
+          '<button type="button" class="resource-page-btn" data-page="' +
+            (page - 1) +
+            '"' +
+            (page <= 1 ? " disabled" : "") +
+            '>이전</button>'
+        );
+        for (var i = 1; i <= totalPages; i += 1) {
+          buttons.push(
+            '<button type="button" class="resource-page-btn" data-page="' +
+              i +
+              '"' +
+              (i === page ? ' aria-current="page"' : "") +
+              ">" +
+              i +
+              "</button>"
+          );
+        }
+        buttons.push(
+          '<button type="button" class="resource-page-btn" data-page="' +
+            (page + 1) +
+            '"' +
+            (page >= totalPages ? " disabled" : "") +
+            '>다음</button>'
+        );
+        paginationEl.innerHTML = buttons.join("");
       }
 
       function renderItems(items) {
@@ -912,17 +986,30 @@
       function applyResourceSearch() {
         if (!resourceSearchInput || !resourceSearchScope || !resourceSearchStatus) {
           renderItems(currentResourceItems);
+          renderPagination(currentResourceItems.length, 1, PAGE_SIZE);
           return;
         }
         var query = (resourceSearchInput.value || "").trim();
         var scope = resourceSearchScope.value === "title-content" ? "title-content" : "title";
         var filtered = filterResourceItems(currentResourceItems, query, scope);
+        var totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+        if (currentPage > totalPages) currentPage = totalPages;
+        if (currentPage < 1) currentPage = 1;
+        var startIdx = (currentPage - 1) * PAGE_SIZE;
+        var paged = filtered.slice(startIdx, startIdx + PAGE_SIZE);
         resourceSearchStatus.textContent = getSearchStatusText(filtered.length, currentResourceItems.length, query);
         if (query && filtered.length === 0) {
           list.innerHTML = '<p class="empty">검색 결과가 없습니다.</p>';
+          renderPagination(0, 1, PAGE_SIZE);
           return;
         }
-        renderItems(filtered);
+        if (!query && filtered.length === 0) {
+          list.innerHTML = '<p class="empty">등록된 자료가 없습니다.</p>';
+          renderPagination(0, 1, PAGE_SIZE);
+          return;
+        }
+        renderItems(paged);
+        renderPagination(filtered.length, currentPage, PAGE_SIZE);
       }
 
       function resetForm() {
@@ -1296,16 +1383,38 @@
       });
 
       if (resourceSearchBtn && resourceSearchInput) {
-        resourceSearchBtn.addEventListener("click", applyResourceSearch);
+        resourceSearchBtn.addEventListener("click", function () {
+          currentPage = 1;
+          applyResourceSearch();
+        });
         resourceSearchInput.addEventListener("keydown", function (e) {
           if (e.key === "Enter") {
             e.preventDefault();
+            currentPage = 1;
             applyResourceSearch();
           }
         });
       }
       if (resourceSearchScope) {
-        resourceSearchScope.addEventListener("change", applyResourceSearch);
+        resourceSearchScope.addEventListener("change", function () {
+          currentPage = 1;
+          applyResourceSearch();
+        });
+      }
+      if (resourceSearchInput) {
+        resourceSearchInput.addEventListener("input", function () {
+          currentPage = 1;
+        });
+      }
+      if (paginationEl) {
+        paginationEl.addEventListener("click", function (e) {
+          var t = e.target;
+          if (!t || t.tagName !== "BUTTON") return;
+          var next = Number(t.getAttribute("data-page"));
+          if (!Number.isFinite(next) || next < 1) return;
+          currentPage = next;
+          applyResourceSearch();
+        });
       }
 
       form.addEventListener("submit", async function (e) {

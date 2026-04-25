@@ -469,62 +469,30 @@
 
     .hero-promo-wave-ch {
       display: inline-block;
-      animation: heroPromoWave 2.4s ease-in-out infinite;
-      animation-delay: calc(var(--wave-i) * 0.14s);
+      animation: heroPromoChFlash 5s ease-in-out infinite;
+      animation-delay: calc(var(--wave-i) * 0.09s);
     }
 
-    @keyframes heroPromoWave {
+    @keyframes heroPromoChFlash {
       0%,
+      82%,
       100% {
-        transform: translateY(0);
+        filter: brightness(1);
       }
-      45% {
-        transform: translateY(-4px);
+      88% {
+        filter: brightness(1.22);
+      }
+      93% {
+        filter: brightness(1);
       }
     }
 
-    .hero-promo-wave-ch:nth-child(11n + 1) {
-      color: #1e40af;
+    .hero-promo-wave-ch:nth-child(odd) {
+      color: #1e3a8a;
     }
 
-    .hero-promo-wave-ch:nth-child(11n + 2) {
+    .hero-promo-wave-ch:nth-child(even) {
       color: #6d28d9;
-    }
-
-    .hero-promo-wave-ch:nth-child(11n + 3) {
-      color: #be185d;
-    }
-
-    .hero-promo-wave-ch:nth-child(11n + 4) {
-      color: #b45309;
-    }
-
-    .hero-promo-wave-ch:nth-child(11n + 5) {
-      color: #047857;
-    }
-
-    .hero-promo-wave-ch:nth-child(11n + 6) {
-      color: #0f766e;
-    }
-
-    .hero-promo-wave-ch:nth-child(11n + 7) {
-      color: #0369a1;
-    }
-
-    .hero-promo-wave-ch:nth-child(11n + 8) {
-      color: #7c3aed;
-    }
-
-    .hero-promo-wave-ch:nth-child(11n + 9) {
-      color: #c026d3;
-    }
-
-    .hero-promo-wave-ch:nth-child(11n + 10) {
-      color: #dc2626;
-    }
-
-    .hero-promo-wave-ch:nth-child(11n + 11) {
-      color: #15803d;
     }
 
     .hero-promo-link {

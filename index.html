@@ -377,30 +377,29 @@
       overflow: hidden !important;
     }
 
-    /* 홍보 이미지: 히어로 우측 패널 안에 소형 썸네일로 배치(전체 폭 띠 제거) */
-    .hero-promo-wrap {
+    /* 홍보 이미지: 데스크톱 3열에서 본문·업무 패널 사이 중앙 열에 배치 */
+    .hero-promo-slot {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      min-height: 0;
       width: 100%;
-      max-width: 22rem;
-      margin: 0 0 0.08rem;
-    }
-
-    @media (min-width: 768px) {
-      .hero-aside .hero-promo-wrap {
-        margin-left: auto;
-      }
     }
 
     .hero-promo-link {
       display: flex;
       align-items: center;
       justify-content: center;
+      flex: 1 1 auto;
+      min-height: 0;
+      width: 100%;
       overflow: hidden;
       border-radius: 4px;
       line-height: 0;
       border: 1px solid rgba(124, 93, 147, 0.38);
       box-shadow: 0 2px 10px rgba(24, 32, 48, 0.1);
       background: linear-gradient(180deg, rgba(12, 18, 32, 0.07) 0%, rgba(248, 249, 252, 0.55) 100%);
-      padding: 0.22rem 0.32rem;
+      padding: 0.18rem 0.28rem;
       transition: box-shadow 0.16s ease, transform 0.12s ease, border-color 0.12s ease;
     }
 
@@ -416,16 +415,20 @@
       display: block;
       margin: 0 auto;
       max-width: 100%;
-      max-height: clamp(5.25rem, 20vw, 9.25rem);
+      max-height: 100%;
       width: auto;
       height: auto;
       object-fit: contain;
       border-radius: 3px;
     }
 
-    @media (max-width: 640px) {
+    @media (max-width: 767px) {
+      .hero-promo-link {
+        flex: 0 0 auto;
+      }
+
       .hero-promo-img {
-        max-height: clamp(4.75rem, 42vw, 7rem);
+        max-height: clamp(4.5rem, 36vw, 6.75rem);
       }
     }
 
@@ -490,9 +493,10 @@
     @media (min-width: 768px) {
       .hero-inner {
         padding: 0.52rem 1.5rem 0.58rem;
-        grid-template-columns: minmax(0, 1.12fr) minmax(0, 0.88fr);
-        gap: 0.95rem;
-        align-items: start;
+        grid-template-columns: minmax(0, 1.02fr) minmax(11rem, 0.48fr) minmax(0, 0.88fr);
+        column-gap: 0.55rem;
+        row-gap: 0.55rem;
+        align-items: stretch;
       }
     }
 
@@ -542,11 +546,16 @@
 
     @media (min-width: 768px) {
       .hero-aside {
-        align-self: center; /* 왼쪽 본문 블록 높이 안에서 세로 중앙 — 행/섹션 높이 증가 없음 */
+        align-self: stretch;
         align-items: flex-end;
         text-align: right;
         margin: 0 0 0 auto;
         padding: 0.62rem 0.98rem;
+        justify-content: space-between;
+      }
+
+      .hero-aside .hero-mini {
+        margin-top: auto;
       }
     }
 
@@ -2056,24 +2065,24 @@
             <a class="btn btn-ghost" href="platform.html">지능형 행정 플랫폼</a>
           </div>
         </div>
+        <div class="hero-promo-slot" aria-label="사무소 홍보">
+          <a
+            class="hero-promo-link"
+            href="#services"
+            aria-label="주요 업무 분야로 이동. 복잡한 행정, 한번에 해결"
+          >
+            <img
+              class="hero-promo-img"
+              src="images/hero-promo-banner.png"
+              alt=""
+              width="1600"
+              height="420"
+              decoding="async"
+              loading="lazy"
+            />
+          </a>
+        </div>
         <aside class="hero-aside" aria-label="업무 분야 바로가기">
-          <div class="hero-promo-wrap">
-            <a
-              class="hero-promo-link"
-              href="#services"
-              aria-label="주요 업무 분야로 이동. 복잡한 행정, 한번에 해결"
-            >
-              <img
-                class="hero-promo-img"
-                src="images/hero-promo-banner.png"
-                alt=""
-                width="1600"
-                height="420"
-                decoding="async"
-                loading="lazy"
-              />
-            </a>
-          </div>
           <p class="hero-tagline">Administrative Agent Office</p>
           <div class="hero-mini">
             <a data-service="nonprofit" href="service-nonprofit.html" aria-label="비영리법인설립업무 게시 페이지로 이동">비영리법인</a>

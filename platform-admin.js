@@ -745,6 +745,19 @@
     if (editorLead) editorLead.rows = 2;
     if (editorBody) editorBody.rows = 7;
 
+    function clearAuthPasswordInputs() {
+      if (adminPassSupabase) {
+        adminPassSupabase.value = "";
+        adminPassSupabase.setAttribute("autocomplete", "off");
+      }
+      if (adminPassLocal) {
+        adminPassLocal.value = "";
+        adminPassLocal.setAttribute("autocomplete", "off");
+      }
+    }
+
+    clearAuthPasswordInputs();
+
     function syncAdminRootVisibility() {
       if (!root) return;
       root.style.display = adminRootOpen ? "" : "none";
@@ -787,6 +800,7 @@
           return;
         }
         adminRootOpen = nextOpen;
+        if (adminRootOpen) clearAuthPasswordInputs();
         if (adminRootOpen && !isAdmin()) {
           setStatus(authStatus, "", "일반 로그인 또는 로컬 비상 모드 로그인을 선택해 주세요.");
         }
@@ -817,6 +831,7 @@
       if (editorPanel) editorPanel.style.display = on ? "block" : "none";
       if (authPanelLoggedOut) authPanelLoggedOut.style.display = on ? "none" : "block";
       if (authPanelAdmin) authPanelAdmin.style.display = on ? "block" : "none";
+      if (!on) clearAuthPasswordInputs();
       if (adminPassSupabase) adminPassSupabase.disabled = on || !client;
       if (btnLoginSupabase) btnLoginSupabase.disabled = on || !client;
       if (adminPassLocal) adminPassLocal.disabled = on || STRICT_CLOUD_SYNC_WHEN_AVAILABLE;

@@ -1151,6 +1151,10 @@
       margin-bottom: 0.45rem;
     }
 
+    #consult-form {
+      scroll-margin-top: 5rem;
+    }
+
     #contact .consult-form-wrap {
       padding: 0.45rem 0.62rem 0.55rem;
       width: 100%;
@@ -2188,8 +2192,8 @@
           <div class="hero-promo-slot" aria-label="사무소 홍보">
             <a
               class="hero-promo-link"
-              href="#services"
-              aria-label="주요 업무 분야로 이동. 복잡한 행정, 한방에 해결"
+              href="#consult-form"
+              aria-label="상담요청 폼으로 이동합니다"
             >
               <div class="hero-promo-frame">
                 <img
@@ -2773,6 +2777,35 @@
             btn.disabled = false;
           });
       });
+    })();
+
+    (function () {
+      function focusConsultNameInput() {
+        var input = document.getElementById("consult-name");
+        if (!input) return;
+        try {
+          input.focus({ preventScroll: true });
+        } catch (e) {
+          input.focus();
+        }
+      }
+      function focusConsultNameIfHash() {
+        var h = (window.location.hash || "").replace(/\/$/, "");
+        if (h !== "#consult-form") return;
+        window.setTimeout(focusConsultNameInput, 200);
+      }
+      window.addEventListener("hashchange", focusConsultNameIfHash);
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", focusConsultNameIfHash);
+      } else {
+        focusConsultNameIfHash();
+      }
+      var heroConsult = document.querySelector('a.hero-promo-link[href="#consult-form"]');
+      if (heroConsult) {
+        heroConsult.addEventListener("click", function () {
+          window.setTimeout(focusConsultNameInput, 280);
+        });
+      }
     })();
 
     (function () {

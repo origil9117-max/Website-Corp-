@@ -2008,16 +2008,16 @@
 
     .registered-search {
       margin-top: 0.7rem;
-      padding: 0.72rem 0.78rem;
+      padding: 0.52rem 0.62rem;
       border: 1px solid rgba(55, 66, 92, 0.2);
       border-radius: 2px;
       background: #fff;
     }
 
     .registered-search label {
-      margin: 0 0 0.35rem;
+      margin: 0 0 0.28rem;
       display: block;
-      font-size: 0.78rem;
+      font-size: 0.75rem;
       font-weight: 700;
       color: var(--ink-soft);
     }
@@ -2058,19 +2058,34 @@
     }
 
     .registered-search-status {
-      margin: 0.42rem 0 0;
+      margin: 0.32rem 0 0;
       font-size: 0.74rem;
       color: var(--muted);
+      display: none;
+    }
+
+    .registered-search-status.show {
+      display: block;
     }
 
     .registered-search-results {
-      margin: 0.48rem 0 0;
+      margin: 0.35rem 0 0;
       padding: 0;
       list-style: none;
-      display: grid;
+      display: none;
       gap: 0.3rem;
-      max-height: 12.5rem;
+      max-height: 8.5rem;
       overflow: auto;
+    }
+
+    .registered-search-results.show {
+      display: grid;
+    }
+
+    .hero-bottom .registered-search {
+      margin-top: 0.48rem;
+      width: 100%;
+      max-width: none;
     }
 
     .registered-search-results li a {
@@ -2330,6 +2345,22 @@
               <a href="platform-hub.html">공지·자료실 연동</a>
             </div>
           </nav>
+          <div class="registered-search hero-registered-search" aria-label="통합 자료 검색">
+            <label for="registered-search-input">통합 자료 검색</label>
+            <div class="registered-search-row">
+              <input
+                id="registered-search-input"
+                type="search"
+                inputmode="search"
+                autocomplete="off"
+                placeholder="예: 출입국, 보훈, FAQ, 로드맵"
+                aria-label="통합 자료 검색어 입력"
+              />
+              <button type="button" id="registered-search-btn">검색</button>
+            </div>
+            <p id="registered-search-status" class="registered-search-status">키워드를 입력하면 등록된 자료 페이지를 바로 찾을 수 있습니다.</p>
+            <ul id="registered-search-results" class="registered-search-results" aria-live="polite"></ul>
+          </div>
         </div>
       </div>
     </section>
@@ -2602,22 +2633,6 @@
                   title="다음에서 대한민국행정사사무소 검색"
                   >다음</a>
               </span>
-            </div>
-            <div class="registered-search" aria-label="등록 자료 검색">
-              <label for="registered-search-input">등록된 자료 검색</label>
-              <div class="registered-search-row">
-                <input
-                  id="registered-search-input"
-                  type="search"
-                  inputmode="search"
-                  autocomplete="off"
-                  placeholder="예: 출입국, 보훈, FAQ, 로드맵"
-                  aria-label="등록된 자료 검색어 입력"
-                />
-                <button type="button" id="registered-search-btn">검색</button>
-              </div>
-              <p id="registered-search-status" class="registered-search-status">키워드를 입력하면 등록된 자료 페이지를 바로 찾을 수 있습니다.</p>
-              <ul id="registered-search-results" class="registered-search-results" aria-live="polite"></ul>
             </div>
           </div>
         </div>
@@ -2956,14 +2971,19 @@
       function renderResults(items, query) {
         resultsEl.innerHTML = "";
         if (!query) {
-          statusEl.textContent = "키워드를 입력하면 등록된 자료 페이지를 바로 찾을 수 있습니다.";
+          statusEl.classList.remove("show");
+          resultsEl.classList.remove("show");
           return;
         }
         if (!items.length) {
           statusEl.textContent = "검색 결과가 없습니다. 다른 키워드로 시도해 주세요.";
+          statusEl.classList.add("show");
+          resultsEl.classList.remove("show");
           return;
         }
         statusEl.textContent = "총 " + items.length + "건의 자료를 찾았습니다.";
+        statusEl.classList.add("show");
+        resultsEl.classList.add("show");
         items.forEach(function (item) {
           var li = document.createElement("li");
           var a = document.createElement("a");

@@ -756,10 +756,20 @@
 
     function ensureAdminToggleButton() {
       if (adminToggleBtn) return;
-      var topLinks = document.querySelector(".topbar .links");
-      var heading = document.querySelector("article h1");
-      var mountHost = topLinks || (heading && heading.parentNode ? heading.parentNode : null);
-      if (!mountHost) return;
+      var wrap = document.querySelector(".wrap");
+      var breadcrumb = document.querySelector(".platform-breadcrumb");
+      if (!wrap) return;
+
+      var mountRow = document.querySelector(".platform-admin-toggle-row");
+      if (!mountRow) {
+        mountRow = document.createElement("div");
+        mountRow.className = "platform-admin-toggle-row";
+        if (breadcrumb && breadcrumb.parentNode === wrap) {
+          breadcrumb.insertAdjacentElement("afterend", mountRow);
+        } else {
+          wrap.insertBefore(mountRow, wrap.firstChild);
+        }
+      }
 
       var btn = document.createElement("button");
       btn.type = "button";
@@ -782,7 +792,7 @@
         }
         updateAdminUi();
       });
-      mountHost.appendChild(btn);
+      mountRow.appendChild(btn);
       adminToggleBtn = btn;
       syncAdminRootVisibility();
     }

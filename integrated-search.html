@@ -473,8 +473,8 @@
             "<p>다른 키워드로 다시 검색해 주세요.</p>" +
             "</div>" +
             '<span class="result-indicator" aria-live="polite">' +
-            '<span class="indicator-text empty">검색결과가 없습니다.</span>' +
             '<span class="result-icon" aria-hidden="true"></span>' +
+            '<span class="indicator-text empty">검색결과가 없습니다.</span>' +
             "</span>";
           resultsEl.appendChild(emptyCard);
           return;
@@ -493,8 +493,8 @@
             "<p>" + escapeHtml(item.desc || "설명 없음") + "</p>" +
             "</div>" +
             '<span class="result-indicator" aria-live="polite">' +
-            '<span class="indicator-text ok">검색되었습니다.</span>' +
             '<span class="result-icon" aria-hidden="true"></span>' +
+            '<span class="indicator-text ok">검색되었습니다.</span>' +
             "</span>";
           resultsEl.appendChild(card);
         });

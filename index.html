@@ -444,19 +444,28 @@
       width: auto;
       height: auto;
       object-fit: contain;
-      animation: heroPromoFlash 3.2s ease-in-out infinite;
+      animation: heroPromoFlash 4s ease-in-out infinite;
     }
 
     @keyframes heroPromoFlash {
       0%,
-      86%,
+      76%,
       100% {
         filter: brightness(1);
       }
-      90% {
-        filter: brightness(1.28);
+      82% {
+        filter: brightness(1.38);
       }
-      93% {
+      86% {
+        filter: brightness(1.62);
+      }
+      90% {
+        filter: brightness(1.55);
+      }
+      95% {
+        filter: brightness(1.22);
+      }
+      98% {
         filter: brightness(1);
       }
     }

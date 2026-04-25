@@ -4,12 +4,54 @@ window.SUPABASE_ANON_KEY = "sb_publishable_00brCPgc_AQYc8YFtbliKA_Os4EdlrP";
 (function () {
   var href = String(window.location.href || "");
   if (!href) return;
-  if (/integrated-search\.html/i.test(href)) return;
+  var isIntegratedSearchPage = /integrated-search\.html/i.test(href);
 
   var params = new URLSearchParams(window.location.search || "");
-  if (params.get("from") !== "integrated-search") return;
+
+  function mountGlobalIntegratedSearchButton() {
+    if (isIntegratedSearchPage) return;
+    if (document.getElementById("global-integrated-search-btn")) return;
+
+    var style = document.createElement("style");
+    style.textContent = [
+      "#global-integrated-search-btn {",
+      "position: fixed;",
+      "right: 1rem;",
+      "top: 4.3rem;",
+      "z-index: 9998;",
+      "display: inline-flex;",
+      "align-items: center;",
+      "justify-content: center;",
+      "padding: 0.52rem 0.76rem;",
+      "border-radius: 999px;",
+      "border: 1px solid rgba(65, 135, 26, 0.44);",
+      "background: linear-gradient(180deg, #9ae74b 0%, #63bf1f 100%);",
+      "color: #1f3f12;",
+      "font: 800 0.78rem/1 'Noto Sans KR', system-ui, sans-serif;",
+      "text-decoration: none;",
+      "box-shadow: 0 8px 18px rgba(44, 98, 20, 0.28);",
+      "}",
+      "#global-integrated-search-btn:hover, #global-integrated-search-btn:focus-visible {",
+      "filter: brightness(1.04);",
+      "text-decoration: none;",
+      "color: #16330b;",
+      "}",
+      "@media (max-width: 640px) {",
+      "#global-integrated-search-btn { right: 0.7rem; top: 3.8rem; padding: 0.48rem 0.7rem; font-size: 0.74rem; }",
+      "}"
+    ].join("");
+    document.head.appendChild(style);
+
+    var btn = document.createElement("a");
+    btn.id = "global-integrated-search-btn";
+    btn.href = "integrated-search.html";
+    btn.textContent = "통합검색";
+    btn.setAttribute("aria-label", "통합검색 페이지로 이동");
+    document.body.appendChild(btn);
+  }
 
   function mountBackButton() {
+    if (params.get("from") !== "integrated-search") return;
     if (document.getElementById("integrated-search-back-btn")) return;
 
     var returnTo = params.get("return_to") || "integrated-search.html";
@@ -52,8 +94,12 @@ window.SUPABASE_ANON_KEY = "sb_publishable_00brCPgc_AQYc8YFtbliKA_Os4EdlrP";
   }
 
   if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", mountBackButton);
+    document.addEventListener("DOMContentLoaded", function () {
+      mountGlobalIntegratedSearchButton();
+      mountBackButton();
+    });
   } else {
+    mountGlobalIntegratedSearchButton();
     mountBackButton();
   }
 })();

@@ -547,7 +547,7 @@
         permit: "인허가 민원",
         appeal: "행정심판"
       };
-      var ADMIN_PASS = "admin1234";
+      var ADMIN_EMAIL = "lkc@daum.net";
       var service = new URL(window.location.href).searchParams.get("service") || "nonprofit";
       if (!SERVICE_MAP[service]) service = "nonprofit";
       var STORAGE_KEY = "service-posts:" + service;
@@ -2076,9 +2076,30 @@
         }
       }
 
-      btnLogin.addEventListener("click", function () {
-        if ((adminPass.value || "").trim() !== ADMIN_PASS) {
-          authStatus.textContent = "비밀번호가 올바르지 않습니다.";
+      btnLogin.addEventListener("click", async function () {
+        var password = (adminPass.value || "").trim();
+        if (!password) {
+          authStatus.textContent = "관리자 비밀번호를 입력해 주세요.";
+          return;
+        }
+        if (!client) {
+          authStatus.textContent = "Supabase 연결이 필요합니다. 일반 관리자 모드 비밀번호로 로그인해 주세요.";
+          return;
+        }
+        var loginRes;
+        try {
+          loginRes = await client.auth.signInWithPassword({ email: ADMIN_EMAIL, password: password });
+        } catch (err) {
+          authStatus.textContent = "로그인 연결 실패(Failed to fetch). 네트워크·HTTPS 주소를 확인해 주세요.";
+          return;
+        }
+        if (loginRes.error) {
+          var msg = String(loginRes.error.message || "");
+          if (/Invalid login credentials/i.test(msg)) {
+            authStatus.textContent = "로그인 실패: 일반 관리자 모드 비밀번호가 올바르지 않습니다.";
+            return;
+          }
+          authStatus.textContent = "로그인 실패: " + msg;
           return;
         }
         adminOn = true;
@@ -2088,9 +2109,12 @@
         renderPosts();
       });
 
-      btnLogout.addEventListener("click", function () {
+      btnLogout.addEventListener("click", async function () {
         adminOn = false;
         formStatus.textContent = "";
+        if (client && client.auth) {
+          try { await client.auth.signOut(); } catch (err) {}
+        }
         updateAdminUi();
         renderPosts();
       });

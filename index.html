@@ -448,77 +448,44 @@
       width: auto;
       height: auto;
       object-fit: contain;
-      animation: heroPromoChFlash 7s ease-in-out infinite;
+      animation: heroPromoImgFlash 12s ease-in-out infinite;
     }
 
-    .hero-promo-wave {
-      flex: 0 0 auto;
-      margin: 0.22rem 0 0;
-      padding: 0.18rem 0.55rem 0.14rem;
-      font-size: clamp(0.58rem, 1.45vw, 0.76rem);
-      font-weight: 800;
-      letter-spacing: 0.1em;
-      line-height: 1.25;
-      text-align: center;
-      white-space: nowrap;
-      border-radius: 4px;
-      background: rgba(248, 249, 252, 0.88);
-      box-shadow: none;
-      border: 1px solid rgba(43, 52, 72, 0.1);
-      max-width: 100%;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .hero-promo-wave-ch {
-      display: inline-block;
-      animation: heroPromoChFlash 7s ease-in-out infinite;
-      animation-delay: calc(var(--wave-i) * 0.158s);
-    }
-
-    @keyframes heroPromoChFlash {
+    @keyframes heroPromoImgFlash {
       0%,
       100% {
         filter: brightness(1);
       }
       3% {
-        filter: brightness(1.16);
+        filter: brightness(1.045);
       }
       6% {
         filter: brightness(1);
       }
       22% {
-        filter: brightness(1.12);
+        filter: brightness(1.03);
       }
       25% {
         filter: brightness(1);
       }
       48% {
-        filter: brightness(1.18);
+        filter: brightness(1.055);
       }
       52% {
         filter: brightness(1);
       }
       72% {
-        filter: brightness(1.1);
+        filter: brightness(1.025);
       }
       75% {
         filter: brightness(1);
       }
       88% {
-        filter: brightness(1.22);
+        filter: brightness(1.06);
       }
       93% {
         filter: brightness(1);
       }
-    }
-
-    .hero-promo-wave-ch:nth-child(odd) {
-      color: #2f3848;
-    }
-
-    .hero-promo-wave-ch:nth-child(even) {
-      color: #5a6578;
     }
 
     .hero-promo-link {
@@ -578,7 +545,6 @@
     }
 
     @media (prefers-reduced-motion: reduce) {
-      .hero-promo-wave-ch,
       .hero-promo-frame .hero-promo-img {
         animation: none;
       }
@@ -2235,9 +2201,6 @@
                   decoding="async"
                   loading="lazy"
                 />
-                <p class="hero-promo-wave" aria-hidden="true">
-                  <span class="hero-promo-wave-ch" style="--wave-i: 0">복</span><span class="hero-promo-wave-ch" style="--wave-i: 1">잡</span><span class="hero-promo-wave-ch" style="--wave-i: 2">한</span><span class="hero-promo-wave-ch" style="--wave-i: 3">행</span><span class="hero-promo-wave-ch" style="--wave-i: 4">정</span><span class="hero-promo-wave-ch" style="--wave-i: 5">, </span><span class="hero-promo-wave-ch" style="--wave-i: 6">한</span><span class="hero-promo-wave-ch" style="--wave-i: 7">방</span><span class="hero-promo-wave-ch" style="--wave-i: 8">에</span><span class="hero-promo-wave-ch" style="--wave-i: 9">해</span><span class="hero-promo-wave-ch" style="--wave-i: 10">결</span>
-                </p>
               </div>
             </a>
           </div>

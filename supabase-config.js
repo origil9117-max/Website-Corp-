@@ -10,6 +10,7 @@ window.SUPABASE_ANON_KEY = "sb_publishable_00brCPgc_AQYc8YFtbliKA_Os4EdlrP";
 
   function mountGlobalIntegratedSearchButton() {
     if (isIntegratedSearchPage) return;
+    if (/\/(?:index\.html)?(?:\?|#|$)/i.test(window.location.pathname + window.location.search + window.location.hash)) return;
     if (document.getElementById("global-integrated-search-btn")) return;
 
     var style = document.createElement("style");

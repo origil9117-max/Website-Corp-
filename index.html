@@ -470,18 +470,41 @@
 
     .hero-promo-wave-ch {
       display: inline-block;
-      animation: heroPromoChFlash 5s ease-in-out infinite;
+      animation: heroPromoChFlash 4s ease-in-out infinite;
       animation-delay: calc(var(--wave-i) * 0.09s);
     }
 
     @keyframes heroPromoChFlash {
       0%,
-      82%,
       100% {
         filter: brightness(1);
       }
-      88% {
+      3% {
+        filter: brightness(1.16);
+      }
+      6% {
+        filter: brightness(1);
+      }
+      22% {
+        filter: brightness(1.12);
+      }
+      25% {
+        filter: brightness(1);
+      }
+      48% {
+        filter: brightness(1.18);
+      }
+      52% {
+        filter: brightness(1);
+      }
+      72% {
         filter: brightness(1.1);
+      }
+      75% {
+        filter: brightness(1);
+      }
+      88% {
+        filter: brightness(1.22);
       }
       93% {
         filter: brightness(1);

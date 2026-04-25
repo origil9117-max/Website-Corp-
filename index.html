@@ -413,6 +413,7 @@
     /* 그라데이션 링 + 가장자리 페이드 */
     .hero-promo-frame {
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
       max-width: 100%;
@@ -438,33 +439,92 @@
 
     .hero-promo-frame .hero-promo-img {
       display: block;
+      flex: 1 1 auto;
+      min-height: 0;
       border-radius: 12px;
       max-width: 100%;
       max-height: 100%;
       width: auto;
       height: auto;
       object-fit: contain;
-      animation: heroPromoFlash 7s ease-in-out infinite;
     }
 
-    @keyframes heroPromoFlash {
+    .hero-promo-wave {
+      flex: 0 0 auto;
+      margin: 0.22rem 0 0;
+      padding: 0.18rem 0.35rem 0.14rem;
+      font-size: clamp(0.56rem, 1.35vw, 0.7rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.25;
+      text-align: center;
+      white-space: nowrap;
+      border-radius: 4px;
+      background: rgba(248, 249, 252, 0.82);
+      box-shadow: 0 1px 4px rgba(24, 32, 48, 0.08);
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .hero-promo-wave-ch {
+      display: inline-block;
+      animation: heroPromoWave 2.4s ease-in-out infinite;
+      animation-delay: calc(var(--wave-i) * 0.14s);
+    }
+
+    @keyframes heroPromoWave {
       0%,
-      76%,
       100% {
-        filter: brightness(1);
+        transform: translateY(0);
       }
-      84% {
-        filter: brightness(1.06);
+      45% {
+        transform: translateY(-4px);
       }
-      88% {
-        filter: brightness(1.14);
-      }
-      93% {
-        filter: brightness(1.08);
-      }
-      97% {
-        filter: brightness(1);
-      }
+    }
+
+    .hero-promo-wave-ch:nth-child(11n + 1) {
+      color: #1e40af;
+    }
+
+    .hero-promo-wave-ch:nth-child(11n + 2) {
+      color: #6d28d9;
+    }
+
+    .hero-promo-wave-ch:nth-child(11n + 3) {
+      color: #be185d;
+    }
+
+    .hero-promo-wave-ch:nth-child(11n + 4) {
+      color: #b45309;
+    }
+
+    .hero-promo-wave-ch:nth-child(11n + 5) {
+      color: #047857;
+    }
+
+    .hero-promo-wave-ch:nth-child(11n + 6) {
+      color: #0f766e;
+    }
+
+    .hero-promo-wave-ch:nth-child(11n + 7) {
+      color: #0369a1;
+    }
+
+    .hero-promo-wave-ch:nth-child(11n + 8) {
+      color: #7c3aed;
+    }
+
+    .hero-promo-wave-ch:nth-child(11n + 9) {
+      color: #c026d3;
+    }
+
+    .hero-promo-wave-ch:nth-child(11n + 10) {
+      color: #dc2626;
+    }
+
+    .hero-promo-wave-ch:nth-child(11n + 11) {
+      color: #15803d;
     }
 
     .hero-promo-link {
@@ -524,7 +584,7 @@
     }
 
     @media (prefers-reduced-motion: reduce) {
-      .hero-promo-frame .hero-promo-img {
+      .hero-promo-wave-ch {
         animation: none;
       }
 
@@ -2168,9 +2228,9 @@
             <a
               class="hero-promo-link"
               href="#services"
-              aria-label="주요 업무 분야로 이동. 복잡한 행정, 한번에 해결"
+              aria-label="주요 업무 분야로 이동. 복잡한 행정, 한방에 해결"
             >
-              <span class="hero-promo-frame">
+              <div class="hero-promo-frame">
                 <img
                   class="hero-promo-img"
                   src="images/hero-promo-banner.png"
@@ -2180,7 +2240,10 @@
                   decoding="async"
                   loading="lazy"
                 />
-              </span>
+                <p class="hero-promo-wave" aria-hidden="true">
+                  <span class="hero-promo-wave-ch" style="--wave-i: 0">복</span><span class="hero-promo-wave-ch" style="--wave-i: 1">잡</span><span class="hero-promo-wave-ch" style="--wave-i: 2">한</span><span class="hero-promo-wave-ch" style="--wave-i: 3">행</span><span class="hero-promo-wave-ch" style="--wave-i: 4">정</span><span class="hero-promo-wave-ch" style="--wave-i: 5">, </span><span class="hero-promo-wave-ch" style="--wave-i: 6">한</span><span class="hero-promo-wave-ch" style="--wave-i: 7">방</span><span class="hero-promo-wave-ch" style="--wave-i: 8">에</span><span class="hero-promo-wave-ch" style="--wave-i: 9">해</span><span class="hero-promo-wave-ch" style="--wave-i: 10">결</span>
+                </p>
+              </div>
             </a>
           </div>
           <aside class="hero-aside" aria-label="업무 분야 바로가기">

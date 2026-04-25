@@ -439,7 +439,7 @@
     <section id="auth-section" class="panel" aria-label="관리자 인증" hidden>
       <h2>관리자 인증</h2>
       <div class="row">
-        <input id="admin-pass" type="password" placeholder="관리자 비밀번호" />
+        <input id="admin-pass" type="password" autocomplete="off" placeholder="관리자 비밀번호" />
         <button id="btn-login" class="btn btn-primary" type="button">관리자 모드 켜기</button>
         <button id="btn-logout" class="btn btn-ghost" type="button">관리자 모드 끄기</button>
       </div>
@@ -591,6 +591,11 @@
       var client = null;
       var cloudEnabled = false;
       var cloudDiag = "";
+
+      if (adminPass) {
+        adminPass.value = "";
+        adminPass.setAttribute("autocomplete", "off");
+      }
 
       var SERVICE_POSTS_SQL =
         "-- Run once in Supabase SQL Editor (게시글 공용 저장)\r\n" +
@@ -2131,6 +2136,7 @@
             return;
           }
           authSectionOpen = nextOpen;
+          if (nextOpen && adminPass) adminPass.value = "";
           updateAdminUi();
         });
       }

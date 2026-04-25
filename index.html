@@ -437,6 +437,7 @@
       mask-size: 100% 100%;
     }
 
+    /* PNG 안의 글자는 선택 불가 → 이미지 전체에 동일 플래시를 주면 문구도 함께 밝아짐 */
     .hero-promo-frame .hero-promo-img {
       display: block;
       flex: 1 1 auto;
@@ -447,6 +448,7 @@
       width: auto;
       height: auto;
       object-fit: contain;
+      animation: heroPromoChFlash 4s ease-in-out infinite;
     }
 
     .hero-promo-wave {
@@ -576,7 +578,8 @@
     }
 
     @media (prefers-reduced-motion: reduce) {
-      .hero-promo-wave-ch {
+      .hero-promo-wave-ch,
+      .hero-promo-frame .hero-promo-img {
         animation: none;
       }
 

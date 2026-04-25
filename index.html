@@ -377,7 +377,24 @@
       overflow: hidden !important;
     }
 
-    /* 홍보 이미지: 데스크톱 3열에서 본문·업무 패널 사이(오른쪽 정렬) */
+    /* 오른쪽 열: 홍보 이미지 + Administrative Agent Office 패널 (가로로 붙이고 높이 맞춤) */
+    .hero-aside-col {
+      display: flex;
+      flex-direction: column;
+      gap: 0.72rem;
+      min-width: 0;
+      width: 100%;
+    }
+
+    @media (min-width: 768px) {
+      .hero-aside-col {
+        flex-direction: row;
+        align-items: stretch;
+        justify-content: flex-end;
+        gap: 0.48rem;
+      }
+    }
+
     .hero-promo-slot {
       display: flex;
       flex-direction: column;
@@ -388,18 +405,19 @@
 
     @media (min-width: 768px) {
       .hero-promo-slot {
-        align-items: flex-end;
-        margin-right: -0.85rem;
-        position: relative;
-        z-index: 1;
+        flex: 0 0 clamp(10rem, 28vw, 14.25rem);
+        align-items: stretch;
       }
     }
 
     /* 그라데이션 링 + 가장자리 페이드 */
     .hero-promo-frame {
-      display: inline-block;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       max-width: 100%;
       max-height: 100%;
+      min-height: 0;
       padding: 2px;
       border-radius: 14px;
       line-height: 0;
@@ -447,10 +465,16 @@
 
     @media (min-width: 768px) {
       .hero-promo-link {
-        justify-content: flex-end;
-        width: auto;
-        max-width: 100%;
+        flex: 1 1 auto;
+        min-height: 0;
+        width: 100%;
+        justify-content: center;
+        align-items: stretch;
         align-self: stretch;
+      }
+
+      .hero-promo-frame {
+        height: 100%;
       }
     }
 
@@ -539,8 +563,8 @@
     @media (min-width: 768px) {
       .hero-inner {
         padding: 0.52rem 1.5rem 0.58rem;
-        grid-template-columns: minmax(0, 1.02fr) minmax(8.5rem, 0.36fr) minmax(0, 0.94fr);
-        column-gap: 0.28rem;
+        grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+        column-gap: 0.85rem;
         row-gap: 0.55rem;
         align-items: stretch;
       }
@@ -595,11 +619,12 @@
         align-self: stretch;
         align-items: flex-end;
         text-align: right;
-        margin: 0 0 0 auto;
+        margin: 0;
+        flex: 1 1 auto;
+        min-width: 0;
+        max-width: 380px;
         padding: 0.62rem 0.98rem;
         justify-content: space-between;
-        position: relative;
-        z-index: 2;
       }
 
       .hero-aside .hero-mini {
@@ -2113,36 +2138,38 @@
             <a class="btn btn-ghost" href="platform.html">지능형 행정 플랫폼</a>
           </div>
         </div>
-        <div class="hero-promo-slot" aria-label="사무소 홍보">
-          <a
-            class="hero-promo-link"
-            href="#services"
-            aria-label="주요 업무 분야로 이동. 복잡한 행정, 한번에 해결"
-          >
-            <span class="hero-promo-frame">
-              <img
-                class="hero-promo-img"
-                src="images/hero-promo-banner.png"
-                alt=""
-                width="1600"
-                height="420"
-                decoding="async"
-                loading="lazy"
-              />
-            </span>
-          </a>
-        </div>
-        <aside class="hero-aside" aria-label="업무 분야 바로가기">
-          <p class="hero-tagline">Administrative Agent Office</p>
-          <div class="hero-mini">
-            <a data-service="nonprofit" href="service-nonprofit.html" aria-label="비영리법인설립업무 게시 페이지로 이동">비영리법인</a>
-            <a data-service="immigration" href="service-immigration.html" aria-label="출입국민원업무 게시 페이지로 이동">출입국민원</a>
-            <a data-service="investment" href="service-investment.html" aria-label="기업투자·법인설립 게시 페이지로 이동">기업투자 · 법인</a>
-            <a data-service="patriot" href="service-patriot.html" aria-label="국가유공자보훈업무 게시 페이지로 이동">국가유공자보훈</a>
-            <a data-service="permit" href="service-permit.html" aria-label="인허가 민원 업무 게시 페이지로 이동">인허가 민원</a>
-            <a data-service="appeal" href="service-appeal.html" aria-label="행정심판 업무 게시 페이지로 이동">행정심판</a>
+        <div class="hero-aside-col">
+          <div class="hero-promo-slot" aria-label="사무소 홍보">
+            <a
+              class="hero-promo-link"
+              href="#services"
+              aria-label="주요 업무 분야로 이동. 복잡한 행정, 한번에 해결"
+            >
+              <span class="hero-promo-frame">
+                <img
+                  class="hero-promo-img"
+                  src="images/hero-promo-banner.png"
+                  alt=""
+                  width="1600"
+                  height="420"
+                  decoding="async"
+                  loading="lazy"
+                />
+              </span>
+            </a>
           </div>
-        </aside>
+          <aside class="hero-aside" aria-label="업무 분야 바로가기">
+            <p class="hero-tagline">Administrative Agent Office</p>
+            <div class="hero-mini">
+              <a data-service="nonprofit" href="service-nonprofit.html" aria-label="비영리법인설립업무 게시 페이지로 이동">비영리법인</a>
+              <a data-service="immigration" href="service-immigration.html" aria-label="출입국민원업무 게시 페이지로 이동">출입국민원</a>
+              <a data-service="investment" href="service-investment.html" aria-label="기업투자·법인설립 게시 페이지로 이동">기업투자 · 법인</a>
+              <a data-service="patriot" href="service-patriot.html" aria-label="국가유공자보훈업무 게시 페이지로 이동">국가유공자보훈</a>
+              <a data-service="permit" href="service-permit.html" aria-label="인허가 민원 업무 게시 페이지로 이동">인허가 민원</a>
+              <a data-service="appeal" href="service-appeal.html" aria-label="행정심판 업무 게시 페이지로 이동">행정심판</a>
+            </div>
+          </aside>
+        </div>
       </div>
       <div class="hero-bottom">
         <div class="hero-platform-cats-wrap">

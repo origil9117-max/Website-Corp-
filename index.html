@@ -654,6 +654,7 @@
 
     .hero-copy {
       max-width: 38rem;
+      --hero-title-block-width: 21.8rem;
     }
 
     .hero-bottom {
@@ -950,7 +951,7 @@
       border: 1px solid rgba(124, 93, 147, 0.35);
       background: rgba(255, 255, 255, 0.64);
       padding: 0.26rem 0.7rem;
-      width: 39ch;
+      width: var(--hero-title-block-width);
       white-space: nowrap;
       box-sizing: border-box;
       margin-bottom: 0.32rem;
@@ -964,8 +965,8 @@
       line-height: 1.18;
       letter-spacing: -0.03em;
       margin-bottom: 0.06rem;
-      width: 36ch;
-      max-width: 36ch;
+      width: var(--hero-title-block-width);
+      max-width: var(--hero-title-block-width);
       color: var(--ink);
       text-shadow: none;
     }

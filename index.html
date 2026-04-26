@@ -132,6 +132,47 @@
       text-decoration: none;
     }
 
+    nav[aria-label="주요 메뉴"] a[href="#about"],
+    nav[aria-label="주요 메뉴"] a[href="#trust"],
+    nav[aria-label="주요 메뉴"] a[href="#services"] {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 1.5rem;
+      padding: 0.08rem 0.36rem;
+      border-radius: 4px;
+      border: 1px solid transparent;
+      font-weight: 700;
+    }
+
+    nav[aria-label="주요 메뉴"] a[href="#about"] {
+      color: #6a4f1f;
+      background: linear-gradient(180deg, rgba(241, 227, 198, 0.95) 0%, rgba(231, 209, 166, 0.92) 100%);
+      border-color: rgba(167, 134, 71, 0.45);
+    }
+
+    nav[aria-label="주요 메뉴"] a[href="#trust"] {
+      color: #255c34;
+      background: linear-gradient(180deg, rgba(205, 242, 216, 0.96) 0%, rgba(177, 229, 194, 0.92) 100%);
+      border-color: rgba(69, 138, 90, 0.42);
+    }
+
+    nav[aria-label="주요 메뉴"] a[href="#services"] {
+      color: #2a3b66;
+      background: linear-gradient(180deg, rgba(214, 226, 255, 0.96) 0%, rgba(189, 207, 246, 0.92) 100%);
+      border-color: rgba(84, 108, 176, 0.44);
+    }
+
+    nav[aria-label="주요 메뉴"] a[href="#about"]:hover,
+    nav[aria-label="주요 메뉴"] a[href="#about"]:focus-visible,
+    nav[aria-label="주요 메뉴"] a[href="#trust"]:hover,
+    nav[aria-label="주요 메뉴"] a[href="#trust"]:focus-visible,
+    nav[aria-label="주요 메뉴"] a[href="#services"]:hover,
+    nav[aria-label="주요 메뉴"] a[href="#services"]:focus-visible {
+      filter: brightness(1.04);
+      text-decoration: none;
+    }
+
     .nav-right {
       display: flex;
       align-items: center;
@@ -824,6 +865,10 @@
       animation: aboutTitleFlashPulse 0.22s ease-in-out 5;
     }
 
+    #about.about-section.about-section-flash-run {
+      animation: aboutSectionFlashPulse 0.22s ease-in-out 5;
+    }
+
     @keyframes introFlashPulse {
       0%, 100% {
         box-shadow: inset 0 0 0 0 rgba(255, 192, 35, 0);
@@ -845,6 +890,17 @@
         text-shadow:
           0 0 0 rgba(255, 0, 0, 0),
           0 0 14px rgba(255, 214, 80, 0.75);
+      }
+    }
+
+    @keyframes aboutSectionFlashPulse {
+      0%, 100% {
+        box-shadow: inset 0 0 0 0 rgba(255, 220, 120, 0);
+        filter: brightness(1);
+      }
+      50% {
+        box-shadow: inset 0 0 0 3px rgba(255, 220, 120, 0.72);
+        filter: brightness(1.1);
       }
     }
 
@@ -2976,6 +3032,9 @@
         aboutLink.addEventListener("click", function (e) {
           e.preventDefault();
           aboutSection.scrollIntoView({ behavior: "smooth", block: "start" });
+          aboutSection.classList.remove("about-section-flash-run");
+          void aboutSection.offsetWidth;
+          aboutSection.classList.add("about-section-flash-run");
           aboutTitle.classList.remove("about-title-flash-run");
           void aboutTitle.offsetWidth;
           aboutTitle.classList.add("about-title-flash-run");
@@ -2984,6 +3043,12 @@
         aboutTitle.addEventListener("animationend", function (evt) {
           if (evt && evt.animationName === "aboutTitleFlashPulse") {
             aboutTitle.classList.remove("about-title-flash-run");
+          }
+        });
+
+        aboutSection.addEventListener("animationend", function (evt) {
+          if (evt && evt.animationName === "aboutSectionFlashPulse") {
+            aboutSection.classList.remove("about-section-flash-run");
           }
         });
       }

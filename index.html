@@ -820,6 +820,10 @@
       animation: introFlashPulse 0.22s ease-in-out 5;
     }
 
+    #about-title.about-title-flash-run {
+      animation: aboutTitleFlashPulse 0.22s ease-in-out 5;
+    }
+
     @keyframes introFlashPulse {
       0%, 100% {
         box-shadow: inset 0 0 0 0 rgba(255, 192, 35, 0);
@@ -828,6 +832,19 @@
       50% {
         box-shadow: inset 0 0 0 3px rgba(255, 192, 35, 0.7);
         filter: brightness(1.08);
+      }
+    }
+
+    @keyframes aboutTitleFlashPulse {
+      0%, 100% {
+        color: #f7f2ea;
+        text-shadow: 0 2px 16px rgba(0, 0, 0, 0.35);
+      }
+      50% {
+        color: #fff5bd;
+        text-shadow:
+          0 0 0 rgba(255, 0, 0, 0),
+          0 0 14px rgba(255, 214, 80, 0.75);
       }
     }
 
@@ -2946,11 +2963,30 @@
     })();
 
     (function () {
+      var aboutLink = document.querySelector('nav[aria-label="주요 메뉴"] a[href="#about"]');
+      var aboutSection = document.getElementById("about");
+      var aboutTitle = document.getElementById("about-title");
       var trustLink = document.querySelector('nav[aria-label="주요 메뉴"] a[href="#trust"]');
       var trustSection = document.getElementById("trust");
       var pillarsSection = document.querySelector(".pillars");
       var servicesLink = document.querySelector('nav[aria-label="주요 메뉴"] a[href="#services"]');
       var servicesSection = document.getElementById("services");
+
+      if (aboutLink && aboutSection && aboutTitle) {
+        aboutLink.addEventListener("click", function (e) {
+          e.preventDefault();
+          aboutSection.scrollIntoView({ behavior: "smooth", block: "start" });
+          aboutTitle.classList.remove("about-title-flash-run");
+          void aboutTitle.offsetWidth;
+          aboutTitle.classList.add("about-title-flash-run");
+        });
+
+        aboutTitle.addEventListener("animationend", function (evt) {
+          if (evt && evt.animationName === "aboutTitleFlashPulse") {
+            aboutTitle.classList.remove("about-title-flash-run");
+          }
+        });
+      }
 
       if (trustLink && trustSection && pillarsSection) {
         trustLink.addEventListener("click", function (e) {

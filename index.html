@@ -824,11 +824,6 @@
       animation: aboutSectionFlashPulse 0.22s ease-in-out 5;
     }
 
-    #services .section-head.services-flash-run,
-    #services .services-grid.services-flash-run {
-      animation: introFlashPulse 0.22s ease-in-out 5;
-    }
-
     #services-title.services-title-highlight-run {
       animation: servicesTitlePulse 0.22s ease-in-out 5;
       border-radius: 3px;
@@ -3004,8 +2999,6 @@
       var pillarsSection = document.querySelector(".pillars");
       var servicesLink = document.querySelector('nav[aria-label="주요 메뉴"] a[href="#services"]');
       var servicesSection = document.getElementById("services");
-      var servicesHead = servicesSection ? servicesSection.querySelector(".section-head") : null;
-      var servicesGrid = servicesSection ? servicesSection.querySelector(".services-grid") : null;
       var servicesTitle = document.getElementById("services-title");
 
       if (aboutLink && aboutSection && aboutTitle) {
@@ -3053,38 +3046,12 @@
         servicesLink.addEventListener("click", function (e) {
           e.preventDefault();
           servicesSection.scrollIntoView({ behavior: "smooth", block: "start" });
-          if (servicesHead) {
-            servicesHead.classList.remove("services-flash-run");
-            void servicesHead.offsetWidth;
-            servicesHead.classList.add("services-flash-run");
-          }
-          if (servicesGrid) {
-            servicesGrid.classList.remove("services-flash-run");
-            void servicesGrid.offsetWidth;
-            servicesGrid.classList.add("services-flash-run");
-          }
           if (servicesTitle) {
             servicesTitle.classList.remove("services-title-highlight-run");
             void servicesTitle.offsetWidth;
             servicesTitle.classList.add("services-title-highlight-run");
           }
         });
-
-        if (servicesHead) {
-          servicesHead.addEventListener("animationend", function (evt) {
-            if (evt && evt.animationName === "introFlashPulse") {
-              servicesHead.classList.remove("services-flash-run");
-            }
-          });
-        }
-
-        if (servicesGrid) {
-          servicesGrid.addEventListener("animationend", function (evt) {
-            if (evt && evt.animationName === "introFlashPulse") {
-              servicesGrid.classList.remove("services-flash-run");
-            }
-          });
-        }
 
         if (servicesTitle) {
           servicesTitle.addEventListener("animationend", function (evt) {

@@ -869,10 +869,16 @@
       0%, 100% {
         background: transparent;
         color: var(--ink);
+        box-shadow: none;
+        outline: 0 solid transparent;
+        transform: none;
       }
       50% {
-        background: rgba(255, 214, 118, 0.46);
-        color: #1c2738;
+        background: #ffe27a;
+        color: #182130;
+        box-shadow: 0 0 0 3px rgba(255, 181, 0, 0.75), 0 2px 10px rgba(255, 181, 0, 0.38);
+        outline: 2px solid rgba(255, 143, 0, 0.9);
+        transform: translateY(-1px);
       }
     }
 

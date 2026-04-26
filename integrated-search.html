@@ -271,10 +271,17 @@
 
     .result-indicator .indicator-text.ok {
       color: #4a5f7f;
+      animation: resultIndicatorBlink 0.34s ease-in-out 3;
     }
 
     .result-indicator .indicator-text.empty {
       color: #8f5a5a;
+      animation: resultIndicatorBlink 0.34s ease-in-out 3;
+    }
+
+    @keyframes resultIndicatorBlink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.25; }
     }
 
     @media (max-width: 860px) {

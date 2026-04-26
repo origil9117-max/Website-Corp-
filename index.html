@@ -812,7 +812,7 @@
       margin: 0;
     }
 
-    .pillars.intro-flash-run {
+    #about.about-section.intro-flash-run {
       animation: introFlashPulse 0.22s ease-in-out 5;
     }
 
@@ -2943,21 +2943,20 @@
 
     (function () {
       var introLink = document.querySelector('nav[aria-label="주요 메뉴"] a[href="#about"]');
-      var trustSection = document.getElementById("trust");
-      var pillarsSection = document.querySelector(".pillars");
+      var aboutSection = document.getElementById("about");
 
-      if (introLink && trustSection && pillarsSection) {
+      if (introLink && aboutSection) {
         introLink.addEventListener("click", function (e) {
           e.preventDefault();
-          trustSection.scrollIntoView({ behavior: "smooth", block: "start" });
-          pillarsSection.classList.remove("intro-flash-run");
-          void pillarsSection.offsetWidth;
-          pillarsSection.classList.add("intro-flash-run");
+          aboutSection.scrollIntoView({ behavior: "smooth", block: "start" });
+          aboutSection.classList.remove("intro-flash-run");
+          void aboutSection.offsetWidth;
+          aboutSection.classList.add("intro-flash-run");
         });
 
-        pillarsSection.addEventListener("animationend", function (evt) {
+        aboutSection.addEventListener("animationend", function (evt) {
           if (evt && evt.animationName === "introFlashPulse") {
-            pillarsSection.classList.remove("intro-flash-run");
+            aboutSection.classList.remove("intro-flash-run");
           }
         });
       }

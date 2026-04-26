@@ -817,7 +817,7 @@
     }
 
     #about-title.about-title-highlight-run {
-      animation: servicesTitlePulse 0.34s ease-in-out 5;
+      animation: aboutTitlePulse 0.46s ease-in-out 5;
       display: inline-block;
       border-radius: 3px;
       padding: 0 0.2rem;
@@ -853,6 +853,23 @@
         background: rgba(255, 226, 122, 0.7);
         color: #182130;
         box-shadow: 0 2px 10px rgba(255, 181, 0, 0.2);
+        outline: none;
+        transform: translateY(-1px);
+      }
+    }
+
+    @keyframes aboutTitlePulse {
+      0%, 100% {
+        background: transparent;
+        color: #f7f2ea;
+        box-shadow: none;
+        outline: none;
+        transform: none;
+      }
+      50% {
+        background: rgba(255, 226, 122, 0.52);
+        color: #fff7da;
+        box-shadow: 0 2px 10px rgba(255, 181, 0, 0.15);
         outline: none;
         transform: translateY(-1px);
       }
@@ -2993,7 +3010,7 @@
         });
 
         aboutTitle.addEventListener("animationend", function (evt) {
-          if (evt && evt.animationName === "servicesTitlePulse") {
+          if (evt && evt.animationName === "aboutTitlePulse") {
             aboutTitle.classList.remove("about-title-highlight-run");
           }
         });

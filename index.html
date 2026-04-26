@@ -816,10 +816,6 @@
       animation: introFlashPulse 0.22s ease-in-out 5;
     }
 
-    #services.intro-flash-run {
-      animation: introFlashPulse 0.22s ease-in-out 5;
-    }
-
     #about-title.about-title-flash-run {
       animation: aboutTitleFlashPulse 0.22s ease-in-out 5;
     }
@@ -2984,8 +2980,6 @@
       var trustLink = document.querySelector('nav[aria-label="주요 메뉴"] a[href="#trust"]');
       var trustSection = document.getElementById("trust");
       var pillarsSection = document.querySelector(".pillars");
-      var servicesLink = document.querySelector('nav[aria-label="주요 메뉴"] a[href="#services"]');
-      var servicesSection = document.getElementById("services");
 
       if (aboutLink && aboutSection && aboutTitle) {
         aboutLink.addEventListener("click", function (e) {
@@ -3028,21 +3022,6 @@
         });
       }
 
-      if (servicesLink && servicesSection) {
-        servicesLink.addEventListener("click", function (e) {
-          e.preventDefault();
-          servicesSection.scrollIntoView({ behavior: "smooth", block: "start" });
-          servicesSection.classList.remove("intro-flash-run");
-          void servicesSection.offsetWidth;
-          servicesSection.classList.add("intro-flash-run");
-        });
-
-        servicesSection.addEventListener("animationend", function (evt) {
-          if (evt && evt.animationName === "introFlashPulse") {
-            servicesSection.classList.remove("intro-flash-run");
-          }
-        });
-      }
     })();
 
     (function () {

@@ -943,7 +943,9 @@
     }
 
     .hero-badge {
-      display: inline-block;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
       font-family: "Noto Sans KR", sans-serif;
       font-size: 0.71rem;
       letter-spacing: 0.03em;
@@ -951,8 +953,10 @@
       color: #5a496f;
       border: 1px solid rgba(124, 93, 147, 0.35);
       background: rgba(255, 255, 255, 0.64);
-      padding: 0.26rem 0.7rem;
-      width: var(--hero-title-block-width);
+      padding: 0.24rem 0.48rem;
+      width: fit-content;
+      max-width: 100%;
+      border-radius: 999px;
       white-space: nowrap;
       box-sizing: border-box;
       margin-bottom: 0.32rem;

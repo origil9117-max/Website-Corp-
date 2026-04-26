@@ -816,12 +816,11 @@
       animation: introFlashPulse 0.22s ease-in-out 5;
     }
 
-    #about-title.about-title-flash-run {
-      animation: aboutTitleFlashPulse 0.22s ease-in-out 5;
-    }
-
-    #about.about-section.about-section-flash-run {
-      animation: aboutSectionFlashPulse 0.22s ease-in-out 5;
+    #about-title.about-title-highlight-run {
+      animation: servicesTitlePulse 0.22s ease-in-out 5;
+      display: inline-block;
+      border-radius: 3px;
+      padding: 0 0.2rem;
     }
 
     #services-title.services-title-highlight-run {
@@ -839,30 +838,6 @@
       50% {
         box-shadow: inset 0 0 0 3px rgba(255, 192, 35, 0.7);
         filter: brightness(1.08);
-      }
-    }
-
-    @keyframes aboutTitleFlashPulse {
-      0%, 100% {
-        color: #f7f2ea;
-        text-shadow: 0 2px 16px rgba(0, 0, 0, 0.35);
-      }
-      50% {
-        color: #fff5bd;
-        text-shadow:
-          0 0 0 rgba(255, 0, 0, 0),
-          0 0 14px rgba(255, 214, 80, 0.75);
-      }
-    }
-
-    @keyframes aboutSectionFlashPulse {
-      0%, 100% {
-        box-shadow: inset 0 0 0 0 rgba(255, 220, 120, 0);
-        filter: brightness(1);
-      }
-      50% {
-        box-shadow: inset 0 0 0 3px rgba(255, 220, 120, 0.72);
-        filter: brightness(1.1);
       }
     }
 
@@ -3012,23 +2987,14 @@
         aboutLink.addEventListener("click", function (e) {
           e.preventDefault();
           aboutSection.scrollIntoView({ behavior: "smooth", block: "start" });
-          aboutSection.classList.remove("about-section-flash-run");
-          void aboutSection.offsetWidth;
-          aboutSection.classList.add("about-section-flash-run");
-          aboutTitle.classList.remove("about-title-flash-run");
+          aboutTitle.classList.remove("about-title-highlight-run");
           void aboutTitle.offsetWidth;
-          aboutTitle.classList.add("about-title-flash-run");
+          aboutTitle.classList.add("about-title-highlight-run");
         });
 
         aboutTitle.addEventListener("animationend", function (evt) {
-          if (evt && evt.animationName === "aboutTitleFlashPulse") {
-            aboutTitle.classList.remove("about-title-flash-run");
-          }
-        });
-
-        aboutSection.addEventListener("animationend", function (evt) {
-          if (evt && evt.animationName === "aboutSectionFlashPulse") {
-            aboutSection.classList.remove("about-section-flash-run");
+          if (evt && evt.animationName === "servicesTitlePulse") {
+            aboutTitle.classList.remove("about-title-highlight-run");
           }
         });
       }

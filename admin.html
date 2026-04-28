@@ -429,6 +429,16 @@
       font-size: 0.82rem;
       color: var(--muted);
     }
+    .auth-decoy {
+      position: absolute !important;
+      left: -9999px !important;
+      top: auto !important;
+      width: 1px !important;
+      height: 1px !important;
+      overflow: hidden !important;
+      opacity: 0 !important;
+      pointer-events: none !important;
+    }
 
     .notice-list {
       display: grid;
@@ -496,8 +506,23 @@
     <div class="auth-box">
       <p>Supabase에 등록한 관리자 계정 비밀번호로 로그인하면 등록·수정·삭제가 활성화됩니다. 일반 방문자에게는 비밀번호가 보이지 않습니다.</p>
       <p id="auth-mode-indicator" class="auth-mode-indicator" data-mode="view" role="status" aria-live="polite">현재: 일반 보기</p>
+      <input class="auth-decoy" type="text" autocomplete="username" tabindex="-1" aria-hidden="true" />
+      <input class="auth-decoy" type="password" autocomplete="current-password" tabindex="-1" aria-hidden="true" />
       <div class="row" id="auth-login-row">
-        <input id="admin-pass" type="password" autocomplete="current-password" placeholder="관리자 비밀번호" />
+        <input
+          id="admin-pass"
+          type="password"
+          name="admin-auth-secret"
+          autocomplete="new-password"
+          autocorrect="off"
+          autocapitalize="off"
+          spellcheck="false"
+          data-lpignore="true"
+          data-1p-ignore="true"
+          data-form-type="other"
+          readonly
+          placeholder="관리자 비밀번호"
+        />
         <button id="btn-login" class="btn btn-ghost" type="button">관리자 모드 켜기</button>
         <button id="btn-logout" class="btn btn-primary" type="button">관리자 모드 끄기</button>
         <button id="btn-test-conn" class="btn btn-ghost" type="button">연결 테스트</button>
@@ -506,9 +531,9 @@
       <hr style="margin: 0.8rem 0; border: 0; border-top: 1px solid var(--line);" />
       <p>로그인 상태에서 계정 비밀번호를 변경할 수 있습니다.</p>
       <div class="row">
-        <input id="current-pass" type="password" placeholder="현재 비밀번호(확인용)" />
-        <input id="next-pass" type="password" placeholder="새 비밀번호 (4자 이상)" />
-        <input id="next-pass-confirm" type="password" placeholder="새 비밀번호 확인" />
+        <input id="current-pass" type="password" autocomplete="new-password" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="현재 비밀번호(확인용)" />
+        <input id="next-pass" type="password" autocomplete="new-password" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="새 비밀번호 (4자 이상)" />
+        <input id="next-pass-confirm" type="password" autocomplete="new-password" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="새 비밀번호 확인" />
         <button id="btn-change-pass" class="btn btn-ghost" type="button">비밀번호 변경</button>
       </div>
       <p id="pass-status" class="status" role="status" aria-live="polite"></p>
@@ -643,6 +668,7 @@
       var showLoginForm = false;
       var ADMIN_OFF_FLAG_KEY = "notice-admin-force-off";
       var savedEditorRange = null;
+      var adminPassEditedByUser = false;
       var editingNoticeId = "";
       var composeZoomed = false;
       var selectedNoticeImg = null;
@@ -1670,6 +1696,22 @@
         return !!(localAdmin || (currentSession && currentSession.user));
       }
 
+      function resetAdminPassField() {
+        if (!passInput) return;
+        passInput.value = "";
+        passInput.setAttribute("readonly", "readonly");
+        adminPassEditedByUser = false;
+      }
+
+      function revealAdminPassFieldForManualInput() {
+        showLoginForm = true;
+        passInput.removeAttribute("readonly");
+        updateAdminUi();
+        setTimeout(function () {
+          passInput.focus();
+        }, 0);
+      }
+
       async function renderList() {
         var items = [];
         if (client) {
@@ -1767,8 +1809,11 @@
         if (on) {
           passInput.style.display = "none";
           btnTestConn.style.display = "";
-        } else {
+        } else if (showLoginForm) {
           passInput.style.display = "";
+          btnTestConn.style.display = "";
+        } else {
+          passInput.style.display = "none";
           btnTestConn.style.display = "";
         }
         applyAuthButtonStyles();
@@ -1797,7 +1842,7 @@
         currentSession = null;
         localAdmin = false;
         showLoginForm = false;
-        if (passInput) passInput.value = "";
+        resetAdminPassField();
         updateAdminUi();
         await renderList();
         if (!silent) {
@@ -1845,6 +1890,35 @@
       if (forcedOffByNavigation || isAdmin()) {
         await deactivateAdminMode({ silent: true });
       }
+      resetAdminPassField();
+      setTimeout(resetAdminPassField, 120);
+      setTimeout(resetAdminPassField, 600);
+      setTimeout(resetAdminPassField, 1400);
+
+      passInput.addEventListener("focus", function () {
+        if (!showLoginForm) {
+          revealAdminPassFieldForManualInput();
+          return;
+        }
+        if (!adminPassEditedByUser && passInput.value) {
+          passInput.value = "";
+        }
+      });
+      passInput.addEventListener("keydown", function () {
+        adminPassEditedByUser = true;
+      });
+      passInput.addEventListener("paste", function () {
+        adminPassEditedByUser = true;
+      });
+      passInput.addEventListener("input", function () {
+        if (!showLoginForm) {
+          resetAdminPassField();
+          return;
+        }
+        if (!passInput.value) {
+          adminPassEditedByUser = false;
+        }
+      });
 
       window.addEventListener("pagehide", function () {
         clearAdminStateOnLeave();
@@ -1867,19 +1941,34 @@
         if (persisted || forceOff || isAdmin()) {
           deactivateAdminMode({ silent: true });
         }
+        resetAdminPassField();
+        setTimeout(resetAdminPassField, 120);
       });
 
       btnLogin.addEventListener("click", async function () {
+        if (!showLoginForm) {
+          resetAdminPassField();
+          revealAdminPassFieldForManualInput();
+          setStatus(authStatus, "", "비밀번호를 직접 입력한 뒤 다시 「관리자 모드 켜기」를 눌러 주세요.");
+          return;
+        }
         var email = ADMIN_EMAIL;
         var password = (passInput.value || "").trim();
         if (!password) {
           setStatus(authStatus, "err", "비밀번호를 입력해 주세요.");
           return;
         }
+        if (!adminPassEditedByUser) {
+          resetAdminPassField();
+          setStatus(authStatus, "err", "자동완성된 비밀번호는 사용할 수 없습니다. 비밀번호를 직접 입력해 주세요.");
+          passInput.focus();
+          return;
+        }
         if (password === "admin1234") {
           localAdmin = true;
           currentSession = null;
-          passInput.value = "";
+          showLoginForm = false;
+          resetAdminPassField();
           updateAdminUi();
           await renderList();
           return;
@@ -1922,7 +2011,8 @@
         }
         currentSession = res.data.session;
         localAdmin = false;
-        passInput.value = "";
+        showLoginForm = false;
+        resetAdminPassField();
         updateAdminUi();
         await renderList();
       });
@@ -1930,7 +2020,7 @@
       btnLogout.addEventListener("click", async function () {
         if (!isAdmin()) {
           showLoginForm = false;
-          passInput.value = "";
+          resetAdminPassField();
           updateAdminUi();
           setStatus(authStatus, "", "관리자 모드가 꺼져 있습니다.");
           return;

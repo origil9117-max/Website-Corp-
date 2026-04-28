@@ -3018,11 +3018,14 @@
       }
 
       if (!top) {
+        topTitle.textContent = "등록된 공지사항이 없습니다.";
+        topTitle.style.fontWeight = "500";
         topLabel.classList.remove("is-live");
         if (navNoticeLink) navNoticeLink.classList.remove("is-live");
         return;
       }
       renderTopTitleWithHighlight(top.title || "공지사항");
+      topTitle.style.fontWeight = "";
       topLabel.classList.add("is-live");
       if (navNoticeLink) navNoticeLink.classList.add("is-live");
     })();

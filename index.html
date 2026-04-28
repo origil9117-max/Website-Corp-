@@ -2995,14 +2995,18 @@
 
       var top = null;
       if (!window.supabase || !window.SUPABASE_URL || !window.SUPABASE_ANON_KEY) {
-        var localOnly = sortItems(loadLocalNotices());
+        var localOnly = sortItems(
+          loadLocalNotices().filter(function (x) {
+            return !!x && !!x.pinned;
+          })
+        );
         if (localOnly.length > 0) top = localOnly[0];
       } else {
         var client = window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY);
         var res = await client
           .from("notices")
           .select("title, content, pinned, created_at")
-          .order("pinned", { ascending: false })
+          .eq("pinned", true)
           .order("created_at", { ascending: false })
           .limit(1);
 

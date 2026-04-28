@@ -1010,6 +1010,58 @@
       padding: 0.5rem 1.2rem;
     }
 
+    .hero-cta .btn.iconized,
+    .hero-platform-cats-grid a.cat-with-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.34rem;
+    }
+
+    .hero-cta .btn.iconized::before,
+    .hero-platform-cats-grid a.cat-with-icon::before {
+      content: "";
+      width: 1.06rem;
+      height: 1.06rem;
+      border-radius: 999px;
+      background-color: #eef3ff;
+      background-image: var(--menu-icon);
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: 72% 72%;
+      border: 1px solid rgba(70, 95, 145, 0.3);
+      box-shadow: 0 1px 2px rgba(50, 70, 110, 0.2);
+      flex: 0 0 auto;
+    }
+
+    .hero-cta .btn.icon-phone {
+      --menu-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M6.7 3.8h2.5l1.1 3.2-1.5 1.6a13.4 13.4 0 0 0 6.6 6.6l1.6-1.5 3.2 1.1v2.5c0 .7-.6 1.3-1.3 1.3C10.2 18.6 5.4 13.8 5.4 7.1c0-.7.6-1.3 1.3-1.3Z' fill='%232f61d5'/%3E%3C/svg%3E");
+    }
+
+    .hero-cta .btn.icon-briefcase {
+      --menu-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect x='3.2' y='7' width='17.6' height='12.5' rx='2.2' fill='none' stroke='%232f61d5' stroke-width='2'/%3E%3Cpath d='M9 7V5.6c0-.9.7-1.6 1.6-1.6h2.8c.9 0 1.6.7 1.6 1.6V7' fill='none' stroke='%232f61d5' stroke-width='2'/%3E%3C/svg%3E");
+    }
+
+    .hero-cta .btn.icon-ai {
+      --menu-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ctext x='5.2' y='15.1' font-family='Arial' font-size='8.8' font-weight='700' fill='%232f61d5'%3EAI%3C/text%3E%3C/svg%3E");
+    }
+
+    .hero-platform-cats-grid a.icon-roadmap {
+      --menu-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M6 17h11M6 12h8M6 7h11' stroke='%232f61d5' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
+    }
+
+    .hero-platform-cats-grid a.icon-checklist {
+      --menu-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M6.2 7.3h11.6M6.2 12h11.6M6.2 16.7h7.2' stroke='%232f61d5' stroke-width='2' stroke-linecap='round'/%3E%3Cpath d='M15.9 16.2 17 17.3l2-2' fill='none' stroke='%232f61d5' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
+    }
+
+    .hero-platform-cats-grid a.icon-faq {
+      --menu-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 16.9v-.1c0-1.5 2.1-1.9 2.1-3.6a2.1 2.1 0 0 0-4.2 0' fill='none' stroke='%232f61d5' stroke-width='2' stroke-linecap='round'/%3E%3Ccircle cx='12' cy='19' r='1.1' fill='%232f61d5'/%3E%3C/svg%3E");
+    }
+
+    .hero-platform-cats-grid a.icon-hub {
+      --menu-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M6 16v-8l6-3 6 3v8l-6 3z' fill='none' stroke='%232f61d5' stroke-width='2'/%3E%3Cpath d='M12 9v6M9 12h6' stroke='%232f61d5' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
+    }
+
     .hero-platform-cats-wrap {
       position: relative;
       margin: 0;
@@ -2388,13 +2440,13 @@
           <h1 id="hero-title">대한민국행정사사무소</h1>
           <div class="hero-cta">
             <a
-              class="btn btn-primary tel-tooltip"
+              class="btn btn-primary tel-tooltip iconized icon-phone"
               href="tel:051-515-5459"
               data-tooltip="모바일로 접속 시 통화로 연결됩니다."
               aria-label="대표전화 051-515-5459. 모바일로 접속 시 통화로 연결됩니다."
               >전화 상담</a>
-            <a class="btn btn-ghost" href="#services">업무 분야</a>
-            <a class="btn btn-ghost" href="platform.html">지능형 행정 플랫폼</a>
+            <a class="btn btn-ghost iconized icon-briefcase" href="#services">업무 분야</a>
+            <a class="btn btn-ghost iconized icon-ai" href="platform.html">지능형 행정 플랫폼</a>
           </div>
         </div>
         <div class="hero-aside-col">
@@ -2435,10 +2487,10 @@
           <nav class="hero-platform-cats" aria-label="지능형 행정 플랫폼 카테고리 바로가기">
             <span class="hero-platform-cats-label">지능형 행정 플랫폼 카테고리</span>
             <div class="hero-platform-cats-grid">
-              <a href="minwon-roadmap.html">민원 로드맵</a>
-              <a href="platform-check.html">서류·준비 체크</a>
-              <a href="platform-faq.html">자주 묻는 질문</a>
-              <a href="platform-hub.html">공지·자료실 연동</a>
+              <a class="cat-with-icon icon-roadmap" href="minwon-roadmap.html">민원 로드맵</a>
+              <a class="cat-with-icon icon-checklist" href="platform-check.html">서류·준비 체크</a>
+              <a class="cat-with-icon icon-faq" href="platform-faq.html">자주 묻는 질문</a>
+              <a class="cat-with-icon icon-hub" href="platform-hub.html">공지·자료실 연동</a>
               <a class="integrated-search-link" href="integrated-search.html">통합검색</a>
             </div>
           </nav>

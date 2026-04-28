@@ -153,6 +153,10 @@
       border: 1px solid rgba(0, 55, 160, 0.55);
       box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.42), 0 2px 8px rgba(0, 82, 214, 0.42);
       text-shadow: none;
+      animation: none;
+    }
+
+    nav a[href="notice.html"].is-live {
       animation: noticeTitleBlink 1.1s ease-in-out infinite;
     }
 
@@ -2501,7 +2505,7 @@
             <li>
               <a href="visit-maps.html">오시는 길</a>
             </li>
-            <li><a href="notice.html">공지</a></li>
+            <li><a id="nav-notice-link" href="notice.html">공지</a></li>
           </ul>
         </nav>
       </div>
@@ -2922,6 +2926,7 @@
       var LOCAL_NOTICE_KEY = "websiteCorpNotices";
       var topTitle = document.getElementById("top-notice-title");
       var topLabel = document.getElementById("top-notice-label");
+      var navNoticeLink = document.getElementById("nav-notice-link");
       var topBodyLegacy = document.getElementById("top-notice-body");
       if (!topTitle || !topLabel) return;
       function renderTopTitleWithHighlight(titleText) {
@@ -3002,10 +3007,12 @@
 
       if (!top) {
         topLabel.classList.remove("is-live");
+        if (navNoticeLink) navNoticeLink.classList.remove("is-live");
         return;
       }
       renderTopTitleWithHighlight(top.title || "공지사항");
       topLabel.classList.add("is-live");
+      if (navNoticeLink) navNoticeLink.classList.add("is-live");
     })();
 
     (function () {

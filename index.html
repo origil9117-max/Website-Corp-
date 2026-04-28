@@ -1018,6 +1018,21 @@
       gap: 0.34rem;
     }
 
+    .menu-icon-badge {
+      width: 1.06rem;
+      height: 1.06rem;
+      border-radius: 999px;
+      background-color: #eef3ff;
+      background-image: var(--menu-icon);
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: 72% 72%;
+      border: 1px solid rgba(70, 95, 145, 0.3);
+      box-shadow: 0 1px 2px rgba(50, 70, 110, 0.2);
+      flex: 0 0 auto;
+      display: inline-block;
+    }
+
     .hero-cta .btn.iconized::before,
     .hero-platform-cats-grid a.cat-with-icon::before {
       content: "";
@@ -2440,11 +2455,11 @@
           <h1 id="hero-title">대한민국행정사사무소</h1>
           <div class="hero-cta">
             <a
-              class="btn btn-primary tel-tooltip iconized icon-phone"
+              class="btn btn-primary tel-tooltip"
               href="tel:051-515-5459"
               data-tooltip="모바일로 접속 시 통화로 연결됩니다."
               aria-label="대표전화 051-515-5459. 모바일로 접속 시 통화로 연결됩니다."
-              >전화 상담</a>
+              ><span class="menu-icon-badge icon-phone" aria-hidden="true"></span>전화 상담</a>
             <a class="btn btn-ghost iconized icon-briefcase" href="#services">업무 분야</a>
             <a class="btn btn-ghost iconized icon-ai" href="platform.html">지능형 행정 플랫폼</a>
           </div>
@@ -2490,7 +2505,7 @@
               <a class="cat-with-icon icon-roadmap" href="minwon-roadmap.html">민원 로드맵</a>
               <a class="cat-with-icon icon-checklist" href="platform-check.html">서류·준비 체크</a>
               <a class="cat-with-icon icon-faq" href="platform-faq.html">자주 묻는 질문</a>
-              <a class="cat-with-icon icon-hub" href="platform-hub.html">공지·자료실 연동</a>
+              <a class="cat-with-icon icon-hub" href="platform-hub.html">공지·자료실</a>
               <a class="integrated-search-link" href="integrated-search.html">통합검색</a>
             </div>
           </nav>

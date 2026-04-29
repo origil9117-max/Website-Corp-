@@ -1092,16 +1092,12 @@
     .hero-platform-cats-grid a.cat-with-icon::after {
       content: "";
       position: absolute;
-      left: var(--ring-center-x, 1.08rem);
-      top: var(--ring-center-y, 50%);
-      width: 1.36rem;
-      height: 1.36rem;
-      transform: translate(-50%, -50%) scale(0.9);
-      border-radius: 999px;
+      inset: -3px;
+      border-radius: inherit;
       border: 2px solid transparent;
       background:
-        linear-gradient(#f7f9ff, #f7f9ff) padding-box,
-        conic-gradient(from 0deg, #78a8ff, #7be0cf, #b6c7ff, #78a8ff) border-box;
+        linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0)) padding-box,
+        conic-gradient(from 0deg, #ff2f2f, #ff8a00, #ffd400, #16a34a, #ff2f2f) border-box;
       opacity: 0;
       pointer-events: none;
       z-index: 0;
@@ -1123,23 +1119,23 @@
     @keyframes iconRingSpin {
       0% {
         opacity: 0;
-        transform: translateY(-50%) scale(0.86) rotate(0deg);
+        transform: scale(0.96) rotate(0deg);
       }
       20% {
         opacity: 0.95;
       }
       100% {
         opacity: 0;
-        transform: translateY(-50%) scale(1.18) rotate(360deg);
+        transform: scale(1.02) rotate(360deg);
       }
     }
 
     @keyframes iconRingHoverSpin {
       0% {
-        transform: translateY(-50%) scale(1) rotate(0deg);
+        transform: rotate(0deg);
       }
       100% {
-        transform: translateY(-50%) scale(1) rotate(360deg);
+        transform: rotate(360deg);
       }
     }
 
@@ -3359,33 +3355,11 @@
       });
 
       var clickRingLinks = Array.prototype.slice.call(document.querySelectorAll("a[data-ring-click='true']"));
-
-      function syncRingCenter(link) {
-        if (!link) return;
-        var icon = link.querySelector(".menu-icon-badge");
-        if (!icon) return;
-        var cx = icon.offsetLeft + (icon.offsetWidth / 2) - 7;
-        var cy = icon.offsetTop + (icon.offsetHeight / 2);
-        link.style.setProperty("--ring-center-x", cx + "px");
-        link.style.setProperty("--ring-center-y", cy + "px");
-      }
-
-      function syncAllRingCenters() {
-        clickRingLinks.forEach(function (link) {
-          syncRingCenter(link);
-        });
-      }
-
-      syncAllRingCenters();
-      window.addEventListener("resize", syncAllRingCenters);
-
       clickRingLinks.forEach(function (link) {
-        syncRingCenter(link);
         link.addEventListener("click", function (evt) {
           if (evt.defaultPrevented) return;
           if (evt.button !== 0) return;
           if (evt.metaKey || evt.ctrlKey || evt.shiftKey || evt.altKey) return;
-          syncRingCenter(link);
           if (link.getAttribute("data-no-nav") === "true") {
             evt.preventDefault();
             return;

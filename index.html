@@ -2293,6 +2293,22 @@
       box-shadow: 0 0 0 2px rgba(92, 31, 40, 0.08);
     }
 
+    /* 성함 입력칸만 컬러 링 테두리 적용 */
+    .consult-form #consult-name {
+      border: 2px solid transparent;
+      background:
+        linear-gradient(var(--paper), var(--paper)) padding-box,
+        conic-gradient(from 0deg, #ff624a, #ff8a00, #ffd400, #16a34a, #4d90ff, #ff624a) border-box;
+      box-shadow: none;
+    }
+    .consult-form #consult-name:focus {
+      border: 2px solid transparent;
+      background:
+        linear-gradient(var(--paper), var(--paper)) padding-box,
+        conic-gradient(from 0deg, #ff624a, #ff8a00, #ffd400, #16a34a, #4d90ff, #ff624a) border-box;
+      box-shadow: 0 0 0 2px rgba(255, 140, 0, 0.12);
+    }
+
     .consult-form textarea {
       min-height: 3.8rem;
       resize: none;

@@ -593,15 +593,38 @@
           "case-procedure-consulting": "사안별 불복 절차 상담"
         }
       };
+      var TOPIC_RENAME_MAP = {
+        investment: {
+          "consular-apostille": "consular-services"
+        }
+      };
+      var TOPIC_READ_ALIASES = {
+        investment: {
+          "consular-services": ["consular-apostille"],
+          "apostille-certification": ["consular-apostille"]
+        }
+      };
       var ADMIN_EMAIL = "lkc@daum.net";
       var params = new URL(window.location.href).searchParams;
       var service = params.get("service") || "nonprofit";
       if (!SERVICE_MAP[service]) service = "nonprofit";
       var topic = params.get("topic") || "";
+      var serviceRenameMap = TOPIC_RENAME_MAP[service] || null;
+      if (topic && serviceRenameMap && serviceRenameMap[topic]) {
+        topic = serviceRenameMap[topic];
+      }
       var topicLabelMap = SERVICE_TOPIC_MAP[service] || null;
       if (topic && (!topicLabelMap || !topicLabelMap[topic])) topic = "";
       var topicLabel = topic && topicLabelMap ? topicLabelMap[topic] : "";
       var STORAGE_KEY = "service-posts:" + service + (topic ? ":" + topic : "");
+      function getTopicReadKeys() {
+        if (!topic) return [""];
+        var aliasesByService = TOPIC_READ_ALIASES[service] || {};
+        var aliases = aliasesByService[topic] || [];
+        var keys = [topic].concat(aliases);
+        return keys.filter(function (v, i, arr) { return !!v && arr.indexOf(v) === i; });
+      }
+      var TOPIC_READ_KEYS = getTopicReadKeys();
 
       var pageTitle = document.getElementById("page-title");
       var pageSubtitle = document.getElementById("page-subtitle");
@@ -1807,6 +1830,18 @@
       function loadLocalPosts() {
         try {
           var raw = localStorage.getItem(STORAGE_KEY);
+          if (!raw && topic && TOPIC_READ_KEYS.length > 1) {
+            for (var i = 0; i < TOPIC_READ_KEYS.length; i++) {
+              var k = TOPIC_READ_KEYS[i];
+              if (k === topic) continue;
+              var legacyKey = "service-posts:" + service + ":" + k;
+              raw = localStorage.getItem(legacyKey);
+              if (raw) {
+                localStorage.setItem(STORAGE_KEY, raw);
+                break;
+              }
+            }
+          }
           var parsed = raw ? JSON.parse(raw) : [];
           if (!Array.isArray(parsed)) return [];
           var changed = false;
@@ -1834,12 +1869,16 @@
       async function loadPosts() {
         if (cloudEnabled) {
           try {
-            var res = await client
+            var query = client
               .from("service_posts")
               .select("id, service, topic, title, body, images, created_at")
-              .eq("service", service)
-              .eq("topic", topic)
-              .order("created_at", { ascending: false });
+              .eq("service", service);
+            if (topic) {
+              query = TOPIC_READ_KEYS.length > 1 ? query.in("topic", TOPIC_READ_KEYS) : query.eq("topic", topic);
+            } else {
+              query = query.eq("topic", "");
+            }
+            var res = await query.order("created_at", { ascending: false });
             if (!res.error) return res.data || [];
             if (isMissingServicePostsTableError(res.error)) {
               cloudEnabled = false;
@@ -1855,12 +1894,16 @@
         cloudDiag = "";
         if (!cloudEnabled) return;
         try {
-          var probe = await client
+          var probeQuery = client
             .from("service_posts")
             .select("id", { head: true, count: "exact" })
-            .eq("service", service)
-            .eq("topic", topic)
-            .limit(1);
+            .eq("service", service);
+          if (topic) {
+            probeQuery = TOPIC_READ_KEYS.length > 1 ? probeQuery.in("topic", TOPIC_READ_KEYS) : probeQuery.eq("topic", topic);
+          } else {
+            probeQuery = probeQuery.eq("topic", "");
+          }
+          var probe = await probeQuery.limit(1);
           if (probe.error) {
             cloudEnabled = false;
             cloudDiag = probe.error.message || "Supabase 오류";
@@ -1932,11 +1975,16 @@
         if (!localItems.length) return;
 
         try {
-          var cloud = await client
+          var cloudQuery = client
             .from("service_posts")
             .select("title, body, topic, created_at")
-            .eq("service", service)
-            .eq("topic", topic);
+            .eq("service", service);
+          if (topic) {
+            cloudQuery = TOPIC_READ_KEYS.length > 1 ? cloudQuery.in("topic", TOPIC_READ_KEYS) : cloudQuery.eq("topic", topic);
+          } else {
+            cloudQuery = cloudQuery.eq("topic", "");
+          }
+          var cloud = await cloudQuery;
           if (cloud.error) return;
 
           var existing = Array.isArray(cloud.data) ? cloud.data : [];

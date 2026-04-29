@@ -1090,34 +1090,40 @@
 
     .hero-cta .btn.iconized::after,
     .hero-platform-cats-grid a.cat-with-icon::after {
-      content: "";
-      position: absolute;
-      inset: -4px;
-      border-radius: 999px;
-      padding: 2px;
-      background: conic-gradient(from 0deg, #ff2f2f, #ff8a00, #ffd400, #16a34a, #ff2f2f);
-      -webkit-mask:
-        linear-gradient(#000 0 0) content-box,
-        linear-gradient(#000 0 0);
-      mask:
-        linear-gradient(#000 0 0) content-box,
-        linear-gradient(#000 0 0);
-      -webkit-mask-composite: xor;
-      mask-composite: exclude;
-      opacity: 0;
-      pointer-events: none;
-      z-index: 2;
+      content: none;
     }
 
-    .hero-cta .btn.iconized.ring-spin-active::after,
-    .hero-platform-cats-grid a.cat-with-icon.ring-spin-active::after {
+    .menu-icon-badge::after {
+      content: "";
+      position: absolute;
+      inset: -5px;
+      border-radius: 999px;
+      background: conic-gradient(
+        from 0deg,
+        rgba(255, 255, 255, 0) 0deg 26deg,
+        #ff624a 26deg 72deg,
+        #ffb327 72deg 118deg,
+        #39bf66 118deg 168deg,
+        rgba(255, 255, 255, 0) 168deg 222deg,
+        #4d90ff 222deg 304deg,
+        #8ac3ff 304deg 360deg
+      );
+      -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 2px));
+      mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 2px));
+      opacity: 0;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .hero-cta .btn.iconized.ring-spin-active .menu-icon-badge::after,
+    .hero-platform-cats-grid a.cat-with-icon.ring-spin-active .menu-icon-badge::after {
       animation: iconRingSpin 0.72s ease-out 1;
     }
 
-    .hero-cta .btn.iconized[data-ring-hover="true"]:hover::after,
-    .hero-cta .btn.iconized[data-ring-hover="true"]:focus-visible::after,
-    .hero-platform-cats-grid a.cat-with-icon[data-ring-hover="true"]:hover::after,
-    .hero-platform-cats-grid a.cat-with-icon[data-ring-hover="true"]:focus-visible::after {
+    .hero-cta .btn.iconized[data-ring-hover="true"]:hover .menu-icon-badge::after,
+    .hero-cta .btn.iconized[data-ring-hover="true"]:focus-visible .menu-icon-badge::after,
+    .hero-platform-cats-grid a.cat-with-icon[data-ring-hover="true"]:hover .menu-icon-badge::after,
+    .hero-platform-cats-grid a.cat-with-icon[data-ring-hover="true"]:focus-visible .menu-icon-badge::after {
       opacity: 0.95;
       animation: iconRingHoverSpin 1s linear infinite;
     }
@@ -1125,14 +1131,14 @@
     @keyframes iconRingSpin {
       0% {
         opacity: 0;
-        transform: scale(0.96) rotate(0deg);
+        transform: scale(0.9) rotate(0deg);
       }
       20% {
         opacity: 0.95;
       }
       100% {
         opacity: 0;
-        transform: scale(1.02) rotate(360deg);
+        transform: scale(1.04) rotate(360deg);
       }
     }
 

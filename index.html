@@ -1080,30 +1080,22 @@
 
     .hero-cta .btn.iconized::before,
     .hero-platform-cats-grid a.cat-with-icon::before {
-      content: "";
-      width: 1.06rem;
-      height: 1.06rem;
-      border-radius: 999px;
-      background-color: #eef3ff;
-      background-image: var(--menu-icon);
-      background-repeat: no-repeat;
-      background-position: center;
-      background-size: 72% 72%;
-      border: 1px solid rgba(70, 95, 145, 0.3);
-      box-shadow: 0 1px 2px rgba(50, 70, 110, 0.2);
-      flex: 0 0 auto;
+      content: none;
+    }
+
+    .menu-icon-badge {
       position: relative;
       z-index: 1;
     }
 
-    .hero-cta .btn.iconized::after,
-    .hero-platform-cats-grid a.cat-with-icon::after {
+    .menu-icon-badge::after {
       content: "";
       position: absolute;
+      left: 50%;
       top: 50%;
       width: 1.36rem;
       height: 1.36rem;
-      transform: translateY(-50%) scale(0.9);
+      transform: translate(-50%, -50%) scale(0.9);
       border-radius: 999px;
       border: 2px solid transparent;
       background:
@@ -1111,38 +1103,18 @@
         conic-gradient(from 0deg, #78a8ff, #7be0cf, #b6c7ff, #78a8ff) border-box;
       opacity: 0;
       pointer-events: none;
-      z-index: 0;
+      z-index: -1;
     }
 
-    .hero-cta .btn.iconized::after {
-      left: 1.04rem;
-    }
-
-    .hero-platform-cats-grid a.cat-with-icon::after {
-      left: 0.57rem;
-    }
-
-    .hero-platform-cats-grid a.icon-roadmap::after {
-      left: 0.61rem;
-    }
-
-    .hero-platform-cats-grid a.icon-checklist::after {
-      left: 0.6rem;
-    }
-
-    .hero-platform-cats-grid a.icon-hub::after {
-      left: 0.6rem;
-    }
-
-    .hero-cta .btn.iconized.ring-spin-active::after,
-    .hero-platform-cats-grid a.cat-with-icon.ring-spin-active::after {
+    .hero-cta .btn.iconized.ring-spin-active .menu-icon-badge::after,
+    .hero-platform-cats-grid a.cat-with-icon.ring-spin-active .menu-icon-badge::after {
       animation: iconRingSpin 0.72s ease-out 1;
     }
 
-    .hero-cta .btn.iconized[data-ring-hover="true"]:hover::after,
-    .hero-cta .btn.iconized[data-ring-hover="true"]:focus-visible::after,
-    .hero-platform-cats-grid a.cat-with-icon[data-ring-hover="true"]:hover::after,
-    .hero-platform-cats-grid a.cat-with-icon[data-ring-hover="true"]:focus-visible::after {
+    .hero-cta .btn.iconized[data-ring-hover="true"]:hover .menu-icon-badge::after,
+    .hero-cta .btn.iconized[data-ring-hover="true"]:focus-visible .menu-icon-badge::after,
+    .hero-platform-cats-grid a.cat-with-icon[data-ring-hover="true"]:hover .menu-icon-badge::after,
+    .hero-platform-cats-grid a.cat-with-icon[data-ring-hover="true"]:focus-visible .menu-icon-badge::after {
       opacity: 0.95;
       animation: iconRingHoverSpin 1s linear infinite;
     }
@@ -1177,59 +1149,59 @@
       box-shadow: 0 1px 2px rgba(61, 116, 83, 0.2);
     }
 
-    .hero-cta .btn.icon-briefcase::before {
+    .menu-icon-badge.icon-briefcase {
       background-color: #e8efff;
       border-color: rgba(82, 109, 179, 0.34);
       box-shadow: 0 1px 2px rgba(64, 86, 142, 0.2);
     }
 
-    .hero-cta .btn.icon-ai::before {
+    .menu-icon-badge.icon-ai {
       background-color: #ece9ff;
       border-color: rgba(102, 84, 183, 0.36);
       box-shadow: 0 1px 2px rgba(83, 69, 146, 0.21);
     }
 
-    .hero-platform-cats-grid a.icon-roadmap::before {
+    .menu-icon-badge.icon-roadmap {
       background-color: #e7f1ff;
       border-color: rgba(77, 131, 178, 0.33);
     }
 
-    .hero-platform-cats-grid a.icon-checklist::before {
+    .menu-icon-badge.icon-checklist {
       background-color: #eaf8f0;
       border-color: rgba(76, 144, 108, 0.33);
     }
 
-    .hero-platform-cats-grid a.icon-faq::before {
+    .menu-icon-badge.icon-faq {
       background-color: #f1ecff;
       border-color: rgba(124, 96, 175, 0.33);
     }
 
-    .hero-platform-cats-grid a.icon-hub::before {
+    .menu-icon-badge.icon-hub {
       background-color: #fff1e8;
       border-color: rgba(186, 119, 72, 0.34);
     }
 
-    .hero-cta .btn.icon-briefcase {
+    .menu-icon-badge.icon-briefcase {
       --menu-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect x='3.2' y='7' width='17.6' height='12.5' rx='2.2' fill='none' stroke='%232f61d5' stroke-width='2'/%3E%3Cpath d='M9 7V5.6c0-.9.7-1.6 1.6-1.6h2.8c.9 0 1.6.7 1.6 1.6V7' fill='none' stroke='%232f61d5' stroke-width='2'/%3E%3C/svg%3E");
     }
 
-    .hero-cta .btn.icon-ai {
+    .menu-icon-badge.icon-ai {
       --menu-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect x='2.4' y='2.4' width='19.2' height='19.2' rx='5.2' fill='%232f61d5'/%3E%3Ctext x='4.1' y='16.2' font-family='Arial' font-size='10.8' font-weight='800' fill='%23ffffff'%3EAI%3C/text%3E%3C/svg%3E");
     }
 
-    .hero-platform-cats-grid a.icon-roadmap {
+    .menu-icon-badge.icon-roadmap {
       --menu-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M6 17h11M6 12h8M6 7h11' stroke='%232f61d5' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
     }
 
-    .hero-platform-cats-grid a.icon-checklist {
+    .menu-icon-badge.icon-checklist {
       --menu-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M6.2 7.3h11.6M6.2 12h11.6M6.2 16.7h7.2' stroke='%232f61d5' stroke-width='2' stroke-linecap='round'/%3E%3Cpath d='M15.9 16.2 17 17.3l2-2' fill='none' stroke='%232f61d5' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
     }
 
-    .hero-platform-cats-grid a.icon-faq {
+    .menu-icon-badge.icon-faq {
       --menu-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 16.9v-.1c0-1.5 2.1-1.9 2.1-3.6a2.1 2.1 0 0 0-4.2 0' fill='none' stroke='%232f61d5' stroke-width='2' stroke-linecap='round'/%3E%3Ccircle cx='12' cy='19' r='1.1' fill='%232f61d5'/%3E%3C/svg%3E");
     }
 
-    .hero-platform-cats-grid a.icon-hub {
+    .menu-icon-badge.icon-hub {
       --menu-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M6 16v-8l6-3 6 3v8l-6 3z' fill='none' stroke='%232f61d5' stroke-width='2'/%3E%3Cpath d='M12 9v6M9 12h6' stroke='%232f61d5' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
     }
 
@@ -2629,8 +2601,8 @@
               data-tooltip="모바일로 접속 시 통화로 연결됩니다."
               aria-label="대표전화 051-515-5459. 모바일로 접속 시 통화로 연결됩니다."
               ><span class="menu-icon-badge icon-phone" aria-hidden="true"></span>전화 상담</a>
-            <a class="btn btn-ghost iconized icon-briefcase" data-ring-click="true" data-ring-hover="true" data-no-nav="true" href="#services">업무 분야</a>
-            <a class="btn btn-ghost iconized icon-ai" data-ring-click="true" data-ring-hover="true" href="platform.html">지능형 행정 플랫폼</a>
+            <a class="btn btn-ghost iconized icon-briefcase" data-ring-click="true" data-ring-hover="true" data-no-nav="true" href="#services"><span class="menu-icon-badge icon-briefcase" aria-hidden="true"></span>업무 분야</a>
+            <a class="btn btn-ghost iconized icon-ai" data-ring-click="true" data-ring-hover="true" href="platform.html"><span class="menu-icon-badge icon-ai" aria-hidden="true"></span>지능형 행정 플랫폼</a>
           </div>
         </div>
         <div class="hero-aside-col">
@@ -2671,10 +2643,10 @@
           <nav class="hero-platform-cats" aria-label="지능형 행정 플랫폼 카테고리 바로가기">
             <span class="hero-platform-cats-label">지능형 행정 플랫폼 카테고리</span>
             <div class="hero-platform-cats-grid">
-              <a class="cat-with-icon icon-roadmap" data-ring-click="true" data-ring-hover="true" href="minwon-roadmap.html">민원 로드맵</a>
-              <a class="cat-with-icon icon-checklist" data-ring-click="true" data-ring-hover="true" href="platform-check.html">서류·준비</a>
-              <a class="cat-with-icon icon-faq" data-ring-click="true" data-ring-hover="true" href="platform-faq.html">자주 묻는 질문</a>
-              <a class="cat-with-icon icon-hub" data-ring-click="true" data-ring-hover="true" href="platform-hub.html">공지·자료실</a>
+              <a class="cat-with-icon icon-roadmap" data-ring-click="true" data-ring-hover="true" href="minwon-roadmap.html"><span class="menu-icon-badge icon-roadmap" aria-hidden="true"></span>민원 로드맵</a>
+              <a class="cat-with-icon icon-checklist" data-ring-click="true" data-ring-hover="true" href="platform-check.html"><span class="menu-icon-badge icon-checklist" aria-hidden="true"></span>서류·준비</a>
+              <a class="cat-with-icon icon-faq" data-ring-click="true" data-ring-hover="true" href="platform-faq.html"><span class="menu-icon-badge icon-faq" aria-hidden="true"></span>자주 묻는 질문</a>
+              <a class="cat-with-icon icon-hub" data-ring-click="true" data-ring-hover="true" href="platform-hub.html"><span class="menu-icon-badge icon-hub" aria-hidden="true"></span>공지·자료실</a>
               <a class="integrated-search-link" href="integrated-search.html">통합검색</a>
             </div>
           </nav>

@@ -1123,19 +1123,19 @@
       animation: iconRingSpin 0.72s ease-out 1;
     }
 
-    .hero-cta .btn.iconized[data-ring-hover="true"]:hover:not(.ring-hover-locked) .menu-icon-badge::after,
-    .hero-cta .btn.iconized[data-ring-hover="true"]:focus-visible:not(.ring-hover-locked) .menu-icon-badge::after,
-    .hero-platform-cats-grid a.cat-with-icon[data-ring-hover="true"]:hover:not(.ring-hover-locked) .menu-icon-badge::after,
-    .hero-platform-cats-grid a.cat-with-icon[data-ring-hover="true"]:focus-visible:not(.ring-hover-locked) .menu-icon-badge::after,
-    .hero-platform-cats-grid a.integrated-search-link[data-ring-hover="true"]:hover:not(.ring-hover-locked) .menu-icon-badge::after,
-    .hero-platform-cats-grid a.integrated-search-link[data-ring-hover="true"]:focus-visible:not(.ring-hover-locked) .menu-icon-badge::after {
+    .hero-cta .btn.iconized[data-ring-hover="true"].ring-hover-running:hover .menu-icon-badge::after,
+    .hero-cta .btn.iconized[data-ring-hover="true"].ring-hover-running:focus-visible .menu-icon-badge::after,
+    .hero-platform-cats-grid a.cat-with-icon[data-ring-hover="true"].ring-hover-running:hover .menu-icon-badge::after,
+    .hero-platform-cats-grid a.cat-with-icon[data-ring-hover="true"].ring-hover-running:focus-visible .menu-icon-badge::after,
+    .hero-platform-cats-grid a.integrated-search-link[data-ring-hover="true"].ring-hover-running:hover .menu-icon-badge::after,
+    .hero-platform-cats-grid a.integrated-search-link[data-ring-hover="true"].ring-hover-running:focus-visible .menu-icon-badge::after {
       opacity: 0.95;
       animation: iconRingHoverSpin 1s linear infinite;
     }
 
-    .hero-cta .btn.iconized[data-ring-border="true"]:hover:not(.ring-hover-locked),
+    .hero-cta .btn.iconized[data-ring-border="true"].ring-hover-running:hover,
     .hero-cta .btn.iconized[data-ring-border="true"].ring-spin-active,
-    .hero-platform-cats-grid a.integrated-search-link[data-ring-border="true"]:hover:not(.ring-hover-locked),
+    .hero-platform-cats-grid a.integrated-search-link[data-ring-border="true"].ring-hover-running:hover,
     .hero-platform-cats-grid a.integrated-search-link[data-ring-border="true"].ring-spin-active {
       animation: arcBorderCycle 1s linear infinite;
     }
@@ -3445,11 +3445,9 @@
           var href = link.getAttribute("href") || "";
           if (!href || href === "#") return;
 
-          if (!link.classList.contains("ring-hover-locked")) {
-            link.classList.remove("ring-spin-active");
-            void link.offsetWidth;
-            link.classList.add("ring-spin-active");
-          }
+          link.classList.remove("ring-spin-active");
+          void link.offsetWidth;
+          link.classList.add("ring-spin-active");
 
           var isHashOnly = href.charAt(0) === "#";
           if (isHashOnly) return;
@@ -3463,15 +3461,27 @@
 
       var hoverRingLinks = Array.prototype.slice.call(document.querySelectorAll("a[data-ring-hover='true']"));
       hoverRingLinks.forEach(function (link) {
-        var locked = false;
-        link.addEventListener("mouseenter", function () {
-          if (locked) return;
-          locked = true;
-          window.setTimeout(function () {
-            link.classList.add("ring-hover-locked");
+        var hoverTimer = null;
+        function openHoverWindow() {
+          if (hoverTimer) window.clearTimeout(hoverTimer);
+          link.classList.add("ring-hover-running");
+          hoverTimer = window.setTimeout(function () {
+            link.classList.remove("ring-hover-running");
             link.classList.remove("ring-spin-active");
+            hoverTimer = null;
           }, 5000);
+        }
+        link.addEventListener("mouseenter", function () {
+          openHoverWindow();
         });
+        link.addEventListener("mouseleave", function () {
+          if (hoverTimer) {
+            window.clearTimeout(hoverTimer);
+            hoverTimer = null;
+          }
+          link.classList.remove("ring-hover-running");
+        });
+        link.addEventListener("focus", openHoverWindow);
       });
     })();
   </script>

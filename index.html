@@ -2246,65 +2246,72 @@
     }
 
     .consult-form-wrap {
-      background: #fff;
-      border: 1px solid var(--line);
-      border-radius: 2px;
+      background: linear-gradient(180deg, #ffffff 0%, #fbfcff 100%);
+      border: 1px solid #e6ebf4;
+      border-radius: 18px;
       padding: 1.35rem 1.25rem 1.5rem;
-      box-shadow: 0 1px 0 rgba(20, 24, 32, 0.04);
+      box-shadow: 0 10px 24px rgba(56, 73, 104, 0.08);
     }
 
     .consult-form-wrap h3 {
       font-family: "Noto Serif KR", serif;
-      font-size: 1.05rem;
+      font-size: 1.1rem;
       font-weight: 700;
       color: var(--ink);
-      margin-bottom: 1rem;
-      padding-bottom: 0.65rem;
-      border-bottom: 2px solid var(--maroon);
+      margin-bottom: 1.05rem;
+      padding-bottom: 0.62rem;
+      border-bottom: 3px solid rgba(104, 84, 163, 0.95);
     }
 
     .consult-form label {
       display: block;
-      font-size: 0.72rem;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 0.35rem;
-      font-weight: 500;
+      font-size: 0.82rem;
+      letter-spacing: 0;
+      text-transform: none;
+      color: #41567a;
+      margin-bottom: 0.38rem;
+      font-weight: 700;
     }
 
     .consult-form input,
     .consult-form textarea {
       width: 100%;
-      padding: 0.55rem 0.65rem;
-      font-size: 0.9rem;
+      padding: 0.58rem 0.74rem;
+      font-size: 0.92rem;
       font-family: inherit;
-      border: 1px solid var(--line);
-      border-radius: 2px;
-      background: var(--paper);
-      color: var(--ink);
+      border: 1px solid #dde4f0;
+      border-radius: 10px;
+      background: #f7f9fd;
+      color: #273857;
       margin-bottom: 0.9rem;
+      transition: border-color 0.18s ease, box-shadow 0.18s ease, background-color 0.18s ease;
+    }
+
+    .consult-form input::placeholder,
+    .consult-form textarea::placeholder {
+      color: #7a8eaf;
     }
 
     .consult-form input:focus,
     .consult-form textarea:focus {
       outline: none;
-      border-color: rgba(92, 31, 40, 0.45);
-      box-shadow: 0 0 0 2px rgba(92, 31, 40, 0.08);
+      border-color: #96aee0;
+      background: #ffffff;
+      box-shadow: 0 0 0 3px rgba(124, 150, 206, 0.15);
     }
 
     /* 성함 입력칸만 컬러 링 테두리 적용 */
     .consult-form #consult-name.consult-name-ring-active {
       border: 2px solid transparent;
       background:
-        linear-gradient(var(--paper), var(--paper)) padding-box,
+        linear-gradient(#f7f9fd, #f7f9fd) padding-box,
         conic-gradient(from 0deg, #ff624a, #ff8a00, #ffd400, #16a34a, #4d90ff, #ff624a) border-box;
       box-shadow: none;
     }
     .consult-form #consult-name.consult-name-ring-active:focus {
       border: 2px solid transparent;
       background:
-        linear-gradient(var(--paper), var(--paper)) padding-box,
+        linear-gradient(#ffffff, #ffffff) padding-box,
         conic-gradient(from 0deg, #ff624a, #ff8a00, #ffd400, #16a34a, #4d90ff, #ff624a) border-box;
       box-shadow: 0 0 0 2px rgba(255, 140, 0, 0.12);
     }
@@ -2320,18 +2327,21 @@
       width: 100%;
       padding: 0.65rem 1rem;
       font-size: 0.9rem;
-      font-weight: 600;
+      font-weight: 700;
       font-family: inherit;
       cursor: pointer;
       border: none;
-      border-radius: 2px;
-      background: linear-gradient(180deg, var(--maroon) 0%, var(--maroon-dark) 100%);
+      border-radius: 10px;
+      background: linear-gradient(180deg, #6a58a8 0%, #554585 100%);
       color: #fff;
-      transition: opacity 0.15s;
+      box-shadow: 0 8px 18px rgba(74, 61, 122, 0.22);
+      transition: transform 0.12s ease, opacity 0.15s ease, box-shadow 0.15s ease;
     }
 
     .consult-form .btn-send:hover:not(:disabled) {
-      opacity: 0.92;
+      opacity: 0.96;
+      transform: translateY(-1px);
+      box-shadow: 0 10px 22px rgba(74, 61, 122, 0.26);
     }
 
     .consult-form .btn-send:disabled {

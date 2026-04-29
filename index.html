@@ -1055,6 +1055,7 @@
       align-items: center;
       justify-content: center;
       gap: 0.34rem;
+      position: relative;
     }
 
     .menu-icon-badge {
@@ -1091,6 +1092,46 @@
       border: 1px solid rgba(70, 95, 145, 0.3);
       box-shadow: 0 1px 2px rgba(50, 70, 110, 0.2);
       flex: 0 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-cta .btn.iconized::after,
+    .hero-platform-cats-grid a.cat-with-icon::after {
+      content: "";
+      position: absolute;
+      left: 0.56rem;
+      top: 50%;
+      width: 1.36rem;
+      height: 1.36rem;
+      transform: translateY(-50%) scale(0.9);
+      border-radius: 999px;
+      border: 2px solid transparent;
+      background:
+        linear-gradient(#f7f9ff, #f7f9ff) padding-box,
+        conic-gradient(from 0deg, #78a8ff, #7be0cf, #b6c7ff, #78a8ff) border-box;
+      opacity: 0;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .hero-cta .btn.iconized.ring-spin-active::after,
+    .hero-platform-cats-grid a.cat-with-icon.ring-spin-active::after {
+      animation: iconRingSpin 0.72s ease-out 1;
+    }
+
+    @keyframes iconRingSpin {
+      0% {
+        opacity: 0;
+        transform: translateY(-50%) scale(0.86) rotate(0deg);
+      }
+      20% {
+        opacity: 0.95;
+      }
+      100% {
+        opacity: 0;
+        transform: translateY(-50%) scale(1.18) rotate(360deg);
+      }
     }
 
     /* 메뉴별 아이콘 톤 차등 */
@@ -2552,8 +2593,8 @@
               data-tooltip="모바일로 접속 시 통화로 연결됩니다."
               aria-label="대표전화 051-515-5459. 모바일로 접속 시 통화로 연결됩니다."
               ><span class="menu-icon-badge icon-phone" aria-hidden="true"></span>전화 상담</a>
-            <a class="btn btn-ghost iconized icon-briefcase" href="#services">업무 분야</a>
-            <a class="btn btn-ghost iconized icon-ai" href="platform.html">지능형 행정 플랫폼</a>
+            <a class="btn btn-ghost iconized icon-briefcase" data-ring-click="true" href="#services">업무 분야</a>
+            <a class="btn btn-ghost iconized icon-ai" data-ring-click="true" href="platform.html">지능형 행정 플랫폼</a>
           </div>
         </div>
         <div class="hero-aside-col">
@@ -2594,10 +2635,10 @@
           <nav class="hero-platform-cats" aria-label="지능형 행정 플랫폼 카테고리 바로가기">
             <span class="hero-platform-cats-label">지능형 행정 플랫폼 카테고리</span>
             <div class="hero-platform-cats-grid">
-              <a class="cat-with-icon icon-roadmap" href="minwon-roadmap.html">민원 로드맵</a>
-              <a class="cat-with-icon icon-checklist" href="platform-check.html">서류·준비</a>
-              <a class="cat-with-icon icon-faq" href="platform-faq.html">자주 묻는 질문</a>
-              <a class="cat-with-icon icon-hub" href="platform-hub.html">공지·자료실</a>
+              <a class="cat-with-icon icon-roadmap" data-ring-click="true" href="minwon-roadmap.html">민원 로드맵</a>
+              <a class="cat-with-icon icon-checklist" data-ring-click="true" href="platform-check.html">서류·준비</a>
+              <a class="cat-with-icon icon-faq" data-ring-click="true" href="platform-faq.html">자주 묻는 질문</a>
+              <a class="cat-with-icon icon-hub" data-ring-click="true" href="platform-hub.html">공지·자료실</a>
               <a class="integrated-search-link" href="integrated-search.html">통합검색</a>
             </div>
           </nav>
@@ -3305,6 +3346,29 @@
           cards.forEach(function (card) {
             if (card.getAttribute("data-service") === selectedService) card.classList.add("selected");
           });
+        });
+      });
+
+      var clickRingLinks = Array.prototype.slice.call(document.querySelectorAll("a[data-ring-click='true']"));
+      clickRingLinks.forEach(function (link) {
+        link.addEventListener("click", function (evt) {
+          if (evt.defaultPrevented) return;
+          if (evt.button !== 0) return;
+          if (evt.metaKey || evt.ctrlKey || evt.shiftKey || evt.altKey) return;
+          var href = link.getAttribute("href") || "";
+          if (!href || href === "#") return;
+
+          link.classList.remove("ring-spin-active");
+          void link.offsetWidth;
+          link.classList.add("ring-spin-active");
+
+          var isHashOnly = href.charAt(0) === "#";
+          if (isHashOnly) return;
+
+          evt.preventDefault();
+          setTimeout(function () {
+            window.location.href = href;
+          }, 240);
         });
       });
     })();

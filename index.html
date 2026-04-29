@@ -3364,7 +3364,7 @@
         if (!link) return;
         var icon = link.querySelector(".menu-icon-badge");
         if (!icon) return;
-        var cx = icon.offsetLeft + (icon.offsetWidth / 2);
+        var cx = icon.offsetLeft + (icon.offsetWidth / 2) - 7;
         var cy = icon.offsetTop + (icon.offsetHeight / 2);
         link.style.setProperty("--ring-center-x", cx + "px");
         link.style.setProperty("--ring-center-y", cy + "px");

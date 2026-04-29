@@ -1891,6 +1891,8 @@
     .service-card li a.service-subtopic-link {
       color: inherit;
       text-decoration: none;
+      display: block;
+      width: 100%;
     }
 
     .service-card li a.service-subtopic-link:hover,
@@ -2694,10 +2696,10 @@
         <article class="service-card" data-service="investment" aria-label="기업투자 · 글러벌 업무 상세 보기">
           <h3><a class="service-card-title" href="service-investment.html">기업투자 · 글러벌 업무</a></h3>
           <ul>
-            <li><a class="service-subtopic-link" href="service-post.html?service=investment&topic=fdi">외국인투자기업(FDI) 설립·신고·변경</a></li>
-            <li><a class="service-subtopic-link" href="service-post.html?service=investment&topic=corp-branch">국내 법인·지점 등 기업 관련 설립</a></li>
-            <li><a class="service-subtopic-link" href="service-post.html?service=investment&topic=permit-case">국제물류주선, 건설폐기물 수집·운반 등 인·허가(사안별)</a></li>
-            <li><a class="service-subtopic-link" href="service-post.html?service=investment&topic=consular-apostille">중국영사관업무 · 베트남영사관업무 · 아포스티유 및 해외 영사인증</a></li>
+            <li data-subtopic-href="service-post.html?service=investment&topic=fdi"><a class="service-subtopic-link" href="service-post.html?service=investment&topic=fdi">외국인투자기업(FDI) 설립·신고·변경</a></li>
+            <li data-subtopic-href="service-post.html?service=investment&topic=corp-branch"><a class="service-subtopic-link" href="service-post.html?service=investment&topic=corp-branch">국내 법인·지점 등 기업 관련 설립</a></li>
+            <li data-subtopic-href="service-post.html?service=investment&topic=permit-case"><a class="service-subtopic-link" href="service-post.html?service=investment&topic=permit-case">국제물류주선, 건설폐기물 수집·운반 등 인·허가(사안별)</a></li>
+            <li data-subtopic-href="service-post.html?service=investment&topic=consular-apostille"><a class="service-subtopic-link" href="service-post.html?service=investment&topic=consular-apostille">중국영사관업무 · 베트남영사관업무 · 아포스티유 및 해외 영사인증</a></li>
           </ul>
         </article>
         <article class="service-card" data-service="patriot" aria-label="국가유공자보훈업무 상세 보기">
@@ -3273,6 +3275,14 @@
 
       cards.forEach(function (card) {
         card.addEventListener("click", function (e) {
+          var subtopicItem = e.target.closest && e.target.closest("li[data-subtopic-href]");
+          if (subtopicItem) {
+            var subtopicHref = subtopicItem.getAttribute("data-subtopic-href");
+            if (subtopicHref) {
+              window.location.href = subtopicHref;
+              return;
+            }
+          }
           if (e.target.closest && e.target.closest("a")) return;
           cards.forEach(function (item) { item.classList.remove("selected"); });
           heroMiniLinks.forEach(function (item) { item.classList.remove("selected"); });

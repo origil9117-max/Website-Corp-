@@ -1123,19 +1123,19 @@
       animation: iconRingSpin 0.72s ease-out 1;
     }
 
-    .hero-cta .btn.iconized[data-ring-hover="true"]:hover .menu-icon-badge::after,
-    .hero-cta .btn.iconized[data-ring-hover="true"]:focus-visible .menu-icon-badge::after,
-    .hero-platform-cats-grid a.cat-with-icon[data-ring-hover="true"]:hover .menu-icon-badge::after,
-    .hero-platform-cats-grid a.cat-with-icon[data-ring-hover="true"]:focus-visible .menu-icon-badge::after,
-    .hero-platform-cats-grid a.integrated-search-link[data-ring-hover="true"]:hover .menu-icon-badge::after,
-    .hero-platform-cats-grid a.integrated-search-link[data-ring-hover="true"]:focus-visible .menu-icon-badge::after {
+    .hero-cta .btn.iconized[data-ring-hover="true"]:hover:not(.ring-hover-locked) .menu-icon-badge::after,
+    .hero-cta .btn.iconized[data-ring-hover="true"]:focus-visible:not(.ring-hover-locked) .menu-icon-badge::after,
+    .hero-platform-cats-grid a.cat-with-icon[data-ring-hover="true"]:hover:not(.ring-hover-locked) .menu-icon-badge::after,
+    .hero-platform-cats-grid a.cat-with-icon[data-ring-hover="true"]:focus-visible:not(.ring-hover-locked) .menu-icon-badge::after,
+    .hero-platform-cats-grid a.integrated-search-link[data-ring-hover="true"]:hover:not(.ring-hover-locked) .menu-icon-badge::after,
+    .hero-platform-cats-grid a.integrated-search-link[data-ring-hover="true"]:focus-visible:not(.ring-hover-locked) .menu-icon-badge::after {
       opacity: 0.95;
       animation: iconRingHoverSpin 1s linear infinite;
     }
 
-    .hero-cta .btn.iconized[data-ring-border="true"]:hover,
+    .hero-cta .btn.iconized[data-ring-border="true"]:hover:not(.ring-hover-locked),
     .hero-cta .btn.iconized[data-ring-border="true"].ring-spin-active,
-    .hero-platform-cats-grid a.integrated-search-link[data-ring-border="true"]:hover,
+    .hero-platform-cats-grid a.integrated-search-link[data-ring-border="true"]:hover:not(.ring-hover-locked),
     .hero-platform-cats-grid a.integrated-search-link[data-ring-border="true"].ring-spin-active {
       animation: arcBorderCycle 1s linear infinite;
     }
@@ -2294,14 +2294,14 @@
     }
 
     /* 성함 입력칸만 컬러 링 테두리 적용 */
-    .consult-form #consult-name {
+    .consult-form #consult-name.consult-name-ring-active {
       border: 2px solid transparent;
       background:
         linear-gradient(var(--paper), var(--paper)) padding-box,
         conic-gradient(from 0deg, #ff624a, #ff8a00, #ffd400, #16a34a, #4d90ff, #ff624a) border-box;
       box-shadow: none;
     }
-    .consult-form #consult-name:focus {
+    .consult-form #consult-name.consult-name-ring-active:focus {
       border: 2px solid transparent;
       background:
         linear-gradient(var(--paper), var(--paper)) padding-box,
@@ -2803,7 +2803,8 @@
             <li data-subtopic-href="service-post.html?service=investment&topic=fdi"><a class="service-subtopic-link" href="service-post.html?service=investment&topic=fdi">외국인투자기업(FDI) 설립·신고·변경</a></li>
             <li data-subtopic-href="service-post.html?service=investment&topic=corp-branch"><a class="service-subtopic-link" href="service-post.html?service=investment&topic=corp-branch">국내 법인·지점 등 기업 관련 설립</a></li>
             <li data-subtopic-href="service-post.html?service=investment&topic=permit-case"><a class="service-subtopic-link" href="service-post.html?service=investment&topic=permit-case">국제물류주선, 건설폐기물 수집·운반 등 인·허가(사안별)</a></li>
-            <li data-subtopic-href="service-post.html?service=investment&topic=consular-apostille"><a class="service-subtopic-link" href="service-post.html?service=investment&topic=consular-apostille">중국영사관업무 · 베트남영사관업무 · 아포스티유 및 해외 영사인증</a></li>
+            <li data-subtopic-href="service-post.html?service=investment&topic=consular-services"><a class="service-subtopic-link" href="service-post.html?service=investment&topic=consular-services">중국영사관업무 · 베트남영사관업무</a></li>
+            <li data-subtopic-href="service-post.html?service=investment&topic=apostille-certification"><a class="service-subtopic-link" href="service-post.html?service=investment&topic=apostille-certification">아포스티유 및 해외 영사인증</a></li>
           </ul>
         </article>
         <article class="service-card" data-service="patriot" aria-label="국가유공자보훈업무 상세 보기">
@@ -3263,6 +3264,12 @@
     })();
 
     (function () {
+      var shouldActivateConsultNameRing = false;
+      function setConsultNameRingActive(on) {
+        var input = document.getElementById("consult-name");
+        if (!input) return;
+        input.classList.toggle("consult-name-ring-active", !!on);
+      }
       function focusConsultNameInput() {
         var input = document.getElementById("consult-name");
         if (!input) return;
@@ -3275,6 +3282,9 @@
       function focusConsultNameIfHash() {
         var h = (window.location.hash || "").replace(/\/$/, "");
         if (h !== "#consult-form") return;
+        if (shouldActivateConsultNameRing) {
+          setConsultNameRingActive(true);
+        }
         window.setTimeout(focusConsultNameInput, 200);
       }
       window.addEventListener("hashchange", focusConsultNameIfHash);
@@ -3286,7 +3296,17 @@
       var heroConsult = document.querySelector('a.hero-promo-link[href="#consult-form"]');
       if (heroConsult) {
         heroConsult.addEventListener("click", function () {
+          shouldActivateConsultNameRing = true;
+          setConsultNameRingActive(true);
           window.setTimeout(focusConsultNameInput, 280);
+        });
+      }
+
+      var consultNameInput = document.getElementById("consult-name");
+      if (consultNameInput) {
+        consultNameInput.addEventListener("blur", function () {
+          shouldActivateConsultNameRing = false;
+          setConsultNameRingActive(false);
         });
       }
     })();
@@ -3425,9 +3445,11 @@
           var href = link.getAttribute("href") || "";
           if (!href || href === "#") return;
 
-          link.classList.remove("ring-spin-active");
-          void link.offsetWidth;
-          link.classList.add("ring-spin-active");
+          if (!link.classList.contains("ring-hover-locked")) {
+            link.classList.remove("ring-spin-active");
+            void link.offsetWidth;
+            link.classList.add("ring-spin-active");
+          }
 
           var isHashOnly = href.charAt(0) === "#";
           if (isHashOnly) return;
@@ -3436,6 +3458,19 @@
           setTimeout(function () {
             window.location.href = href;
           }, 240);
+        });
+      });
+
+      var hoverRingLinks = Array.prototype.slice.call(document.querySelectorAll("a[data-ring-hover='true']"));
+      hoverRingLinks.forEach(function (link) {
+        var locked = false;
+        link.addEventListener("mouseenter", function () {
+          if (locked) return;
+          locked = true;
+          window.setTimeout(function () {
+            link.classList.add("ring-hover-locked");
+            link.classList.remove("ring-spin-active");
+          }, 5000);
         });
       });
     })();

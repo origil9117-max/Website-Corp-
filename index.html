@@ -3364,10 +3364,8 @@
         if (!link) return;
         var icon = link.querySelector(".menu-icon-badge");
         if (!icon) return;
-        var linkRect = link.getBoundingClientRect();
-        var iconRect = icon.getBoundingClientRect();
-        var cx = iconRect.left - linkRect.left + (iconRect.width / 2);
-        var cy = iconRect.top - linkRect.top + (iconRect.height / 2);
+        var cx = icon.offsetLeft + (icon.offsetWidth / 2);
+        var cy = icon.offsetTop + (icon.offsetHeight / 2);
         link.style.setProperty("--ring-center-x", cx + "px");
         link.style.setProperty("--ring-center-y", cy + "px");
       }

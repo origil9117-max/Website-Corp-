@@ -80,6 +80,12 @@
     }
     .label { font-size: 0.72rem; color: var(--maroon); letter-spacing: 0.14em; text-transform: uppercase; font-weight: 700; }
     h1 { margin: 0.2rem 0 0.25rem; font-size: clamp(1.2rem, 2.7vw, 1.7rem); }
+    .page-subtitle {
+      margin: 0.08rem 0 0;
+      font-size: 0.94rem;
+      font-weight: 700;
+      color: #24364f;
+    }
     .panel {
       border: 1px solid var(--line);
       border-radius: 4px;
@@ -433,6 +439,7 @@
       </div>
       <div>
         <h1 id="page-title">업무 게시</h1>
+        <p id="page-subtitle" class="page-subtitle" hidden></p>
       </div>
     </section>
     <p id="cloud-warning" class="cloud-warning"></p>
@@ -542,17 +549,31 @@
       var SERVICE_MAP = {
         nonprofit: "비영리법인설립업무",
         immigration: "출입국민원업무",
-        investment: "기업투자·법인설립",
+        investment: "기업투자 · 글러벌 업무",
         patriot: "국가유공자보훈업무",
         permit: "인허가 민원",
         appeal: "행정심판"
       };
+      var SERVICE_TOPIC_MAP = {
+        investment: {
+          fdi: "외국인투자기업(FDI) 설립·신고·변경",
+          "corp-branch": "국내 법인·지점 등 기업 관련 설립",
+          "permit-case": "국제물류주선, 건설폐기물 수집·운반 등 인·허가(사안별)",
+          "consular-apostille": "중국영사관업무 · 베트남영사관업무 · 아포스티유 및 해외 영사인증"
+        }
+      };
       var ADMIN_EMAIL = "lkc@daum.net";
-      var service = new URL(window.location.href).searchParams.get("service") || "nonprofit";
+      var params = new URL(window.location.href).searchParams;
+      var service = params.get("service") || "nonprofit";
       if (!SERVICE_MAP[service]) service = "nonprofit";
-      var STORAGE_KEY = "service-posts:" + service;
+      var topic = params.get("topic") || "";
+      var topicLabelMap = SERVICE_TOPIC_MAP[service] || null;
+      if (topic && (!topicLabelMap || !topicLabelMap[topic])) topic = "";
+      var topicLabel = topic && topicLabelMap ? topicLabelMap[topic] : "";
+      var STORAGE_KEY = "service-posts:" + service + (topic ? ":" + topic : "");
 
       var pageTitle = document.getElementById("page-title");
+      var pageSubtitle = document.getElementById("page-subtitle");
       var adminPass = document.getElementById("admin-pass");
       var btnLogin = document.getElementById("btn-login");
       var btnLogout = document.getElementById("btn-logout");
@@ -603,14 +624,19 @@
         "create table if not exists public.service_posts (\r\n" +
         "  id uuid primary key default gen_random_uuid(),\r\n" +
         "  service text not null,\r\n" +
+        "  topic text not null default '',\r\n" +
         "  title text not null,\r\n" +
         "  body text not null,\r\n" +
         "  images jsonb not null default '[]'::jsonb,\r\n" +
         "  created_at timestamptz not null default now()\r\n" +
         ");\r\n" +
         "\r\n" +
+        "alter table public.service_posts add column if not exists topic text not null default '';\r\n" +
+        "\r\n" +
         "create index if not exists service_posts_service_created_idx\r\n" +
         "  on public.service_posts (service, created_at desc);\r\n" +
+        "create index if not exists service_posts_service_topic_created_idx\r\n" +
+        "  on public.service_posts (service, topic, created_at desc);\r\n" +
         "\r\n" +
         "alter table public.service_posts enable row level security;\r\n" +
         "\r\n" +
@@ -627,6 +653,15 @@
       }
 
       pageTitle.textContent = SERVICE_MAP[service];
+      if (pageSubtitle) {
+        if (topicLabel) {
+          pageSubtitle.textContent = topicLabel;
+          pageSubtitle.hidden = false;
+        } else {
+          pageSubtitle.textContent = "";
+          pageSubtitle.hidden = true;
+        }
+      }
 
       if (window.supabase && window.SUPABASE_URL && window.SUPABASE_ANON_KEY) {
         client = window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY);
@@ -1770,8 +1805,9 @@
           try {
             var res = await client
               .from("service_posts")
-              .select("id, service, title, body, images, created_at")
+              .select("id, service, topic, title, body, images, created_at")
               .eq("service", service)
+              .eq("topic", topic)
               .order("created_at", { ascending: false });
             if (!res.error) return res.data || [];
             if (isMissingServicePostsTableError(res.error)) {
@@ -1792,6 +1828,7 @@
             .from("service_posts")
             .select("id", { head: true, count: "exact" })
             .eq("service", service)
+            .eq("topic", topic)
             .limit(1);
           if (probe.error) {
             cloudEnabled = false;
@@ -1866,8 +1903,9 @@
         try {
           var cloud = await client
             .from("service_posts")
-            .select("title, body, created_at")
-            .eq("service", service);
+            .select("title, body, topic, created_at")
+            .eq("service", service)
+            .eq("topic", topic);
           if (cloud.error) return;
 
           var existing = Array.isArray(cloud.data) ? cloud.data : [];
@@ -1882,6 +1920,7 @@
             if (!dup) {
               toInsert.push({
                 service: service,
+                topic: topic,
                 title: p.title || "",
                 body: p.body || "",
                 images: Array.isArray(p.images) ? p.images : [],
@@ -2022,6 +2061,7 @@
         }
         return client.from("service_posts").insert({
           service: service,
+          topic: topic,
           title: title,
           body: body,
           images: images
@@ -2030,7 +2070,7 @@
 
       function isMissingServicePostsTableError(err) {
         var msg = err && err.message ? String(err.message) : "";
-        return /service_posts/i.test(msg) && /could not find the table|schema cache|does not exist/i.test(msg);
+        return /service_posts|topic/i.test(msg) && /could not find the table|schema cache|does not exist|column .*topic.* does not exist/i.test(msg);
       }
 
       async function deletePostCloud(id) {
@@ -2625,6 +2665,7 @@
                   fallbackItems.push({
                     id: Date.now().toString(36) + Math.random().toString(36).slice(2, 7),
                     service: service,
+                    topic: topic,
                     title: title,
                     body: body,
                     images: pendingImages.slice(),
@@ -2653,6 +2694,7 @@
               items.push({
                 id: Date.now().toString(36) + Math.random().toString(36).slice(2, 7),
                 service: service,
+                topic: topic,
                 title: title,
                 body: body,
                 images: pendingImages.slice(),

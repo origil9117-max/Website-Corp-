@@ -236,6 +236,36 @@
     .btn-primary { color: #fff; background: linear-gradient(180deg, var(--maroon) 0%, var(--maroon-dark) 100%); }
     .btn-ghost { background: #fff; color: var(--ink); border-color: var(--line); }
     .post-list { display: grid; gap: 0.7rem; }
+    .post-pagination {
+      margin-top: 0.9rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0.35rem;
+      flex-wrap: wrap;
+    }
+    .post-pagination[hidden] { display: none !important; }
+    .post-pagination button {
+      min-width: 2rem;
+      height: 2rem;
+      padding: 0 0.55rem;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--ink);
+      border-radius: 2px;
+      font-size: 0.84rem;
+      cursor: pointer;
+    }
+    .post-pagination button[disabled] {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+    .post-pagination button.is-active {
+      background: var(--maroon);
+      border-color: var(--maroon);
+      color: #fff;
+      font-weight: 700;
+    }
     .file-help { margin-top: 0.45rem; font-size: 0.8rem; color: var(--muted); }
     .paste-hint {
       margin: 0.5rem 0 0.35rem;
@@ -539,6 +569,7 @@
     <section class="panel">
       <h2>게시글 목록</h2>
       <div id="post-list" class="post-list"></div>
+      <div id="post-pagination" class="post-pagination" hidden aria-label="게시글 페이지 이동"></div>
     </section>
   </main>
 
@@ -656,9 +687,12 @@
       var btnReset = document.getElementById("btn-reset");
       var formStatus = document.getElementById("form-status");
       var postList = document.getElementById("post-list");
+      var postPagination = document.getElementById("post-pagination");
 
       var pendingImages = [];
       var currentPosts = [];
+      var currentPage = 1;
+      var POSTS_PER_PAGE = 5;
       var adminOn = false;
       var authSectionOpen = false;
       var MAX_IMAGES = 5;
@@ -2018,13 +2052,50 @@
         }
       }
 
+      function renderPagination(totalItems, totalPages, page) {
+        if (!postPagination) return;
+        if (totalItems <= POSTS_PER_PAGE || totalPages <= 1) {
+          postPagination.hidden = true;
+          postPagination.innerHTML = "";
+          return;
+        }
+        postPagination.hidden = false;
+        var html = "";
+        html +=
+          '<button type="button" data-page-nav="prev" ' +
+          (page <= 1 ? "disabled" : "") +
+          ">이전</button>";
+        for (var p = 1; p <= totalPages; p++) {
+          html +=
+            '<button type="button" data-page="' +
+            p +
+            '" class="' +
+            (p === page ? "is-active" : "") +
+            '">' +
+            p +
+            "</button>";
+        }
+        html +=
+          '<button type="button" data-page-nav="next" ' +
+          (page >= totalPages ? "disabled" : "") +
+          ">다음</button>";
+        postPagination.innerHTML = html;
+      }
+
       function renderPosts() {
         var items = currentPosts;
         if (!items.length) {
           postList.innerHTML = '<p class="empty">등록된 게시글이 없습니다.</p>';
+          renderPagination(0, 0, 1);
           return;
         }
-        postList.innerHTML = items.map(function (item) {
+        var totalPages = Math.max(1, Math.ceil(items.length / POSTS_PER_PAGE));
+        if (currentPage > totalPages) currentPage = totalPages;
+        if (currentPage < 1) currentPage = 1;
+        var startIdx = (currentPage - 1) * POSTS_PER_PAGE;
+        var pageItems = items.slice(startIdx, startIdx + POSTS_PER_PAGE);
+
+        postList.innerHTML = pageItems.map(function (item) {
           var imagesHtml = "";
           if (Array.isArray(item.images) && item.images.length) {
             imagesHtml = '<div class="post-images">' + item.images.map(function (img) {
@@ -2046,6 +2117,7 @@
             imagesHtml + actions +
           '</article>';
         }).join("");
+        renderPagination(items.length, totalPages, currentPage);
       }
 
       function resetForm() {
@@ -2785,6 +2857,7 @@
 
           formStatus.textContent = id ? "게시글을 수정했습니다." : "게시글을 등록했습니다.";
           resetForm();
+          currentPage = 1;
           currentPosts = await loadPosts();
           renderPosts();
         } catch (err) {
@@ -2854,6 +2927,33 @@
           renderPosts();
         }
       });
+
+      if (postPagination) {
+        postPagination.addEventListener("click", function (e) {
+          var btn = e.target && e.target.closest ? e.target.closest("button") : null;
+          if (!btn || btn.disabled) return;
+          var totalPages = Math.max(1, Math.ceil((currentPosts || []).length / POSTS_PER_PAGE));
+          var nav = btn.getAttribute("data-page-nav");
+          var rawPage = btn.getAttribute("data-page");
+          if (nav === "prev") {
+            currentPage = Math.max(1, currentPage - 1);
+            renderPosts();
+            return;
+          }
+          if (nav === "next") {
+            currentPage = Math.min(totalPages, currentPage + 1);
+            renderPosts();
+            return;
+          }
+          if (rawPage) {
+            var nextPage = Number(rawPage);
+            if (!Number.isNaN(nextPage)) {
+              currentPage = Math.max(1, Math.min(totalPages, nextPage));
+              renderPosts();
+            }
+          }
+        });
+      }
 
       bindPostRichEditor();
 

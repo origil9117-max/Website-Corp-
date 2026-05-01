@@ -1,0 +1,309 @@
+/* 법령·판례 검색 — PRD형 커버 & 기능 명세 레이아웃 */
+
+:root {
+  --law-prd-navy: #0f172a;
+  --law-prd-navy-mid: #1e293b;
+  --law-prd-gold: #c9a962;
+  --law-prd-gold-soft: #e8d4a8;
+  --law-prd-text-muted: rgba(255, 255, 255, 0.72);
+  --law-prd-p1: #e91e8c;
+  --law-prd-p2: #eab308;
+  --law-prd-p3: #94a3b8;
+  --law-prd-chip-bg: #f1f5f9;
+  --law-prd-chip-border: #cbd5e1;
+}
+
+.law-prd-body {
+  background: var(--paper);
+}
+
+.law-prd-hero {
+  position: relative;
+  margin: 0 calc(-1 * var(--page-pad)) 2rem;
+  padding: clamp(1.75rem, 5vw, 2.75rem) clamp(1.25rem, 4vw, 2.5rem)
+    clamp(1.5rem, 4vw, 2rem);
+  background: linear-gradient(
+    155deg,
+    var(--law-prd-navy) 0%,
+    var(--law-prd-navy-mid) 55%,
+    #0c1220 100%
+  );
+  border-radius: 0 0 14px 14px;
+  overflow: hidden;
+  color: #fff;
+}
+
+@media (min-width: 768px) {
+  .law-prd-hero {
+    border-radius: 0 0 18px 18px;
+    margin-left: calc(-1 * var(--page-pad));
+    margin-right: calc(-1 * var(--page-pad));
+  }
+}
+
+.law-prd-hero-deco {
+  position: absolute;
+  top: -2rem;
+  right: -1.5rem;
+  width: 12rem;
+  height: 12rem;
+  pointer-events: none;
+  opacity: 0.35;
+}
+
+.law-prd-hero-deco span {
+  position: absolute;
+  border: 1px solid var(--law-prd-gold-soft);
+  border-radius: 50%;
+}
+
+.law-prd-hero-deco span:nth-child(1) {
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+}
+
+.law-prd-hero-deco span:nth-child(2) {
+  width: 72%;
+  height: 72%;
+  top: 14%;
+  left: 14%;
+}
+
+.law-prd-hero-deco span:nth-child(3) {
+  width: 44%;
+  height: 44%;
+  top: 28%;
+  left: 28%;
+}
+
+.law-prd-eyebrow {
+  font-size: 0.68rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--law-prd-gold);
+  font-weight: 700;
+  margin-bottom: 0.65rem;
+}
+
+.law-prd-title {
+  font-family: "Noto Serif KR", serif;
+  font-size: clamp(1.45rem, 4vw, 2rem);
+  font-weight: 700;
+  line-height: 1.28;
+  letter-spacing: -0.02em;
+  margin-bottom: 0.5rem;
+}
+
+.law-prd-domain {
+  font-size: clamp(1rem, 2.5vw, 1.15rem);
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.92);
+  margin-bottom: 0.45rem;
+}
+
+.law-prd-sub {
+  font-size: 0.88rem;
+  color: var(--law-prd-text-muted);
+  line-height: 1.55;
+  max-width: 36rem;
+}
+
+.law-prd-meta {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.65rem 1rem;
+  margin-top: 1.35rem;
+  padding-top: 1.15rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.14);
+  font-size: 0.78rem;
+}
+
+@media (min-width: 560px) {
+  .law-prd-meta {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.5rem 1rem;
+  }
+}
+
+.law-prd-meta dt {
+  color: rgba(255, 255, 255, 0.48);
+  font-weight: 600;
+  margin-bottom: 0.15rem;
+}
+
+.law-prd-meta dd {
+  color: rgba(255, 255, 255, 0.92);
+  font-weight: 600;
+}
+
+.law-prd-status {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.22rem 0.55rem;
+  border-radius: 999px;
+  background: rgba(232, 212, 168, 0.22);
+  color: var(--law-prd-gold-soft);
+  border: 1px solid rgba(232, 212, 168, 0.35);
+  font-size: 0.74rem;
+  font-weight: 700;
+}
+
+.law-prd-features {
+  max-width: 44rem;
+  margin: 0 auto;
+}
+
+.law-prd-feature {
+  padding: 1.35rem 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.law-prd-feature:first-of-type {
+  padding-top: 0.35rem;
+}
+
+.law-prd-feature-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.5rem;
+}
+
+.law-prd-feature-head h2 {
+  font-family: "Noto Sans KR", system-ui, sans-serif;
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--ink);
+  letter-spacing: -0.02em;
+}
+
+.law-prd-p {
+  flex-shrink: 0;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: #fff;
+}
+
+.law-prd-p1 {
+  background: linear-gradient(145deg, #ec4899, #db2777);
+}
+
+.law-prd-p2 {
+  background: linear-gradient(145deg, #facc15, #ca8a04);
+  color: #1c1917;
+}
+
+.law-prd-p3 {
+  background: linear-gradient(145deg, #94a3b8, #64748b);
+}
+
+.law-prd-desc {
+  font-size: 0.88rem;
+  color: var(--ink-soft);
+  line-height: 1.68;
+  margin-bottom: 0.65rem;
+}
+
+.law-prd-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  list-style: none;
+}
+
+.law-prd-tags li {
+  font-size: 0.68rem;
+  font-weight: 600;
+  padding: 0.28rem 0.45rem;
+  background: var(--law-prd-chip-bg);
+  border: 1px solid var(--law-prd-chip-border);
+  border-radius: 4px;
+  color: var(--ink-soft);
+}
+
+.law-prd-cats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.5rem;
+  margin-top: 0.65rem;
+}
+
+@media (min-width: 520px) {
+  .law-prd-cats {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.law-prd-cat {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.45rem 0.5rem;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.law-prd-cat-icon {
+  width: 1.65rem;
+  height: 1.65rem;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.95rem;
+  flex-shrink: 0;
+  background: var(--law-prd-chip-bg);
+}
+
+.law-prd-scroll-hint {
+  display: flex;
+  justify-content: center;
+  padding: 2rem 0 0.5rem;
+}
+
+.law-prd-scroll-hint--after-hero {
+  padding: 0.35rem 0 1.25rem;
+  margin-top: -0.35rem;
+}
+
+.law-prd-scroll-hint button {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  background: #fff;
+  cursor: pointer;
+  color: var(--muted);
+  font-size: 1rem;
+  line-height: 1;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.law-prd-scroll-hint button:hover {
+  background: var(--law-prd-chip-bg);
+  border-color: var(--law-prd-chip-border);
+}
+
+.law-prd-note {
+  font-size: 0.82rem;
+  color: var(--muted);
+  margin-top: 1.5rem;
+  padding: 0.85rem 1rem;
+  background: rgba(124, 93, 147, 0.06);
+  border-left: 3px solid var(--maroon);
+  border-radius: 0 6px 6px 0;
+  line-height: 1.6;
+}

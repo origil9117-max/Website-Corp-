@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>법령·판례 검색 | 지능형 행정 플랫폼 | 대한민국행정사사무소</title>
+  <meta name="description" content="생활법률·판례 통합 검색 서비스 기획안 — 키워드 검색, 생활주제 카테고리, 법령 원문·판례·AI Q&A 등 단계적 도입 예정." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700&family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="platform-pages.css?v=20260420d" />
+  <link rel="stylesheet" href="law-search-prd.css?v=20260501a" />
+</head>
+<body class="law-prd-body" data-platform-slug="law-precedent-search">
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a href="index.html" class="brand">
+        대한민국행정사사무소
+        <span>Republic of Korea Administrative Scrivener Office</span>
+      </a>
+      <div class="links">
+        <a href="index.html">메인</a>
+      </div>
+    </div>
+  </header>
+
+  <div class="platform-wip-banner" role="status" aria-live="polite">
+    <p class="platform-wip-banner-inner">
+      <strong class="platform-wip-pulse">검토 중</strong> — 아래 안내는 서비스 기획·명세 초안입니다. 실제 검색·연동 기능은 단계적으로 준비되며,
+      <a href="tel:051-515-5459">대표전화</a> 또는 <a href="index.html#contact">연락처</a>를 이용해 주세요.
+    </p>
+  </div>
+
+  <div class="wrap">
+    <nav class="platform-breadcrumb" aria-label="경로">
+      <a href="index.html">홈</a><span class="sep" aria-hidden="true">/</span>
+      <a href="platform.html">지능형 행정 플랫폼</a><span class="sep" aria-hidden="true">/</span>
+      <span>법령·판례 검색</span>
+    </nav>
+
+    <section class="law-prd-hero" aria-labelledby="law-prd-title">
+      <div class="law-prd-hero-deco" aria-hidden="true">
+        <span></span><span></span><span></span>
+      </div>
+      <p class="law-prd-eyebrow">Product Requirements Document</p>
+      <h1 id="law-prd-title" class="law-prd-title">생활법률 · 판례 검색 페이지</h1>
+      <p class="law-prd-domain">daehanminkuk.co.kr</p>
+      <p class="law-prd-sub">대한민국행정사사무소 — 법령·판례 통합 검색 서비스</p>
+      <dl class="law-prd-meta">
+        <div>
+          <dt>버전</dt>
+          <dd>v1.0 초안</dd>
+        </div>
+        <div>
+          <dt>작성일</dt>
+          <dd>2026.05</dd>
+        </div>
+        <div>
+          <dt>대상</dt>
+          <dd>홈페이지 내 신규 페이지</dd>
+        </div>
+        <div>
+          <dt>상태</dt>
+          <dd><span class="law-prd-status">검토 중</span></dd>
+        </div>
+      </dl>
+    </section>
+
+    <div class="law-prd-scroll-hint law-prd-scroll-hint--after-hero">
+      <button
+        type="button"
+        aria-label="기능 명세로 스크롤"
+        onclick="document.getElementById('law-prd-spec').scrollIntoView({ behavior: 'smooth', block: 'start' })"
+      >
+        ↓
+      </button>
+    </div>
+
+    <article class="law-prd-features" id="law-prd-spec" aria-label="기능 명세">
+      <section class="law-prd-feature">
+        <div class="law-prd-feature-head">
+          <span class="law-prd-p law-prd-p1" aria-label="우선순위 1">P1</span>
+          <h2>통합 키워드 검색</h2>
+        </div>
+        <p class="law-prd-desc">
+          자연어 키워드로 법령 명칭·조문·판례를 한 번에 검색합니다. 오타 교정 및 동의어 확장(예: 「전세 사기」→ 주택임대차보호법 관련)을 포함하고,
+          검색창은 화면 상단에 고정합니다.
+        </p>
+        <ul class="law-prd-tags">
+          <li>국가법령정보 API</li>
+          <li>대법원 판례 API</li>
+        </ul>
+      </section>
+
+      <section class="law-prd-feature">
+        <div class="law-prd-feature-head">
+          <span class="law-prd-p law-prd-p1" aria-label="우선순위 1">P1</span>
+          <h2>생활주제 카테고리</h2>
+        </div>
+        <p class="law-prd-desc">
+          부동산·임대차, 가족·상속, 근로·임금, 외국인·비자, 소비자 분쟁, 행정처분·불복, 사업·법인, 형사·범죄 등 8개 주제를 아이콘 기반으로 빠르게 탐색합니다.
+        </p>
+        <div class="law-prd-cats">
+          <div class="law-prd-cat"><span class="law-prd-cat-icon">🏠</span>부동산·임대차</div>
+          <div class="law-prd-cat"><span class="law-prd-cat-icon">👨‍👩‍👧</span>가족·상속</div>
+          <div class="law-prd-cat"><span class="law-prd-cat-icon">⚙️</span>근로·임금</div>
+          <div class="law-prd-cat"><span class="law-prd-cat-icon">🌐</span>외국인·비자</div>
+          <div class="law-prd-cat"><span class="law-prd-cat-icon">🛒</span>소비자 분쟁</div>
+          <div class="law-prd-cat"><span class="law-prd-cat-icon">📋</span>행정처분·불복</div>
+          <div class="law-prd-cat"><span class="law-prd-cat-icon">🏢</span>사업·법인</div>
+          <div class="law-prd-cat"><span class="law-prd-cat-icon">⚖️</span>형사·범죄</div>
+        </div>
+      </section>
+
+      <section class="law-prd-feature">
+        <div class="law-prd-feature-head">
+          <span class="law-prd-p law-prd-p1" aria-label="우선순위 1">P1</span>
+          <h2>법령 원문 조회</h2>
+        </div>
+        <p class="law-prd-desc">
+          법령명 또는 조문번호로 조회하고, 연혁·시행일 선택을 지원합니다. 어려운 용어는 툴팁으로 간단히 설명합니다.
+        </p>
+        <ul class="law-prd-tags">
+          <li>국가법령정보 Open API</li>
+        </ul>
+      </section>
+
+      <section class="law-prd-feature">
+        <div class="law-prd-feature-head">
+          <span class="law-prd-p law-prd-p1" aria-label="우선순위 1">P1</span>
+          <h2>판례 검색 및 요약</h2>
+        </div>
+        <p class="law-prd-desc">
+          사건번호·키워드로 판례를 검색하고, 판시요지 요약을 자동 생성합니다. 대법원 종합법률정보 등 원문 링크와 하급심 판결 포함을 목표로 합니다.
+        </p>
+        <ul class="law-prd-tags">
+          <li>대법원 Open API</li>
+          <li>Claude AI 요약</li>
+        </ul>
+      </section>
+
+      <section class="law-prd-feature">
+        <div class="law-prd-feature-head">
+          <span class="law-prd-p law-prd-p2" aria-label="우선순위 2">P2</span>
+          <h2>AI 생활법률 Q&amp;A</h2>
+        </div>
+        <p class="law-prd-desc">
+          「보증금 돌려받을 수 있나요?」와 같은 자연어 질문에 관련 법령·판례를 인용해 답변합니다. 면책 고지 및 전문 상담 유도 CTA를 필수로 표시합니다.
+        </p>
+        <ul class="law-prd-tags">
+          <li>Anthropic API</li>
+        </ul>
+      </section>
+
+      <section class="law-prd-feature">
+        <div class="law-prd-feature-head">
+          <span class="law-prd-p law-prd-p2" aria-label="우선순위 2">P2</span>
+          <h2>행정심판·처분 판례</h2>
+        </div>
+        <p class="law-prd-desc">
+          행정심판 재결 등 전용 탭으로 안내합니다. 비자 거절·체류연장 불허가 등 행정사 사무와 맞닿은 영역을 중점적으로 다룹니다.
+        </p>
+        <ul class="law-prd-tags">
+          <li>법령 MCP / 행심 데이터</li>
+        </ul>
+      </section>
+
+      <section class="law-prd-feature">
+        <div class="law-prd-feature-head">
+          <span class="law-prd-p law-prd-p3" aria-label="우선순위 3">P3</span>
+          <h2>즐겨찾기·공유</h2>
+        </div>
+        <p class="law-prd-desc">
+          법령·판례 즐겨찾기(로컬 저장), 링크 공유, PDF 저장 기능을 제공합니다.
+        </p>
+      </section>
+
+      <p class="law-prd-note">
+        본 페이지는 <strong>법령·판례 검색</strong> 서비스 도입을 위한 기획 초안입니다. 웹페이지 열람만으로 법률 자문이 성립하지 않으며,
+        구체적 사안은 방문·유선 등 개별 상담을 통해 확인해 주세요.
+      </p>
+    </article>
+
+    <div class="platform-middle-box" aria-hidden="true"></div>
+    <p class="platform-back"><a href="platform.html">← 지능형 행정 플랫폼 목차로 돌아가기</a></p>
+    <nav class="platform-sibling-nav" aria-label="다른 플랫폼 카테고리">
+      <strong>다른 카테고리</strong>
+      <ul>
+        <li><a href="minwon-roadmap.html">민원 로드맵</a></li>
+        <li><a href="platform-check.html">서류·준비 체크</a></li>
+        <li><a href="platform-faq.html">자주 묻는 질문</a></li>
+        <li><a href="platform-hub.html">공지·자료실 연동</a></li>
+      </ul>
+    </nav>
+  </div>
+</body>
+</html>

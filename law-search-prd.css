@@ -174,7 +174,7 @@
 
 .law-prd-feature-head h2 {
   font-family: "Noto Sans KR", system-ui, sans-serif;
-  font-size: 1.02rem;
+  font-size: 1.24rem;
   font-weight: 800;
   color: var(--ink);
   letter-spacing: -0.02em;
@@ -210,10 +210,10 @@
 }
 
 .law-prd-desc {
-  font-size: 0.875rem;
+  font-size: 1.18rem;
   color: var(--ink-soft);
-  line-height: 1.68;
-  margin-bottom: 0.65rem;
+  line-height: 1.75;
+  margin-bottom: 0.75rem;
 }
 
 .law-prd-tags {
@@ -224,9 +224,9 @@
 }
 
 .law-prd-tags li {
-  font-size: 0.66rem;
+  font-size: 0.98rem;
   font-weight: 600;
-  padding: 0.28rem 0.5rem;
+  padding: 0.38rem 0.62rem;
   background: #fff;
   border: 1px solid var(--law-prd-chip-border);
   border-radius: 3px;
@@ -250,23 +250,23 @@
   display: flex;
   align-items: center;
   gap: 0.45rem;
-  padding: 0.45rem 0.5rem;
+  padding: 0.58rem 0.6rem;
   background: #fff;
   border: 1px solid rgba(36, 48, 64, 0.1);
   border-radius: 6px;
-  font-size: 0.73rem;
+  font-size: 1.02rem;
   font-weight: 700;
   color: var(--ink);
 }
 
 .law-prd-cat-icon {
-  width: 1.6rem;
-  height: 1.6rem;
+  width: 1.95rem;
+  height: 1.95rem;
   border-radius: 5px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.9rem;
+  font-size: 1.08rem;
   flex-shrink: 0;
   background: var(--law-prd-chip-bg);
   border: 1px solid rgba(36, 48, 64, 0.06);
@@ -314,7 +314,7 @@
 }
 
 .law-topic-search h2 {
-  font-size: 0.98rem;
+  font-size: 1.3rem;
   font-weight: 800;
   letter-spacing: -0.02em;
   color: var(--ink);
@@ -322,7 +322,7 @@
 
 .law-topic-search-desc {
   margin-top: 0.28rem;
-  font-size: 0.8rem;
+  font-size: 1.04rem;
   color: var(--muted);
 }
 
@@ -340,8 +340,8 @@
   border-radius: 7px;
   background: #fbfdff;
   color: var(--ink);
-  padding: 0.52rem 0.65rem;
-  font-size: 0.85rem;
+  padding: 0.72rem 0.8rem;
+  font-size: 1.08rem;
 }
 
 .law-topic-search-row input:focus {
@@ -355,15 +355,15 @@
   background: linear-gradient(180deg, #2d71b8, #1c4a7c);
   color: #fff;
   border-radius: 7px;
-  padding: 0.52rem 0.8rem;
-  font-size: 0.82rem;
+  padding: 0.72rem 1rem;
+  font-size: 1.08rem;
   font-weight: 700;
   cursor: pointer;
 }
 
 .law-topic-status {
   margin-top: 0.55rem;
-  font-size: 0.78rem;
+  font-size: 1rem;
   color: #1c4a7c;
 }
 
@@ -388,7 +388,7 @@
 }
 
 .law-result-plan-col h3 {
-  font-size: 0.8rem;
+  font-size: 1.06rem;
   font-weight: 800;
   color: #163b63;
   margin-bottom: 0.35rem;
@@ -401,7 +401,7 @@
 }
 
 .law-result-plan-col li {
-  font-size: 0.76rem;
+  font-size: 1rem;
   color: var(--ink-soft);
 }
 

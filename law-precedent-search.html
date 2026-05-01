@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>법령·판례 검색 | 지능형 행정 플랫폼 | 대한민국행정사사무소</title>
-  <meta name="description" content="생활법률·판례 통합 검색 서비스 기획안 — 키워드 검색, 생활주제 카테고리, 법령 원문·판례·AI Q&A 등 단계적 도입 예정." />
+  <title>법령·판례 통합 검색 서비스 | 지능형 행정 플랫폼 | 대한민국행정사사무소</title>
+  <meta name="description" content="국가법령정보·판례 등을 아우르는 법령·판례 통합 검색 서비스 — 키워드 검색, 주제별 탐색, 법령 원문·판례·AI 안내 등 단계적 도입 예정." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700&family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="platform-pages.css?v=20260420d" />
-  <link rel="stylesheet" href="law-search-prd.css?v=20260501a" />
+  <link rel="stylesheet" href="law-search-prd.css?v=20260501b" />
 </head>
 <body class="law-prd-body" data-platform-slug="law-precedent-search">
   <header class="topbar">
@@ -26,7 +26,7 @@
 
   <div class="platform-wip-banner" role="status" aria-live="polite">
     <p class="platform-wip-banner-inner">
-      <strong class="platform-wip-pulse">검토 중</strong> — 아래 안내는 서비스 기획·명세 초안입니다. 실제 검색·연동 기능은 단계적으로 준비되며,
+      <strong class="platform-wip-pulse">준비 중</strong> — 실제 검색·API 연동은 단계적으로 개방됩니다. 급한 문의는
       <a href="tel:051-515-5459">대표전화</a> 또는 <a href="index.html#contact">연락처</a>를 이용해 주세요.
     </p>
   </div>
@@ -35,35 +35,23 @@
     <nav class="platform-breadcrumb" aria-label="경로">
       <a href="index.html">홈</a><span class="sep" aria-hidden="true">/</span>
       <a href="platform.html">지능형 행정 플랫폼</a><span class="sep" aria-hidden="true">/</span>
-      <span>법령·판례 검색</span>
+      <span>법령·판례 통합 검색 서비스</span>
     </nav>
 
-    <section class="law-prd-hero" aria-labelledby="law-prd-title">
+    <section class="law-prd-hero law-portal-hero" aria-labelledby="law-prd-title">
       <div class="law-prd-hero-deco" aria-hidden="true">
         <span></span><span></span><span></span>
       </div>
-      <p class="law-prd-eyebrow">Product Requirements Document</p>
-      <h1 id="law-prd-title" class="law-prd-title">생활법률 · 판례 검색 페이지</h1>
-      <p class="law-prd-domain">daehanminkuk.co.kr</p>
-      <p class="law-prd-sub">대한민국행정사사무소 — 법령·판례 통합 검색 서비스</p>
-      <dl class="law-prd-meta">
-        <div>
-          <dt>버전</dt>
-          <dd>v1.0 초안</dd>
-        </div>
-        <div>
-          <dt>작성일</dt>
-          <dd>2026.05</dd>
-        </div>
-        <div>
-          <dt>대상</dt>
-          <dd>홈페이지 내 신규 페이지</dd>
-        </div>
-        <div>
-          <dt>상태</dt>
-          <dd><span class="law-prd-status">검토 중</span></dd>
-        </div>
-      </dl>
+      <div class="law-portal-hero-inner">
+        <h1 id="law-prd-title" class="law-portal-title">법령·판례 통합 검색 서비스</h1>
+        <div class="law-portal-rule" aria-hidden="true"></div>
+        <p class="law-portal-lead">
+          국가법령정보와 판례 등 공공 법령정보를 활용해, 일상·행정 분야에서 필요한 법령과 판결을 한곳에서 찾아볼 수 있도록 설계 중인 정보 창구입니다.
+        </p>
+        <p class="law-portal-sub">
+          제공 예정인 검색·요약 기능은 참고용 일반 정보에 해당하며, 개별 사안의 적용 여부나 법적 판단을 대신하지 않습니다. 권리·의무 관계가 실제로 문제될 경우에는 행정사 등 전문가 상담을 통해 확인하시기 바랍니다.
+        </p>
+      </div>
     </section>
 
     <div class="law-prd-scroll-hint law-prd-scroll-hint--after-hero">
@@ -76,7 +64,7 @@
       </button>
     </div>
 
-    <article class="law-prd-features" id="law-prd-spec" aria-label="기능 명세">
+    <article class="law-prd-features law-portal-spec" id="law-prd-spec" aria-label="서비스 구성 안내">
       <section class="law-prd-feature">
         <div class="law-prd-feature-head">
           <span class="law-prd-p law-prd-p1" aria-label="우선순위 1">P1</span>
@@ -176,7 +164,7 @@
       </section>
 
       <p class="law-prd-note">
-        본 페이지는 <strong>법령·판례 검색</strong> 서비스 도입을 위한 기획 초안입니다. 웹페이지 열람만으로 법률 자문이 성립하지 않으며,
+        <strong>법령·판례 통합 검색 서비스</strong>는 단계적으로 기능을 확장할 예정이며, 상기 구성은 도입 우선순위에 따른 안내입니다. 웹페이지 이용만으로 법률 자문이나 대리관계가 성립하지 않으며,
         구체적 사안은 방문·유선 등 개별 상담을 통해 확인해 주세요.
       </p>
     </article>

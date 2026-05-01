@@ -1,59 +1,72 @@
-/* 법령·판례 검색 — PRD형 커버 & 기능 명세 레이아웃 */
+/* 법령·판례 통합 검색 — 공공 법령·판례 포털 스타일 */
 
 :root {
-  --law-prd-navy: #0f172a;
-  --law-prd-navy-mid: #1e293b;
-  --law-prd-gold: #c9a962;
-  --law-prd-gold-soft: #e8d4a8;
-  --law-prd-text-muted: rgba(255, 255, 255, 0.72);
-  --law-prd-p1: #e91e8c;
-  --law-prd-p2: #eab308;
-  --law-prd-p3: #94a3b8;
-  --law-prd-chip-bg: #f1f5f9;
-  --law-prd-chip-border: #cbd5e1;
+  --law-portal-navy: #0a1628;
+  --law-portal-navy-mid: #132337;
+  --law-portal-navy-deep: #060d18;
+  --law-portal-gold: #b8926a;
+  --law-portal-gold-line: rgba(184, 146, 106, 0.55);
+  --law-portal-gold-soft: rgba(232, 216, 190, 0.92);
+  --law-portal-text-muted: rgba(255, 255, 255, 0.68);
+  --law-portal-spec-bg: #f7f9fc;
+  --law-portal-spec-border: rgba(15, 38, 71, 0.08);
+  --law-portal-p1: #1c4a7c;
+  --law-portal-p2: #8b6914;
+  --law-portal-p3: #5c6b7e;
+  --law-prd-chip-bg: #eef2f7;
+  --law-prd-chip-border: #c5cdd9;
 }
 
 .law-prd-body {
   background: var(--paper);
 }
 
+/* ——— 히어로 ——— */
 .law-prd-hero {
   position: relative;
-  margin: 0 calc(-1 * var(--page-pad)) 2rem;
-  padding: clamp(1.75rem, 5vw, 2.75rem) clamp(1.25rem, 4vw, 2.5rem)
-    clamp(1.5rem, 4vw, 2rem);
-  background: linear-gradient(
-    155deg,
-    var(--law-prd-navy) 0%,
-    var(--law-prd-navy-mid) 55%,
-    #0c1220 100%
-  );
-  border-radius: 0 0 14px 14px;
+  margin: 0 calc(-1 * var(--page-pad)) 0;
+  padding: clamp(2rem, 5vw, 3rem) clamp(1.25rem, 4vw, 2.5rem)
+    clamp(2rem, 4vw, 2.65rem);
+  background:
+    linear-gradient(180deg, rgba(184, 146, 106, 0.07) 0%, transparent 42%),
+    linear-gradient(
+      165deg,
+      var(--law-portal-navy-deep) 0%,
+      var(--law-portal-navy) 38%,
+      var(--law-portal-navy-mid) 100%
+    );
+  border-radius: 0 0 12px 12px;
   overflow: hidden;
   color: #fff;
+  border-bottom: 1px solid rgba(184, 146, 106, 0.2);
+  box-shadow: 0 12px 40px rgba(6, 13, 24, 0.18);
 }
 
 @media (min-width: 768px) {
   .law-prd-hero {
-    border-radius: 0 0 18px 18px;
+    border-radius: 0 0 16px 16px;
     margin-left: calc(-1 * var(--page-pad));
     margin-right: calc(-1 * var(--page-pad));
   }
 }
 
+.law-portal-hero .law-prd-hero-deco span {
+  border-color: var(--law-portal-gold-line);
+}
+
 .law-prd-hero-deco {
   position: absolute;
-  top: -2rem;
-  right: -1.5rem;
-  width: 12rem;
-  height: 12rem;
+  top: -2.5rem;
+  right: -2rem;
+  width: 14rem;
+  height: 14rem;
   pointer-events: none;
-  opacity: 0.35;
+  opacity: 0.22;
 }
 
 .law-prd-hero-deco span {
   position: absolute;
-  border: 1px solid var(--law-prd-gold-soft);
+  border: 1px solid var(--law-portal-gold-line);
   border-radius: 50%;
 }
 
@@ -78,90 +91,77 @@
   left: 28%;
 }
 
-.law-prd-eyebrow {
-  font-size: 0.68rem;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--law-prd-gold);
-  font-weight: 700;
-  margin-bottom: 0.65rem;
+.law-portal-hero-inner {
+  position: relative;
+  z-index: 1;
+  max-width: 40rem;
 }
 
-.law-prd-title {
+.law-portal-title {
   font-family: "Noto Serif KR", serif;
-  font-size: clamp(1.45rem, 4vw, 2rem);
+  font-size: clamp(1.5rem, 4.2vw, 2.05rem);
   font-weight: 700;
-  line-height: 1.28;
-  letter-spacing: -0.02em;
-  margin-bottom: 0.5rem;
+  line-height: 1.35;
+  letter-spacing: -0.03em;
+  font-feature-settings: "palt" 1;
 }
 
-.law-prd-domain {
-  font-size: clamp(1rem, 2.5vw, 1.15rem);
-  font-weight: 600;
-  color: rgba(255, 255, 255, 0.92);
-  margin-bottom: 0.45rem;
+.law-portal-rule {
+  width: 3.25rem;
+  height: 2px;
+  margin: 1rem 0 1.15rem;
+  background: linear-gradient(
+    90deg,
+    var(--law-portal-gold) 0%,
+    rgba(184, 146, 106, 0.25) 100%
+  );
+  border-radius: 1px;
 }
 
-.law-prd-sub {
-  font-size: 0.88rem;
-  color: var(--law-prd-text-muted);
-  line-height: 1.55;
-  max-width: 36rem;
+.law-portal-lead {
+  font-size: clamp(0.9rem, 2.1vw, 0.98rem);
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.9);
+  line-height: 1.75;
+  margin-bottom: 0.85rem;
 }
 
-.law-prd-meta {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.65rem 1rem;
-  margin-top: 1.35rem;
-  padding-top: 1.15rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.14);
-  font-size: 0.78rem;
+.law-portal-sub {
+  font-size: 0.8rem;
+  color: var(--law-portal-text-muted);
+  line-height: 1.72;
+  padding-left: 0.65rem;
+  border-left: 2px solid rgba(184, 146, 106, 0.45);
 }
 
-@media (min-width: 560px) {
-  .law-prd-meta {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 0.5rem 1rem;
-  }
-}
-
-.law-prd-meta dt {
-  color: rgba(255, 255, 255, 0.48);
-  font-weight: 600;
-  margin-bottom: 0.15rem;
-}
-
-.law-prd-meta dd {
-  color: rgba(255, 255, 255, 0.92);
-  font-weight: 600;
-}
-
-.law-prd-status {
-  display: inline-flex;
-  align-items: center;
-  padding: 0.22rem 0.55rem;
-  border-radius: 999px;
-  background: rgba(232, 212, 168, 0.22);
-  color: var(--law-prd-gold-soft);
-  border: 1px solid rgba(232, 212, 168, 0.35);
-  font-size: 0.74rem;
-  font-weight: 700;
-}
-
+/* ——— 본문 명세 카드 ——— */
 .law-prd-features {
   max-width: 44rem;
   margin: 0 auto;
 }
 
-.law-prd-feature {
-  padding: 1.35rem 0;
-  border-bottom: 1px solid var(--line);
+.law-portal-spec {
+  margin-top: 1.75rem;
+  padding: clamp(1.25rem, 3vw, 1.85rem) clamp(1rem, 3vw, 1.5rem)
+    clamp(1.5rem, 3vw, 2rem);
+  background: var(--law-portal-spec-bg);
+  border: 1px solid var(--law-portal-spec-border);
+  border-radius: 10px;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.8) inset;
 }
 
-.law-prd-feature:first-of-type {
-  padding-top: 0.35rem;
+.law-portal-spec .law-prd-feature:first-of-type {
+  padding-top: 0.15rem;
+}
+
+.law-prd-feature {
+  padding: 1.25rem 0;
+  border-bottom: 1px solid rgba(36, 48, 64, 0.1);
+}
+
+.law-prd-feature:last-of-type {
+  border-bottom: none;
+  padding-bottom: 0.35rem;
 }
 
 .law-prd-feature-head {
@@ -174,7 +174,7 @@
 
 .law-prd-feature-head h2 {
   font-family: "Noto Sans KR", system-ui, sans-serif;
-  font-size: 1.05rem;
+  font-size: 1.02rem;
   font-weight: 800;
   color: var(--ink);
   letter-spacing: -0.02em;
@@ -182,32 +182,35 @@
 
 .law-prd-p {
   flex-shrink: 0;
-  width: 2rem;
-  height: 2rem;
-  border-radius: 50%;
+  width: 1.9rem;
+  height: 1.9rem;
+  border-radius: 4px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.72rem;
+  font-size: 0.68rem;
   font-weight: 800;
   color: #fff;
+  letter-spacing: 0.02em;
 }
 
 .law-prd-p1 {
-  background: linear-gradient(145deg, #ec4899, #db2777);
+  background: linear-gradient(180deg, #2563a8, var(--law-portal-p1));
+  box-shadow: 0 1px 2px rgba(28, 74, 124, 0.25);
 }
 
 .law-prd-p2 {
-  background: linear-gradient(145deg, #facc15, #ca8a04);
-  color: #1c1917;
+  background: linear-gradient(180deg, #a67c1a, var(--law-portal-p2));
+  color: #fffdf8;
+  box-shadow: 0 1px 2px rgba(139, 105, 20, 0.2);
 }
 
 .law-prd-p3 {
-  background: linear-gradient(145deg, #94a3b8, #64748b);
+  background: linear-gradient(180deg, #7a8796, var(--law-portal-p3));
 }
 
 .law-prd-desc {
-  font-size: 0.88rem;
+  font-size: 0.875rem;
   color: var(--ink-soft);
   line-height: 1.68;
   margin-bottom: 0.65rem;
@@ -221,12 +224,12 @@
 }
 
 .law-prd-tags li {
-  font-size: 0.68rem;
+  font-size: 0.66rem;
   font-weight: 600;
-  padding: 0.28rem 0.45rem;
-  background: var(--law-prd-chip-bg);
+  padding: 0.28rem 0.5rem;
+  background: #fff;
   border: 1px solid var(--law-prd-chip-border);
-  border-radius: 4px;
+  border-radius: 3px;
   color: var(--ink-soft);
 }
 
@@ -249,23 +252,24 @@
   gap: 0.45rem;
   padding: 0.45rem 0.5rem;
   background: #fff;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  font-size: 0.74rem;
+  border: 1px solid rgba(36, 48, 64, 0.1);
+  border-radius: 6px;
+  font-size: 0.73rem;
   font-weight: 700;
   color: var(--ink);
 }
 
 .law-prd-cat-icon {
-  width: 1.65rem;
-  height: 1.65rem;
-  border-radius: 8px;
+  width: 1.6rem;
+  height: 1.6rem;
+  border-radius: 5px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   flex-shrink: 0;
   background: var(--law-prd-chip-bg);
+  border: 1px solid rgba(36, 48, 64, 0.06);
 }
 
 .law-prd-scroll-hint {
@@ -275,35 +279,38 @@
 }
 
 .law-prd-scroll-hint--after-hero {
-  padding: 0.35rem 0 1.25rem;
-  margin-top: -0.35rem;
+  padding: 0.5rem 0 1.35rem;
+  margin-top: 0;
+  background: linear-gradient(180deg, rgba(247, 249, 252, 0.5), transparent);
 }
 
 .law-prd-scroll-hint button {
-  width: 2.5rem;
-  height: 2.5rem;
+  width: 2.45rem;
+  height: 2.45rem;
   border-radius: 50%;
-  border: 1px solid var(--line);
+  border: 1px solid rgba(28, 74, 124, 0.2);
   background: #fff;
   cursor: pointer;
-  color: var(--muted);
+  color: var(--law-portal-p1);
   font-size: 1rem;
   line-height: 1;
-  transition: background 0.15s ease, border-color 0.15s ease;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  box-shadow: 0 2px 8px rgba(10, 22, 40, 0.06);
 }
 
 .law-prd-scroll-hint button:hover {
-  background: var(--law-prd-chip-bg);
-  border-color: var(--law-prd-chip-border);
+  background: var(--law-portal-spec-bg);
+  border-color: rgba(28, 74, 124, 0.35);
+  color: #0f2744;
 }
 
 .law-prd-note {
-  font-size: 0.82rem;
-  color: var(--muted);
-  margin-top: 1.5rem;
-  padding: 0.85rem 1rem;
-  background: rgba(124, 93, 147, 0.06);
-  border-left: 3px solid var(--maroon);
+  font-size: 0.81rem;
+  color: var(--ink-soft);
+  margin-top: 1.35rem;
+  padding: 0.9rem 1rem;
+  background: rgba(28, 74, 124, 0.05);
+  border-left: 3px solid var(--law-portal-p1);
   border-radius: 0 6px 6px 0;
-  line-height: 1.6;
+  line-height: 1.65;
 }

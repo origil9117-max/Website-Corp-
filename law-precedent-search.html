@@ -72,6 +72,29 @@
         <button id="law-topic-search-btn" type="button">주제 구성 보기</button>
       </div>
       <p id="law-topic-status" class="law-topic-status" role="status" aria-live="polite"></p>
+      <div class="law-result-plan" aria-label="검색 결과 기본 구성">
+        <div class="law-result-plan-col">
+          <h3>1차 구성 (검색·결과 기본)</h3>
+          <ul>
+            <li>키워드 검색</li>
+            <li>법령 원문 조회</li>
+            <li>판례 목록 (대법원 API)</li>
+            <li>카테고리 8개</li>
+            <li>반응형 UI</li>
+            <li>면책고지</li>
+          </ul>
+        </div>
+        <div class="law-result-plan-col">
+          <h3>2차 구성 (고도화)</h3>
+          <ul>
+            <li>AI 판례 요약</li>
+            <li>생활법률 Q&amp;A 챗봇</li>
+            <li>행정심판 재결례 탭</li>
+            <li>즐겨찾기</li>
+            <li>상담 전환 CTA 최적화</li>
+          </ul>
+        </div>
+      </div>
     </section>
 
     <article class="law-prd-features law-portal-spec" id="law-prd-spec" aria-label="서비스 구성 안내">
@@ -123,54 +146,73 @@
         </ul>
       </section>
 
-      <section class="law-prd-feature" data-topic-keywords="판례 사건번호 판시요지 부동산 임대차 가족 상속 근로 임금 외국인 비자 소비자 분쟁 행정처분 불복 사업 법인 형사 범죄">
+      <section class="law-prd-feature" data-topic-keywords="판례 목록 사건번호 판시요지 부동산 임대차 가족 상속 근로 임금 외국인 비자 소비자 분쟁 행정처분 불복 사업 법인 형사 범죄 대법원 API">
         <div class="law-prd-feature-head">
           <span class="law-prd-p law-prd-p1" aria-label="우선순위 1">P1</span>
-          <h2>판례 검색 및 요약</h2>
+          <h2>판례 목록 (대법원 API)</h2>
         </div>
         <p class="law-prd-desc">
-          사건번호·키워드로 판례를 검색하고, 판시요지 요약을 자동 생성합니다. 대법원 종합법률정보 등 원문 링크와 하급심 판결 포함을 목표로 합니다.
+          사건번호·키워드로 판례 목록을 조회하고, 대법원 종합법률정보 등 원문 링크를 함께 제공합니다. 하급심 판결 연계는 단계적으로 확장합니다.
         </p>
         <ul class="law-prd-tags">
           <li>대법원 Open API</li>
-          <li>Claude AI 요약</li>
+          <li>판례 목록 결과</li>
         </ul>
       </section>
 
-      <section class="law-prd-feature" data-topic-keywords="AI 질문 답변 보증금 임대차 근로 임금 외국인 비자 소비자 분쟁">
+      <section class="law-prd-feature" data-topic-keywords="AI 판례 요약 요약 보증금 임대차 근로 임금 외국인 비자 소비자 분쟁">
+        <div class="law-prd-feature-head">
+          <span class="law-prd-p law-prd-p2" aria-label="우선순위 2">P2</span>
+          <h2>AI 판례 요약</h2>
+        </div>
+        <p class="law-prd-desc">
+          검색된 판례의 핵심 쟁점·판시이유를 요약해 빠르게 파악할 수 있도록 제공합니다. 원문 링크와 함께 참고용 요약임을 표시합니다.
+        </p>
+        <ul class="law-prd-tags">
+          <li>Claude AI 요약</li>
+          <li>판례 핵심 포인트</li>
+        </ul>
+      </section>
+
+      <section class="law-prd-feature" data-topic-keywords="AI 질문 답변 챗봇 보증금 임대차 근로 임금 외국인 비자 소비자 분쟁">
         <div class="law-prd-feature-head">
           <span class="law-prd-p law-prd-p2" aria-label="우선순위 2">P2</span>
           <h2>AI 생활법률 Q&amp;A</h2>
         </div>
         <p class="law-prd-desc">
-          「보증금 돌려받을 수 있나요?」와 같은 자연어 질문에 관련 법령·판례를 인용해 답변합니다. 면책 고지 및 전문 상담 유도 CTA를 필수로 표시합니다.
+          「보증금 돌려받을 수 있나요?」와 같은 자연어 질문에 관련 법령·판례를 인용해 답변하는 챗봇을 제공합니다. 면책 고지 및 전문 상담 유도 CTA를 필수로 표시합니다.
         </p>
         <ul class="law-prd-tags">
           <li>Anthropic API</li>
+          <li>Q&amp;A 챗봇</li>
         </ul>
       </section>
 
-      <section class="law-prd-feature" data-topic-keywords="행정심판 처분 불복 비자 거절 체류 연장 행정처분">
+      <section class="law-prd-feature" data-topic-keywords="행정심판 처분 불복 비자 거절 체류 연장 행정처분 재결례 탭">
         <div class="law-prd-feature-head">
           <span class="law-prd-p law-prd-p2" aria-label="우선순위 2">P2</span>
-          <h2>행정심판·처분 판례</h2>
+          <h2>행정심판 재결례 탭</h2>
         </div>
         <p class="law-prd-desc">
-          행정심판 재결 등 전용 탭으로 안내합니다. 비자 거절·체류연장 불허가 등 행정사 사무와 맞닿은 영역을 중점적으로 다룹니다.
+          행정심판 재결례를 전용 탭으로 분리해 안내합니다. 비자 거절·체류연장 불허가 등 행정사 사무와 맞닿은 영역을 중점적으로 다룹니다.
         </p>
         <ul class="law-prd-tags">
           <li>법령 MCP / 행심 데이터</li>
         </ul>
       </section>
 
-      <section class="law-prd-feature" data-topic-keywords="즐겨찾기 공유 PDF 링크 저장 공통">
+      <section class="law-prd-feature" data-topic-keywords="즐겨찾기 공유 PDF 링크 저장 공통 CTA 상담 전환 최적화">
         <div class="law-prd-feature-head">
           <span class="law-prd-p law-prd-p3" aria-label="우선순위 3">P3</span>
-          <h2>즐겨찾기·공유</h2>
+          <h2>즐겨찾기 + 상담 전환 CTA 최적화</h2>
         </div>
         <p class="law-prd-desc">
-          법령·판례 즐겨찾기(로컬 저장), 링크 공유, PDF 저장 기능을 제공합니다.
+          법령·판례 즐겨찾기(로컬 저장), 링크 공유, PDF 저장을 제공하고 결과 화면의 상담 버튼 노출·문구를 최적화합니다.
         </p>
+        <ul class="law-prd-tags">
+          <li>즐겨찾기</li>
+          <li>상담 전환 CTA</li>
+        </ul>
       </section>
 
       <p class="law-prd-note">
@@ -246,7 +288,7 @@
           status.textContent = "전체 구성 표시 중입니다.";
           return;
         }
-        status.textContent = "\"" + raw + "\" 주제 기준으로 " + visibleCount + "개 구성 항목을 표시합니다.";
+        status.textContent = "\"" + raw + "\" 주제 기준으로 " + visibleCount + "개 구성 항목을 표시합니다. (1차: 검색·결과 기본, 2차: AI·전환 고도화)";
       }
 
       button.addEventListener("click", renderByTopic);

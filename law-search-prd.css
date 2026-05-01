@@ -109,6 +109,10 @@
   max-width: none;
 }
 
+.law-portal-hero--law .law-portal-hero-inner {
+  max-width: none;
+}
+
 @media (min-width: 960px) {
   .law-portal-hero-grid {
     grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
@@ -118,6 +122,11 @@
   .law-portal-hero--immigration .law-portal-hero-grid {
     grid-template-columns: minmax(0, 1fr) auto;
     gap: clamp(0.45rem, 1vw, 0.75rem);
+  }
+
+  .law-portal-hero--law .law-portal-hero-grid {
+    grid-template-columns: minmax(0, 1.28fr) minmax(0, 0.72fr);
+    gap: clamp(0.5rem, 1vw, 0.8rem);
   }
 }
 
@@ -191,6 +200,20 @@
 
 .law-hero-logo-card--box::after {
   content: none;
+}
+
+.law-hero-logo-card--law {
+  width: min(100%, 20rem);
+  min-height: 0;
+  aspect-ratio: 16 / 7.1;
+}
+
+.law-hero-logo-card--law img {
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  object-fit: cover;
 }
 
 @media (max-width: 959px) {

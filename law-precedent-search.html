@@ -98,7 +98,7 @@
     </section>
 
     <article class="law-prd-features law-portal-spec" id="law-prd-spec" aria-label="서비스 구성 안내">
-      <section class="law-prd-feature" data-topic-keywords="공통 통합 키워드 검색 법령 판례" data-core="true">
+      <section class="law-prd-feature" data-feature-id="keyword-search" data-topic-keywords="공통 통합 키워드 검색 법령 판례" data-core="true">
         <div class="law-prd-feature-head">
           <span class="law-prd-p law-prd-p1" aria-label="우선순위 1">P1</span>
           <h2>통합 키워드 검색</h2>
@@ -113,7 +113,7 @@
         </ul>
       </section>
 
-      <section class="law-prd-feature" data-topic-keywords="부동산 임대차 가족 상속 근로 임금 외국인 비자 소비자 분쟁 행정처분 불복 사업 법인 형사 범죄 주제 카테고리" data-core="true">
+      <section class="law-prd-feature" data-feature-id="topic-category" data-topic-keywords="부동산 임대차 가족 상속 근로 임금 외국인 비자 소비자 분쟁 행정처분 불복 사업 법인 형사 범죄 주제 카테고리" data-core="true">
         <div class="law-prd-feature-head">
           <span class="law-prd-p law-prd-p1" aria-label="우선순위 1">P1</span>
           <h2>생활주제 카테고리</h2>
@@ -133,7 +133,7 @@
         </div>
       </section>
 
-      <section class="law-prd-feature" data-topic-keywords="법령 조문 시행일 원문 조회 부동산 임대차 가족 상속 근로 임금 외국인 비자 소비자 분쟁 행정처분 불복 사업 법인 형사 범죄">
+      <section class="law-prd-feature" data-feature-id="law-text" data-topic-keywords="법령 조문 시행일 원문 조회 부동산 임대차 가족 상속 근로 임금 외국인 비자 소비자 분쟁 행정처분 불복 사업 법인 형사 범죄">
         <div class="law-prd-feature-head">
           <span class="law-prd-p law-prd-p1" aria-label="우선순위 1">P1</span>
           <h2>법령 원문 조회</h2>
@@ -146,7 +146,7 @@
         </ul>
       </section>
 
-      <section class="law-prd-feature" data-topic-keywords="판례 목록 사건번호 판시요지 부동산 임대차 가족 상속 근로 임금 외국인 비자 소비자 분쟁 행정처분 불복 사업 법인 형사 범죄 대법원 API">
+      <section class="law-prd-feature" data-feature-id="precedent-list" data-topic-keywords="판례 목록 사건번호 판시요지 부동산 임대차 가족 상속 근로 임금 외국인 비자 소비자 분쟁 행정처분 불복 사업 법인 형사 범죄 대법원 API">
         <div class="law-prd-feature-head">
           <span class="law-prd-p law-prd-p1" aria-label="우선순위 1">P1</span>
           <h2>판례 목록 (대법원 API)</h2>
@@ -160,7 +160,7 @@
         </ul>
       </section>
 
-      <section class="law-prd-feature" data-topic-keywords="AI 판례 요약 요약 보증금 임대차 근로 임금 외국인 비자 소비자 분쟁">
+      <section class="law-prd-feature" data-feature-id="ai-summary" data-topic-keywords="AI 판례 요약 요약 보증금 임대차 근로 임금 외국인 비자 소비자 분쟁">
         <div class="law-prd-feature-head">
           <span class="law-prd-p law-prd-p2" aria-label="우선순위 2">P2</span>
           <h2>AI 판례 요약</h2>
@@ -276,11 +276,19 @@
         var raw = input.value;
         var tokens = expandQuery(raw);
         var visibleCount = 0;
+        var keywordFlowIds = ["keyword-search", "law-text", "precedent-list", "ai-summary"];
         sections.forEach(function (section) {
           var keywords = normalize(section.getAttribute("data-topic-keywords"));
           var isCore = section.getAttribute("data-core") === "true";
+          var featureId = section.getAttribute("data-feature-id");
           var matched = tokens.some(function (token) { return keywords.indexOf(token) !== -1; });
-          var show = !tokens.length || isCore || matched;
+          var show;
+          if (!tokens.length) {
+            show = true;
+          } else {
+            // 통합키워드 검색 입력 시에는 요청한 3개 결과(법령 원문·판례 목록·AI 판례 요약) 중심으로 표시
+            show = keywordFlowIds.indexOf(featureId) !== -1 || matched;
+          }
           section.style.display = show ? "" : "none";
           if (show) visibleCount += 1;
         });
@@ -288,7 +296,7 @@
           status.textContent = "전체 구성 표시 중입니다.";
           return;
         }
-        status.textContent = "\"" + raw + "\" 주제 기준으로 " + visibleCount + "개 구성 항목을 표시합니다. (1차: 검색·결과 기본, 2차: AI·전환 고도화)";
+        status.textContent = "\"" + raw + "\" 입력 결과: 통합키워드 검색 흐름에 따라 법령 원문 조회 · 판례 목록 · AI 판례 요약을 중심으로 " + visibleCount + "개 항목을 표시합니다.";
       }
 
       button.addEventListener("click", renderByTopic);

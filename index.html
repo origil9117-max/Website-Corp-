@@ -1305,8 +1305,25 @@
     }
 
     @media (min-width: 981px) {
-      .hero-platform-cats-grid a + a {
-        margin-left: -0.32rem;
+      .hero-platform-cats-grid a.overlap-pill + a.overlap-pill {
+        margin-left: -1.02rem;
+      }
+
+      .hero-platform-cats-grid a.overlap-pill.o1 { z-index: 2; }
+      .hero-platform-cats-grid a.overlap-pill.o2 { z-index: 3; }
+      .hero-platform-cats-grid a.overlap-pill.o3 { z-index: 4; }
+      .hero-platform-cats-grid a.overlap-pill.o4 { z-index: 5; }
+
+      .hero-platform-cats-grid a.overlap-pill {
+        box-shadow:
+          0 3px 10px rgba(74, 85, 112, 0.24),
+          1px 0 0 rgba(255, 255, 255, 0.45),
+          inset 0 1px 0 rgba(255, 255, 255, 0.8),
+          inset 0 -1px 0 rgba(96, 76, 126, 0.16);
+      }
+
+      .hero-platform-cats-grid a.integrated-search-link {
+        margin-left: 0.28rem;
       }
 
       .hero-platform-cats-grid a:hover,
@@ -2819,10 +2836,10 @@
           <nav class="hero-platform-cats" aria-label="지능형 행정 플랫폼 카테고리 바로가기">
             <span class="hero-platform-cats-label">지능형 행정 플랫폼</span>
             <div class="hero-platform-cats-grid">
-              <a class="cat-with-icon icon-roadmap" data-ring-click="true" data-ring-hover="true" href="minwon-roadmap.html"><span class="menu-icon-badge icon-roadmap" aria-hidden="true"></span>민원 로드맵</a>
-              <a class="cat-with-icon icon-checklist" data-ring-click="true" data-ring-hover="true" href="law-precedent-search.html"><span class="menu-icon-badge icon-checklist" aria-hidden="true"></span>법령·판례 검색</a>
-              <a class="cat-with-icon icon-faq no-wrap-label" data-ring-click="true" data-ring-hover="true" href="platform-faq.html"><span class="menu-icon-badge icon-faq" aria-hidden="true"></span>출입국민원 검색</a>
-              <a class="cat-with-icon icon-hub" data-ring-click="true" data-ring-hover="true" href="platform-hub.html"><span class="menu-icon-badge icon-hub" aria-hidden="true"></span>공지·자료실</a>
+              <a class="cat-with-icon icon-roadmap overlap-pill o1" data-ring-click="true" data-ring-hover="true" href="minwon-roadmap.html"><span class="menu-icon-badge icon-roadmap" aria-hidden="true"></span>민원 로드맵</a>
+              <a class="cat-with-icon icon-checklist overlap-pill o2" data-ring-click="true" data-ring-hover="true" href="law-precedent-search.html"><span class="menu-icon-badge icon-checklist" aria-hidden="true"></span>법령·판례 검색</a>
+              <a class="cat-with-icon icon-faq no-wrap-label overlap-pill o3" data-ring-click="true" data-ring-hover="true" href="platform-faq.html"><span class="menu-icon-badge icon-faq" aria-hidden="true"></span>출입국민원 검색</a>
+              <a class="cat-with-icon icon-hub overlap-pill o4" data-ring-click="true" data-ring-hover="true" href="platform-hub.html"><span class="menu-icon-badge icon-hub" aria-hidden="true"></span>공지·자료실</a>
               <a class="integrated-search-link" data-ring-click="true" data-ring-hover="true" data-ring-border="true" href="integrated-search.html"><span class="menu-icon-badge icon-search" aria-hidden="true"></span>통합검색</a>
             </div>
           </nav>

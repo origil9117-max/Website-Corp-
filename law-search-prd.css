@@ -304,6 +304,69 @@
   color: #0f2744;
 }
 
+.law-topic-search {
+  max-width: 44rem;
+  margin: 0 auto 0.95rem;
+  padding: 1rem;
+  border: 1px solid var(--law-portal-spec-border);
+  border-radius: 10px;
+  background: #fff;
+}
+
+.law-topic-search h2 {
+  font-size: 0.98rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+
+.law-topic-search-desc {
+  margin-top: 0.28rem;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.law-topic-search-row {
+  margin-top: 0.65rem;
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.law-topic-search-row input {
+  flex: 1 1 18rem;
+  min-width: 0;
+  border: 1px solid #c7d2df;
+  border-radius: 7px;
+  background: #fbfdff;
+  color: var(--ink);
+  padding: 0.52rem 0.65rem;
+  font-size: 0.85rem;
+}
+
+.law-topic-search-row input:focus {
+  outline: 2px solid rgba(37, 99, 168, 0.22);
+  outline-offset: 1px;
+  border-color: rgba(37, 99, 168, 0.45);
+}
+
+.law-topic-search-row button {
+  border: 1px solid rgba(28, 74, 124, 0.3);
+  background: linear-gradient(180deg, #2d71b8, #1c4a7c);
+  color: #fff;
+  border-radius: 7px;
+  padding: 0.52rem 0.8rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.law-topic-status {
+  margin-top: 0.55rem;
+  font-size: 0.78rem;
+  color: #1c4a7c;
+}
+
 .law-prd-note {
   font-size: 0.81rem;
   color: var(--ink-soft);

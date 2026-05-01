@@ -64,8 +64,18 @@
       </button>
     </div>
 
+    <section class="law-topic-search" aria-label="주제 검색">
+      <h2>주제별 구성 검색</h2>
+      <p class="law-topic-search-desc">주제를 입력하면 해당 주제에 맞는 기능 구성으로 자동 정리됩니다.</p>
+      <div class="law-topic-search-row">
+        <input id="law-topic-input" type="search" placeholder="예: 부동산 임대차, 외국인 비자, 행정처분" />
+        <button id="law-topic-search-btn" type="button">주제 구성 보기</button>
+      </div>
+      <p id="law-topic-status" class="law-topic-status" role="status" aria-live="polite"></p>
+    </section>
+
     <article class="law-prd-features law-portal-spec" id="law-prd-spec" aria-label="서비스 구성 안내">
-      <section class="law-prd-feature">
+      <section class="law-prd-feature" data-topic-keywords="공통 통합 키워드 검색 법령 판례" data-core="true">
         <div class="law-prd-feature-head">
           <span class="law-prd-p law-prd-p1" aria-label="우선순위 1">P1</span>
           <h2>통합 키워드 검색</h2>
@@ -80,7 +90,7 @@
         </ul>
       </section>
 
-      <section class="law-prd-feature">
+      <section class="law-prd-feature" data-topic-keywords="부동산 임대차 가족 상속 근로 임금 외국인 비자 소비자 분쟁 행정처분 불복 사업 법인 형사 범죄 주제 카테고리" data-core="true">
         <div class="law-prd-feature-head">
           <span class="law-prd-p law-prd-p1" aria-label="우선순위 1">P1</span>
           <h2>생활주제 카테고리</h2>
@@ -100,7 +110,7 @@
         </div>
       </section>
 
-      <section class="law-prd-feature">
+      <section class="law-prd-feature" data-topic-keywords="법령 조문 시행일 원문 조회 부동산 임대차 가족 상속 근로 임금 외국인 비자 소비자 분쟁 행정처분 불복 사업 법인 형사 범죄">
         <div class="law-prd-feature-head">
           <span class="law-prd-p law-prd-p1" aria-label="우선순위 1">P1</span>
           <h2>법령 원문 조회</h2>
@@ -113,7 +123,7 @@
         </ul>
       </section>
 
-      <section class="law-prd-feature">
+      <section class="law-prd-feature" data-topic-keywords="판례 사건번호 판시요지 부동산 임대차 가족 상속 근로 임금 외국인 비자 소비자 분쟁 행정처분 불복 사업 법인 형사 범죄">
         <div class="law-prd-feature-head">
           <span class="law-prd-p law-prd-p1" aria-label="우선순위 1">P1</span>
           <h2>판례 검색 및 요약</h2>
@@ -127,7 +137,7 @@
         </ul>
       </section>
 
-      <section class="law-prd-feature">
+      <section class="law-prd-feature" data-topic-keywords="AI 질문 답변 보증금 임대차 근로 임금 외국인 비자 소비자 분쟁">
         <div class="law-prd-feature-head">
           <span class="law-prd-p law-prd-p2" aria-label="우선순위 2">P2</span>
           <h2>AI 생활법률 Q&amp;A</h2>
@@ -140,7 +150,7 @@
         </ul>
       </section>
 
-      <section class="law-prd-feature">
+      <section class="law-prd-feature" data-topic-keywords="행정심판 처분 불복 비자 거절 체류 연장 행정처분">
         <div class="law-prd-feature-head">
           <span class="law-prd-p law-prd-p2" aria-label="우선순위 2">P2</span>
           <h2>행정심판·처분 판례</h2>
@@ -153,7 +163,7 @@
         </ul>
       </section>
 
-      <section class="law-prd-feature">
+      <section class="law-prd-feature" data-topic-keywords="즐겨찾기 공유 PDF 링크 저장 공통">
         <div class="law-prd-feature-head">
           <span class="law-prd-p law-prd-p3" aria-label="우선순위 3">P3</span>
           <h2>즐겨찾기·공유</h2>
@@ -181,5 +191,72 @@
       </ul>
     </nav>
   </div>
+  <script>
+    (function () {
+      var input = document.getElementById("law-topic-input");
+      var button = document.getElementById("law-topic-search-btn");
+      var status = document.getElementById("law-topic-status");
+      var spec = document.getElementById("law-prd-spec");
+      if (!input || !button || !status || !spec) return;
+
+      var sections = Array.prototype.slice.call(spec.querySelectorAll(".law-prd-feature"));
+      var topicAliases = {
+        "부동산": ["부동산", "임대차", "전세", "월세", "보증금"],
+        "가족·상속": ["가족", "이혼", "상속", "친권"],
+        "근로·임금": ["근로", "임금", "해고", "퇴직", "노동"],
+        "외국인·비자": ["외국인", "비자", "체류", "출입국"],
+        "소비자 분쟁": ["소비자", "환불", "계약해지", "분쟁"],
+        "행정처분·불복": ["행정처분", "불복", "행정심판", "처분"],
+        "사업·법인": ["사업", "법인", "회사", "투자"],
+        "형사·범죄": ["형사", "범죄", "고소", "고발"]
+      };
+
+      function normalize(value) {
+        return String(value || "").trim().toLowerCase();
+      }
+
+      function expandQuery(query) {
+        var lowered = normalize(query);
+        if (!lowered) return [];
+        var expanded = [lowered];
+        Object.keys(topicAliases).forEach(function (topic) {
+          var list = topicAliases[topic];
+          var matched = list.some(function (word) { return lowered.indexOf(normalize(word)) !== -1; });
+          if (matched) {
+            expanded.push(normalize(topic));
+            list.forEach(function (word) { expanded.push(normalize(word)); });
+          }
+        });
+        return expanded;
+      }
+
+      function renderByTopic() {
+        var raw = input.value;
+        var tokens = expandQuery(raw);
+        var visibleCount = 0;
+        sections.forEach(function (section) {
+          var keywords = normalize(section.getAttribute("data-topic-keywords"));
+          var isCore = section.getAttribute("data-core") === "true";
+          var matched = tokens.some(function (token) { return keywords.indexOf(token) !== -1; });
+          var show = !tokens.length || isCore || matched;
+          section.style.display = show ? "" : "none";
+          if (show) visibleCount += 1;
+        });
+        if (!tokens.length) {
+          status.textContent = "전체 구성 표시 중입니다.";
+          return;
+        }
+        status.textContent = "\"" + raw + "\" 주제 기준으로 " + visibleCount + "개 구성 항목을 표시합니다.";
+      }
+
+      button.addEventListener("click", renderByTopic);
+      input.addEventListener("keydown", function (event) {
+        if (event.key === "Enter") {
+          event.preventDefault();
+          renderByTopic();
+        }
+      });
+    })();
+  </script>
 </body>
 </html>

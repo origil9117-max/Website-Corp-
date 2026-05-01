@@ -1920,16 +1920,8 @@
         }
       });
 
-      window.addEventListener("pagehide", function () {
-        clearAdminStateOnLeave();
-      });
       window.addEventListener("beforeunload", function () {
         clearAdminStateOnLeave();
-      });
-      document.addEventListener("visibilitychange", function () {
-        if (document.visibilityState === "hidden") {
-          clearAdminStateOnLeave();
-        }
       });
       window.addEventListener("pageshow", function (e) {
         var persisted = !!(e && e.persisted);
@@ -1938,7 +1930,7 @@
           forceOff = sessionStorage.getItem(ADMIN_OFF_FLAG_KEY) === "1";
           if (forceOff) sessionStorage.removeItem(ADMIN_OFF_FLAG_KEY);
         } catch (err) {}
-        if (persisted || forceOff || isAdmin()) {
+        if (persisted || forceOff) {
           deactivateAdminMode({ silent: true });
         }
         resetAdminPassField();

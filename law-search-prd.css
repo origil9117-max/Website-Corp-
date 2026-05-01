@@ -163,10 +163,11 @@
 .law-hero-logo-card--box {
   width: min(100%, 31rem);
   min-height: 0;
-  aspect-ratio: 1024 / 235;
+  aspect-ratio: 1024 / 682;
   border-radius: 12px;
   border: 1px solid rgba(175, 193, 220, 0.28);
   box-shadow: 0 8px 24px rgba(6, 13, 24, 0.28);
+  background: rgba(7, 19, 34, 0.4);
 }
 
 .law-hero-logo-card--box img {
@@ -174,7 +175,8 @@
   height: 100%;
   max-width: none;
   max-height: none;
-  object-fit: cover;
+  object-fit: contain;
+  object-position: center;
   border-radius: 10px;
 }
 

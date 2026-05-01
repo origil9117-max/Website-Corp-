@@ -1696,6 +1696,22 @@
         return !!(localAdmin || (currentSession && currentSession.user));
       }
 
+      async function ensureAdminSession() {
+        if (isAdmin()) return true;
+        if (!client) return false;
+        try {
+          var sessionRes = await client.auth.getSession();
+          var sess = sessionRes && sessionRes.data ? sessionRes.data.session : null;
+          if (sess && sess.user) {
+            currentSession = sess;
+            localAdmin = false;
+            updateAdminUi();
+            return true;
+          }
+        } catch (e) {}
+        return false;
+      }
+
       function resetAdminPassField() {
         if (!passInput) return;
         passInput.value = "";
@@ -2044,7 +2060,7 @@
       });
 
       btnChangePass.addEventListener("click", async function () {
-        if (!isAdmin()) {
+        if (!(await ensureAdminSession())) {
           setStatus(passStatus, "err", "관리자 모드를 먼저 켜 주세요.");
           return;
         }
@@ -2087,7 +2103,7 @@
 
       noticeForm.addEventListener("submit", async function (e) {
         e.preventDefault();
-        if (!isAdmin()) {
+        if (!(await ensureAdminSession())) {
           setStatus(formStatus, "err", "관리자만 저장할 수 있습니다.");
           return;
         }
@@ -2161,7 +2177,8 @@
 
       noticeList.addEventListener("click", async function (e) {
         var target = e.target;
-        if (!target || !target.dataset || !isAdmin()) return;
+        if (!target || !target.dataset) return;
+        if (!(await ensureAdminSession())) return;
         var act = target.dataset.act;
         var id = target.dataset.id;
         if (!act || !id) return;

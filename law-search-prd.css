@@ -136,7 +136,7 @@
 
 /* ——— 본문 명세 카드 ——— */
 .law-prd-features {
-  max-width: 44rem;
+  max-width: min(92rem, 100%);
   margin: 0 auto;
 }
 
@@ -305,7 +305,7 @@
 }
 
 .law-topic-search {
-  max-width: 44rem;
+  max-width: min(92rem, 100%);
   margin: 0 auto 0.95rem;
   padding: 1rem;
   border: 1px solid var(--law-portal-spec-border);

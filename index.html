@@ -2637,6 +2637,13 @@
       width: auto;
     }
 
+    /* 대한행정사회(434×162) 기준 표시 너비와 동일하게 맞춤 */
+    .footer-logo-link.footer-logo-equal-w img {
+      width: calc(434px * 34 / 162);
+      height: 34px;
+      object-fit: contain;
+    }
+
     .footer-logo-sep {
       color: rgba(255, 255, 255, 0.38);
       font-size: 0.72rem;
@@ -3087,7 +3094,7 @@
         </p>
       </div>
       <div class="footer-logos" aria-label="관련 기관 링크">
-        <a class="footer-logo-link" href="https://daaa.or.kr/vtMain.html" target="_blank" rel="noopener noreferrer" aria-label="대한행정사회 새 창 열기">
+        <a class="footer-logo-link footer-logo-equal-w" href="https://daaa.or.kr/vtMain.html" target="_blank" rel="noopener noreferrer" aria-label="대한행정사회 새 창 열기">
           <img src="images/logo-daaa.png" alt="대한행정사회" />
         </a>
         <span class="footer-logo-sep" aria-hidden="true">|</span>
@@ -3095,15 +3102,15 @@
           <img src="images/logo-mois.png" alt="행정안전부" />
         </a>
         <span class="footer-logo-sep" aria-hidden="true">|</span>
-        <a class="footer-logo-link" href="https://www.hikorea.go.kr/Main.pt" target="_blank" rel="noopener noreferrer" aria-label="하이코리아 새 창 열기">
+        <a class="footer-logo-link footer-logo-equal-w" href="https://www.hikorea.go.kr/Main.pt" target="_blank" rel="noopener noreferrer" aria-label="하이코리아 새 창 열기">
           <img src="images/logo-hikorea.png" alt="하이코리아" />
         </a>
         <span class="footer-logo-sep" aria-hidden="true">|</span>
-        <a class="footer-logo-link" href="https://portal.scourt.go.kr/pgp/index.on?m=PGP1011M01&amp;l=N&amp;c=900" target="_blank" rel="noopener noreferrer" aria-label="사법정보공개포털 새 창 열기">
-          <img src="images/logo-scourt.svg" alt="사법정보공개포털" />
+        <a class="footer-logo-link footer-logo-equal-w" href="https://portal.scourt.go.kr/pgp/index.on?m=PGP1011M01&amp;l=N&amp;c=900" target="_blank" rel="noopener noreferrer" aria-label="사법정보공개포털 새 창 열기">
+          <img src="images/logo-scourt.png" alt="대한민국 법원 사법정보공개포털" />
         </a>
         <span class="footer-logo-sep" aria-hidden="true">|</span>
-        <a class="footer-logo-link" href="https://www.law.go.kr/main.html" target="_blank" rel="noopener noreferrer" aria-label="국가법령정보센터 새 창 열기">
+        <a class="footer-logo-link footer-logo-equal-w" href="https://www.law.go.kr/main.html" target="_blank" rel="noopener noreferrer" aria-label="국가법령정보센터 새 창 열기">
           <img src="images/logo-lawgo.png" alt="국가법령정보센터" />
         </a>
       </div>

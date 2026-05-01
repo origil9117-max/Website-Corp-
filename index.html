@@ -1300,6 +1300,25 @@
 
     .hero-platform-cats-grid a {
       flex: 0 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    @media (min-width: 981px) {
+      .hero-platform-cats-grid a + a {
+        margin-left: -0.32rem;
+      }
+
+      .hero-platform-cats-grid a:hover,
+      .hero-platform-cats-grid a:focus-visible {
+        z-index: 8;
+        transform: translateY(-2px) scale(1.02);
+        box-shadow:
+          0 8px 18px rgba(28, 36, 52, 0.3),
+          0 1px 0 rgba(255, 255, 255, 0.48),
+          inset 0 1px 0 rgba(255, 255, 255, 0.62),
+          inset 0 0 0 1px rgba(255, 255, 255, 0.34);
+      }
     }
 
     .hero-platform-cats-grid a.integrated-search-link {

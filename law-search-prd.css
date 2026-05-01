@@ -105,10 +105,19 @@
   align-items: center;
 }
 
+.law-portal-hero--immigration .law-portal-hero-inner {
+  max-width: none;
+}
+
 @media (min-width: 960px) {
   .law-portal-hero-grid {
     grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
     gap: 1.5rem;
+  }
+
+  .law-portal-hero--immigration .law-portal-hero-grid {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: clamp(0.45rem, 1vw, 0.75rem);
   }
 }
 

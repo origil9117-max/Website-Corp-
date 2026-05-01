@@ -64,12 +64,12 @@
       </button>
     </div>
 
-    <section class="law-topic-search" aria-label="주제 검색">
-      <h2>주제별 구성 검색</h2>
+    <section class="law-topic-search" aria-label="통합 검색">
+      <h2>통합 검색</h2>
       <p class="law-topic-search-desc">주제를 입력하면 해당 주제에 맞는 기능 구성으로 자동 정리됩니다.</p>
       <div class="law-topic-search-row">
         <input id="law-topic-input" type="search" placeholder="예: 부동산 임대차, 외국인 비자, 행정처분" />
-        <button id="law-topic-search-btn" type="button">주제 구성 보기</button>
+        <button id="law-topic-search-btn" type="button">검색</button>
       </div>
       <p id="law-topic-status" class="law-topic-status" role="status" aria-live="polite"></p>
       <div class="law-result-plan" aria-label="검색 결과 기본 구성">
@@ -299,7 +299,9 @@
         status.textContent = "\"" + raw + "\" 입력 결과: 통합키워드 검색 흐름에 따라 법령 원문 조회 · 판례 목록 · AI 판례 요약을 중심으로 " + visibleCount + "개 항목을 표시합니다.";
       }
 
-      button.addEventListener("click", renderByTopic);
+      button.addEventListener("click", function () {
+        renderByTopic();
+      });
       input.addEventListener("keydown", function (event) {
         if (event.key === "Enter") {
           event.preventDefault();

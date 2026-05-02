@@ -709,7 +709,7 @@
     .hero-aside {
       display: flex;
       flex-direction: column;
-      align-items: stretch;
+      align-items: center;
       justify-content: center;
       gap: 0.4rem;
       padding: 0.58rem 0.92rem;
@@ -733,19 +733,25 @@
     @media (min-width: 768px) {
       .hero-aside {
         align-self: stretch;
-        align-items: flex-end;
-        text-align: right;
+        align-items: center;
+        text-align: center;
         margin: 0;
         flex: 1 1 auto;
         min-width: 0;
         max-width: 380px;
         padding: 0.62rem 0.98rem;
-        justify-content: space-between;
+        justify-content: flex-start;
       }
+    }
 
-      .hero-aside .hero-mini {
-        margin-top: auto;
-      }
+    .hero-aside-head {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      width: 100%;
+      gap: 0.28rem;
+      margin-bottom: 0.08rem;
     }
 
     .hero-tagline {
@@ -757,33 +763,17 @@
       line-height: 1.35;
       margin: 0;
       text-shadow: none;
-      align-self: center;
-      text-align: center;
       width: 100%;
-    }
-
-    .hero-aside-kicker {
-      margin: 0;
-      font-size: 0.82rem;
-      font-weight: 700;
-      color: rgba(43, 52, 72, 0.94);
-      line-height: 1.35;
-      width: 100%;
+      max-width: 22rem;
     }
 
     .hero-aside-hint {
-      margin: 0 0 0.15rem;
+      margin: 0;
       font-size: 0.72rem;
-      line-height: 1.45;
+      line-height: 1.48;
       color: rgba(59, 71, 96, 0.84);
       width: 100%;
-    }
-
-    @media (min-width: 768px) {
-      .hero-aside-kicker,
-      .hero-aside-hint {
-        text-align: right;
-      }
+      max-width: 22rem;
     }
 
     .hero-mini {
@@ -2895,10 +2885,11 @@
               </div>
             </a>
           </div>
-          <aside class="hero-aside" aria-label="주요 업무 바로가기">
-            <p class="hero-tagline">Administrative Agent Office</p>
-            <p class="hero-aside-kicker">주요 업무 바로가기</p>
-            <p class="hero-aside-hint">아래에서 상세 업무 페이지로 이동할 수 있습니다.</p>
+          <aside class="hero-aside" aria-label="업무 분야 바로가기">
+            <div class="hero-aside-head">
+              <p class="hero-tagline">Administrative Agent Office</p>
+              <p class="hero-aside-hint">아래에서 상세 업무 페이지로 이동할 수 있습니다.</p>
+            </div>
             <div class="hero-mini">
               <a data-service="nonprofit" href="service-nonprofit.html" aria-label="비영리법인설립업무 게시 페이지로 이동">비영리법인</a>
               <a data-service="immigration" href="service-immigration.html" aria-label="출입국민원업무 게시 페이지로 이동">출입국민원</a>

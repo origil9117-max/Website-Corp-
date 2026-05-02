@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>메인 개선안 확인용 | 대한민국행정사사무소</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;600;700&family=Noto+Serif+KR:wght@700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --navy: #1a2b4b;
+      --muted: rgba(59, 71, 96, 0.88);
+      --border: rgba(124, 93, 147, 0.35);
+      --bg: #f4f5f8;
+      --card: #fff;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Noto Sans KR", system-ui, sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+      color: var(--muted);
+      background: var(--bg);
+    }
+    .wrap { max-width: 42rem; margin: 0 auto; padding: 1.25rem 1rem 3rem; }
+    .banner {
+      background: linear-gradient(135deg, #2a3f66, var(--navy));
+      color: #e8ecf4;
+      padding: 0.65rem 1rem;
+      border-radius: 8px;
+      margin-bottom: 1.5rem;
+      font-size: 0.9rem;
+    }
+    .banner a { color: #b8d4ff; }
+    h1 {
+      font-family: "Noto Serif KR", serif;
+      font-size: 1.65rem;
+      color: var(--navy);
+      margin: 0 0 0.35rem;
+      font-weight: 700;
+    }
+    .sub { font-size: 0.88rem; color: rgba(59, 71, 96, 0.75); margin-bottom: 1.75rem; }
+    section {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.1rem 1.15rem;
+      margin-bottom: 1rem;
+      box-shadow: 0 2px 10px rgba(80, 90, 120, 0.08);
+    }
+    h2 {
+      margin: 0 0 0.65rem;
+      font-size: 1.05rem;
+      color: var(--navy);
+      font-weight: 700;
+    }
+    .tag { font-size: 0.72rem; letter-spacing: 0.08em; color: rgba(59, 71, 96, 0.65); text-transform: uppercase; display: block; margin-bottom: 0.25rem; }
+    blockquote {
+      margin: 0.5rem 0 0;
+      padding: 0.65rem 0.85rem;
+      border-left: 3px solid #4d6a9e;
+      background: rgba(77, 106, 158, 0.06);
+      font-size: 0.95rem;
+      color: rgba(36, 44, 62, 0.92);
+    }
+    blockquote + blockquote { margin-top: 0.65rem; }
+    blockquote cite { display: block; margin-top: 0.35rem; font-size: 0.8rem; font-style: normal; color: rgba(59, 71, 96, 0.7); }
+    ul { margin: 0.4rem 0 0; padding-left: 1.2rem; }
+    li { margin: 0.25rem 0; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.9rem; margin-top: 0.5rem; }
+    th, td { border: 1px solid var(--border); padding: 0.45rem 0.55rem; text-align: left; vertical-align: top; }
+    th { background: rgba(26, 43, 75, 0.06); color: var(--navy); font-weight: 600; }
+    ol.steps { padding-left: 1.2rem; margin: 0.5rem 0 0; }
+    ol.steps li { margin: 0.35rem 0; }
+    .pill-row { display: flex; flex-wrap: wrap; gap: 0.35rem; margin-top: 0.65rem; }
+    .pill {
+      font-size: 0.72rem;
+      padding: 0.35rem 0.6rem;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.9);
+      color: #364057;
+    }
+    .pill--accent {
+      background: linear-gradient(165deg, #eee4d6, #c4a882);
+      border-color: rgba(60, 48, 38, 0.28);
+      font-weight: 700;
+    }
+    .aside-mock .label { font-weight: 700; color: var(--navy); font-size: 0.88rem; margin-bottom: 0.35rem; }
+    .aside-mock .hint { font-size: 0.82rem; margin-bottom: 0.75rem; color: rgba(59, 71, 96, 0.78); }
+    .grid-mock {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.35rem;
+      font-size: 0.72rem;
+    }
+    .grid-mock span {
+      padding: 0.45rem;
+      text-align: center;
+      border-radius: 4px;
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.85);
+    }
+    hr.sep { border: none; border-top: 1px dashed var(--border); margin: 0.85rem 0; }
+    footer { font-size: 0.78rem; color: rgba(59, 71, 96, 0.65); margin-top: 1.5rem; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="banner">
+      <strong>확인용 초안 페이지</strong> — 실제 메인은 <a href="index.html">index.html</a>입니다. 검색엔진 색인 제외(noindex) 설정됨.
+    </div>
+
+    <p class="tag">Preview</p>
+    <h1>메인 페이지 개선안 (카피·구조)</h1>
+    <p class="sub">docs/homepage-improvement-draft.md 내용을 화면에서 훑어보기 위한 로컬 확인용입니다.</p>
+
+    <section aria-labelledby="s1">
+      <h2 id="s1">1. 히어로 한 줄 슬로건 후보</h2>
+      <blockquote>출입국·법인·보훈·인허가·행정심판까지, 절차와 서류를 한곳에서 안내합니다.<cite>초안 A</cite></blockquote>
+      <blockquote>부산을 거점으로, 방문·전화·온라인으로 행정 민원을 대리·대행합니다.<cite>초안 B</cite></blockquote>
+      <blockquote>복잡한 행정 절차를 기준에 맞추어 정리·대행합니다.<cite>초안 C (짧게)</cite></blockquote>
+    </section>
+
+    <section aria-labelledby="s2">
+      <h2 id="s2">2. 오른쪽 히어로 블록 (배너 + 그리드) 모형</h2>
+      <p style="margin:0 0 0.5rem;font-size:0.88rem;">배너 이미지 자리</p>
+      <div style="height:4rem;border-radius:8px;background:linear-gradient(90deg,#dfe4ec,#c9d4e8);border:1px solid var(--border);"></div>
+      <hr class="sep" />
+      <div class="aside-mock">
+        <div class="label">주요 업무 바로가기</div>
+        <p class="hint">아래에서 상세 업무 페이지로 이동할 수 있습니다.</p>
+        <div class="grid-mock">
+          <span>비영리법인</span><span>출입국민원</span>
+          <span>기업투자 · 글로벌</span><span>국가유공자보훈</span>
+          <span>인허가 민원</span><span>행정심판</span>
+        </div>
+      </div>
+    </section>
+
+    <section aria-labelledby="s3">
+      <h2 id="s3">3. 지능형 행정 플랫폼 (소개 + pill 예시)</h2>
+      <p style="margin:0;font-size:0.92rem;">지능형 행정 플랫폼에서는 민원 로드맵, 법령·판례 검색, 출입국민원 검색, 자료검색, 통합검색을 통해 절차 안내와 자료 탐색을 한 흐름으로 이어갈 수 있습니다.</p>
+      <p style="margin:0.65rem 0 0;font-size:0.88rem;color:rgba(59,71,96,0.85);"><strong>짧은 버전:</strong> 로드맵·검색·자료를 묶어, 준비부터 확인까지 단계적으로 안내합니다.</p>
+      <div class="pill-row" aria-hidden="true">
+        <span class="pill">민원 로드맵</span>
+        <span class="pill">법령·판례 검색</span>
+        <span class="pill">출입국민원 검색</span>
+        <span class="pill">자료검색</span>
+        <span class="pill pill--accent">통합검색</span>
+      </div>
+    </section>
+
+    <section aria-labelledby="s4">
+      <h2 id="s4">4. Practice Areas 카드 규칙 (요약)</h2>
+      <ul>
+        <li>카드당 불릿 3~4개, 나머지는 service 페이지로 유도</li>
+        <li>카드 상단 한 줄 요약 예: 비영리 — 사단·재단·협동조합 설립과 정관·해산 행정</li>
+        <li>본문 14px 이상, line-height 1.55~1.65</li>
+      </ul>
+    </section>
+
+    <section aria-labelledby="s5">
+      <h2 id="s5">5. 색상·폰트·강조</h2>
+      <table>
+        <thead><tr><th>항목</th><th>제안</th></tr></thead>
+        <tbody>
+          <tr><th>메인 색</th><td>기존 네이비 유지</td></tr>
+          <tr><th>보조 강조</th><td>통합검색 등 1종만 최우선 탐색 톤</td></tr>
+          <tr><th>폰트</th><td>본문 Noto Sans KR, 제목만 세리프</td></tr>
+          <tr><th>전화 CTA</th><td>영업·통화 가능 안내 한 줄(작은 글씨)</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section aria-labelledby="s6">
+      <h2 id="s6">6. 공지 비었을 때 대체 문구</h2>
+      <blockquote>대표 안내·블로그 소식은 공지 및 네이버 공식 블로그에서 확인하실 수 있습니다.</blockquote>
+    </section>
+
+    <section aria-labelledby="s7">
+      <h2 id="s7">7. 차별화 문장 후보</h2>
+      <ul>
+        <li>플랫폼: 로드맵·통합 탐색·자료검색을 한 브랜드로 소개</li>
+        <li>법무부 등록 출입국 대행 + 대한행정사회 소속을 한 문장으로 반복</li>
+        <li>히어로 한 줄 인용: 교육·실무 배경(최종 문구는 사실 확인 후)</li>
+      </ul>
+    </section>
+
+    <section aria-labelledby="s8">
+      <h2 id="s8">8. index.html 반영 순서</h2>
+      <ol class="steps">
+        <li>.hero-copy 슬로건 요소 추가</li>
+        <li>.hero-aside 소제목·여백·구분</li>
+        <li>.hero-platform-cats 보조 문구 1줄</li>
+        <li>#services 카드 텍스트 축약·요약 줄</li>
+        <li>.top-notice 빈 상태 문구</li>
+      </ol>
+    </section>
+
+    <footer>원본 초안: docs/homepage-improvement-draft.md · 법적·등록 표현은 게시 전 검토</footer>
+  </div>
+</body>
+</html>

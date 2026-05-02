@@ -465,7 +465,7 @@
         flex-direction: row;
         align-items: stretch;
         justify-content: flex-end;
-        gap: 1cm;
+        gap: 0.55rem;
         align-self: start;
       }
     }
@@ -703,20 +703,24 @@
       }
     }
 
-    .hero-bottom {
+    /* CTA 바로 아래 두어 그리드 1행 높이 차로 생기던 왼쪽 빈칸 제거 + 뷰포트 폭으로 pill 줄 유지 */
+    .hero-copy > .hero-bottom {
       position: relative;
       z-index: 3;
-      max-width: var(--max);
-      margin: -1.2rem auto 0;
-      padding: 0.15rem 1.25rem 0.04rem;
+      margin-top: 0.35rem;
+      margin-bottom: 0;
+      padding: 0.12rem 1.25rem 0.15rem;
+      width: 100vw;
+      max-width: 100vw;
+      margin-left: calc(50% - 50vw);
+      margin-right: calc(50% - 50vw);
       box-sizing: border-box;
-      width: 100%;
     }
 
     @media (min-width: 768px) {
-      .hero-bottom {
-        margin-top: -2.1rem;
-        padding: 0.18rem 1.5rem 0.04rem;
+      .hero-copy > .hero-bottom {
+        margin-top: 0.42rem;
+        padding: 0.22rem 1.5rem 0.12rem;
       }
     }
 
@@ -1322,7 +1326,7 @@
       color: rgba(59, 71, 96, 0.9);
       display: flex;
       flex-direction: column;
-      gap: 0.52rem;
+      gap: 0.36rem;
     }
 
     .hero-platform-cats-label {
@@ -1338,7 +1342,7 @@
     }
 
     .hero-platform-cats-lead {
-      margin: 0.15rem 0 0;
+      margin: 0.08rem 0 0;
       font-size: 0.72rem;
       line-height: 1.52;
       font-weight: 500;
@@ -2876,6 +2880,23 @@
               ><span class="menu-icon-badge icon-phone" aria-hidden="true"></span>전화 상담</a>
             <a class="btn btn-ghost iconized icon-ai" data-ring-click="true" data-ring-hover="true" href="platform.html"><span class="menu-icon-badge icon-ai" aria-hidden="true"></span>지능형 행정 플랫폼</a>
           </div>
+          <div class="hero-bottom">
+            <div class="hero-platform-cats-wrap">
+              <nav class="hero-platform-cats" aria-label="지능형 행정 플랫폼 카테고리 바로가기">
+                <span class="hero-platform-cats-label">지능형 행정 플랫폼</span>
+                <p class="hero-platform-cats-lead">
+                  로드맵·검색·자료를 묶어, 준비부터 확인까지 단계적으로 안내합니다.
+                </p>
+                <div class="hero-platform-cats-grid">
+                  <a class="cat-with-icon icon-roadmap overlap-pill overlap-front o1" data-ring-click="true" data-ring-hover="true" href="minwon-roadmap.html"><span class="menu-icon-badge icon-roadmap" aria-hidden="true"></span>민원 로드맵</a>
+                  <a class="cat-with-icon icon-checklist overlap-pill overlap-front o2" data-ring-click="true" data-ring-hover="true" href="law-precedent-search.html"><span class="menu-icon-badge icon-checklist" aria-hidden="true"></span>법령·판례 검색</a>
+                  <a class="cat-with-icon icon-faq no-wrap-label overlap-pill overlap-front o3" data-ring-click="true" data-ring-hover="true" href="platform-faq.html"><span class="menu-icon-badge icon-faq" aria-hidden="true"></span>출입국민원 검색</a>
+                  <a class="cat-with-icon icon-hub overlap-pill o4" data-ring-click="true" data-ring-hover="true" href="resources.html"><span class="menu-icon-badge icon-hub" aria-hidden="true"></span>자료검색</a>
+                  <a class="integrated-search-link overlap-pill o5" data-ring-click="true" data-ring-hover="true" data-ring-border="true" href="integrated-search.html"><span class="menu-icon-badge icon-search" aria-hidden="true"></span>통합검색</a>
+                </div>
+              </nav>
+            </div>
+          </div>
         </div>
         <div class="hero-aside-col">
           <div class="hero-promo-slot" aria-label="사무소 홍보">
@@ -2914,23 +2935,6 @@
               출입국·법인·보훈·인허가·행정심판까지, 절차와 서류를 한곳에서 안내합니다.
             </p>
           </aside>
-        </div>
-      </div>
-      <div class="hero-bottom">
-        <div class="hero-platform-cats-wrap">
-          <nav class="hero-platform-cats" aria-label="지능형 행정 플랫폼 카테고리 바로가기">
-            <span class="hero-platform-cats-label">지능형 행정 플랫폼</span>
-            <p class="hero-platform-cats-lead">
-              로드맵·검색·자료를 묶어, 준비부터 확인까지 단계적으로 안내합니다.
-            </p>
-            <div class="hero-platform-cats-grid">
-              <a class="cat-with-icon icon-roadmap overlap-pill overlap-front o1" data-ring-click="true" data-ring-hover="true" href="minwon-roadmap.html"><span class="menu-icon-badge icon-roadmap" aria-hidden="true"></span>민원 로드맵</a>
-              <a class="cat-with-icon icon-checklist overlap-pill overlap-front o2" data-ring-click="true" data-ring-hover="true" href="law-precedent-search.html"><span class="menu-icon-badge icon-checklist" aria-hidden="true"></span>법령·판례 검색</a>
-              <a class="cat-with-icon icon-faq no-wrap-label overlap-pill overlap-front o3" data-ring-click="true" data-ring-hover="true" href="platform-faq.html"><span class="menu-icon-badge icon-faq" aria-hidden="true"></span>출입국민원 검색</a>
-              <a class="cat-with-icon icon-hub overlap-pill o4" data-ring-click="true" data-ring-hover="true" href="resources.html"><span class="menu-icon-badge icon-hub" aria-hidden="true"></span>자료검색</a>
-              <a class="integrated-search-link overlap-pill o5" data-ring-click="true" data-ring-hover="true" data-ring-border="true" href="integrated-search.html"><span class="menu-icon-badge icon-search" aria-hidden="true"></span>통합검색</a>
-            </div>
-          </nav>
         </div>
       </div>
     </section>

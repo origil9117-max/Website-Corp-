@@ -733,21 +733,21 @@
       margin-top: 0;
     }
 
-    /* CTA 바로 아래: 100vw 브레이크아웃 제거(overflow·높이 계산 이슈로 하단 잘림 방지), 열 폭에 맞춤 */
+    /* CTA 행과 플랫폼 안내 블록 사이 여백(구역 구분) */
     .hero-copy > .hero-bottom {
       position: relative;
       z-index: 3;
       align-self: stretch;
       width: 100%;
       max-width: none;
-      margin: 0.12rem 0 0;
+      margin: clamp(0.72rem, 2.4vw, 1.05rem) 0 0;
       padding: 0 0 0.2rem;
       box-sizing: border-box;
     }
 
     @media (min-width: 768px) {
       .hero-copy > .hero-bottom {
-        margin-top: 0.14rem;
+        margin-top: clamp(0.85rem, 2.1vw, 1.2rem);
         padding-bottom: 0.18rem;
       }
     }
@@ -1048,11 +1048,11 @@
     .hero-badge {
       display: inline-flex;
       align-items: center;
-      justify-content: center;
+      justify-content: flex-start;
       font-family: "Noto Sans KR", sans-serif;
       font-size: 0.71rem;
       letter-spacing: 0.03em;
-      text-align: center;
+      text-align: left;
       color: #5a496f;
       border: 1px solid rgba(124, 93, 147, 0.35);
       background: rgba(255, 255, 255, 0.64);
@@ -1062,7 +1062,8 @@
       border-radius: 999px;
       white-space: nowrap;
       box-sizing: border-box;
-      margin: 0 auto 0.32rem;
+      /* 아래 h1과 동일한 좌측 들여쓰기(0.5cm)로 줄 맞춤 */
+      margin: 0 0 0.32rem 0.5cm;
       text-shadow: none;
     }
 

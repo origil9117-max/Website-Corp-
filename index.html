@@ -604,6 +604,23 @@
       text-decoration: none;
     }
 
+    @keyframes heroPromoHintBlink {
+      0%,
+      100% {
+        opacity: 1;
+      }
+      12.5%,
+      37.5%,
+      62.5% {
+        opacity: 0.22;
+      }
+      25%,
+      50%,
+      75% {
+        opacity: 1;
+      }
+    }
+
     .hero-promo-hover-hint {
       box-sizing: border-box;
       width: 100%;
@@ -620,10 +637,7 @@
       opacity: 0;
       overflow: hidden;
       pointer-events: none;
-      transition:
-        max-height 0.22s ease,
-        opacity 0.18s ease,
-        margin-top 0.2s ease;
+      transition: max-height 0.22s ease, margin-top 0.2s ease;
     }
 
     .hero-promo-slot:hover .hero-promo-hover-hint,
@@ -631,11 +645,17 @@
       max-height: 3rem;
       opacity: 1;
       margin-top: 0.38rem;
+      animation: heroPromoHintBlink 1.35s ease-in-out 1 forwards;
     }
 
     @media (prefers-reduced-motion: reduce) {
       .hero-promo-hover-hint {
         transition: none;
+      }
+
+      .hero-promo-slot:hover .hero-promo-hover-hint,
+      .hero-promo-slot:focus-within .hero-promo-hover-hint {
+        animation: none;
       }
     }
 

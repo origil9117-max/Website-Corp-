@@ -1035,17 +1035,25 @@
       text-shadow: none;
     }
 
-    .hero-slogan {
+    .hero-aside-slogan {
       font-family: "Noto Sans KR", sans-serif;
       font-size: clamp(0.7rem, 1.38vw, 0.8rem);
       font-weight: 500;
       line-height: 1.55;
       letter-spacing: -0.02em;
       color: rgba(52, 64, 84, 0.9);
-      margin: 0 0 0.95rem;
-      margin-left: 0.5cm;
-      max-width: 36rem;
+      margin: 0.65rem 0 0;
+      padding: 0 0.35rem;
+      max-width: 22rem;
+      width: 100%;
+      text-align: center;
       text-shadow: none;
+    }
+
+    @media (min-width: 768px) {
+      .hero-aside-slogan {
+        margin-top: 0.78rem;
+      }
     }
 
     .hero-cta-hint {
@@ -1086,7 +1094,7 @@
       flex-wrap: wrap;
       gap: 0.04rem;
       align-items: center;
-      margin-top: 1.58rem;
+      margin-top: 0.95rem;
     }
 
     .hero-cta .btn {
@@ -2853,9 +2861,6 @@
         <div class="hero-copy">
           <p class="hero-badge">법무부 출입국민원대행기관 등록 · 정부행정전문가</p>
           <h1 id="hero-title">대한민국행정사사무소</h1>
-          <p class="hero-slogan">
-            출입국·법인·보훈·인허가·행정심판까지, 절차와 서류를 한곳에서 안내합니다.
-          </p>
           <div class="hero-cta">
             <a
               class="btn btn-primary tel-tooltip iconized"
@@ -2903,6 +2908,9 @@
               <a data-service="permit" href="service-permit.html" aria-label="인허가 민원 업무 게시 페이지로 이동">인허가 민원</a>
               <a data-service="appeal" href="service-appeal.html" aria-label="행정심판 업무 게시 페이지로 이동">행정심판</a>
             </div>
+            <p class="hero-aside-slogan">
+              출입국·법인·보훈·인허가·행정심판까지, 절차와 서류를 한곳에서 안내합니다.
+            </p>
           </aside>
         </div>
       </div>

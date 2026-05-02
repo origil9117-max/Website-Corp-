@@ -460,6 +460,7 @@
         align-items: stretch;
         justify-content: flex-end;
         gap: 1cm;
+        align-self: start;
       }
     }
 
@@ -680,7 +681,8 @@
         grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
         column-gap: 0.85rem;
         row-gap: 0.55rem;
-        align-items: stretch;
+        /* stretch면 왼쪽 열이 오른쪽 높이까지 늘어 '방문 전…' 아래 빈 공간이 생김 */
+        align-items: start;
       }
     }
 
@@ -689,20 +691,26 @@
       --hero-title-block-width: 19.8rem;
     }
 
+    @media (min-width: 768px) {
+      .hero-copy {
+        align-self: start;
+      }
+    }
+
     .hero-bottom {
       position: relative;
       z-index: 3;
       max-width: var(--max);
-      margin: -1.05rem auto 0;
-      padding: 0.32rem 1.25rem 0.04rem;
+      margin: -1.2rem auto 0;
+      padding: 0.15rem 1.25rem 0.04rem;
       box-sizing: border-box;
       width: 100%;
     }
 
     @media (min-width: 768px) {
       .hero-bottom {
-        margin-top: -1.72rem;
-        padding: 0.38rem 1.5rem 0.04rem;
+        margin-top: -2.1rem;
+        padding: 0.18rem 1.5rem 0.04rem;
       }
     }
 
@@ -1061,13 +1069,13 @@
       font-size: 0.72rem;
       line-height: 1.45;
       color: rgba(59, 71, 96, 0.78);
-      margin: 0.38rem 0 0.4rem 0.5cm;
+      margin: 0.38rem 0 0.22rem 0.5cm;
       max-width: 26rem;
     }
 
     @media (min-width: 768px) {
       .hero-cta-hint {
-        margin-bottom: 0.5rem;
+        margin-bottom: 0.28rem;
       }
     }
 

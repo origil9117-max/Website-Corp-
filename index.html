@@ -762,6 +762,30 @@
       width: 100%;
     }
 
+    .hero-aside-kicker {
+      margin: 0;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: rgba(43, 52, 72, 0.94);
+      line-height: 1.35;
+      width: 100%;
+    }
+
+    .hero-aside-hint {
+      margin: 0 0 0.15rem;
+      font-size: 0.72rem;
+      line-height: 1.45;
+      color: rgba(59, 71, 96, 0.84);
+      width: 100%;
+    }
+
+    @media (min-width: 768px) {
+      .hero-aside-kicker,
+      .hero-aside-hint {
+        text-align: right;
+      }
+    }
+
     .hero-mini {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1019,6 +1043,28 @@
       max-width: var(--hero-title-block-width);
       color: var(--ink);
       text-shadow: none;
+    }
+
+    .hero-slogan {
+      font-family: "Noto Sans KR", sans-serif;
+      font-size: clamp(0.78rem, 1.65vw, 0.9rem);
+      font-weight: 500;
+      line-height: 1.55;
+      letter-spacing: -0.02em;
+      color: rgba(52, 64, 84, 0.9);
+      margin: 0 0 0.62rem;
+      margin-left: 0.5cm;
+      max-width: 36rem;
+      text-shadow: none;
+    }
+
+    .hero-cta-hint {
+      font-size: 0.72rem;
+      line-height: 1.45;
+      color: rgba(59, 71, 96, 0.78);
+      margin: 0.38rem 0 0;
+      margin-left: 0.5cm;
+      max-width: 26rem;
     }
 
     .hero-sub {
@@ -1285,6 +1331,15 @@
       z-index: 2;
       white-space: normal;
       overflow-wrap: anywhere;
+    }
+
+    .hero-platform-cats-lead {
+      margin: 0.15rem 0 0;
+      font-size: 0.72rem;
+      line-height: 1.52;
+      font-weight: 500;
+      color: rgba(59, 71, 96, 0.86);
+      max-width: 38rem;
     }
 
     .hero-platform-cats-grid {
@@ -2008,6 +2063,16 @@
       outline: none;
     }
 
+    .service-card .service-card-lead {
+      margin: 0;
+      padding: 0.5rem 0.85rem 0.48rem;
+      font-size: 0.84rem;
+      line-height: 1.6;
+      color: rgba(40, 48, 62, 0.9);
+      background: rgba(248, 249, 252, 0.96);
+      border-bottom: 1px solid rgba(28, 38, 52, 0.08);
+    }
+
     .service-card.selected[data-service="nonprofit"] h3 {
       background-color: #4a3860;
       background-image: linear-gradient(
@@ -2095,9 +2160,9 @@
       position: relative;
       padding-left: 0.85rem;
       margin-bottom: 0.45rem;
-      font-size: 0.82rem;
+      font-size: 0.875rem;
       color: var(--muted);
-      line-height: 1.55;
+      line-height: 1.58;
     }
 
     .service-card li a.service-subtopic-link {
@@ -2781,7 +2846,7 @@
       <div class="top-notice-inner">
         <a class="top-notice-link" href="notice.html" target="_blank" rel="noopener noreferrer" aria-label="최신 공지 새 창에서 열기">
           <span class="top-notice-label" id="top-notice-label">공지</span>
-          <span class="top-notice-title" id="top-notice-title">등록된 공지사항이 없습니다.</span>
+          <span class="top-notice-title" id="top-notice-title">등록된 공지가 없습니다. 공지·블로그에서 소식을 확인하실 수 있습니다.</span>
         </a>
       </div>
     </section>
@@ -2793,6 +2858,9 @@
         <div class="hero-copy">
           <p class="hero-badge">법무부 출입국민원대행기관 등록 · 정부행정전문가</p>
           <h1 id="hero-title">대한민국행정사사무소</h1>
+          <p class="hero-slogan">
+            출입국·법인·보훈·인허가·행정심판까지, 절차와 서류를 한곳에서 안내합니다.
+          </p>
           <div class="hero-cta">
             <a
               class="btn btn-primary tel-tooltip iconized"
@@ -2805,6 +2873,7 @@
               ><span class="menu-icon-badge icon-phone" aria-hidden="true"></span>전화 상담</a>
             <a class="btn btn-ghost iconized icon-ai" data-ring-click="true" data-ring-hover="true" href="platform.html"><span class="menu-icon-badge icon-ai" aria-hidden="true"></span>지능형 행정 플랫폼</a>
           </div>
+          <p class="hero-cta-hint">방문 전 연락 주시면 상담 가능 시간을 안내해 드립니다.</p>
         </div>
         <div class="hero-aside-col">
           <div class="hero-promo-slot" aria-label="사무소 홍보">
@@ -2826,8 +2895,10 @@
               </div>
             </a>
           </div>
-          <aside class="hero-aside" aria-label="업무 분야 바로가기">
+          <aside class="hero-aside" aria-label="주요 업무 바로가기">
             <p class="hero-tagline">Administrative Agent Office</p>
+            <p class="hero-aside-kicker">주요 업무 바로가기</p>
+            <p class="hero-aside-hint">아래에서 상세 업무 페이지로 이동할 수 있습니다.</p>
             <div class="hero-mini">
               <a data-service="nonprofit" href="service-nonprofit.html" aria-label="비영리법인설립업무 게시 페이지로 이동">비영리법인</a>
               <a data-service="immigration" href="service-immigration.html" aria-label="출입국민원업무 게시 페이지로 이동">출입국민원</a>
@@ -2843,6 +2914,9 @@
         <div class="hero-platform-cats-wrap">
           <nav class="hero-platform-cats" aria-label="지능형 행정 플랫폼 카테고리 바로가기">
             <span class="hero-platform-cats-label">지능형 행정 플랫폼</span>
+            <p class="hero-platform-cats-lead">
+              로드맵·검색·자료를 묶어, 준비부터 확인까지 단계적으로 안내합니다.
+            </p>
             <div class="hero-platform-cats-grid">
               <a class="cat-with-icon icon-roadmap overlap-pill overlap-front o1" data-ring-click="true" data-ring-hover="true" href="minwon-roadmap.html"><span class="menu-icon-badge icon-roadmap" aria-hidden="true"></span>민원 로드맵</a>
               <a class="cat-with-icon icon-checklist overlap-pill overlap-front o2" data-ring-click="true" data-ring-hover="true" href="law-precedent-search.html"><span class="menu-icon-badge icon-checklist" aria-hidden="true"></span>법령·판례 검색</a>
@@ -2927,6 +3001,7 @@
       <div class="services-grid">
         <article class="service-card" data-service="nonprofit" aria-label="비영리법인설립업무 상세 보기">
           <h3><a class="service-card-title" href="service-post.html?service=nonprofit&topic=corp-foundation-bylaws">비영리법인설립업무</a></h3>
+          <p class="service-card-lead">사단·재단·협동조합 설립과 정관·해산 등 행정 절차를 안내합니다.</p>
           <ul>
             <li data-subtopic-href="service-post.html?service=nonprofit&topic=corp-foundation-bylaws"><a class="service-subtopic-link" href="service-post.html?service=nonprofit&topic=corp-foundation-bylaws">비영리법인(사단·재단) 설립·정관 변경</a></li>
             <li data-subtopic-href="service-post.html?service=nonprofit&topic=cooperative-establish"><a class="service-subtopic-link" href="service-post.html?service=nonprofit&topic=cooperative-establish">협동조합설립</a></li>
@@ -2936,6 +3011,7 @@
         </article>
         <article class="service-card" data-service="immigration" aria-label="출입국민원업무 상세 보기">
           <h3><a class="service-card-title" href="service-post.html?service=immigration&topic=f4-f5-status-loss">출입국민원업무</a></h3>
+          <p class="service-card-lead">비자·체류·국적 등 출입국민원 대행 기준에 맞춰 절차를 안내합니다.</p>
           <ul>
             <li data-subtopic-href="service-post.html?service=immigration&topic=f4-f5-status-loss"><a class="service-subtopic-link" href="service-post.html?service=immigration&topic=f4-f5-status-loss">재외동포(F4)·영주권(F5)·거소증 신청·국적상실 신고 등</a></li>
             <li data-subtopic-href="service-post.html?service=immigration&topic=d8-e7-visa-stay"><a class="service-subtopic-link" href="service-post.html?service=immigration&topic=d8-e7-visa-stay">외국인 투자(D-8)·전문인력(E-7) 등 비자·체류</a></li>
@@ -2945,16 +3021,17 @@
         </article>
         <article class="service-card" data-service="investment" aria-label="기업투자 · 글러벌 업무 상세 보기">
           <h3><a class="service-card-title" href="service-post.html?service=investment&topic=fdi">기업투자 · 글러벌 업무</a></h3>
+          <p class="service-card-lead">외국인투자(FDI)·국내법인 설립과 영사·인증 업무를 연계해 안내합니다.</p>
           <ul>
             <li data-subtopic-href="service-post.html?service=investment&topic=fdi"><a class="service-subtopic-link" href="service-post.html?service=investment&topic=fdi">외국인투자기업(FDI) 설립·신고·변경</a></li>
             <li data-subtopic-href="service-post.html?service=investment&topic=corp-branch"><a class="service-subtopic-link" href="service-post.html?service=investment&topic=corp-branch">국내 법인·지점 등 기업 관련 설립</a></li>
             <li data-subtopic-href="service-post.html?service=investment&topic=permit-case"><a class="service-subtopic-link" href="service-post.html?service=investment&topic=permit-case">국제물류주선, 건설폐기물 수집·운반 등 인·허가(사안별)</a></li>
             <li data-subtopic-href="service-post.html?service=investment&topic=consular-services"><a class="service-subtopic-link" href="service-post.html?service=investment&topic=consular-services">중국영사관업무 · 베트남영사관업무</a></li>
-            <li data-subtopic-href="service-post.html?service=investment&topic=apostille-certification"><a class="service-subtopic-link" href="service-post.html?service=investment&topic=apostille-certification">아포스티유 및 해외 영사인증</a></li>
           </ul>
         </article>
         <article class="service-card" data-service="patriot" aria-label="국가유공자보훈업무 상세 보기">
           <h3><a class="service-card-title" href="service-post.html?service=patriot&topic=veteran-registered">국가유공자보훈업무</a></h3>
+          <p class="service-card-lead">국가유공자·보훈 등록과 국가배상·불복 절차를 안내합니다.</p>
           <ul>
             <li data-subtopic-href="service-post.html?service=patriot&topic=veteran-registered"><a class="service-subtopic-link" href="service-post.html?service=patriot&topic=veteran-registered">국가유공자·보훈 등록</a></li>
             <li data-subtopic-href="service-post.html?service=patriot&topic=national-disability-registration"><a class="service-subtopic-link" href="service-post.html?service=patriot&topic=national-disability-registration">국가장애인등록</a></li>
@@ -2964,6 +3041,7 @@
         </article>
         <article class="service-card" data-service="permit" aria-label="인허가 민원 업무 상세 보기">
           <h3><a class="service-card-title" href="service-post.html?service=permit&topic=food-development-medical-waste">인허가 민원업무</a></h3>
+          <p class="service-card-lead">식품·개발행위·의료·폐기물 등 각종 인허가·신고를 사안별로 지원합니다.</p>
           <ul>
             <li data-subtopic-href="service-post.html?service=permit&topic=food-development-medical-waste"><a class="service-subtopic-link" href="service-post.html?service=permit&topic=food-development-medical-waste">식품접객업·개발행위·의료법인설립, 폐기물처리업 허가 등</a></li>
             <li data-subtopic-href="service-post.html?service=permit&topic=nonprofit-socialcoop-redevelopment"><a class="service-subtopic-link" href="service-post.html?service=permit&topic=nonprofit-socialcoop-redevelopment">비영리사단(재단)·사회적협동조합·재개발·재건축조합 인가 등</a></li>
@@ -2973,6 +3051,7 @@
         </article>
         <article class="service-card" data-service="appeal" aria-label="행정심판 업무 상세 보기">
           <h3><a class="service-card-title" href="service-post.html?service=appeal&topic=revocation-nullity-claim">행정심판업무</a></h3>
+          <p class="service-card-lead">행정심판 청구·집행정지·재결 후속 절차를 단계별로 지원합니다.</p>
           <ul>
             <li data-subtopic-href="service-post.html?service=appeal&topic=revocation-nullity-claim"><a class="service-subtopic-link" href="service-post.html?service=appeal&topic=revocation-nullity-claim">처분 취소·무효 확인 등 행정심판 청구</a></li>
             <li data-subtopic-href="service-post.html?service=appeal&topic=stay-opinion-support"><a class="service-subtopic-link" href="service-post.html?service=appeal&topic=stay-opinion-support">집행정지 신청 및 의견서 작성 지원</a></li>
@@ -3264,7 +3343,8 @@
       }
 
       if (!top) {
-        topTitle.textContent = "등록된 공지사항이 없습니다.";
+        topTitle.textContent =
+          "등록된 공지가 없습니다. 공지·블로그에서 소식을 확인하실 수 있습니다.";
         topTitle.style.fontWeight = "500";
         topLabel.classList.remove("is-live");
         if (navNoticeLink) navNoticeLink.classList.remove("is-live");

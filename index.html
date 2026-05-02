@@ -294,6 +294,12 @@
       transform: translateX(-38%);
       top: auto;
       bottom: calc(100% + 10px);
+      white-space: normal;
+      text-align: left;
+      font-size: 0.72rem;
+      line-height: 1.45;
+      max-width: min(92vw, 17.5rem);
+      width: auto;
     }
     .hero-cta a.tel-tooltip[data-tooltip]::before {
       content: none !important;
@@ -1062,20 +1068,6 @@
     @media (min-width: 768px) {
       .hero-aside-slogan {
         margin-top: 0.78rem;
-      }
-    }
-
-    .hero-cta-hint {
-      font-size: 0.72rem;
-      line-height: 1.45;
-      color: rgba(59, 71, 96, 0.78);
-      margin: 0.38rem 0 0.22rem 0.5cm;
-      max-width: 26rem;
-    }
-
-    @media (min-width: 768px) {
-      .hero-cta-hint {
-        margin-bottom: 0.28rem;
       }
     }
 
@@ -2878,12 +2870,12 @@
               data-ring-click="true"
               data-ring-hover="true"
               data-ring-border="true"
-              data-tooltip="모바일로 접속 시 통화로 연결됩니다."
-              aria-label="대표전화 051-515-5459. 모바일로 접속 시 통화로 연결됩니다."
+              data-tooltip="방문 전 연락 주시면 상담 가능 시간을 안내해 드립니다. 모바일로 접속 시 통화로 연결됩니다."
+              title="방문 전 연락 주시면 상담 가능 시간을 안내해 드립니다. 모바일로 접속 시 통화로 연결됩니다."
+              aria-label="대표전화 051-515-5459. 방문 전 연락 주시면 상담 가능 시간을 안내해 드립니다. 모바일로 접속 시 통화로 연결됩니다."
               ><span class="menu-icon-badge icon-phone" aria-hidden="true"></span>전화 상담</a>
             <a class="btn btn-ghost iconized icon-ai" data-ring-click="true" data-ring-hover="true" href="platform.html"><span class="menu-icon-badge icon-ai" aria-hidden="true"></span>지능형 행정 플랫폼</a>
           </div>
-          <p class="hero-cta-hint">방문 전 연락 주시면 상담 가능 시간을 안내해 드립니다.</p>
         </div>
         <div class="hero-aside-col">
           <div class="hero-promo-slot" aria-label="사무소 홍보">

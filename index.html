@@ -475,6 +475,7 @@
     .hero-promo-slot {
       display: flex;
       flex-direction: column;
+      align-items: center;
       min-width: 0;
       min-height: 0;
       width: 100%;
@@ -601,6 +602,41 @@
     .hero-promo-link:focus-visible {
       opacity: 0.93;
       text-decoration: none;
+    }
+
+    .hero-promo-hover-hint {
+      box-sizing: border-box;
+      width: 100%;
+      max-width: 14.25rem;
+      margin: 0;
+      padding: 0 0.25rem;
+      font-size: 0.68rem;
+      line-height: 1.42;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      color: rgba(35, 44, 62, 0.92);
+      text-align: center;
+      max-height: 0;
+      opacity: 0;
+      overflow: hidden;
+      pointer-events: none;
+      transition:
+        max-height 0.22s ease,
+        opacity 0.18s ease,
+        margin-top 0.2s ease;
+    }
+
+    .hero-promo-slot:hover .hero-promo-hover-hint,
+    .hero-promo-slot:focus-within .hero-promo-hover-hint {
+      max-height: 3rem;
+      opacity: 1;
+      margin-top: 0.38rem;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .hero-promo-hover-hint {
+        transition: none;
+      }
     }
 
     @media (max-width: 767px) {
@@ -2932,7 +2968,7 @@
             <a
               class="hero-promo-link"
               href="#consult-form"
-              aria-label="상담요청 폼으로 이동합니다"
+              aria-label="상담요청 폼으로 이동합니다. 클릭하면 상담요청 하실 수 있습니다."
             >
               <div class="hero-promo-frame">
                 <img
@@ -2946,6 +2982,7 @@
                 />
               </div>
             </a>
+            <p class="hero-promo-hover-hint" aria-hidden="true">클릭하면 상담요청 하실 수 있습니다.</p>
           </div>
           <aside class="hero-aside" aria-label="업무 분야 바로가기">
             <div class="hero-aside-head">

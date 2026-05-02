@@ -703,13 +703,33 @@
       }
     }
 
-    /* CTA 바로 아래 두어 그리드 1행 높이 차로 생기던 왼쪽 빈칸 제거 + 뷰포트 폭으로 pill 줄 유지 */
-    .hero-copy > .hero-bottom {
+    /* CTA + 플랫폼을 한 덩어리로 묶어 세로 간격을 gap으로만 제어(붉은 표기 수준으로 최소화) */
+    .hero-cta-stack {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.1rem;
+      width: 100%;
+      margin-top: 0.95rem;
+    }
+
+    @media (min-width: 768px) {
+      .hero-cta-stack {
+        gap: 0.12rem;
+      }
+    }
+
+    .hero-cta-stack .hero-cta {
+      margin-top: 0;
+    }
+
+    /* 그리드 1행 높이 차로 생기던 왼쪽 빈칸 제거 + 뷰포트 폭으로 pill 줄 유지 */
+    .hero-cta-stack > .hero-bottom {
       position: relative;
       z-index: 3;
-      margin-top: 0.35rem;
+      margin-top: 0;
       margin-bottom: 0;
-      padding: 0.12rem 1.25rem 0.15rem;
+      padding: 0 1.25rem 0.12rem;
       width: 100vw;
       max-width: 100vw;
       margin-left: calc(50% - 50vw);
@@ -718,9 +738,8 @@
     }
 
     @media (min-width: 768px) {
-      .hero-copy > .hero-bottom {
-        margin-top: 0.42rem;
-        padding: 0.22rem 1.5rem 0.12rem;
+      .hero-cta-stack > .hero-bottom {
+        padding: 0 1.5rem 0.1rem;
       }
     }
 
@@ -1326,7 +1345,7 @@
       color: rgba(59, 71, 96, 0.9);
       display: flex;
       flex-direction: column;
-      gap: 0.36rem;
+      gap: 0.22rem;
     }
 
     .hero-platform-cats-label {
@@ -1342,7 +1361,7 @@
     }
 
     .hero-platform-cats-lead {
-      margin: 0.08rem 0 0;
+      margin: 0;
       font-size: 0.72rem;
       line-height: 1.52;
       font-weight: 500;
@@ -2867,6 +2886,7 @@
         <div class="hero-copy">
           <p class="hero-badge">법무부 출입국민원대행기관 등록 · 정부행정전문가</p>
           <h1 id="hero-title">대한민국행정사사무소</h1>
+          <div class="hero-cta-stack">
           <div class="hero-cta">
             <a
               class="btn btn-primary tel-tooltip iconized"
@@ -2896,6 +2916,7 @@
                 </div>
               </nav>
             </div>
+          </div>
           </div>
         </div>
         <div class="hero-aside-col">

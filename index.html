@@ -2587,6 +2587,39 @@
       color: var(--ink-soft);
     }
 
+    .search-bar.search-bar-portal {
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .search-bar-portal .portal-search-input {
+      flex: 1 1 10rem;
+      min-width: 0;
+      margin: 0;
+      padding: 0.2rem 0.15rem;
+      border: none;
+      background: transparent;
+      font: inherit;
+      font-size: 0.88rem;
+      font-weight: 500;
+      color: var(--ink);
+      line-height: 1.35;
+    }
+
+    .search-bar-portal .portal-search-input::placeholder {
+      color: rgba(55, 66, 92, 0.45);
+      font-weight: 400;
+    }
+
+    .search-bar-portal .portal-search-input:focus {
+      outline: none;
+    }
+
+    .search-bar-portal:focus-within {
+      border-color: rgba(55, 66, 92, 0.45);
+      box-shadow: 0 0 0 2px rgba(77, 106, 158, 0.18);
+    }
+
     .search-label {
       color: #3d4861;
       font-size: 0.72rem;
@@ -3159,28 +3192,40 @@
           </div>
 
           <div class="search-mock">
-            <p>아래와 같이 포털에서 사무소명으로 검색하실 수 있습니다.</p>
-            <div class="search-bar">
-              <span class="search-label">검색</span> 대한민국행정사사무소
+            <p>검색어를 입력한 뒤 포털을 누르거나 Enter로 구글 검색이 열립니다. 비우면 사무소명으로 검색합니다.</p>
+            <form class="search-bar search-bar-portal" id="portal-search-form" role="search" aria-label="포털 검색">
+              <label class="search-label" for="portal-search-q">검색</label>
+              <input
+                type="search"
+                id="portal-search-q"
+                name="q"
+                class="portal-search-input"
+                value="대한민국행정사사무소"
+                placeholder="검색어를 입력하세요"
+                autocomplete="off"
+                enterkeyhint="search"
+                aria-describedby="portal-search-hint"
+              />
+              <span id="portal-search-hint" class="visually-hidden">입력창을 누르면 기본 문구가 지워집니다. 비우면 대한민국행정사사무소로 검색합니다.</span>
               <span class="search-portals">
                 <a
-                  href="https://www.google.com/search?q=%EB%8C%80%ED%95%9C%EB%AF%BC%EA%B5%AD%ED%96%89%EC%A0%95%EC%82%AC%EC%82%AC%EB%AC%B4%EC%86%8C"
-                  target="_blank"
+                  href="#"
+                  data-search-engine="google"
                   rel="noopener noreferrer"
-                  title="구글에서 대한민국행정사사무소 검색"
+                  title="구글에서 검색"
                   ><span class="google-gu">구</span><span class="google-geul">글</span></a><span class="search-portals-sep" aria-hidden="true"> · </span><a
-                  href="https://search.naver.com/search.naver?query=%EB%8C%80%ED%95%9C%EB%AF%BC%EA%B5%AD%ED%96%89%EC%A0%95%EC%82%AC%EC%82%AC%EB%AC%B4%EC%86%8C"
-                  target="_blank"
+                  href="#"
+                  data-search-engine="naver"
                   rel="noopener noreferrer"
-                  title="네이버에서 대한민국행정사사무소 검색"
+                  title="네이버에서 검색"
                   >네이버</a><span class="search-portals-sep" aria-hidden="true"> · </span><a
-                  href="https://search.daum.net/search?w=tot&q=%EB%8C%80%ED%95%9C%EB%AF%BC%EA%B5%AD%ED%96%89%EC%A0%95%EC%82%AC%EC%82%AC%EB%AC%B4%EC%86%8C"
-                  target="_blank"
+                  href="#"
+                  data-search-engine="daum"
                   rel="noopener noreferrer"
-                  title="다음에서 대한민국행정사사무소 검색"
+                  title="다음에서 검색"
                   >다음</a>
               </span>
-            </div>
+            </form>
           </div>
         </div>
 
@@ -3245,6 +3290,48 @@
   <script src="supabase-config.js"></script>
   <script>
     document.getElementById("y").textContent = new Date().getFullYear();
+
+    (function () {
+      var DEFAULT_OFFICE = "대한민국행정사사무소";
+      var form = document.getElementById("portal-search-form");
+      var input = document.getElementById("portal-search-q");
+      if (!form || !input) return;
+
+      function effectiveQuery() {
+        var t = (input.value || "").trim();
+        return t || DEFAULT_OFFICE;
+      }
+
+      function openPortal(engine) {
+        var q = encodeURIComponent(effectiveQuery());
+        var map = {
+          google: "https://www.google.com/search?q=" + q,
+          naver: "https://search.naver.com/search.naver?query=" + q,
+          daum: "https://search.daum.net/search?w=tot&q=" + q
+        };
+        var url = map[engine];
+        if (!url) return;
+        window.open(url, "_blank", "noopener,noreferrer");
+      }
+
+      input.addEventListener("focus", function () {
+        if (input.dataset.portalTouched === "1") return;
+        input.dataset.portalTouched = "1";
+        if (input.value === DEFAULT_OFFICE) input.value = "";
+      });
+
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+        openPortal("google");
+      });
+
+      form.querySelectorAll("[data-search-engine]").forEach(function (el) {
+        el.addEventListener("click", function (e) {
+          e.preventDefault();
+          openPortal(el.getAttribute("data-search-engine"));
+        });
+      });
+    })();
 
     (async function () {
       var LOCAL_NOTICE_KEY = "websiteCorpNotices";

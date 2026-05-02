@@ -37,6 +37,8 @@
     html {
       scroll-behavior: smooth;
       font-size: 110%;
+      /* hero 등에서 100vw 풀블리드 시 가로 스크롤만 막음(세로 overflow는 건드리지 않음) */
+      overflow-x: hidden;
     }
 
     body {
@@ -224,7 +226,7 @@
       color: #fff;
     }
 
-    /* 전화상담 말풍선 (호버·포커스; hero는 overflow-y:visible로 아래쪽 표시 가능) */
+    /* 전화상담 말풍선 (호버·포커스; hero는 overflow:visible) */
     a.tel-tooltip {
       position: relative;
       z-index: 2;
@@ -632,9 +634,8 @@
 
     .hero {
       position: relative;
-      /* 세로는 잘리지 않게(플랫폼 pill·문구가 하단에서 잘리는 현상 방지), 가로만 넘침 차단 */
-      overflow-x: hidden;
-      overflow-y: visible;
+      /* overflow-x/y 혼합은 스펙상 한 축이 auto로 바뀌어 세로가 잘릴 수 있음 → 전부 visible, 가로는 html에서만 제한 */
+      overflow: visible;
       max-width: none;
       margin: 0;
       border-bottom: 1px solid rgba(140, 150, 175, 0.16);
@@ -682,6 +683,7 @@
       align-content: start;
       gap: 0.72rem;
       min-height: min-content;
+      overflow: visible;
     }
 
     @media (min-width: 768px) {
@@ -698,6 +700,10 @@
     .hero-copy {
       max-width: 38rem;
       --hero-title-block-width: 19.8rem;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      min-width: 0;
     }
 
     @media (min-width: 768px) {
@@ -727,24 +733,22 @@
       margin-top: 0;
     }
 
-    /* 그리드 1행 높이 차로 생기던 왼쪽 빈칸 제거 + 뷰포트 폭으로 pill 줄 유지 */
-    .hero-cta-stack > .hero-bottom {
+    /* CTA 바로 아래: 100vw 브레이크아웃 제거(overflow·높이 계산 이슈로 하단 잘림 방지), 열 폭에 맞춤 */
+    .hero-copy > .hero-bottom {
       position: relative;
       z-index: 3;
-      flex-shrink: 0;
-      margin-top: 0;
-      margin-bottom: 0;
-      padding: 0 1.25rem 0.12rem;
-      width: 100vw;
-      max-width: 100vw;
-      margin-left: calc(50% - 50vw);
-      margin-right: calc(50% - 50vw);
+      align-self: stretch;
+      width: 100%;
+      max-width: none;
+      margin: 0.12rem 0 0;
+      padding: 0 0 0.2rem;
       box-sizing: border-box;
     }
 
     @media (min-width: 768px) {
-      .hero-cta-stack > .hero-bottom {
-        padding: 0 1.5rem 0.1rem;
+      .hero-copy > .hero-bottom {
+        margin-top: 0.14rem;
+        padding-bottom: 0.18rem;
       }
     }
 
@@ -2905,6 +2909,7 @@
               ><span class="menu-icon-badge icon-phone" aria-hidden="true"></span>전화 상담</a>
             <a class="btn btn-ghost iconized icon-ai" data-ring-click="true" data-ring-hover="true" href="platform.html"><span class="menu-icon-badge icon-ai" aria-hidden="true"></span>지능형 행정 플랫폼</a>
           </div>
+          </div>
           <div class="hero-bottom">
             <div class="hero-platform-cats-wrap">
               <nav class="hero-platform-cats" aria-label="지능형 행정 플랫폼 카테고리 바로가기">
@@ -2921,7 +2926,6 @@
                 </div>
               </nav>
             </div>
-          </div>
           </div>
         </div>
         <div class="hero-aside-col">

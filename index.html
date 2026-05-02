@@ -693,16 +693,16 @@
       position: relative;
       z-index: 3;
       max-width: var(--max);
-      margin: -1.1rem auto 0;
-      padding: 0 1.25rem 0.04rem;
+      margin: -0.75rem auto 0;
+      padding: 0.7rem 1.25rem 0.04rem;
       box-sizing: border-box;
       width: 100%;
     }
 
     @media (min-width: 768px) {
       .hero-bottom {
-        margin-top: -1.85rem;
-        padding: 0 1.5rem 0.04rem;
+        margin-top: -1.35rem;
+        padding: 0.85rem 1.5rem 0.04rem;
       }
     }
 
@@ -1037,7 +1037,7 @@
 
     .hero-slogan {
       font-family: "Noto Sans KR", sans-serif;
-      font-size: clamp(0.78rem, 1.65vw, 0.9rem);
+      font-size: clamp(0.7rem, 1.38vw, 0.8rem);
       font-weight: 500;
       line-height: 1.55;
       letter-spacing: -0.02em;
@@ -1052,9 +1052,14 @@
       font-size: 0.72rem;
       line-height: 1.45;
       color: rgba(59, 71, 96, 0.78);
-      margin: 0.38rem 0 0;
-      margin-left: 0.5cm;
+      margin: 0.38rem 0 1.05rem 0.5cm;
       max-width: 26rem;
+    }
+
+    @media (min-width: 768px) {
+      .hero-cta-hint {
+        margin-bottom: 1.35rem;
+      }
     }
 
     .hero-sub {

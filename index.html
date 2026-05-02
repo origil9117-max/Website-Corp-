@@ -632,7 +632,9 @@
 
     .hero {
       position: relative;
-      overflow: hidden;
+      /* 세로는 잘리지 않게(플랫폼 pill·문구가 하단에서 잘리는 현상 방지), 가로만 넘침 차단 */
+      overflow-x: hidden;
+      overflow-y: visible;
       max-width: none;
       margin: 0;
       border-bottom: 1px solid rgba(140, 150, 175, 0.16);
@@ -673,17 +675,18 @@
       z-index: 3;
       max-width: var(--max);
       margin: 0 auto;
-      padding: 0.12rem 1.25rem 0;
+      padding: 0.12rem 1.25rem 0.65rem;
       color: #2b3448;
       display: grid;
       grid-template-columns: 1fr;
       align-content: start;
       gap: 0.72rem;
+      min-height: min-content;
     }
 
     @media (min-width: 768px) {
       .hero-inner {
-        padding: 0.12rem 1.5rem 0;
+        padding: 0.12rem 1.5rem 0.75rem;
         grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
         column-gap: 0.85rem;
         row-gap: 0.55rem;
@@ -711,6 +714,7 @@
       gap: 0.1rem;
       width: 100%;
       margin-top: 0.95rem;
+      min-height: min-content;
     }
 
     @media (min-width: 768px) {
@@ -727,6 +731,7 @@
     .hero-cta-stack > .hero-bottom {
       position: relative;
       z-index: 3;
+      flex-shrink: 0;
       margin-top: 0;
       margin-bottom: 0;
       padding: 0 1.25rem 0.12rem;

@@ -15,15 +15,50 @@ const { URL } = require("url");
 
 const BASE = "https://www.law.go.kr/DRF";
 
-/** 공동활용 시스템정보에 적은 도메인과 동일해야 검증 오류가 줄어듭니다. */
-function getRegisteredSiteHeaders() {
-  var raw = String(
-    process.env.LAW_API_SITE_URL ||
-      process.env.LAW_REGISTERED_SITE_URL ||
-      ""
-  ).trim();
-  if (!raw) raw = "https://daehanminkuk.co.kr";
-  var base = raw.replace(/\/+$/, "");
+function normalizeOrigin(s) {
+  return String(s || "")
+    .trim()
+    .replace(/\/+$/, "");
+}
+
+/** Vercel 기본 플레이스홀더·로컬 등은 법제처 검증에 쓰이면 안 됩니다. */
+function isPlausibleLawSiteUrl(s) {
+  var t = normalizeOrigin(s);
+  if (!t) return false;
+  if (!/^https:\/\//i.test(t)) return false;
+  if (/example\.com|api\.example|localhost|127\.0\.0\.1|placeholder|mydomain\.com/i.test(t)) return false;
+  return true;
+}
+
+function toggleWwwOrigin(t) {
+  var n = normalizeOrigin(t);
+  if (/\/\/www\./i.test(n)) return n.replace(/^(https?:\/\/)www\./i, "$1");
+  return n.replace(/^(https:\/\/)([^/]+)$/i, "$1www.$2");
+}
+
+/**
+ * 공동활용에 적은 도메인과 맞출 때까지 순서대로 시도합니다.
+ * (환경 변수가 플레이스홀더면 무시하고 daehanminkuk.co.kr / www 변형을 시도)
+ */
+function getSiteOriginCandidates() {
+  var out = [];
+  function add(x) {
+    var n = normalizeOrigin(x);
+    if (!isPlausibleLawSiteUrl(n)) return;
+    if (out.indexOf(n) === -1) out.push(n);
+  }
+  var env = String(process.env.LAW_API_SITE_URL || process.env.LAW_REGISTERED_SITE_URL || "").trim();
+  if (env) {
+    add(env);
+    add(toggleWwwOrigin(env));
+  }
+  add("https://daehanminkuk.co.kr");
+  add("https://www.daehanminkuk.co.kr");
+  return out;
+}
+
+function siteHeadersForOrigin(originBase) {
+  var base = normalizeOrigin(originBase || "https://daehanminkuk.co.kr");
   return {
     Referer: base + "/",
     Origin: base,
@@ -32,11 +67,12 @@ function getRegisteredSiteHeaders() {
 
 /**
  * @param {string} urlStr
+ * @param {string} [siteOriginBase] https://host 형태(끝 슬래시 없음)
  * @returns {Promise<string>}
  */
-function httpsGetText(urlStr) {
+function httpsGetText(urlStr, siteOriginBase) {
   const u = new URL(urlStr);
-  const site = getRegisteredSiteHeaders();
+  const site = siteHeadersForOrigin(siteOriginBase);
   return new Promise(function (resolve, reject) {
     dns.lookup(u.hostname, { family: 4, all: false }, function (lookupErr, address) {
       if (lookupErr) return reject(lookupErr);
@@ -261,15 +297,57 @@ module.exports = async function lawArticleHandler(req, res) {
       "&target=law&type=JSON&display=15&query=" +
       encodeURIComponent(lawName);
 
-    const searchText = await httpsGetText(searchUrl);
-    let searchJson;
-    try {
-      searchJson = JSON.parse(searchText);
-    } catch (e) {
+    var siteCandidates = getSiteOriginCandidates();
+    var searchJson = null;
+    var usedSiteOrigin = siteCandidates[0] || "https://daehanminkuk.co.kr";
+    var lastApiMsg = "";
+    var tried = [];
+
+    for (var si = 0; si < siteCandidates.length; si++) {
+      var originTry = siteCandidates[si];
+      tried.push(originTry);
+      var searchText;
+      try {
+        searchText = await httpsGetText(searchUrl, originTry);
+      } catch (netErr) {
+        lastApiMsg = netErr && netErr.message ? String(netErr.message) : "network";
+        continue;
+      }
+      var parsedOnce = null;
+      try {
+        parsedOnce = JSON.parse(searchText);
+      } catch (pe) {
+        return res.status(502).json({
+          ok: false,
+          error: "SEARCH_PARSE",
+          message: "법령 검색 응답이 JSON이 아닙니다.",
+        });
+      }
+      var lawsOnce = getLawsFromSearch(parsedOnce);
+      if (lawsOnce.length) {
+        searchJson = parsedOnce;
+        usedSiteOrigin = originTry;
+        break;
+      }
+      var msgOnce =
+        parsedOnce.msg || parsedOnce.message || parsedOnce.MSG || parsedOnce.result || "";
+      lastApiMsg = String(msgOnce || "");
+      if (!/IP주소|도메인|검증|OPEN API/i.test(lastApiMsg)) {
+        searchJson = parsedOnce;
+        usedSiteOrigin = originTry;
+        break;
+      }
+    }
+
+    if (!searchJson) {
       return res.status(502).json({
         ok: false,
-        error: "SEARCH_PARSE",
-        message: "법령 검색 응답이 JSON이 아닙니다.",
+        error: "SEARCH_API",
+        message:
+          (lastApiMsg || "법령 검색 실패") +
+          " — Referer 출처를 순서대로 시도했습니다: " +
+          tried.join(", ") +
+          ". Vercel의 LAW_API_SITE_URL이 플레이스홀더(api.example.com)가 아닌지 확인하고, 공동활용 IP·도메인·OC 신청 건이 승인·반영되었는지 확인하세요.",
       });
     }
 
@@ -278,9 +356,11 @@ module.exports = async function lawArticleHandler(req, res) {
       const msg = searchJson.msg || searchJson.message || searchJson.MSG || "";
       if (msg) {
         var fullMsg = String(msg);
-        if (/IP주소|도메인|검증/i.test(fullMsg)) {
+        if (/IP주소|도메인|검증|OPEN API/i.test(fullMsg)) {
           fullMsg +=
-            " — 공동활용 시스템정보의 도메인과 동일하게 Vercel에 LAW_API_SITE_URL을 설정했는지(기본값 https://daehanminkuk.co.kr), /api/egress-ip로 확인한 출구 IP를 모두 등록했는지 확인하세요.";
+            " — 시도한 Referer: " +
+            tried.join(", ") +
+            ". 공동활용 시스템정보의 도메인(www 유무 포함)과 일치하는 LAW_API_SITE_URL을 넣거나, /api/egress-ip로 나온 출구 IP를 모두 등록했는지 확인하세요.";
         }
         return res.status(502).json({
           ok: false,
@@ -320,7 +400,7 @@ module.exports = async function lawArticleHandler(req, res) {
       encodeURIComponent(mst) +
       "&type=JSON";
 
-    const svcText = await httpsGetText(svcUrl);
+    const svcText = await httpsGetText(svcUrl, usedSiteOrigin);
     let svcJson;
     try {
       svcJson = JSON.parse(svcText);
@@ -348,7 +428,7 @@ module.exports = async function lawArticleHandler(req, res) {
         encodeURIComponent(oc) +
         "&target=expc&type=JSON&display=8&query=" +
         encodeURIComponent(expq);
-      const expText = await httpsGetText(expUrl);
+      const expText = await httpsGetText(expUrl, usedSiteOrigin);
       const expJson = JSON.parse(expText);
       interpretations = getExpcList(expJson).slice(0, 8).map(mapExpcRow);
     } catch (e) {

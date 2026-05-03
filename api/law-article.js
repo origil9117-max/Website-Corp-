@@ -127,42 +127,189 @@ function arr(x) {
   return Array.isArray(x) ? x : [x];
 }
 
-function parseArticleQuery(q) {
-  const s = String(q || "")
-    .trim()
-    .replace(/\s+/g, "");
-  if (!s) return null;
+function articlePartsToLabel(main, branch) {
+  return branch ? "제" + main + "조의" + branch : "제" + main + "조";
+}
 
-  let m = s.match(/^(.+?)제(\d+)조(?:의(\d+))?$/);
-  if (m) {
-    const lawName = String(m[1] || "").trim();
-    if (!lawName) return null;
-    const main = m[2];
-    const branch = m[3] || null;
-    const label = branch ? "제" + main + "조의" + branch : "제" + main + "조";
-    return { lawName, main, branch, label };
+/** 흔한 오타·근접 입력(버↔법 등) */
+function normalizeLawQueryTypos(str) {
+  return String(str || "")
+    .replace(/민버/g, "민법")
+    .replace(/상버/g, "상법")
+    .replace(/형버/g, "형법")
+    .replace(/헌버/g, "헌법")
+    .replace(/공버/g, "공법")
+    .replace(/근로기준버/g, "근로기준법")
+    .replace(/건설기준버/g, "건설기준법");
+}
+
+/** 자연어 안의 부연·요청어 제거(법령명 본문은 건드리지 않음) */
+function stripLawQueryNoise(str) {
+  var t = String(str || "").trim();
+  t = t.replace(/[\s·‧•※]+/g, " ");
+  t = t.replace(
+    /(?:^|\s)(?:관련|원문|조문|해석|판례|사례|내용|검색|찾기|좀|부탁|부탁드립니다|알려|알려줘|알려주세요|해줘|주세요|대해서|대한|에\s*대해|참고|설명|정리|요약)(?=\s|$)/gi,
+    " "
+  );
+  t = t.replace(/^(?:관련|원문|조문|해석|판례|사례|내용|검색|알려|알려줘|알려주세요|해줘|주세요)\s+/gi, "");
+  return t.trim();
+}
+
+/** 법령명 전체: 한글 음절 + …법·…령·시행령·시행규칙·규칙 (전체 문자열이 이 형태일 때만) */
+const LAW_NAME_ONLY = new RegExp(
+  "^[\\uAC00-\\uD7A3]{1,22}(?:법|령|시행령|시행규칙|규칙)$",
+  "u"
+);
+
+/** 2~3글자로도 자주 쓰이는 기본법 — '…민법'처럼 짧게 끊을 때 우선 */
+const SHORT_LAW_NAMES = {
+  민법: 1,
+  상법: 1,
+  형법: 1,
+  헌법: 1,
+  공법: 1,
+  국법: 1,
+};
+
+/** '2 의 1' → '2의1' 등 조·의 주변 공백 정리 후 전체 공백 제거 */
+function compactLawArticleWhitespace(s) {
+  return String(s || "")
+    .replace(/(\d)\s*조\s*의\s*(\d)/g, "$1조의$2")
+    .replace(/(\d)\s*의\s*(\d)/g, "$1의$2")
+    .replace(/\s+/g, "");
+}
+
+/**
+ * before의 접미 중 법령명 패턴과 맞는 후보를 모은 뒤,
+ * - 화이트리스트 짧은 법(민법 등)이 있으면 그중 **시작 인덱스가 가장 큰 것**(제 앞 최단)
+ * - 없으면 **가장 긴** 접미(공정거래위원회법 등 복합 명칭)
+ */
+function lawNameSuffixTouchingEnd(before) {
+  const b = String(before || "");
+  if (!b) return null;
+  const cands = [];
+  for (let i = 0; i < b.length; i++) {
+    const suf = b.slice(i);
+    if (!LAW_NAME_ONLY.test(suf)) continue;
+    cands.push({ suf: suf, i: i, len: suf.length });
   }
-  /* 민법32조 — "제" 생략. (?<![제])로 민법제32조가 법령명 끝 "민법제"로 쪼개지지 않게 함 */
-  m = s.match(/^(.+?)(?<![제])(\d+)조(?:의(\d+))?$/);
-  if (m) {
-    const lawName = String(m[1] || "").trim();
-    if (!lawName) return null;
-    const main = m[2];
-    const branch = m[3] || null;
-    const label = branch ? "제" + main + "조의" + branch : "제" + main + "조";
-    return { lawName, main, branch, label };
+  if (!cands.length) return null;
+  const shortHits = cands.filter(function (c) {
+    return SHORT_LAW_NAMES[c.suf];
+  });
+  if (shortHits.length) {
+    shortHits.sort(function (a, x) {
+      return x.i - a.i;
+    });
+    return shortHits[0].suf;
   }
-  /* 민법32 — "조" 생략(제N조와 동일 취급). 조의M은 …2의1 형태 */
-  m = s.match(/^(.+?)(?<![제])(\d+)(?:의(\d+))?$/);
+  cands.sort(function (a, x) {
+    return x.len - a.len;
+  });
+  return cands[0].suf;
+}
+
+/**
+ * 공백 제거 후 엄격 매칭.
+ * 순서: 제N조 → N조 → 제N의M → 제N(조생략) → N의M → N
+ */
+function parseArticleQueryStrict(s) {
+  const str = String(s || "").trim();
+  if (!str) return null;
+
+  let m = str.match(/^(.+)제(\d{1,5})조(?:의(\d{1,3}))?$/);
   if (m) {
-    const lawName = String(m[1] || "").trim();
+    const lawName = lawNameSuffixTouchingEnd(m[1]);
     if (!lawName) return null;
-    const main = m[2];
-    const branch = m[3] || null;
-    const label = branch ? "제" + main + "조의" + branch : "제" + main + "조";
-    return { lawName, main, branch, label };
+    return {
+      lawName,
+      main: m[2],
+      branch: m[3] || null,
+      label: articlePartsToLabel(m[2], m[3] || null),
+    };
+  }
+  m = str.match(/^(.+?)(?<![제])(\d{1,5})조(?:의(\d{1,3}))?$/);
+  if (m) {
+    const lawName = lawNameSuffixTouchingEnd(m[1]);
+    if (!lawName) return null;
+    return {
+      lawName,
+      main: m[2],
+      branch: m[3] || null,
+      label: articlePartsToLabel(m[2], m[3] || null),
+    };
+  }
+  m = str.match(/^(.+)제(\d{1,5})의(\d{1,3})$/);
+  if (m) {
+    const lawName = lawNameSuffixTouchingEnd(m[1]);
+    if (!lawName) return null;
+    return {
+      lawName,
+      main: m[2],
+      branch: m[3],
+      label: articlePartsToLabel(m[2], m[3]),
+    };
+  }
+  m = str.match(/^(.+)제(\d{1,5})$/);
+  if (m) {
+    const lawName = lawNameSuffixTouchingEnd(m[1]);
+    if (!lawName) return null;
+    return {
+      lawName,
+      main: m[2],
+      branch: null,
+      label: articlePartsToLabel(m[2], null),
+    };
+  }
+  m = str.match(/^(.+?)(?<![제])(\d{1,5})(?:의(\d{1,3}))?$/);
+  if (m) {
+    const lawName = lawNameSuffixTouchingEnd(m[1]);
+    if (!lawName) return null;
+    return {
+      lawName,
+      main: m[2],
+      branch: m[3] || null,
+      label: articlePartsToLabel(m[2], m[3] || null),
+    };
   }
   return null;
+}
+
+/** 문장 속 '…민법 제32조'처럼 앞뒤 수식이 있을 때 마지막 법령명+조문 꼬리만 추출 */
+function parseArticleQueryLooseFromContext(s) {
+  const str = String(s || "");
+  if (str.length < 5) return null;
+  const tailRes = [
+    /(제\d{1,5}조(?:의\d{1,3})?)$/,
+    /((?<![제\d])(?<![제])\d{1,5}조(?:의\d{1,3})?)$/,
+    /(제\d{1,5}의\d{1,3})$/,
+    /(제\d{1,5})$/,
+    /((?<![제\d])(?<![제])\d{1,5}(?:의\d{1,3})?)$/,
+  ];
+  for (let ti = 0; ti < tailRes.length; ti++) {
+    const tm = str.match(tailRes[ti]);
+    if (!tm || !tm[1]) continue;
+    const tail = tm[1];
+    const rest = str.slice(0, str.length - tail.length);
+    if (!rest) continue;
+    const lawName = lawNameSuffixTouchingEnd(rest);
+    if (lawName) {
+      const p = parseArticleQueryStrict(lawName + tail);
+      if (p) return p;
+    }
+  }
+  return null;
+}
+
+function parseArticleQuery(q) {
+  const raw = String(q || "").trim();
+  if (!raw) return null;
+  let pre = stripLawQueryNoise(raw);
+  pre = normalizeLawQueryTypos(pre);
+  const collapsed = compactLawArticleWhitespace(pre);
+  let p = parseArticleQueryStrict(collapsed);
+  if (p) return p;
+  return parseArticleQueryLooseFromContext(collapsed);
 }
 
 function parseArticleParams(req) {
@@ -514,7 +661,7 @@ module.exports = async function lawArticleHandler(req, res) {
       ok: false,
       error: "PARSE",
       message:
-        "법령명+조문 형식이 아닙니다. 예: 민법제32조, 민법32조, 민법32, 상법제300조, 근로기준법2조의1 또는 쿼리 law·jo·branch",
+        "법령명+조문 형식이 아닙니다. 예: 민법 제32조, 민법제32, 민법 32조, 민법32, 민버32, 상법 제300조, 근로기준법 2 의 1 또는 쿼리 law·jo·branch",
     });
   }
 

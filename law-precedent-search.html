@@ -77,7 +77,7 @@
       <h2>통합 검색</h2>
       <p class="law-topic-search-desc">
         주제를 입력하면 아래 <strong>① 법령·해석 ② 판례 ③ 참고 사례</strong> 블록이 갱신됩니다.
-        <strong>법령명+조문</strong> 형식(예: <kbd>민법제32조</kbd>, <kbd>민법32조</kbd>, <kbd>민법32</kbd>, <kbd>상법 제300조</kbd>)은 배포 서버의
+        <strong>법령명+조문</strong> 형식(예: <kbd>민법 제32조</kbd>, <kbd>민법제32</kbd>, <kbd>민법 32조</kbd>, <kbd>민법32</kbd>, <kbd>민버32</kbd>, <kbd>상법 제300조</kbd>)은 배포 서버의
         <code>/api/law-article</code>를 통해 국가법령정보 Open API로 원문·해석 목록을 불러와 ①에 표시합니다. 그 외 키워드는 공식 포털 링크로 연결됩니다.
       </p>
       <form id="law-topic-search-form" class="law-topic-search-row" role="search" action="#" method="get">
@@ -382,45 +382,168 @@
         return null;
       }
 
-      function parseLawArticleQuery(input) {
-        var s = String(input || "")
-          .trim()
+      function articlePartsToLabel(main, branch) {
+        return branch ? "제" + main + "조의" + branch : "제" + main + "조";
+      }
+
+      function normalizeLawQueryTypos(str) {
+        return String(str || "")
+          .replace(/민버/g, "민법")
+          .replace(/상버/g, "상법")
+          .replace(/형버/g, "형법")
+          .replace(/헌버/g, "헌법")
+          .replace(/공버/g, "공법")
+          .replace(/근로기준버/g, "근로기준법")
+          .replace(/건설기준버/g, "건설기준법");
+      }
+
+      function stripLawQueryNoise(str) {
+        var t = String(str || "").trim();
+        t = t.replace(/[\s·‧•※]+/g, " ");
+        t = t.replace(
+          /(?:^|\s)(?:관련|원문|조문|해석|판례|사례|내용|검색|찾기|좀|부탁|부탁드립니다|알려|알려줘|알려주세요|해줘|주세요|대해서|대한|에\s*대해|참고|설명|정리|요약)(?=\s|$)/gi,
+          " "
+        );
+        t = t.replace(/^(?:관련|원문|조문|해석|판례|사례|내용|검색|알려|알려줘|알려주세요|해줘|주세요)\s+/gi, "");
+        return t.trim();
+      }
+
+      function compactLawArticleWhitespace(s) {
+        return String(s || "")
+          .replace(/(\d)\s*조\s*의\s*(\d)/g, "$1조의$2")
+          .replace(/(\d)\s*의\s*(\d)/g, "$1의$2")
           .replace(/\s+/g, "");
-        if (!s) return null;
-        var m = s.match(/^(.+?)제(\d+)조(?:의(\d+))?$/);
+      }
+
+      var LAW_NAME_ONLY = new RegExp(
+        "^[\\uAC00-\\uD7A3]{1,22}(?:법|령|시행령|시행규칙|규칙)$",
+        "u"
+      );
+
+      var SHORT_LAW_NAMES = { 민법: 1, 상법: 1, 형법: 1, 헌법: 1, 공법: 1, 국법: 1 };
+
+      function lawNameSuffixTouchingEnd(before) {
+        var b = String(before || "");
+        if (!b) return null;
+        var cands = [];
+        var i;
+        for (i = 0; i < b.length; i++) {
+          var suf = b.slice(i);
+          if (!LAW_NAME_ONLY.test(suf)) continue;
+          cands.push({ suf: suf, i: i, len: suf.length });
+        }
+        if (!cands.length) return null;
+        var shortHits = cands.filter(function (c) {
+          return SHORT_LAW_NAMES[c.suf];
+        });
+        if (shortHits.length) {
+          shortHits.sort(function (a, x) {
+            return x.i - a.i;
+          });
+          return shortHits[0].suf;
+        }
+        cands.sort(function (a, x) {
+          return x.len - a.len;
+        });
+        return cands[0].suf;
+      }
+
+      function parseLawArticleQueryStrict(s) {
+        var str = String(s || "").trim();
+        if (!str) return null;
+        var m = str.match(/^(.+)제(\d{1,5})조(?:의(\d{1,3}))?$/);
         if (m) {
-          var n1 = String(m[1] || "").trim();
-          if (!n1) return null;
+          var lawName = lawNameSuffixTouchingEnd(m[1]);
+          if (!lawName) return null;
           return {
-            lawName: n1,
+            lawName: lawName,
             main: m[2],
             branch: m[3] || null,
-            label: m[3] ? "제" + m[2] + "조의" + m[3] : "제" + m[2] + "조",
+            label: articlePartsToLabel(m[2], m[3] || null),
           };
         }
-        m = s.match(/^(.+?)(?<![제])(\d+)조(?:의(\d+))?$/);
+        m = str.match(/^(.+?)(?<![제])(\d{1,5})조(?:의(\d{1,3}))?$/);
         if (m) {
-          var n2 = String(m[1] || "").trim();
-          if (!n2) return null;
+          lawName = lawNameSuffixTouchingEnd(m[1]);
+          if (!lawName) return null;
           return {
-            lawName: n2,
+            lawName: lawName,
             main: m[2],
             branch: m[3] || null,
-            label: m[3] ? "제" + m[2] + "조의" + m[3] : "제" + m[2] + "조",
+            label: articlePartsToLabel(m[2], m[3] || null),
           };
         }
-        m = s.match(/^(.+?)(?<![제])(\d+)(?:의(\d+))?$/);
+        m = str.match(/^(.+)제(\d{1,5})의(\d{1,3})$/);
         if (m) {
-          var n3 = String(m[1] || "").trim();
-          if (!n3) return null;
+          lawName = lawNameSuffixTouchingEnd(m[1]);
+          if (!lawName) return null;
           return {
-            lawName: n3,
+            lawName: lawName,
+            main: m[2],
+            branch: m[3],
+            label: articlePartsToLabel(m[2], m[3]),
+          };
+        }
+        m = str.match(/^(.+)제(\d{1,5})$/);
+        if (m) {
+          lawName = lawNameSuffixTouchingEnd(m[1]);
+          if (!lawName) return null;
+          return {
+            lawName: lawName,
+            main: m[2],
+            branch: null,
+            label: articlePartsToLabel(m[2], null),
+          };
+        }
+        m = str.match(/^(.+?)(?<![제])(\d{1,5})(?:의(\d{1,3}))?$/);
+        if (m) {
+          lawName = lawNameSuffixTouchingEnd(m[1]);
+          if (!lawName) return null;
+          return {
+            lawName: lawName,
             main: m[2],
             branch: m[3] || null,
-            label: m[3] ? "제" + m[2] + "조의" + m[3] : "제" + m[2] + "조",
+            label: articlePartsToLabel(m[2], m[3] || null),
           };
         }
         return null;
+      }
+
+      function parseLawArticleQueryLooseFromContext(s) {
+        var str = String(s || "");
+        if (str.length < 5) return null;
+        var tailRes = [
+          /(제\d{1,5}조(?:의\d{1,3})?)$/,
+          /((?<![제\d])(?<![제])\d{1,5}조(?:의\d{1,3})?)$/,
+          /(제\d{1,5}의\d{1,3})$/,
+          /(제\d{1,5})$/,
+          /((?<![제\d])(?<![제])\d{1,5}(?:의\d{1,3})?)$/,
+        ];
+        var ti;
+        for (ti = 0; ti < tailRes.length; ti++) {
+          var tm = str.match(tailRes[ti]);
+          if (!tm || !tm[1]) continue;
+          var tail = tm[1];
+          var rest = str.slice(0, str.length - tail.length);
+          if (!rest) continue;
+          var lawName = lawNameSuffixTouchingEnd(rest);
+          if (lawName) {
+            var p = parseLawArticleQueryStrict(lawName + tail);
+            if (p) return p;
+          }
+        }
+        return null;
+      }
+
+      function parseLawArticleQuery(input) {
+        var raw = String(input || "").trim();
+        if (!raw) return null;
+        var pre = stripLawQueryNoise(raw);
+        pre = normalizeLawQueryTypos(pre);
+        var collapsed = compactLawArticleWhitespace(pre);
+        var p = parseLawArticleQueryStrict(collapsed);
+        if (p) return p;
+        return parseLawArticleQueryLooseFromContext(collapsed);
       }
 
       function lawPanelOfficialLinksHtml(safeLabel, q) {

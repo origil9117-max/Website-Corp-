@@ -311,6 +311,38 @@
           .replace(/"/g, "&quot;");
       }
 
+      /** 국가법령정보센터 상세 URL 정리(API와 동일 규칙, 캐시·구버전 응답 대비). */
+      function lawGoKrBrowseHref(link) {
+        var s = String(link || "").trim();
+        if (!s) return "";
+        while (/^https:\/\/www\.law\.go\.krhttps:\/\//i.test(s)) {
+          s = s.replace(/^https:\/\/www\.law\.go\.kr/i, "");
+        }
+        try {
+          if (/^https?:\/\//i.test(s)) {
+            var u = new URL(s.replace(/^http:\/\//i, "https://"));
+            if (u.protocol !== "https:") return "";
+            var host = u.hostname.toLowerCase();
+            if (!/(\.)?law\.go\.kr$/i.test(host)) return "";
+            var rest = u.pathname + u.search + u.hash;
+            if (!rest || rest === "/") return "https://www.law.go.kr/main.html";
+            return "https://www.law.go.kr" + rest;
+          }
+          if (s.indexOf("//") === 0) {
+            var u2 = new URL("https:" + s);
+            var h2 = u2.hostname.toLowerCase();
+            if (!/(\.)?law\.go\.kr$/i.test(h2)) return "";
+            var r2 = u2.pathname + u2.search + u2.hash;
+            if (!r2 || r2 === "/") return "https://www.law.go.kr/main.html";
+            return "https://www.law.go.kr" + r2;
+          }
+          if (s.charAt(0) === "/") return "https://www.law.go.kr" + s;
+        } catch (err) {
+          return "";
+        }
+        return "";
+      }
+
       function lawCenterSearchUrl(q) {
         return "https://www.law.go.kr/LSW/lsAstListSc.do?menuId=0&subMenuId=0&searchScope=1&queryText=" + encodeURIComponent(q);
       }
@@ -538,15 +570,18 @@
           .map(function (row) {
             var badge =
               '<span class="law-expc-kind">' + escapeHtml(interpretationKindLabel(row.kind)) + "</span> ";
-            var titleText = escapeHtml(row.title || "(제목 없음)");
-            var titleHtml =
-              row.link && /^https:\/\/www\.law\.go\.kr\//i.test(row.link)
-                ? '<a href="' + escapeHtml(row.link) + '" target="_blank" rel="noopener noreferrer">' + titleText + "</a>"
-                : titleText;
+            var titlePlain = row.title || "(제목 없음)";
             var meta = "";
             if (row.dept) meta += ' <span class="law-expc-meta">' + escapeHtml(row.dept) + "</span>";
             if (row.date) meta += ' <span class="law-expc-meta">' + escapeHtml(row.date) + "</span>";
-            return "<li>" + badge + titleHtml + meta + "</li>";
+            var inner = escapeHtml(titlePlain) + meta;
+            var detail = lawGoKrBrowseHref(row.link);
+            var fbQ = String(titlePlain + " " + (row.dept || "")).trim();
+            var href = detail || (fbQ ? lawCenterSearchUrl(fbQ) : "");
+            var bodyHtml = href
+              ? '<a class="law-expc-item-hit" href="' + escapeHtml(href) + '" target="_blank" rel="noopener noreferrer">' + inner + "</a>"
+              : inner;
+            return "<li>" + badge + bodyHtml + "</li>";
           })
           .join("");
       }
@@ -615,15 +650,18 @@
           var listItems = precRows
             .map(function (row) {
               var title = escapeHtml(row.title || "(사건명 없음)");
-              var titleHtml =
-                row.link && /^https:\/\/www\.law\.go\.kr\//i.test(row.link)
-                  ? '<a href="' + escapeHtml(row.link) + '" target="_blank" rel="noopener noreferrer">' + title + "</a>"
-                  : title;
               var meta = "";
               if (row.caseNo) meta += ' <span class="law-prec-meta">' + escapeHtml(row.caseNo) + "</span>";
               if (row.court) meta += ' <span class="law-prec-meta">' + escapeHtml(row.court) + "</span>";
               if (row.date) meta += ' <span class="law-prec-meta">' + escapeHtml(row.date) + "</span>";
-              return "<li>" + titleHtml + meta + "</li>";
+              var inner = title + meta;
+              var detail = lawGoKrBrowseHref(row.link);
+              var fb = String(row.caseNo || row.title || q || "").trim();
+              var href = detail || (fb ? scourtPrecedentSearchUrl(fb) : "");
+              var titleHtml = href
+                ? '<a class="law-prec-item-hit" href="' + escapeHtml(href) + '" target="_blank" rel="noopener noreferrer">' + inner + "</a>"
+                : inner;
+              return "<li>" + titleHtml + "</li>";
             })
             .join("");
           panelPrec.innerHTML =

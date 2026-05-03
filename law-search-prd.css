@@ -866,6 +866,22 @@
   text-underline-offset: 2px;
 }
 
+.law-expc-item-hit {
+  color: #1c4a7c;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.law-expc-item-hit:hover {
+  color: #0f3558;
+}
+
+.law-expc-item-hit .law-expc-meta {
+  color: var(--muted);
+  font-weight: 500;
+  text-decoration: none;
+}
+
 .law-expc-meta {
   font-size: 0.9em;
   color: var(--muted);
@@ -896,6 +912,22 @@
   color: #1c4a7c;
   text-decoration: underline;
   text-underline-offset: 2px;
+}
+
+.law-prec-item-hit {
+  color: #1c4a7c;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.law-prec-item-hit:hover {
+  color: #0f3558;
+}
+
+.law-prec-item-hit .law-prec-meta {
+  color: var(--muted);
+  font-weight: 500;
+  text-decoration: none;
 }
 
 .law-prec-api-list li {

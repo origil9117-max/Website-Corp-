@@ -450,7 +450,8 @@ function findJoUnit(units, main, branch) {
 function lightSanitizeHtml(html) {
   return String(html || "")
     .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "")
-    .replace(/\son\w+\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi, "");
+    .replace(/\son\w+\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi, "")
+    .replace(/(<a\b[^>]*\shref=["'])\/(?=LSW\/|DRF\/|admRul\/|lsSc|lsAst|INF\/|joOn)/gi, "$1https://www.law.go.kr/");
 }
 
 function getExpcList(json) {
@@ -489,6 +490,46 @@ function uniqStrings(list) {
   return out;
 }
 
+/**
+ * 상세링크가 `/경로`, `http(s)://(www.)law.go.kr/...`, `//law.go.kr/...` 등으로 올 수 있음.
+ * 브라우저에서 국가법령정보센터(www) 기준으로 열리도록 https + 호스트 정리(이중 베이스 제거).
+ */
+function normalizeLawGoKrDetailUrl(raw) {
+  let s = String(raw || "").trim();
+  if (!s) return "";
+  while (/^https:\/\/www\.law\.go\.krhttps:\/\//i.test(s)) {
+    s = s.replace(/^https:\/\/www\.law\.go\.kr/i, "");
+  }
+  if (/^https?:\/\//i.test(s)) {
+    try {
+      const u = new URL(s.replace(/^http:\/\//i, "https://"));
+      const host = u.hostname.toLowerCase();
+      if (!/(\.)?law\.go\.kr$/i.test(host)) {
+        return s.replace(/^http:\/\//i, "https://");
+      }
+      const rest = u.pathname + u.search + u.hash;
+      if (!rest || rest === "/") return "https://www.law.go.kr/main.html";
+      return "https://www.law.go.kr" + rest;
+    } catch (e) {
+      return "";
+    }
+  }
+  if (s.startsWith("//")) {
+    try {
+      const u = new URL("https:" + s);
+      const host = u.hostname.toLowerCase();
+      if (!/(\.)?law\.go\.kr$/i.test(host)) return "https:" + s;
+      const rest = u.pathname + u.search + u.hash;
+      if (!rest || rest === "/") return "https://www.law.go.kr/main.html";
+      return "https://www.law.go.kr" + rest;
+    } catch (e2) {
+      return "";
+    }
+  }
+  const path = s.startsWith("/") ? s : "/" + s.replace(/^\/+/, "");
+  return "https://www.law.go.kr" + path;
+}
+
 function mapExpcRow(row) {
   const title =
     row.안건명 ||
@@ -501,8 +542,9 @@ function mapExpcRow(row) {
     row.질의기관명 || row.담당부서 || row.소관부처 || row.회신기관명 || row.처리기관 || "";
   const date = row.회신일자 || row.공포일자 || row.신청일자 || "";
   const id = row.법령해석례일련번호 || row.행정해석일련번호 || row.해석례일련번호 || row.ID || row.id || "";
-  var link = "";
-  if (row.법령해석례상세링크) link = "https://www.law.go.kr" + String(row.법령해석례상세링크);
+  const rawLink =
+    row.법령해석례상세링크 || row.법령해석상세링크 || row.법령해석례링크 || row.상세링크 || "";
+  const link = normalizeLawGoKrDetailUrl(rawLink);
   return { kind: "expc", title: String(title), dept: String(dept), date: String(date), id: String(id), link };
 }
 
@@ -511,13 +553,14 @@ function mapAdmRulRow(row) {
   const dept = row.소관부처명 || row.소관부처 || row.제개정구분명 || "";
   const date = String(row.발령일자 || row.시행일자 || row.공포일자 || "");
   const id = String(row.행정규칙일련번호 || row.행정규칙ID || row.id || "");
-  var link = "";
-  if (row.행정규칙상세링크) link = "https://www.law.go.kr" + String(row.행정규칙상세링크);
+  const rawLink = row.행정규칙상세링크 || row.행정규칙본문링크 || row.상세링크 || "";
+  const link = normalizeLawGoKrDetailUrl(rawLink);
   return { kind: "admrul", title: String(title), dept: String(dept), date: date, id: id, link };
 }
 
 function mapPrecRow(row) {
-  const link = row.판례상세링크 ? "https://www.law.go.kr" + String(row.판례상세링크) : "";
+  const rawLink = row.판례상세링크 || row.상세링크 || "";
+  const link = normalizeLawGoKrDetailUrl(rawLink);
   return {
     kind: "prec",
     title: String(row.사건명 || ""),

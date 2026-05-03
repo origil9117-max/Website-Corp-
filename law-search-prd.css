@@ -852,7 +852,49 @@
   margin-bottom: 0.35rem;
 }
 
+.law-expc-list a {
+  color: #1c4a7c;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
 .law-expc-meta {
+  font-size: 0.9em;
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.law-expc-kind {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #1c4a7c;
+  background: rgba(28, 74, 124, 0.08);
+  padding: 0.08rem 0.35rem;
+  border-radius: 3px;
+  margin-right: 0.25rem;
+  vertical-align: baseline;
+}
+
+.law-prec-api-list {
+  margin: 0.4rem 0 0.6rem;
+  padding-left: 1.15rem;
+  font-size: 0.84rem;
+  line-height: 1.55;
+  color: var(--ink-soft);
+}
+
+.law-prec-api-list a {
+  color: #1c4a7c;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.law-prec-api-list li {
+  margin-bottom: 0.4rem;
+}
+
+.law-prec-meta {
   font-size: 0.9em;
   color: var(--muted);
   font-weight: 500;

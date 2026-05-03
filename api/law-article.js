@@ -283,11 +283,38 @@ function lightSanitizeHtml(html) {
 
 function getExpcList(json) {
   if (!json || typeof json !== "object") return [];
+  if (json.Expc && json.Expc.expc != null) return arr(json.Expc.expc);
   const ls = json.LawSearch || json.lawSearch || json.ExpcSearch || json;
   if (ls && ls.law != null) return arr(ls.law);
   if (ls && ls.행정해석 != null) return arr(ls.행정해석);
   if (ls && ls.expc != null) return arr(ls.expc);
   return [];
+}
+
+function getAdmRulList(json) {
+  if (!json || typeof json !== "object") return [];
+  const ar = json.AdmRulSearch || json.admRulSearch;
+  if (ar && ar.admrul != null) return arr(ar.admrul);
+  return [];
+}
+
+function getPrecList(json) {
+  if (!json || typeof json !== "object") return [];
+  const ps = json.PrecSearch || json.precSearch;
+  if (ps && ps.prec != null) return arr(ps.prec);
+  return [];
+}
+
+function uniqStrings(list) {
+  const out = [];
+  const seen = {};
+  for (let i = 0; i < list.length; i++) {
+    const s = String(list[i] || "").trim();
+    if (!s || seen[s]) continue;
+    seen[s] = 1;
+    out.push(s);
+  }
+  return out;
 }
 
 function mapExpcRow(row) {
@@ -298,10 +325,140 @@ function mapExpcRow(row) {
     row.사건명 ||
     row.법령명 ||
     "";
-  const dept = row.담당부서 || row.소관부처 || row.처리기관 || "";
+  const dept =
+    row.질의기관명 || row.담당부서 || row.소관부처 || row.회신기관명 || row.처리기관 || "";
   const date = row.회신일자 || row.공포일자 || row.신청일자 || "";
-  const id = row.행정해석일련번호 || row.해석례일련번호 || row.ID || row.id || "";
-  return { title: String(title), dept: String(dept), date: String(date), id: String(id) };
+  const id = row.법령해석례일련번호 || row.행정해석일련번호 || row.해석례일련번호 || row.ID || row.id || "";
+  var link = "";
+  if (row.법령해석례상세링크) link = "https://www.law.go.kr" + String(row.법령해석례상세링크);
+  return { kind: "expc", title: String(title), dept: String(dept), date: String(date), id: String(id), link };
+}
+
+function mapAdmRulRow(row) {
+  const title = row.행정규칙명 || row.행정규칙명한글 || "";
+  const dept = row.소관부처명 || row.소관부처 || row.제개정구분명 || "";
+  const date = String(row.발령일자 || row.시행일자 || row.공포일자 || "");
+  const id = String(row.행정규칙일련번호 || row.행정규칙ID || row.id || "");
+  var link = "";
+  if (row.행정규칙상세링크) link = "https://www.law.go.kr" + String(row.행정규칙상세링크);
+  return { kind: "admrul", title: String(title), dept: String(dept), date: date, id: id, link };
+}
+
+function mapPrecRow(row) {
+  const link = row.판례상세링크 ? "https://www.law.go.kr" + String(row.판례상세링크) : "";
+  return {
+    kind: "prec",
+    title: String(row.사건명 || ""),
+    caseNo: String(row.사건번호 || ""),
+    court: String(row.법원명 || row.데이터출처명 || ""),
+    date: String(row.선고일자 || ""),
+    id: String(row.판례일련번호 || row.id || ""),
+    link,
+  };
+}
+
+/**
+ * 법령해석(expc) 다중 쿼리 + 행정규칙(admrul) 병합
+ */
+async function fetchInterpretationRows(oc, origin, lawName, label, articleTitle) {
+  const merged = [];
+  const seen = new Set();
+  function pushRow(m) {
+    const key = m.kind + ":" + (m.id || m.title);
+    if (seen.has(key)) return;
+    seen.add(key);
+    merged.push(m);
+  }
+
+  const expQueries = uniqStrings([
+    lawName + " " + label,
+    articleTitle ? lawName + " " + String(articleTitle).trim() : "",
+    articleTitle ? String(articleTitle).trim() : "",
+  ]);
+  for (let qi = 0; qi < expQueries.length && merged.length < 20; qi++) {
+    var expq = expQueries[qi];
+    if (!expq) continue;
+    var expUrl =
+      BASE +
+      "/lawSearch.do?OC=" +
+      encodeURIComponent(oc) +
+      "&target=expc&type=JSON&display=15&query=" +
+      encodeURIComponent(expq);
+    try {
+      var expText = await httpsGetText(expUrl, origin);
+      var expJson = JSON.parse(expText);
+      var expRows = getExpcList(expJson);
+      for (var ei = 0; ei < expRows.length; ei++) {
+        pushRow(mapExpcRow(expRows[ei]));
+        if (merged.length >= 18) break;
+      }
+    } catch (e1) {
+      /* ignore */
+    }
+  }
+
+  var admUrl =
+    BASE +
+    "/lawSearch.do?OC=" +
+    encodeURIComponent(oc) +
+    "&target=admrul&type=JSON&display=12&query=" +
+    encodeURIComponent(lawName + " " + label);
+  try {
+    var admText = await httpsGetText(admUrl, origin);
+    var admJson = JSON.parse(admText);
+    var admRows = getAdmRulList(admJson);
+    for (var ai = 0; ai < admRows.length && merged.length < 22; ai++) {
+      pushRow(mapAdmRulRow(admRows[ai]));
+    }
+  } catch (e2) {
+    /* ignore */
+  }
+
+  return merged.slice(0, 20);
+}
+
+/**
+ * 판례(prec): 조문제목·법령+조문 등 순차 검색 후 중복 제거
+ */
+async function fetchPrecedentRows(oc, origin, lawName, label, articleTitle) {
+  const queries = uniqStrings([
+    articleTitle ? String(articleTitle).trim() : "",
+    articleTitle
+      ? String(articleTitle)
+          .trim()
+          .replace(/\([^)]*\)/g, "")
+          .trim()
+      : "",
+    lawName + " " + label,
+    lawName,
+  ]);
+  const out = [];
+  const seenId = {};
+  for (let pi = 0; pi < queries.length && out.length < 12; pi++) {
+    var pq = queries[pi];
+    if (!pq) continue;
+    var pUrl =
+      BASE +
+      "/lawSearch.do?OC=" +
+      encodeURIComponent(oc) +
+      "&target=prec&type=JSON&display=12&query=" +
+      encodeURIComponent(pq);
+    try {
+      var pText = await httpsGetText(pUrl, origin);
+      var pJson = JSON.parse(pText);
+      var plist = getPrecList(pJson);
+      for (var pj = 0; pj < plist.length; pj++) {
+        var pr = mapPrecRow(plist[pj]);
+        if (!pr.id || seenId[pr.id]) continue;
+        seenId[pr.id] = 1;
+        out.push(pr);
+        if (out.length >= 10) return out;
+      }
+    } catch (e3) {
+      /* ignore */
+    }
+  }
+  return out;
 }
 
 module.exports = async function lawArticleHandler(req, res) {
@@ -468,20 +625,21 @@ module.exports = async function lawArticleHandler(req, res) {
       (svcJson.Law && svcJson.Law.기본정보) ||
       {};
 
+    const articleTitleForMeta =
+      unit && unit.조문제목 ? String(unit.조문제목).trim() : "";
+
     let interpretations = [];
+    let precedents = [];
     try {
-      const expq = lawName + " " + label;
-      const expUrl =
-        BASE +
-        "/lawSearch.do?OC=" +
-        encodeURIComponent(oc) +
-        "&target=expc&type=JSON&display=8&query=" +
-        encodeURIComponent(expq);
-      const expText = await httpsGetText(expUrl, usedSiteOrigin);
-      const expJson = JSON.parse(expText);
-      interpretations = getExpcList(expJson).slice(0, 8).map(mapExpcRow);
-    } catch (e) {
+      var interpPrec = await Promise.all([
+        fetchInterpretationRows(oc, usedSiteOrigin, lawName, label, articleTitleForMeta),
+        fetchPrecedentRows(oc, usedSiteOrigin, lawName, label, articleTitleForMeta),
+      ]);
+      interpretations = interpPrec[0];
+      precedents = interpPrec[1];
+    } catch (interpErr) {
       interpretations = [];
+      precedents = [];
     }
 
     if (!unit) {
@@ -497,6 +655,7 @@ module.exports = async function lawArticleHandler(req, res) {
         시행일자: basic.시행일자 || "",
         공포일자: basic.공포일자 || "",
         interpretations,
+        precedents,
       });
     }
 
@@ -515,6 +674,7 @@ module.exports = async function lawArticleHandler(req, res) {
       시행일자: basic.시행일자 || unit.조문시행일자 || "",
       공포일자: basic.공포일자 || "",
       interpretations,
+      precedents,
     });
   } catch (err) {
     var msg = err && err.message ? String(err.message) : "서버 오류";

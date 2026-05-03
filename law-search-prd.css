@@ -732,3 +732,128 @@
   font-weight: 700;
   color: var(--law-portal-p1);
 }
+
+.law-topic-search-desc kbd {
+  font-family: inherit;
+  font-size: 0.88em;
+  padding: 0.12em 0.38em;
+  border-radius: 4px;
+  background: rgba(28, 74, 124, 0.08);
+  border: 1px solid rgba(28, 74, 124, 0.18);
+}
+
+.law-result-loading {
+  margin: 0;
+  font-size: 0.92rem;
+  color: var(--law-portal-p1);
+  font-weight: 600;
+}
+
+.law-warn-box {
+  padding: 0.65rem 0.75rem;
+  border-radius: 8px;
+  background: rgba(180, 83, 9, 0.08);
+  border: 1px solid rgba(180, 83, 9, 0.25);
+  margin-bottom: 0.35rem;
+}
+
+.law-warn-box p {
+  margin: 0;
+  font-size: 0.88rem;
+  line-height: 1.55;
+  color: var(--ink);
+}
+
+.law-result-panel-lead--warn {
+  color: #8a5a0a;
+}
+
+.law-result-divider {
+  height: 1px;
+  margin: 0.65rem 0 0.45rem;
+  background: rgba(28, 74, 124, 0.12);
+  border: 0;
+}
+
+.law-result-subhead {
+  margin: 0 0 0.35rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #163b63;
+  text-transform: none;
+}
+
+.law-article-meta {
+  margin: 0 0 0.35rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #12365c;
+}
+
+.law-article-title {
+  margin: 0 0 0.4rem;
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--ink);
+}
+
+.law-article-html {
+  font-size: 0.88rem;
+  line-height: 1.65;
+  color: var(--ink);
+  max-height: min(28rem, 55vh);
+  overflow: auto;
+  padding: 0.55rem 0.65rem;
+  border-radius: 8px;
+  background: #fff;
+  border: 1px solid rgba(28, 74, 124, 0.14);
+}
+
+.law-article-html--from-api p {
+  margin: 0.35em 0;
+}
+
+.law-article-html--from-api br + br {
+  display: none;
+}
+
+.law-expc-block {
+  margin-top: 0.75rem;
+}
+
+.law-expc-head {
+  margin: 0 0 0.4rem;
+  font-size: 0.86rem;
+  font-weight: 800;
+  color: #163b63;
+}
+
+.law-expc-list {
+  margin: 0;
+  padding-left: 1.15rem;
+  font-size: 0.84rem;
+  line-height: 1.55;
+  color: var(--ink-soft);
+}
+
+.law-expc-list li {
+  margin-bottom: 0.35rem;
+}
+
+.law-expc-meta {
+  font-size: 0.9em;
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.law-expc-empty {
+  margin: 0;
+  font-size: 0.84rem;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+button#law-topic-search-btn:disabled {
+  opacity: 0.65;
+  cursor: wait;
+}

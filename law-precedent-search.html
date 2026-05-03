@@ -115,12 +115,14 @@
           </article>
         </div>
         <p class="law-result-api-note">
-          <strong>조문 원문 표시:</strong> Vercel 등 서버리스에 이 저장소의 <code>api/law-article.js</code>가 배포되고,
-          프로젝트 환경 변수 <code>LAW_OC</code>(또는 <code>KOREAN_LAW_API_KEY</code>)에
-          <a href="https://open.law.go.kr/LSO/main.do" target="_blank" rel="noopener noreferrer">공동활용</a>에서 발급한 인증값을 넣은 뒤,
-          동일 키 신청 화면에서 <strong>서버의 출구 IP</strong>(Vercel이 안내하는 대로)를 등록해야 합니다. 인증값은 절대 프론트에 넣지 마세요.
-          판례 <code>target=prec</code> 등도 동일하게 서버 프록시로 확장할 수 있습니다. 참고:
-          <a href="https://github.com/chrisryugj/korean-law-mcp" target="_blank" rel="noopener noreferrer">korean-law-mcp</a>.
+          <strong>2단계 IP 등록:</strong> 사이트가 Vercel에 배포된 뒤 브라우저에서
+          <code>/api/egress-ip</code> 경로를 열면(예: <code>https://(도메인)/api/egress-ip</code>) JSON의 <code>ip</code> 값이 나옵니다.
+          그 IP를 <a href="https://open.law.go.kr/LSO/main.do" target="_blank" rel="noopener noreferrer">공동활용</a> 마이페이지의
+          <strong>API 허용 IP</strong>에 등록하세요. 호출할 때마다 IP가 바뀌면 Vercel 동적 egress이므로, 막히면 고정 IP 플랜·별도 서버를 검토합니다.
+          <strong>3단계 환경 변수:</strong> Vercel → 프로젝트 → Settings → Environment Variables에서
+          <code>LAW_OC</code>(또는 <code>KOREAN_LAW_API_KEY</code>)에 발급 OC를 넣고 Production에 적용한 뒤 <strong>Redeploy</strong> 하거나,
+          로컬 PowerShell에서 <code>$env:LAW_OC='…'; .\scripts\add-vercel-law-oc.ps1</code> 로 추가할 수 있습니다.
+          OC는 프론트에 넣지 마세요. 조문 API는 <code>api/law-article.js</code>를 사용합니다.
         </p>
       </section>
 

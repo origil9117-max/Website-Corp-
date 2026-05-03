@@ -134,7 +134,8 @@
             <li>
               <strong>공동활용(open.law.go.kr)</strong>은 API 신청·IP 등록용이며, 일반 창에서 링크를 열면 &quot;페이지 접속에 실패&quot;가 자주 납니다.
               이 사이트의 목록 링크는 <code>open.law.go.kr</code>·<code>/LSO/</code>·브라우저용이 아닌 <code>/DRF/</code>(Open API) 주소로 가지 않도록
-              <a href="https://www.law.go.kr/main.html" target="_blank" rel="noopener noreferrer">국가법령정보센터</a> 통합검색·메인 등으로 돌립니다.
+              <a href="https://www.law.go.kr/main.html" target="_blank" rel="noopener noreferrer">국가법령정보센터</a>
+              <strong>통합검색(<code>/LSW/lsSc.do?query=</code>)</strong>·메인 등으로 돌립니다. (구형 <code>lsAstListSc.do</code> 주소는 404가 나와 사용하지 않습니다.)
               IP·OC 등록은 위 안내의 <code>https://open.law.go.kr/LSO/main.do</code>를 <strong>복사</strong>해 등록 가능한 환경에서 여세요.
             </li>
             <li>
@@ -408,18 +409,16 @@
         var t = String(title || "").trim();
         var d = String(dept || "").trim();
         var chunks = [];
-        if (/^\d{3,20}$/.test(idStr)) chunks.push(idStr);
+        if (/^\d{6,22}$/.test(idStr)) chunks.push(idStr);
         if (d) chunks.push(d.length > 28 ? d.slice(0, 28) : d);
         if (t) chunks.push(t.length > 72 ? t.slice(0, 72) + "…" : t);
         return chunks.join(" ").trim() || "법령";
       }
 
+      /** 국가법령정보센터 통합검색 — `lsAstListSc.do?queryText=…` 는 현재 404이므로 `lsSc.do?query=…` 로 연결(서버 200 확인). */
       function lawCenterSearchUrl(q) {
         var safe = capQueryForGetUrl(q, 1100);
-        return (
-          "https://www.law.go.kr/LSW/lsAstListSc.do?menuId=0&subMenuId=0&searchScope=1&queryText=" +
-          encodeURIComponent(safe)
-        );
+        return "https://www.law.go.kr/LSW/lsSc.do?menuId=1&query=" + encodeURIComponent(safe);
       }
 
       function scourtPrecedentSearchUrl(q) {

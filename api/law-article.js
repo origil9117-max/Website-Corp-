@@ -212,9 +212,54 @@ function normalizeJoNum(s) {
   return String(s || "").replace(/\s/g, "");
 }
 
+/** DRF JSON에서는 조문번호가 "32"처럼 숫자만 오는 경우가 대부분입니다. */
+function normalizeArticleMetaNum(v) {
+  if (v == null) return "";
+  return String(v).replace(/\s/g, "");
+}
+
+function branchKeyFromUnit(u) {
+  const g = normalizeArticleMetaNum(u.조문가지번호);
+  if (!g || g === "0") return "";
+  return g;
+}
+
 function findJoUnit(units, main, branch) {
+  const mainS = normalizeArticleMetaNum(main);
+  const branchS = branch ? normalizeArticleMetaNum(branch) : "";
   const full = branch ? "제" + main + "조의" + branch : "제" + main + "조";
   const short = "제" + main + "조";
+
+  function mainMatches(num) {
+    if (!num) return false;
+    if (/^\d+$/.test(num)) return num === mainS;
+    if (num === full) return true;
+    if (!branch && num === short) return true;
+    return false;
+  }
+
+  function branchMatches(u) {
+    const g = branchKeyFromUnit(u);
+    if (branchS) return g === branchS;
+    return !g;
+  }
+
+  const candidates = [];
+  for (const u of units) {
+    const num = normalizeJoNum(u.조문번호);
+    if (!mainMatches(num)) continue;
+    if (!branchMatches(u)) continue;
+    candidates.push(u);
+  }
+  if (candidates.length === 1) return candidates[0];
+  if (candidates.length > 1) {
+    const real = candidates.filter(function (u) {
+      return u.조문여부 === "조문";
+    });
+    if (real.length) return real[0];
+    return candidates[0];
+  }
+
   for (const u of units) {
     const num = normalizeJoNum(u.조문번호);
     if (!num) continue;

@@ -73,16 +73,16 @@
       </button>
     </div>
 
-    <section class="law-topic-search" aria-label="통합 검색">
-      <h2>통합 검색</h2>
+    <section class="law-topic-search" aria-label="법령 검색">
+      <h2>법령 검색</h2>
       <p class="law-topic-search-desc">
         주제를 입력하면 아래 <strong>① 법령·해석 ② 판례 ③ 참고 사례</strong> 블록이 갱신됩니다.
         <strong>법령명+조문</strong> 형식(예: <kbd>민법 제32조</kbd>, <kbd>민법제32</kbd>, <kbd>민법 32조</kbd>, <kbd>민법32</kbd>, <kbd>민버32</kbd>, <kbd>상법 제300조</kbd>)은 배포 서버의
         <code>/api/law-article</code>를 통해 국가법령정보 Open API로 원문·해석 목록을 불러와 ①에 표시합니다. 그 외 키워드는 공식 포털 링크로 연결됩니다.
       </p>
       <form id="law-topic-search-form" class="law-topic-search-row" role="search" action="#" method="get">
-        <label class="visually-hidden" for="law-topic-input">통합 검색어</label>
-        <input id="law-topic-input" name="q" type="search" autocomplete="off" placeholder="예: 부동산 임대차, 외국인 비자, 행정처분" />
+        <label class="visually-hidden" for="law-topic-input">법령 검색어</label>
+        <input id="law-topic-input" name="q" type="search" autocomplete="off" placeholder="예: 민법제1조, 민법1조 등으로 검색해주세요" />
         <button id="law-topic-search-btn" type="submit">검색</button>
       </form>
       <p id="law-topic-status" class="law-topic-status" role="status" aria-live="polite">검색어를 입력한 뒤 검색을 누르면 공식 포털 링크와 참고 안내가 표시됩니다.</p>

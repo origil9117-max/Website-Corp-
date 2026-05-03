@@ -131,13 +131,38 @@ function parseArticleQuery(q) {
   const s = String(q || "")
     .trim()
     .replace(/\s+/g, "");
-  const m = s.match(/^(.+?)제(\d+)조(?:의(\d+))?$/);
-  if (!m) return null;
-  const lawName = m[1];
-  const main = m[2];
-  const branch = m[3] || null;
-  const label = branch ? "제" + main + "조의" + branch : "제" + main + "조";
-  return { lawName, main, branch, label };
+  if (!s) return null;
+
+  let m = s.match(/^(.+?)제(\d+)조(?:의(\d+))?$/);
+  if (m) {
+    const lawName = String(m[1] || "").trim();
+    if (!lawName) return null;
+    const main = m[2];
+    const branch = m[3] || null;
+    const label = branch ? "제" + main + "조의" + branch : "제" + main + "조";
+    return { lawName, main, branch, label };
+  }
+  /* 민법32조 — "제" 생략. (?<![제])로 민법제32조가 법령명 끝 "민법제"로 쪼개지지 않게 함 */
+  m = s.match(/^(.+?)(?<![제])(\d+)조(?:의(\d+))?$/);
+  if (m) {
+    const lawName = String(m[1] || "").trim();
+    if (!lawName) return null;
+    const main = m[2];
+    const branch = m[3] || null;
+    const label = branch ? "제" + main + "조의" + branch : "제" + main + "조";
+    return { lawName, main, branch, label };
+  }
+  /* 민법32 — "조" 생략(제N조와 동일 취급). 조의M은 …2의1 형태 */
+  m = s.match(/^(.+?)(?<![제])(\d+)(?:의(\d+))?$/);
+  if (m) {
+    const lawName = String(m[1] || "").trim();
+    if (!lawName) return null;
+    const main = m[2];
+    const branch = m[3] || null;
+    const label = branch ? "제" + main + "조의" + branch : "제" + main + "조";
+    return { lawName, main, branch, label };
+  }
+  return null;
 }
 
 function parseArticleParams(req) {
@@ -489,7 +514,7 @@ module.exports = async function lawArticleHandler(req, res) {
       ok: false,
       error: "PARSE",
       message:
-        "법령명+조문 형식이 아닙니다. 예: 민법제32조, 상법 제300조, 근로기준법제2조의1 또는 쿼리 law·jo·branch",
+        "법령명+조문 형식이 아닙니다. 예: 민법제32조, 민법32조, 민법32, 상법제300조, 근로기준법2조의1 또는 쿼리 law·jo·branch",
     });
   }
 

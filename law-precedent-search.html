@@ -77,7 +77,7 @@
       <h2>통합 검색</h2>
       <p class="law-topic-search-desc">
         주제를 입력하면 아래 <strong>① 법령·해석 ② 판례 ③ 참고 사례</strong> 블록이 갱신됩니다.
-        <strong>법령명+조문</strong> 형식(예: <kbd>민법제32조</kbd>, <kbd>상법 제300조</kbd>)은 배포 서버의
+        <strong>법령명+조문</strong> 형식(예: <kbd>민법제32조</kbd>, <kbd>민법32조</kbd>, <kbd>민법32</kbd>, <kbd>상법 제300조</kbd>)은 배포 서버의
         <code>/api/law-article</code>를 통해 국가법령정보 Open API로 원문·해석 목록을 불러와 ①에 표시합니다. 그 외 키워드는 공식 포털 링크로 연결됩니다.
       </p>
       <form id="law-topic-search-form" class="law-topic-search-row" role="search" action="#" method="get">
@@ -386,14 +386,41 @@
         var s = String(input || "")
           .trim()
           .replace(/\s+/g, "");
+        if (!s) return null;
         var m = s.match(/^(.+?)제(\d+)조(?:의(\d+))?$/);
-        if (!m) return null;
-        return {
-          lawName: m[1],
-          main: m[2],
-          branch: m[3] || null,
-          label: m[3] ? "제" + m[2] + "조의" + m[3] : "제" + m[2] + "조",
-        };
+        if (m) {
+          var n1 = String(m[1] || "").trim();
+          if (!n1) return null;
+          return {
+            lawName: n1,
+            main: m[2],
+            branch: m[3] || null,
+            label: m[3] ? "제" + m[2] + "조의" + m[3] : "제" + m[2] + "조",
+          };
+        }
+        m = s.match(/^(.+?)(?<![제])(\d+)조(?:의(\d+))?$/);
+        if (m) {
+          var n2 = String(m[1] || "").trim();
+          if (!n2) return null;
+          return {
+            lawName: n2,
+            main: m[2],
+            branch: m[3] || null,
+            label: m[3] ? "제" + m[2] + "조의" + m[3] : "제" + m[2] + "조",
+          };
+        }
+        m = s.match(/^(.+?)(?<![제])(\d+)(?:의(\d+))?$/);
+        if (m) {
+          var n3 = String(m[1] || "").trim();
+          if (!n3) return null;
+          return {
+            lawName: n3,
+            main: m[2],
+            branch: m[3] || null,
+            label: m[3] ? "제" + m[2] + "조의" + m[3] : "제" + m[2] + "조",
+          };
+        }
+        return null;
       }
 
       function lawPanelOfficialLinksHtml(safeLabel, q) {
@@ -706,7 +733,7 @@
           status.textContent =
             "\"" +
             raw +
-            "\" 기준: 공식 포털 링크·참고 사례를 표시했습니다. 조문 원문은 「법령명제N조」 형식으로 검색해 보세요. 아래 명세 " +
+            "\" 기준: 공식 포털 링크·참고 사례를 표시했습니다. 조문 원문은 「법령명제N조」「법령명N조」「법령명N」처럼 검색해 보세요. 아래 명세 " +
             specInfo.visibleCount +
             "개 항목을 강조합니다.";
         }

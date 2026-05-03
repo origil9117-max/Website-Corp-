@@ -5,6 +5,9 @@
  *
  * Node fetch()는 일부 클라우드에서 IPv6 경로로 law.go.kr 연결이 실패하는 경우가 있어
  * IPv4 전용 https 요청을 사용합니다.
+ *
+ * 공동활용에 등록한 "도메인주소"와 동일한 출처를 알리기 위해 Referer·Origin을 보냅니다.
+ * 사이트가 www를 쓰면 Vercel 환경 변수 LAW_API_SITE_URL=https://www.daehanminkuk.co.kr 로 맞추세요.
  */
 const https = require("https");
 const dns = require("dns");
@@ -12,12 +15,28 @@ const { URL } = require("url");
 
 const BASE = "https://www.law.go.kr/DRF";
 
+/** 공동활용 시스템정보에 적은 도메인과 동일해야 검증 오류가 줄어듭니다. */
+function getRegisteredSiteHeaders() {
+  var raw = String(
+    process.env.LAW_API_SITE_URL ||
+      process.env.LAW_REGISTERED_SITE_URL ||
+      ""
+  ).trim();
+  if (!raw) raw = "https://daehanminkuk.co.kr";
+  var base = raw.replace(/\/+$/, "");
+  return {
+    Referer: base + "/",
+    Origin: base,
+  };
+}
+
 /**
  * @param {string} urlStr
  * @returns {Promise<string>}
  */
 function httpsGetText(urlStr) {
   const u = new URL(urlStr);
+  const site = getRegisteredSiteHeaders();
   return new Promise(function (resolve, reject) {
     dns.lookup(u.hostname, { family: 4, all: false }, function (lookupErr, address) {
       if (lookupErr) return reject(lookupErr);
@@ -27,11 +46,14 @@ function httpsGetText(urlStr) {
         servername: u.hostname,
         path: u.pathname + u.search,
         method: "GET",
-        headers: {
-          Host: u.hostname,
-          Accept: "application/json, text/plain, */*",
-          "User-Agent": "daehanminkuk-law-article-proxy/1.0",
-        },
+        headers: Object.assign(
+          {
+            Host: u.hostname,
+            Accept: "application/json, text/plain, */*",
+            "User-Agent": "daehanminkuk-law-article-proxy/1.0",
+          },
+          site
+        ),
         rejectUnauthorized: true,
       };
       const req = https.request(opts, function (res) {
@@ -255,10 +277,15 @@ module.exports = async function lawArticleHandler(req, res) {
     if (!laws.length) {
       const msg = searchJson.msg || searchJson.message || searchJson.MSG || "";
       if (msg) {
+        var fullMsg = String(msg);
+        if (/IP주소|도메인|검증/i.test(fullMsg)) {
+          fullMsg +=
+            " — 공동활용 시스템정보의 도메인과 동일하게 Vercel에 LAW_API_SITE_URL을 설정했는지(기본값 https://daehanminkuk.co.kr), /api/egress-ip로 확인한 출구 IP를 모두 등록했는지 확인하세요.";
+        }
         return res.status(502).json({
           ok: false,
           error: "SEARCH_API",
-          message: String(msg),
+          message: fullMsg,
         });
       }
       return res.status(404).json({

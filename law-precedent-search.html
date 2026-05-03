@@ -119,9 +119,10 @@
           <code>/api/egress-ip</code> 경로를 열면(예: <code>https://(도메인)/api/egress-ip</code>) JSON의 <code>ip</code> 값이 나옵니다.
           그 IP를 <a href="https://open.law.go.kr/LSO/main.do" target="_blank" rel="noopener noreferrer">공동활용</a> 마이페이지의
           <strong>API 허용 IP</strong>에 등록하세요. 호출할 때마다 IP가 바뀌면 Vercel 동적 egress이므로, 막히면 고정 IP 플랜·별도 서버를 검토합니다.
-          <strong>3단계 환경 변수:</strong> Vercel → 프로젝트 → Settings → Environment Variables에서
-          <code>LAW_OC</code>(또는 <code>KOREAN_LAW_API_KEY</code>)에 발급 OC를 넣고 Production에 적용한 뒤 <strong>Redeploy</strong> 하거나,
-          로컬 PowerShell에서 <code>$env:LAW_OC='…'; .\scripts\add-vercel-law-oc.ps1</code> 로 추가할 수 있습니다.
+          <strong>3단계 환경 변수:</strong> Vercel → Settings → Environment Variables에서
+          <code>LAW_OC</code>(또는 <code>KOREAN_LAW_API_KEY</code>)에 발급 OC를 넣고,
+          공동활용에 적은 도메인이 <code>www</code>를 포함하면 <code>LAW_API_SITE_URL</code>을 예:
+          <code>https://www.daehanminkuk.co.kr</code> 로 맞춘 뒤 <strong>Redeploy</strong> 하세요.
           OC는 프론트에 넣지 마세요. 조문 API는 <code>api/law-article.js</code>를 사용합니다.
         </p>
       </section>

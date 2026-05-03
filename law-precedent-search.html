@@ -117,8 +117,10 @@
         <p class="law-result-api-note">
           <strong>2단계 IP 등록:</strong> 사이트가 Vercel에 배포된 뒤 브라우저에서
           <code>/api/egress-ip</code> 경로를 열면(예: <code>https://(도메인)/api/egress-ip</code>) JSON의 <code>ip</code> 값이 나옵니다.
-          그 IP를 <a href="https://open.law.go.kr/LSO/main.do" target="_blank" rel="noopener noreferrer">공동활용</a> 마이페이지의
-          <strong>API 허용 IP</strong>에 등록하세요. 호출할 때마다 IP가 바뀌면 Vercel 동적 egress이므로, 막히면 고정 IP 플랜·별도 서버를 검토합니다.
+          그 IP를 <strong>공동활용</strong> 마이페이지의 <strong>API 허용 IP</strong>에 등록하세요.
+          포털 주소는 <code class="law-open-data-url" translate="no">https://open.law.go.kr/LSO/main.do</code>
+          (링크로 열면 &quot;페이지 접속에 실패&quot;가 날 수 있어 <strong>주소 복사</strong> 후, 로그인·등록이 되어 있는 PC 브라우저에 붙여넣기 하세요.)
+          호출할 때마다 IP가 바뀌면 Vercel 동적 egress이므로, 막히면 고정 IP 플랜·별도 서버를 검토합니다.
           <strong>3단계 환경 변수:</strong> Vercel → Settings → Environment Variables에서
           <code>LAW_OC</code>(또는 <code>KOREAN_LAW_API_KEY</code>)에 발급 OC를 넣고,
           공동활용에 적은 도메인이 <code>www</code>를 포함하면 <code>LAW_API_SITE_URL</code>을 예:
@@ -130,10 +132,10 @@
           <h4 class="law-result-access-help-title">「페이지 접속에 실패」가 나올 때</h4>
           <ol class="law-result-access-help-list">
             <li>
-              <strong>공동활용(open.law.go.kr) 화면</strong>은 API 신청·IP 등록용입니다. 목록의 제목 링크가 실수로 그쪽으로 가면
-              오류 문구만 보일 수 있습니다. 이 사이트에서는 <code>/LSO/</code>로 시작하는 주소를
-              <a href="https://www.law.go.kr/main.html" target="_blank" rel="noopener noreferrer">국가법령정보센터 메인</a>으로 바꿔 열도록 처리합니다.
-              메인에서 통합검색으로 제목·사건번호를 다시 찾아 주세요.
+              <strong>공동활용(open.law.go.kr)</strong>은 API 신청·IP 등록용이며, 일반 창에서 링크를 열면 &quot;페이지 접속에 실패&quot;가 자주 납니다.
+              이 사이트의 목록 링크는 <code>open.law.go.kr</code>·<code>/LSO/</code>로 가지 않도록
+              <a href="https://www.law.go.kr/main.html" target="_blank" rel="noopener noreferrer">국가법령정보센터 메인</a> 등으로 돌립니다.
+              IP·OC 등록은 위 안내의 <code>https://open.law.go.kr/LSO/main.do</code>를 <strong>복사</strong>해 등록 가능한 환경에서 여세요.
             </li>
             <li>
               <strong>조문·목록 API가 막힌 경우</strong>는 서버 쪽입니다. 위의 IP·<code>LAW_OC</code>·<code>LAW_API_SITE_URL</code>을 확인하고,
@@ -336,6 +338,8 @@
       function finalizeLawBrowseUrl(urlStr) {
         try {
           var u = new URL(String(urlStr || ""));
+          var host = (u.hostname || "").toLowerCase();
+          if (host === "open.law.go.kr") return "https://www.law.go.kr/main.html";
           var p = u.pathname || "";
           if (/^\/LSO(\/|$)/i.test(p)) return "https://www.law.go.kr/main.html";
         } catch (err) {
@@ -357,6 +361,7 @@
             if (u.protocol !== "https:") return "";
             var host = u.hostname.toLowerCase();
             if (!/(\.)?law\.go\.kr$/i.test(host)) return "";
+            if (host === "open.law.go.kr") return "https://www.law.go.kr/main.html";
             var rest = u.pathname + u.search + u.hash;
             if (!rest || rest === "/") return finalizeLawBrowseUrl("https://www.law.go.kr/main.html");
             return finalizeLawBrowseUrl("https://www.law.go.kr" + rest);
@@ -365,6 +370,7 @@
             var u2 = new URL("https:" + s);
             var h2 = u2.hostname.toLowerCase();
             if (!/(\.)?law\.go\.kr$/i.test(h2)) return "";
+            if (h2 === "open.law.go.kr") return "https://www.law.go.kr/main.html";
             var r2 = u2.pathname + u2.search + u2.hash;
             if (!r2 || r2 === "/") return finalizeLawBrowseUrl("https://www.law.go.kr/main.html");
             return finalizeLawBrowseUrl("https://www.law.go.kr" + r2);
@@ -576,7 +582,7 @@
           lawUrl +
           '" target="_blank" rel="noopener noreferrer">국가법령정보센터 통합검색 (새 창)</a></li>' +
           '<li><a href="https://www.law.go.kr/main.html" target="_blank" rel="noopener noreferrer">센터 메인 — 법령해석·행정규칙 메뉴</a></li>' +
-          '<li><a href="https://open.law.go.kr/LSO/main.do" target="_blank" rel="noopener noreferrer">공동활용 (API 신청·IP 등록)</a></li>' +
+          '<li><span class="law-muted">공동활용(API·IP 등록)</span> <code class="law-open-data-url" translate="no">https://open.law.go.kr/LSO/main.do</code> <span class="law-muted">(주소 복사 후 등록 PC에서 열기)</span></li>' +
           "</ul>" +
           '<p class="law-result-disclaimer">검색어 <strong>' +
           safeLabel +
@@ -759,7 +765,8 @@
             ) {
               supportLinks =
                 '<p class="law-result-support-links">' +
-                '<a href="https://open.law.go.kr/LSO/main.do" target="_blank" rel="noopener noreferrer">국가법령정보 공동활용(신청·문의)</a> · ' +
+                '<a href="https://www.law.go.kr/main.html" target="_blank" rel="noopener noreferrer">국가법령정보센터</a> · ' +
+                '<span class="law-muted">공동활용</span> <code class="law-open-data-url" translate="no">https://open.law.go.kr/LSO/main.do</code> · ' +
                 '<a href="/api/egress-ip" target="_blank" rel="noopener noreferrer">등록용 출구 IP 확인</a>' +
                 "</p>";
             }

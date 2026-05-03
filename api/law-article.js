@@ -451,6 +451,10 @@ function lightSanitizeHtml(html) {
   return String(html || "")
     .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "")
     .replace(/\son\w+\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi, "")
+    .replace(
+      /(<a\b[^>]*\shref=["'])(?:https?:)?\/\/open\.law\.go\.kr[^"']*(["'])/gi,
+      "$1https://www.law.go.kr/main.html$2"
+    )
     .replace(/(<a\b[^>]*\shref=["'])\/(?=LSW\/|DRF\/|admRul\/|lsSc|lsAst|INF\/|joOn)/gi, "$1https://www.law.go.kr/");
 }
 
@@ -497,6 +501,9 @@ function uniqStrings(list) {
 function finalizeLawGoKrPublicBrowseUrl(urlStr) {
   try {
     const u = new URL(String(urlStr || ""));
+    const host = (u.hostname || "").toLowerCase();
+    /* 공동활용 호스트·경로는 일반 브라우저 세션에서 실패 화면이 잦음 */
+    if (host === "open.law.go.kr") return "https://www.law.go.kr/main.html";
     const p = u.pathname || "";
     if (/^\/LSO(\/|$)/i.test(p)) return "https://www.law.go.kr/main.html";
   } catch (e) {
@@ -522,6 +529,7 @@ function normalizeLawGoKrDetailUrl(raw) {
       if (!/(\.)?law\.go\.kr$/i.test(host)) {
         return s.replace(/^http:\/\//i, "https://");
       }
+      if (host === "open.law.go.kr") return "https://www.law.go.kr/main.html";
       const rest = u.pathname + u.search + u.hash;
       if (!rest || rest === "/") return finalizeLawGoKrPublicBrowseUrl("https://www.law.go.kr/main.html");
       return finalizeLawGoKrPublicBrowseUrl("https://www.law.go.kr" + rest);
@@ -534,6 +542,7 @@ function normalizeLawGoKrDetailUrl(raw) {
       const u = new URL("https:" + s);
       const host = u.hostname.toLowerCase();
       if (!/(\.)?law\.go\.kr$/i.test(host)) return "https:" + s;
+      if (host === "open.law.go.kr") return "https://www.law.go.kr/main.html";
       const rest = u.pathname + u.search + u.hash;
       if (!rest || rest === "/") return finalizeLawGoKrPublicBrowseUrl("https://www.law.go.kr/main.html");
       return finalizeLawGoKrPublicBrowseUrl("https://www.law.go.kr" + rest);

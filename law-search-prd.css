@@ -714,6 +714,43 @@
   background: rgba(255, 255, 255, 0.75);
 }
 
+.law-result-access-help {
+  margin: 0.65rem 0 0;
+  padding: 0.65rem 0.8rem 0.7rem;
+  font-size: 0.78rem;
+  line-height: 1.55;
+  color: var(--ink-soft);
+  background: rgba(28, 74, 124, 0.06);
+  border-radius: 8px;
+  border: 1px solid rgba(28, 74, 124, 0.14);
+  border-left: 4px solid rgba(28, 74, 124, 0.35);
+}
+
+.law-result-access-help-title {
+  margin: 0 0 0.4rem;
+  font-size: 0.82rem;
+  font-weight: 800;
+  color: #163b63;
+}
+
+.law-result-access-help-list {
+  margin: 0;
+  padding-left: 1.1rem;
+}
+
+.law-result-access-help-list li {
+  margin-bottom: 0.45rem;
+}
+
+.law-result-access-help-list li:last-child {
+  margin-bottom: 0;
+}
+
+.law-result-access-help a {
+  font-weight: 700;
+  color: #1c4a7c;
+}
+
 .law-result-roadmap-teaser {
   margin-top: 0.85rem;
   padding: 0.55rem 0.75rem;

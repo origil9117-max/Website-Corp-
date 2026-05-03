@@ -491,6 +491,21 @@ function uniqStrings(list) {
 }
 
 /**
+ * 공동활용·LSO 관리 경로는 일반 브라우저에서 "페이지 접속에 실패"가 나는 경우가 많아
+ * 이용자용 포털 메인으로 보냅니다.
+ */
+function finalizeLawGoKrPublicBrowseUrl(urlStr) {
+  try {
+    const u = new URL(String(urlStr || ""));
+    const p = u.pathname || "";
+    if (/^\/LSO(\/|$)/i.test(p)) return "https://www.law.go.kr/main.html";
+  } catch (e) {
+    /* ignore */
+  }
+  return String(urlStr || "");
+}
+
+/**
  * 상세링크가 `/경로`, `http(s)://(www.)law.go.kr/...`, `//law.go.kr/...` 등으로 올 수 있음.
  * 브라우저에서 국가법령정보센터(www) 기준으로 열리도록 https + 호스트 정리(이중 베이스 제거).
  */
@@ -508,8 +523,8 @@ function normalizeLawGoKrDetailUrl(raw) {
         return s.replace(/^http:\/\//i, "https://");
       }
       const rest = u.pathname + u.search + u.hash;
-      if (!rest || rest === "/") return "https://www.law.go.kr/main.html";
-      return "https://www.law.go.kr" + rest;
+      if (!rest || rest === "/") return finalizeLawGoKrPublicBrowseUrl("https://www.law.go.kr/main.html");
+      return finalizeLawGoKrPublicBrowseUrl("https://www.law.go.kr" + rest);
     } catch (e) {
       return "";
     }
@@ -520,14 +535,15 @@ function normalizeLawGoKrDetailUrl(raw) {
       const host = u.hostname.toLowerCase();
       if (!/(\.)?law\.go\.kr$/i.test(host)) return "https:" + s;
       const rest = u.pathname + u.search + u.hash;
-      if (!rest || rest === "/") return "https://www.law.go.kr/main.html";
-      return "https://www.law.go.kr" + rest;
+      if (!rest || rest === "/") return finalizeLawGoKrPublicBrowseUrl("https://www.law.go.kr/main.html");
+      return finalizeLawGoKrPublicBrowseUrl("https://www.law.go.kr" + rest);
     } catch (e2) {
       return "";
     }
   }
   const path = s.startsWith("/") ? s : "/" + s.replace(/^\/+/, "");
-  return "https://www.law.go.kr" + path;
+  if (/^\/LSO(\/|$)/i.test(path)) return "https://www.law.go.kr/main.html";
+  return finalizeLawGoKrPublicBrowseUrl("https://www.law.go.kr" + path);
 }
 
 function mapExpcRow(row) {

@@ -2,8 +2,63 @@
  * 국가법령정보 Open API 프록시 — 법령 조문 원문 + 법령해석(expc) 검색
  * Vercel: 프로젝트 환경 변수 LAW_OC (또는 KOREAN_LAW_API_KEY) 설정 및
  * open.law.go.kr 에 서버 출구 IP 등록 필요.
+ *
+ * Node fetch()는 일부 클라우드에서 IPv6 경로로 law.go.kr 연결이 실패하는 경우가 있어
+ * IPv4 전용 https 요청을 사용합니다.
  */
+const https = require("https");
+const dns = require("dns");
+const { URL } = require("url");
+
 const BASE = "https://www.law.go.kr/DRF";
+
+/**
+ * @param {string} urlStr
+ * @returns {Promise<string>}
+ */
+function httpsGetText(urlStr) {
+  const u = new URL(urlStr);
+  return new Promise(function (resolve, reject) {
+    dns.lookup(u.hostname, { family: 4, all: false }, function (lookupErr, address) {
+      if (lookupErr) return reject(lookupErr);
+      const opts = {
+        host: address,
+        port: 443,
+        servername: u.hostname,
+        path: u.pathname + u.search,
+        method: "GET",
+        headers: {
+          Host: u.hostname,
+          Accept: "application/json, text/plain, */*",
+          "User-Agent": "daehanminkuk-law-article-proxy/1.0",
+        },
+        rejectUnauthorized: true,
+      };
+      const req = https.request(opts, function (res) {
+        var body = "";
+        res.setEncoding("utf8");
+        res.on("data", function (chunk) {
+          body += chunk;
+        });
+        res.on("end", function () {
+          if (res.statusCode && res.statusCode >= 400) {
+            var e = new Error("HTTP " + res.statusCode);
+            e.statusCode = res.statusCode;
+            e.body = body.slice(0, 500);
+            return reject(e);
+          }
+          resolve(body);
+        });
+      });
+      req.on("error", reject);
+      req.setTimeout(25000, function () {
+        req.destroy();
+        reject(new Error("요청 시간 초과(25s)"));
+      });
+      req.end();
+    });
+  });
+}
 
 function arr(x) {
   if (x == null) return [];
@@ -152,7 +207,9 @@ module.exports = async function lawArticleHandler(req, res) {
     return res.status(405).json({ ok: false, error: "METHOD", message: "GET only" });
   }
 
-  const oc = process.env.LAW_OC || process.env.KOREAN_LAW_API_KEY || process.env.LAW_GO_KR_OC;
+  const oc = String(
+    process.env.LAW_OC || process.env.KOREAN_LAW_API_KEY || process.env.LAW_GO_KR_OC || ""
+  ).trim();
   if (!oc) {
     return res.status(503).json({
       ok: false,
@@ -182,8 +239,7 @@ module.exports = async function lawArticleHandler(req, res) {
       "&target=law&type=JSON&display=15&query=" +
       encodeURIComponent(lawName);
 
-    const searchRes = await fetch(searchUrl);
-    const searchText = await searchRes.text();
+    const searchText = await httpsGetText(searchUrl);
     let searchJson;
     try {
       searchJson = JSON.parse(searchText);
@@ -237,8 +293,7 @@ module.exports = async function lawArticleHandler(req, res) {
       encodeURIComponent(mst) +
       "&type=JSON";
 
-    const svcRes = await fetch(svcUrl);
-    const svcText = await svcRes.text();
+    const svcText = await httpsGetText(svcUrl);
     let svcJson;
     try {
       svcJson = JSON.parse(svcText);
@@ -266,8 +321,7 @@ module.exports = async function lawArticleHandler(req, res) {
         encodeURIComponent(oc) +
         "&target=expc&type=JSON&display=8&query=" +
         encodeURIComponent(expq);
-      const expRes = await fetch(expUrl);
-      const expText = await expRes.text();
+      const expText = await httpsGetText(expUrl);
       const expJson = JSON.parse(expText);
       interpretations = getExpcList(expJson).slice(0, 8).map(mapExpcRow);
     } catch (e) {
@@ -307,10 +361,15 @@ module.exports = async function lawArticleHandler(req, res) {
       interpretations,
     });
   } catch (err) {
+    var msg = err && err.message ? String(err.message) : "서버 오류";
+    if (msg === "fetch failed" || /ECONNRESET|ETIMEDOUT|ENOTFOUND|certificate/i.test(msg)) {
+      msg +=
+        " — law.go.kr 연결 실패입니다. 공동활용에 등록한 서버 IP가 최신인지(/api/egress-ip 여러 번 확인), OC·재배포를 확인하세요. Vercel은 icn1(서울) 리전 사용을 권장합니다.";
+    }
     return res.status(500).json({
       ok: false,
       error: "INTERNAL",
-      message: err && err.message ? String(err.message) : "서버 오류",
+      message: msg,
     });
   }
 };

@@ -1,0 +1,11 @@
+{
+  "regions": ["icn1"],
+  "functions": {
+    "api/law-article.js": {
+      "maxDuration": 30
+    },
+    "api/egress-ip.js": {
+      "maxDuration": 15
+    }
+  }
+}

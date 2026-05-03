@@ -455,7 +455,12 @@ function lightSanitizeHtml(html) {
       /(<a\b[^>]*\shref=["'])(?:https?:)?\/\/open\.law\.go\.kr[^"']*(["'])/gi,
       "$1https://www.law.go.kr/main.html$2"
     )
-    .replace(/(<a\b[^>]*\shref=["'])\/(?=LSW\/|DRF\/|admRul\/|lsSc|lsAst|INF\/|joOn)/gi, "$1https://www.law.go.kr/");
+    .replace(
+      /(<a\b[^>]*\shref=["'])https?:\/\/www\.law\.go\.kr\/DRF[^"']*(["'])/gi,
+      "$1https://www.law.go.kr/main.html$2"
+    )
+    .replace(/(<a\b[^>]*\shref=["'])\/DRF[^"']*(["'])/gi, "$1https://www.law.go.kr/main.html$2")
+    .replace(/(<a\b[^>]*\shref=["'])\/(?=LSW\/|admRul\/|lsSc|lsAst|INF\/|joOn)/gi, "$1https://www.law.go.kr/");
 }
 
 function getExpcList(json) {
@@ -506,6 +511,8 @@ function finalizeLawGoKrPublicBrowseUrl(urlStr) {
     if (host === "open.law.go.kr") return "https://www.law.go.kr/main.html";
     const p = u.pathname || "";
     if (/^\/LSO(\/|$)/i.test(p)) return "https://www.law.go.kr/main.html";
+    /* Open API(JSON)용 /DRF/… 는 브라우저에서 열면 실패·원시응답만 나오는 경우가 많음 → 직링크 비활성 */
+    if (/^\/DRF(\/|$)/i.test(p)) return "";
   } catch (e) {
     /* ignore */
   }
@@ -552,6 +559,7 @@ function normalizeLawGoKrDetailUrl(raw) {
   }
   const path = s.startsWith("/") ? s : "/" + s.replace(/^\/+/, "");
   if (/^\/LSO(\/|$)/i.test(path)) return "https://www.law.go.kr/main.html";
+  if (/^\/DRF(\/|$)/i.test(path)) return "";
   return finalizeLawGoKrPublicBrowseUrl("https://www.law.go.kr" + path);
 }
 

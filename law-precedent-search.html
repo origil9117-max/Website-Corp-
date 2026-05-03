@@ -133,8 +133,8 @@
           <ol class="law-result-access-help-list">
             <li>
               <strong>공동활용(open.law.go.kr)</strong>은 API 신청·IP 등록용이며, 일반 창에서 링크를 열면 &quot;페이지 접속에 실패&quot;가 자주 납니다.
-              이 사이트의 목록 링크는 <code>open.law.go.kr</code>·<code>/LSO/</code>로 가지 않도록
-              <a href="https://www.law.go.kr/main.html" target="_blank" rel="noopener noreferrer">국가법령정보센터 메인</a> 등으로 돌립니다.
+              이 사이트의 목록 링크는 <code>open.law.go.kr</code>·<code>/LSO/</code>·브라우저용이 아닌 <code>/DRF/</code>(Open API) 주소로 가지 않도록
+              <a href="https://www.law.go.kr/main.html" target="_blank" rel="noopener noreferrer">국가법령정보센터</a> 통합검색·메인 등으로 돌립니다.
               IP·OC 등록은 위 안내의 <code>https://open.law.go.kr/LSO/main.do</code>를 <strong>복사</strong>해 등록 가능한 환경에서 여세요.
             </li>
             <li>
@@ -342,6 +342,7 @@
           if (host === "open.law.go.kr") return "https://www.law.go.kr/main.html";
           var p = u.pathname || "";
           if (/^\/LSO(\/|$)/i.test(p)) return "https://www.law.go.kr/main.html";
+          if (/^\/DRF(\/|$)/i.test(p)) return "";
         } catch (err) {
           /* ignore */
         }
@@ -377,6 +378,7 @@
           }
           if (s.charAt(0) === "/") {
             if (/^\/LSO(\/|$)/i.test(s)) return "https://www.law.go.kr/main.html";
+            if (/^\/DRF(\/|$)/i.test(s)) return "";
             return finalizeLawBrowseUrl("https://www.law.go.kr" + s);
           }
         } catch (err) {
@@ -618,7 +620,7 @@
             if (row.date) meta += ' <span class="law-expc-meta">' + escapeHtml(row.date) + "</span>";
             var inner = escapeHtml(titlePlain) + meta;
             var detail = lawGoKrBrowseHref(row.link);
-            var fbQ = String(titlePlain + " " + (row.dept || "")).trim();
+            var fbQ = String(titlePlain + " " + (row.dept || "") + (row.id ? " " + row.id : "")).trim();
             var href = detail || (fbQ ? lawCenterSearchUrl(fbQ) : "");
             var bodyHtml = href
               ? '<a class="law-expc-item-hit" href="' + escapeHtml(href) + '" target="_blank" rel="noopener noreferrer">' + inner + "</a>"
@@ -643,7 +645,7 @@
           '<ol class="law-expc-list">' +
           interpretationListItemsHtml(rows) +
           "</ol>" +
-          '<p class="law-result-disclaimer">법령해석(expc) 검색 결과입니다. 적용 여부는 각 원문에서 확인해야 합니다.</p>' +
+          '<p class="law-result-disclaimer">법령해석(expc) 검색 결과입니다. API가 내려주는 주소가 데이터용(/DRF/)인 경우에는 통합검색으로 연결됩니다. 적용 여부는 각 원문에서 확인해야 합니다.</p>' +
           "</section>"
         );
       }
@@ -663,7 +665,7 @@
           '<ol class="law-expc-list">' +
           interpretationListItemsHtml(rows) +
           "</ol>" +
-          '<p class="law-result-disclaimer">행정규칙(admrul) 검색 결과입니다. 적용 여부는 각 원문에서 확인해야 합니다.</p>' +
+          '<p class="law-result-disclaimer">행정규칙(admrul) 검색 결과입니다. 상세 주소가 /DRF/ 등 API 전용이면 통합검색으로 연결됩니다. 적용 여부는 각 원문에서 확인해야 합니다.</p>' +
           "</section>"
         );
       }
@@ -698,7 +700,7 @@
               if (row.date) meta += ' <span class="law-prec-meta">' + escapeHtml(row.date) + "</span>";
               var inner = title + meta;
               var detail = lawGoKrBrowseHref(row.link);
-              var fb = String(row.caseNo || row.title || q || "").trim();
+              var fb = String(row.caseNo || row.title || row.id || q || "").trim();
               var href = detail || (fb ? scourtPrecedentSearchUrl(fb) : "");
               var titleHtml = href
                 ? '<a class="law-prec-item-hit" href="' + escapeHtml(href) + '" target="_blank" rel="noopener noreferrer">' + inner + "</a>"
@@ -713,7 +715,7 @@
             '<ol class="law-prec-api-list">' +
             listItems +
             "</ol>" +
-            '<p class="law-result-disclaimer">목록은 키워드 검색 결과이며, 사실관계에 따라 달라질 수 있습니다. 대법원 포털에서 사건번호로 재확인하세요.</p>' +
+            '<p class="law-result-disclaimer">목록은 키워드 검색 결과이며, 국가법령정보 API가 내려주는 주소가 /DRF/ 등 브라우저 비호환인 경우 대법원 판례 검색으로 연결됩니다. 사실관계에 따라 달라질 수 있으니 사건번호로 재확인하세요.</p>' +
             '<p class="law-result-subhead">공개 포털에서 추가 검색</p>' +
             portalBlock;
           return;

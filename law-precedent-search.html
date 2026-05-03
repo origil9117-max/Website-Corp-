@@ -387,12 +387,47 @@
         return "";
       }
 
+      /** GET 검색 URL이 너무 길면 센터에서 404·거부되는 경우가 있어 인코딩 길이로 상한을 둡니다. */
+      function capQueryForGetUrl(raw, maxEncodedLen) {
+        var s = String(raw || "").trim().replace(/\s+/g, " ");
+        var cap = typeof maxEncodedLen === "number" ? maxEncodedLen : 1100;
+        if (!s) return "법령";
+        while (s.length > 1 && encodeURIComponent(s).length > cap) {
+          s = s.slice(0, Math.max(1, Math.floor(s.length * 0.88)));
+        }
+        while (encodeURIComponent(s).length > cap && s.length > 0) {
+          s = s.slice(0, s.length - 1);
+        }
+        s = s.trim();
+        return s || "법령";
+      }
+
+      /** API 행 제목이 매우 길 때: 일련번호·부처 앞부분·제목 앞부분만 넣어 검색 길이를 줄입니다. */
+      function lawPortalFallbackQuery(title, dept, id) {
+        var idStr = String(id || "").trim();
+        var t = String(title || "").trim();
+        var d = String(dept || "").trim();
+        var chunks = [];
+        if (/^\d{3,20}$/.test(idStr)) chunks.push(idStr);
+        if (d) chunks.push(d.length > 28 ? d.slice(0, 28) : d);
+        if (t) chunks.push(t.length > 72 ? t.slice(0, 72) + "…" : t);
+        return chunks.join(" ").trim() || "법령";
+      }
+
       function lawCenterSearchUrl(q) {
-        return "https://www.law.go.kr/LSW/lsAstListSc.do?menuId=0&subMenuId=0&searchScope=1&queryText=" + encodeURIComponent(q);
+        var safe = capQueryForGetUrl(q, 1100);
+        return (
+          "https://www.law.go.kr/LSW/lsAstListSc.do?menuId=0&subMenuId=0&searchScope=1&queryText=" +
+          encodeURIComponent(safe)
+        );
       }
 
       function scourtPrecedentSearchUrl(q) {
-        return "https://glaw.scourt.go.kr/wsjo/panre/sjo010.do?outmax=100&stDate=&endDate=&saNo=&nm=" + encodeURIComponent(q);
+        var safe = capQueryForGetUrl(q, 900);
+        return (
+          "https://glaw.scourt.go.kr/wsjo/panre/sjo010.do?outmax=100&stDate=&endDate=&saNo=&nm=" +
+          encodeURIComponent(safe)
+        );
       }
 
       function expandQuery(query) {
@@ -620,8 +655,8 @@
             if (row.date) meta += ' <span class="law-expc-meta">' + escapeHtml(row.date) + "</span>";
             var inner = escapeHtml(titlePlain) + meta;
             var detail = lawGoKrBrowseHref(row.link);
-            var fbQ = String(titlePlain + " " + (row.dept || "") + (row.id ? " " + row.id : "")).trim();
-            var href = detail || (fbQ ? lawCenterSearchUrl(fbQ) : "");
+            var fbQ = lawPortalFallbackQuery(titlePlain, row.dept, row.id);
+            var href = detail || lawCenterSearchUrl(fbQ);
             var bodyHtml = href
               ? '<a class="law-expc-item-hit" href="' + escapeHtml(href) + '" target="_blank" rel="noopener noreferrer">' + inner + "</a>"
               : inner;

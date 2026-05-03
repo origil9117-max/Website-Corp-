@@ -768,6 +768,18 @@
   color: #8a5a0a;
 }
 
+.law-result-support-links {
+  font-size: 0.9rem;
+  margin: 0.45rem 0 0.75rem;
+  line-height: 1.45;
+}
+
+.law-result-support-links a {
+  color: #1c4a7c;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
 .law-result-divider {
   height: 1px;
   margin: 0.65rem 0 0.45rem;

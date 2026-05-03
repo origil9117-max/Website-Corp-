@@ -54,6 +54,8 @@ function getSiteOriginCandidates() {
   }
   add("https://daehanminkuk.co.kr");
   add("https://www.daehanminkuk.co.kr");
+  /* 일부 환경에서 등록 도메인 외에 포털 자체 Referer로만 통과하는 사례가 있어 마지막 후보로 시도 */
+  add("https://www.law.go.kr");
   return out;
 }
 
@@ -86,7 +88,9 @@ function httpsGetText(urlStr, siteOriginBase) {
           {
             Host: u.hostname,
             Accept: "application/json, text/plain, */*",
-            "User-Agent": "daehanminkuk-law-article-proxy/1.0",
+            "Accept-Language": "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7",
+            "User-Agent":
+              "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
           },
           site
         ),
@@ -360,7 +364,7 @@ module.exports = async function lawArticleHandler(req, res) {
           fullMsg +=
             " — 시도한 Referer: " +
             tried.join(", ") +
-            ". 공동활용 시스템정보의 도메인(www 유무 포함)과 일치하는 LAW_API_SITE_URL을 넣거나, /api/egress-ip로 나온 출구 IP를 모두 등록했는지 확인하세요.";
+            ". Vercel의 LAW_API_SITE_URL·LAW_OC가 이 신청 건과 같은지, /api/egress-ip로 나온 출구 IP를 모두 등록했는지 확인하세요. 위를 모두 맞춰도 동일하면 국가법령정보 공동활용(https://open.law.go.kr/LSO/main.do) 고객지원에 문의하세요(등록 도메인·허용 IP·OC 식별 정보).";
         }
         return res.status(502).json({
           ok: false,

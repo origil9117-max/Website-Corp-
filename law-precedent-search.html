@@ -508,10 +508,22 @@
           }
           if (!data || !data.ok) {
             var errMsg = data && data.message ? String(data.message) : "API 응답을 해석하지 못했습니다.";
+            var supportLinks = "";
+            if (
+              (data && data.error === "SEARCH_API") ||
+              (/OPEN API|IP주소|도메인|검증/i.test(errMsg) && errMsg)
+            ) {
+              supportLinks =
+                '<p class="law-result-support-links">' +
+                '<a href="https://open.law.go.kr/LSO/main.do" target="_blank" rel="noopener noreferrer">국가법령정보 공동활용(신청·문의)</a> · ' +
+                '<a href="/api/egress-ip" target="_blank" rel="noopener noreferrer">등록용 출구 IP 확인</a>' +
+                "</p>";
+            }
             panelLaw.innerHTML =
               '<p class="law-result-panel-lead law-result-panel-lead--warn">' +
               escapeHtml(errMsg) +
               "</p>" +
+              supportLinks +
               lawPanelOfficialLinksHtml(safeLabel, q);
             return "api_err";
           }

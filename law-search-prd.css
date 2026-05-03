@@ -1,5 +1,17 @@
 /* 법령·판례 통합 검색 — 공공 법령·판례 포털 스타일 */
 
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 :root {
   --law-portal-navy: #0a1628;
   --law-portal-navy-mid: #132337;
@@ -480,6 +492,7 @@
   display: flex;
   gap: 0.4rem;
   flex-wrap: wrap;
+  align-items: stretch;
 }
 
 .law-topic-search-row input {
@@ -563,4 +576,159 @@
   border-left: 3px solid var(--law-portal-p1);
   border-radius: 0 6px 6px 0;
   line-height: 1.65;
+}
+
+/* ——— 통합 검색 결과: 법령 / 판례 / 참고 사례 ——— */
+.law-search-results {
+  margin-top: 1rem;
+}
+
+.law-result-panels {
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 900px) {
+  .law-result-panels {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.law-search-results--active .law-result-panel {
+  border-color: rgba(28, 74, 124, 0.28);
+  box-shadow: 0 4px 14px rgba(10, 22, 40, 0.06);
+}
+
+.law-result-panel {
+  border: 1px solid rgba(28, 74, 124, 0.16);
+  border-radius: 10px;
+  background: linear-gradient(180deg, #fbfdff 0%, #f4f8fc 100%);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  min-height: 10rem;
+}
+
+.law-result-panel-head {
+  padding: 0.55rem 0.85rem;
+  background: rgba(28, 74, 124, 0.08);
+  border-bottom: 1px solid rgba(28, 74, 124, 0.12);
+}
+
+.law-result-panel-head h3 {
+  margin: 0;
+  font-size: 0.98rem;
+  font-weight: 800;
+  color: #12365c;
+  letter-spacing: -0.02em;
+}
+
+.law-result-panel-body {
+  padding: 0.75rem 0.85rem 0.9rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.law-result-panel-placeholder {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.law-result-panel-lead {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--ink-soft);
+  line-height: 1.55;
+}
+
+.law-result-actions,
+.law-result-example-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.35rem;
+}
+
+.law-result-actions a {
+  display: inline-block;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--law-portal-p1);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.law-result-actions a:hover {
+  color: #0f2744;
+}
+
+.law-result-example-list li {
+  position: relative;
+  padding-left: 1rem;
+  font-size: 0.88rem;
+  color: var(--ink-soft);
+  line-height: 1.55;
+}
+
+.law-result-example-list li::before {
+  content: "·";
+  position: absolute;
+  left: 0;
+  font-weight: 800;
+  color: var(--law-portal-p1);
+}
+
+.law-result-disclaimer {
+  margin: 0.25rem 0 0;
+  font-size: 0.78rem;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.law-result-disclaimer a {
+  font-weight: 600;
+  color: var(--law-portal-p1);
+}
+
+.law-result-api-note {
+  margin: 0.85rem 0 0;
+  padding: 0.65rem 0.75rem;
+  font-size: 0.78rem;
+  line-height: 1.55;
+  color: var(--ink-soft);
+  background: rgba(92, 107, 126, 0.08);
+  border-radius: 8px;
+  border: 1px solid rgba(92, 107, 126, 0.15);
+}
+
+.law-result-api-note code {
+  font-size: 0.76em;
+  padding: 0.08em 0.28em;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.75);
+}
+
+.law-result-roadmap-teaser {
+  margin-top: 0.85rem;
+  padding: 0.55rem 0.75rem;
+  font-size: 0.86rem;
+  color: var(--muted);
+  background: rgba(184, 146, 106, 0.08);
+  border-radius: 8px;
+  border: 1px solid rgba(184, 146, 106, 0.22);
+}
+
+.law-result-roadmap-teaser p {
+  margin: 0;
+}
+
+.law-result-roadmap-teaser a {
+  font-weight: 700;
+  color: var(--law-portal-p1);
 }

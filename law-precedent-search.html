@@ -4,12 +4,12 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>법령·판례 통합 검색 서비스 | 지능형 행정 플랫폼 | 대한민국행정사사무소</title>
-  <meta name="description" content="국가법령정보·판례 등을 아우르는 법령·판례 통합 검색 서비스 — 키워드 검색, 주제별 탐색, 법령 원문·판례·AI 안내 등 단계적 도입 예정." />
+  <meta name="description" content="국가법령정보·판례 등을 아우르는 법령·판례 통합 검색 — 키워드 검색 후 공식 포털 링크(법령·판례)와 참고용 사례 안내, 향후 Open API 연동." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700&family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="platform-pages.css?v=20260420d" />
-  <link rel="stylesheet" href="law-search-prd.css?v=20260502i" />
+  <link rel="stylesheet" href="law-search-prd.css?v=20260503a" />
 </head>
 <body class="law-prd-body" data-platform-slug="law-precedent-search">
   <header class="topbar">
@@ -26,7 +26,9 @@
 
   <div class="platform-wip-banner" role="status" aria-live="polite">
     <p class="platform-wip-banner-inner">
-      <strong class="platform-wip-pulse">준비 중</strong> — 실제 검색·API 연동은 단계적으로 개방됩니다. 급한 문의는
+      <strong class="platform-wip-pulse">1차 오픈</strong> — 아래 검색은 <strong>공식 포털(국가법령정보센터·대법원 등)</strong>로 연결되는 링크와
+      <strong>참고용 일반 안내</strong>를 제공합니다. 인증키(OC)가 필요한 Open API는 브라우저에 노출하지 않으며,
+      서버 프록시 구축 후 동일 화면에서 요약·목록을 불러오도록 확장할 예정입니다. 급한 문의는
       <a href="tel:051-515-5459">대표전화</a> 또는 <a href="index.html#contact">연락처</a>를 이용해 주세요.
     </p>
   </div>
@@ -73,34 +75,49 @@
 
     <section class="law-topic-search" aria-label="통합 검색">
       <h2>통합 검색</h2>
-      <p class="law-topic-search-desc">주제를 입력하면 해당 주제에 맞는 기능 구성으로 자동 정리됩니다.</p>
-      <div class="law-topic-search-row">
-        <input id="law-topic-input" type="search" placeholder="예: 부동산 임대차, 외국인 비자, 행정처분" />
-        <button id="law-topic-search-btn" type="button">검색</button>
-      </div>
-      <p id="law-topic-status" class="law-topic-status" role="status" aria-live="polite"></p>
-      <div class="law-result-plan" aria-label="검색 결과 기본 구성">
-        <div class="law-result-plan-col">
-          <h3>1차 구성 (검색·결과 기본)</h3>
-          <ul>
-            <li>키워드 검색</li>
-            <li>법령 원문 조회</li>
-            <li>판례 목록 (대법원 API)</li>
-            <li>카테고리 8개</li>
-            <li>반응형 UI</li>
-            <li>면책고지</li>
-          </ul>
+      <p class="law-topic-search-desc">주제를 입력하면 아래 <strong>① 법령·해석 ② 판례 ③ 참고 사례</strong> 블록이 키워드에 맞춰 갱신됩니다. (현재 단계는 공식 포털 링크 중심입니다.)</p>
+      <form id="law-topic-search-form" class="law-topic-search-row" role="search" action="#" method="get">
+        <label class="visually-hidden" for="law-topic-input">통합 검색어</label>
+        <input id="law-topic-input" name="q" type="search" autocomplete="off" placeholder="예: 부동산 임대차, 외국인 비자, 행정처분" />
+        <button id="law-topic-search-btn" type="submit">검색</button>
+      </form>
+      <p id="law-topic-status" class="law-topic-status" role="status" aria-live="polite">검색어를 입력한 뒤 검색을 누르면 공식 포털 링크와 참고 안내가 표시됩니다.</p>
+
+      <section id="law-search-results" class="law-search-results" aria-label="검색 결과">
+        <div class="law-result-panels">
+          <article class="law-result-panel" aria-labelledby="law-panel-law-title">
+            <header class="law-result-panel-head">
+              <h3 id="law-panel-law-title">1. 법령 원문 및 해석</h3>
+            </header>
+            <div class="law-result-panel-body" id="law-panel-law-body">
+              <p class="law-result-panel-placeholder">검색 후 국가법령정보센터·법령해석 등 공식 경로로 이동할 수 있는 링크가 여기에 표시됩니다.</p>
+            </div>
+          </article>
+          <article class="law-result-panel" aria-labelledby="law-panel-prec-title">
+            <header class="law-result-panel-head">
+              <h3 id="law-panel-prec-title">2. 관련 판례</h3>
+            </header>
+            <div class="law-result-panel-body" id="law-panel-prec-body">
+              <p class="law-result-panel-placeholder">검색 후 대법원 종합법률정보 등 판례 검색으로 연결되는 링크가 여기에 표시됩니다.</p>
+            </div>
+          </article>
+          <article class="law-result-panel" aria-labelledby="law-panel-ex-title">
+            <header class="law-result-panel-head">
+              <h3 id="law-panel-ex-title">3. 사례 예시</h3>
+            </header>
+            <div class="law-result-panel-body" id="law-panel-ex-body">
+              <p class="law-result-panel-placeholder">주제에 맞는 <strong>참고용</strong> 절차 흐름(일반론)이 여기에 표시됩니다. 개별 사안은 상담으로 확인해 주세요.</p>
+            </div>
+          </article>
         </div>
-        <div class="law-result-plan-col">
-          <h3>2차 구성 (고도화)</h3>
-          <ul>
-            <li>AI 판례 요약</li>
-            <li>생활법률 Q&amp;A 챗봇</li>
-            <li>행정심판 재결례 탭</li>
-            <li>즐겨찾기</li>
-            <li>상담 전환 CTA 최적화</li>
-          </ul>
-        </div>
+        <p class="law-result-api-note">
+          <strong>향후 연동:</strong> 발급하신 <a href="https://open.law.go.kr/LSO/main.do" target="_blank" rel="noopener noreferrer">국가법령정보 공동활용</a> Open API(예: 판례 <code>target=prec</code>)는
+          서버에서만 호출하도록 구성하는 것이 안전합니다. 개발 참고로 <a href="https://github.com/chrisryugj/korean-law-mcp" target="_blank" rel="noopener noreferrer">korean-law-mcp</a>는 동일 데이터를 MCP 도구로 묶어 둔 예시입니다.
+        </p>
+      </section>
+
+      <div class="law-result-roadmap-teaser" aria-label="로드맵 안내">
+        <p><strong>도입 로드맵</strong>은 아래 기능 명세에서 확인할 수 있습니다. <a href="#law-prd-spec">기능 명세로 이동</a></p>
       </div>
     </section>
 
@@ -242,11 +259,16 @@
   </div>
   <script>
     (function () {
+      var form = document.getElementById("law-topic-search-form");
       var input = document.getElementById("law-topic-input");
       var button = document.getElementById("law-topic-search-btn");
       var status = document.getElementById("law-topic-status");
       var spec = document.getElementById("law-prd-spec");
-      if (!input || !button || !status || !spec) return;
+      var panelLaw = document.getElementById("law-panel-law-body");
+      var panelPrec = document.getElementById("law-panel-prec-body");
+      var panelEx = document.getElementById("law-panel-ex-body");
+      var resultsEl = document.getElementById("law-search-results");
+      if (!input || !button || !status || !spec || !panelLaw || !panelPrec || !panelEx) return;
 
       var sections = Array.prototype.slice.call(spec.querySelectorAll(".law-prd-feature"));
       var topicAliases = {
@@ -260,8 +282,67 @@
         "형사·범죄": ["형사", "범죄", "고소", "고발"]
       };
 
+      var topicExamples = {
+        "부동산": [
+          "분쟁 전에는 계약서·전입신고·보증금 지급·중도해지 조건 등 사실관계를 날짜 순으로 정리해 두는 것이 일반적으로 유리합니다.",
+          "관련 법령·판례는 주택·상가 등 유형에 따라 달라질 수 있으므로, 통합검색으로 조문 체계를 확인한 뒤 개별 상담으로 구체 적용 여부를 검토하는 흐름이 많습니다."
+        ],
+        "가족·상속": [
+          "가사·상속 사안은 당사자 관계·재산 구성·협의서 유무에 따라 절차가 크게 달라질 수 있습니다.",
+          "민법·가사소송 등 관련 조문과 판례를 참고하되, 조정·합의 가능성까지 포함해 전문가 상담을 병행하는 경우가 많습니다."
+        ],
+        "근로·임금": [
+          "근로계약서·임금대장·퇴직 정산 내역 등 서면 자료를 확보한 뒤 쟁점(해고의 정당성, 임금·수당 등)을 나누어 보는 것이 일반적입니다.",
+          "근로기준법·노동관계법령과 판례를 병행 검토하고, 필요 시 노동위원회·민사 절차를 검토합니다."
+        ],
+        "외국인·비자": [
+          "체류 자격·허가 기간·위반 사유 등은 출입국관리법령과 행정처분·불복 절차가 맞물리는 경우가 많습니다.",
+          "거절처분이 있는 경우 행정심판·소송과 별도로 사실관계 보완 자료를 준비하는 흐름이 흔합니다."
+        ],
+        "소비자 분쟁": [
+          "계약 조항·광고·결제·환불 정책을 대조하고, 소비자분쟁조정·민사 절차 중 어느 경로가 적합한지 단계적으로 검토합니다.",
+          "전자상거래 등 특별법 조문과 판례를 함께 확인하는 것이 일반적입니다."
+        ],
+        "행정처분·불복": [
+          "처분청·이유·청구기간·증거를 먼저 정리하고, 행정심판법·해당 부처 법령의 불복 요건을 조문 단위로 확인합니다.",
+          "행정심판 재결·판례를 통해 유사 사안의 심리 경향을 참고할 수 있습니다."
+        ],
+        "사업·법인": [
+          "회사 설립·지분·계약·규제 분야별로 상법·세법·허가 법령이 겹치는 경우가 많아, 키워드별로 조문을 나누어 검토합니다.",
+          "등기·인허가와 민사 분쟁이 연결되면 판례 검색 범위도 넓어지는 편입니다."
+        ],
+        "형사·범죄": [
+          "고소·고발 전 구성요건·공소시효·관할을 법령과 판례로 확인하고, 방어 또는 피해 회복 절차를 별도로 설계합니다.",
+          "형사 절차와 민사(손해배상 등)가 병행될 수 있어 자료를 구분해 두는 것이 좋습니다."
+        ],
+        _default: [
+          "입력하신 키워드를 바탕으로 국가법령정보센터·판례 포털에서 조문과 판시를 확인한 뒤, 사무소 상담으로 사실관계를 좁혀 가는 절차를 권장합니다.",
+          "아래 링크는 공공 기관 제공 검색으로 이동합니다. 자동 요약·챗봇 등은 도입 예정이며, 현재 화면의 사례 설명은 법률 자문이 아닙니다."
+        ]
+      };
+
+      var PLACEHOLDER_LAW = "<p class=\"law-result-panel-placeholder\">검색 후 국가법령정보센터·법령해석 등 공식 경로로 이동할 수 있는 링크가 여기에 표시됩니다.</p>";
+      var PLACEHOLDER_PREC = "<p class=\"law-result-panel-placeholder\">검색 후 대법원 종합법률정보 등 판례 검색으로 연결되는 링크가 여기에 표시됩니다.</p>";
+      var PLACEHOLDER_EX = "<p class=\"law-result-panel-placeholder\">주제에 맞는 <strong>참고용</strong> 절차 흐름(일반론)이 여기에 표시됩니다. 개별 사안은 상담으로 확인해 주세요.</p>";
+
       function normalize(value) {
         return String(value || "").trim().toLowerCase();
+      }
+
+      function escapeHtml(s) {
+        return String(s)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;");
+      }
+
+      function lawCenterSearchUrl(q) {
+        return "https://www.law.go.kr/LSW/lsAstListSc.do?menuId=0&subMenuId=0&searchScope=1&queryText=" + encodeURIComponent(q);
+      }
+
+      function scourtPrecedentSearchUrl(q) {
+        return "https://glaw.scourt.go.kr/wsjo/panre/sjo010.do?outmax=100&stDate=&endDate=&saNo=&nm=" + encodeURIComponent(q);
       }
 
       function expandQuery(query) {
@@ -279,6 +360,62 @@
         return expanded;
       }
 
+      function matchTopicKey(lowered) {
+        var key;
+        for (key in topicAliases) {
+          if (!Object.prototype.hasOwnProperty.call(topicAliases, key)) continue;
+          var list = topicAliases[key];
+          if (list.some(function (word) { return lowered.indexOf(normalize(word)) !== -1; })) return key;
+        }
+        return null;
+      }
+
+      function renderResultPanels(raw) {
+        var q = String(raw || "").trim();
+        var safeLabel = escapeHtml(q || "키워드");
+        if (!q) {
+          panelLaw.innerHTML = PLACEHOLDER_LAW;
+          panelPrec.innerHTML = PLACEHOLDER_PREC;
+          panelEx.innerHTML = PLACEHOLDER_EX;
+          if (resultsEl) resultsEl.classList.remove("law-search-results--active");
+          return;
+        }
+        if (resultsEl) resultsEl.classList.add("law-search-results--active");
+
+        var lawUrl = lawCenterSearchUrl(q);
+        var precUrl = scourtPrecedentSearchUrl(q);
+
+        panelLaw.innerHTML =
+          "<p class=\"law-result-panel-lead\">검색어 <strong>" + safeLabel + "</strong>에 대해 국가법령정보센터에서 법령·행정규칙 등을 검색합니다.</p>" +
+          "<ul class=\"law-result-actions\">" +
+          "<li><a href=\"" + lawUrl + "\" target=\"_blank\" rel=\"noopener noreferrer\">국가법령정보센터 통합검색 (새 창)</a></li>" +
+          "<li><a href=\"https://www.law.go.kr/main.html\" target=\"_blank\" rel=\"noopener noreferrer\">센터 메인 — 메뉴에서 법령해석·행정규칙</a></li>" +
+          "<li><a href=\"https://open.law.go.kr/LSO/main.do\" target=\"_blank\" rel=\"noopener noreferrer\">국가법령정보 공동활용 (API 신청·문서)</a></li>" +
+          "</ul>" +
+          "<p class=\"law-result-disclaimer\">원문·연혁·시행일은 센터 화면에서 확인하세요. 링크 URL은 공공 사이트 정책에 따라 변경될 수 있습니다.</p>";
+
+        panelPrec.innerHTML =
+          "<p class=\"law-result-panel-lead\">검색어 <strong>" + safeLabel + "</strong>로 판례·재결 등을 공개 포털에서 찾습니다.</p>" +
+          "<ul class=\"law-result-actions\">" +
+          "<li><a href=\"" + precUrl + "\" target=\"_blank\" rel=\"noopener noreferrer\">대법원 종합법률정보 — 판례 검색 (새 창)</a></li>" +
+          "<li><a href=\"https://glaw.scourt.go.kr/\" target=\"_blank\" rel=\"noopener noreferrer\">종합법률정보 포털 메인</a></li>" +
+          "<li><a href=\"https://www.simpan.go.kr/\" target=\"_blank\" rel=\"noopener noreferrer\">행정심판 정보 포털 (재결·안내)</a></li>" +
+          "</ul>" +
+          "<p class=\"law-result-disclaimer\">사건번호·심급·판시사항은 포털 검색 결과를 기준으로 하세요. 하급심 연계는 단계적으로 확장 예정입니다.</p>";
+
+        var topicKey = matchTopicKey(normalize(q));
+        var bullets = topicExamples[topicKey || "_default"] || topicExamples._default;
+        var listHtml = bullets.map(function (line) { return "<li>" + escapeHtml(line) + "</li>"; }).join("");
+        var topicNote = topicKey
+          ? "<p class=\"law-result-panel-lead\">입력 내용을 <strong>" + escapeHtml(topicKey) + "</strong> 주제에 가깝게 분류했습니다. 아래는 <strong>참고용 일반 흐름</strong>이며 개별 법률 효력이 없습니다.</p>"
+          : "<p class=\"law-result-panel-lead\">주제 분류가 명확하지 않아 일반 안내를 표시합니다. <strong>참고용</strong>이며 법률 자문이 아닙니다.</p>";
+
+        panelEx.innerHTML =
+          topicNote +
+          "<ul class=\"law-result-example-list\">" + listHtml + "</ul>" +
+          "<p class=\"law-result-disclaimer\">구체적 사실관계·증거·기간에 따라 결과가 달라질 수 있습니다. <a href=\"index.html#contact\">상담 예약</a>을 이용해 주세요.</p>";
+      }
+
       function renderByTopic() {
         var raw = input.value;
         var tokens = expandQuery(raw);
@@ -286,34 +423,48 @@
         var keywordFlowIds = ["keyword-search", "law-text", "precedent-list", "ai-summary"];
         sections.forEach(function (section) {
           var keywords = normalize(section.getAttribute("data-topic-keywords"));
-          var isCore = section.getAttribute("data-core") === "true";
           var featureId = section.getAttribute("data-feature-id");
           var matched = tokens.some(function (token) { return keywords.indexOf(token) !== -1; });
           var show;
           if (!tokens.length) {
             show = true;
           } else {
-            // 통합키워드 검색 입력 시에는 요청한 3개 결과(법령 원문·판례 목록·AI 판례 요약) 중심으로 표시
             show = keywordFlowIds.indexOf(featureId) !== -1 || matched;
           }
           section.style.display = show ? "" : "none";
           if (show) visibleCount += 1;
         });
+
         if (!tokens.length) {
-          status.textContent = "전체 구성 표시 중입니다.";
+          status.textContent = "검색어를 입력한 뒤 검색을 누르면 공식 포털 링크와 참고 안내가 표시됩니다. (아래는 전체 기능 명세 표시)";
+          renderResultPanels("");
           return;
         }
-        status.textContent = "\"" + raw + "\" 입력 결과: 통합키워드 검색 흐름에 따라 법령 원문 조회 · 판례 목록 · AI 판례 요약을 중심으로 " + visibleCount + "개 항목을 표시합니다.";
+
+        renderResultPanels(raw);
+        status.textContent =
+          "\"" + raw + "\" 기준: 위 세 블록에 공식 포털 링크·참고 사례를 표시했습니다. 아래 명세는 " + visibleCount + "개 항목을 강조 표시합니다.";
+
+        if (resultsEl && typeof resultsEl.scrollIntoView === "function") {
+          resultsEl.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        }
       }
 
-      button.addEventListener("click", function () {
-        renderByTopic();
-      });
-      input.addEventListener("keydown", function (event) {
-        if (event.key === "Enter") {
-          event.preventDefault();
-          renderByTopic();
+      function onSubmit(event) {
+        if (event) event.preventDefault();
+        var trimmed = String(input.value || "").trim();
+        if (!trimmed) {
+          status.textContent = "검색어를 입력해 주세요.";
+          input.focus();
+          return;
         }
+        renderByTopic();
+      }
+
+      if (form) form.addEventListener("submit", onSubmit);
+      button.addEventListener("click", function (e) {
+        e.preventDefault();
+        onSubmit(e);
       });
     })();
   </script>

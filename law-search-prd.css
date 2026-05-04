@@ -934,12 +934,7 @@
   cursor: default;
 }
 
-.law-expc-item-plain .law-expc-meta {
-  color: var(--muted);
-  font-weight: 500;
-}
-
-.law-expc-item-hit .law-expc-meta {
+.law-expc-list li .law-expc-meta {
   color: var(--muted);
   font-weight: 500;
   text-decoration: none;

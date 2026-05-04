@@ -530,14 +530,15 @@
       }
 
       /**
-       * 특정 조문 검색 시 법령해석 목록에서 «한 행만» 센터로 링크하고, 그 외 행은 텍스트만 표시하는 규칙.
+       * 특정 조문 검색 시 법령해석 목록에서 «매칭 한 행»은 센터 검색어를 고정 문구로 넘기고,
+       * 그 외 행은 행마다 상세 URL 또는 제목·부처 기반 포털 검색으로 연결합니다(제목만 링크, 부처·일자는 링크 밖).
        * 항목을 추가하면 동일 패턴이 공통 적용됩니다.
        */
       var EXPC_SINGLE_LINK_RULES = [
         {
           id: "civil32-molit-logistics",
           disclaimerNote:
-            "「민법」제32조로 조회한 경우, 위 목록 중 <strong>국토교통부</strong> 안건 제목만 클릭 가능하며 국가법령정보센터 <strong>판례·해석례등</strong> 화면(법제처 해석례)으로 열립니다. 검색창에는 해당 안건 전체 제목이 채워집니다. 그 외 해석 행은 링크 없이 참고용으로만 표시합니다.",
+            "「민법」제32조로 조회한 경우, 각 안건 <strong>제목</strong>(노란색 부처·일자 제외)을 클릭하면 국가법령정보센터 <strong>판례·해석례등</strong> 화면으로 열립니다. <strong>국토교통부</strong> 해당 안건은 검색창에 안내용 전체 문구가 들어가고, 그 외 안건은 해당 제목 등으로 검색이 채워집니다.",
           portalQuery:
             "국토교통부 - 「민법」 또는 「상법」에 따라 설립된 법인이 「물류시설의 개발 및 운영에 관한 법률」 제27조제2항제1호부터 제4호까지의 어느 하나에 해당하는 자와 공동으로 물류단지개발사업 시행자로 지정받은 경우 사업대상 토지면적의 3분의 2 이상을 매입하지 않고도 물류단지개발사업에 필요한 토지등을 수용하거나 사용할 수 있는지 여부(「물류시설의 개발 및 운영에 관한 법률」 제32조제1항 등 관련)",
           matchArticle: function (p) {
@@ -851,12 +852,9 @@
             var meta = "";
             if (row.dept) meta += ' <span class="law-expc-meta">' + escapeHtml(row.dept) + "</span>";
             if (row.date) meta += ' <span class="law-expc-meta">' + escapeHtml(row.date) + "</span>";
-            var inner = escapeHtml(titlePlain) + meta;
             var href = "";
-            if (singleRule && row.kind === "expc") {
-              if (ruleRowMatchesExpcSingleLink(singleRule, titlePlain)) {
-                href = lawExpcScInterpretPrecMenuUrl(singleRule.portalQuery);
-              }
+            if (row.kind === "expc" && singleRule && ruleRowMatchesExpcSingleLink(singleRule, titlePlain)) {
+              href = lawExpcScInterpretPrecMenuUrl(singleRule.portalQuery);
             } else {
               var detail = lawGoKrBrowseHref(row.link);
               var fbQ = lawPortalFallbackQuery(titlePlain, row.dept, row.id);
@@ -864,9 +862,15 @@
                 row.kind === "admrul" ? lawAdmrulPortalSearchUrl(fbQ) : lawExpcPortalSearchUrl(fbQ);
               href = detail || portalFb;
             }
+            var titleEsc = escapeHtml(titlePlain);
             var bodyHtml = href
-              ? '<a class="law-expc-item-hit" href="' + escapeHtml(href) + '" target="_blank" rel="noopener noreferrer">' + inner + "</a>"
-              : '<span class="law-expc-item-plain">' + inner + "</span>";
+              ? '<a class="law-expc-item-hit" href="' +
+                escapeHtml(href) +
+                '" target="_blank" rel="noopener noreferrer">' +
+                titleEsc +
+                "</a>" +
+                meta
+              : '<span class="law-expc-item-plain">' + titleEsc + "</span>" + meta;
             return "<li>" + badge + bodyHtml + "</li>";
           })
           .join("");

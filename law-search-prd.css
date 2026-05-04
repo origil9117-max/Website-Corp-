@@ -940,6 +940,18 @@
   text-decoration: none;
 }
 
+/* 검색 조문 인용: 링크 밖·참고 강조 */
+.law-expc-title-hit-skip {
+  display: inline;
+  background: rgba(255, 236, 160, 0.75);
+  border-radius: 2px;
+  padding: 0 0.06em;
+  cursor: text;
+  color: inherit;
+  text-decoration: none;
+  font-weight: 500;
+}
+
 .law-expc-meta {
   font-size: 0.9em;
   color: var(--muted);

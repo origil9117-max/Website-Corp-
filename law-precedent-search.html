@@ -531,14 +531,14 @@
 
       /**
        * 특정 조문 검색 시 법령해석 목록에서 «매칭 한 행»은 센터 검색어를 고정 문구로 넘기고,
-       * 그 외 행은 행마다 상세 URL 또는 제목·부처 기반 포털 검색으로 연결합니다(제목만 링크, 부처·일자는 링크 밖).
+       * 그 외 행은 행마다 상세 URL 또는 제목·부처 기반 포털 검색으로 연결합니다(제목 중 검색 조문 인용·부처·일자는 링크 밖).
        * 항목을 추가하면 동일 패턴이 공통 적용됩니다.
        */
       var EXPC_SINGLE_LINK_RULES = [
         {
           id: "civil32-molit-logistics",
           disclaimerNote:
-            "「민법」제32조로 조회한 경우, 각 안건 <strong>제목</strong>(노란색 부처·일자 제외)을 클릭하면 국가법령정보센터 <strong>판례·해석례등</strong> 화면으로 열립니다. <strong>국토교통부</strong> 해당 안건은 검색창에 안내용 전체 문구가 들어가고, 그 외 안건은 해당 제목 등으로 검색이 채워집니다.",
+            "「민법」제32조로 조회한 경우, 제목 안에서 이번에 검색한 <strong>조문 인용 구간</strong>(노란색)과 맨 끝 <strong>부처·일자</strong>는 링크가 아니며, 그 밖의 제목 부분을 누르면 국가법령정보센터 <strong>판례·해석례등</strong> 화면으로 열립니다. <strong>국토교통부</strong> 해당 안건은 검색창에 안내용 전체 문구가 들어가고, 그 외 안건은 해당 제목 등으로 검색이 채워집니다.",
           portalQuery:
             "국토교통부 - 「민법」 또는 「상법」에 따라 설립된 법인이 「물류시설의 개발 및 운영에 관한 법률」 제27조제2항제1호부터 제4호까지의 어느 하나에 해당하는 자와 공동으로 물류단지개발사업 시행자로 지정받은 경우 사업대상 토지면적의 3분의 2 이상을 매입하지 않고도 물류단지개발사업에 필요한 토지등을 수용하거나 사용할 수 있는지 여부(「물류시설의 개발 및 운영에 관한 법률」 제32조제1항 등 관련)",
           matchArticle: function (p) {
@@ -841,9 +841,118 @@
         return { expc: expc, admrul: admrul };
       }
 
+      function articleJoRegexFragment(parsed) {
+        if (!parsed) return "";
+        var main = String(parsed.main || "").trim();
+        if (!main) return "";
+        var jo = "제" + main + "조";
+        var br = parsed.branch != null && String(parsed.branch).trim() !== "";
+        if (br) jo += "의" + String(parsed.branch).trim();
+        return jo;
+      }
+
+      function mergeIntervals(intervals) {
+        if (!intervals.length) return [];
+        intervals.sort(function (a, b) {
+          return a[0] - b[0];
+        });
+        var out = [intervals[0].slice()];
+        var i;
+        for (i = 1; i < intervals.length; i++) {
+          var cur = intervals[i];
+          var last = out[out.length - 1];
+          if (cur[0] <= last[1]) {
+            last[1] = Math.max(last[1], cur[1]);
+          } else {
+            out.push(cur.slice());
+          }
+        }
+        return out;
+      }
+
+      /** 현재 검색한 법령·조문이 제목에 그대로 인용된 구간 — 링크에서 제외·노란 표시용. */
+      function findUnlinkedArticlePhraseRanges(title, parsed) {
+        if (!parsed || !parsed.lawName) return [];
+        var mainStr = String(parsed.main || "").trim();
+        if (!mainStr) return [];
+        var jo = articleJoRegexFragment(parsed);
+        if (!jo) return [];
+        var esc = String(parsed.lawName).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+        var t = String(title);
+        var ranges = [];
+        var rxBook = new RegExp("「" + esc + "」\\s*" + jo, "g");
+        var rxBare = new RegExp(esc + "\\s*" + jo, "g");
+        [rxBook, rxBare].forEach(function (rx) {
+          var m;
+          while ((m = rx.exec(t)) !== null) {
+            ranges.push([m.index, m.index + m[0].length]);
+            if (m.index === rx.lastIndex) rx.lastIndex++;
+          }
+        });
+        return mergeIntervals(ranges);
+      }
+
+      function buildExpcInterpretationTitleHtml(titlePlain, href, titleUnlinkParsed) {
+        var ranges = titleUnlinkParsed ? findUnlinkedArticlePhraseRanges(titlePlain, titleUnlinkParsed) : [];
+        if (!ranges.length) {
+          var te = escapeHtml(titlePlain);
+          if (href) {
+            return (
+              '<a class="law-expc-item-hit" href="' +
+              escapeHtml(href) +
+              '" target="_blank" rel="noopener noreferrer">' +
+              te +
+              "</a>"
+            );
+          }
+          return '<span class="law-expc-item-plain">' + te + "</span>";
+        }
+        var html = "";
+        var last = 0;
+        var i;
+        for (i = 0; i < ranges.length; i++) {
+          var r = ranges[i];
+          if (r[0] > last) {
+            var linkChunk = titlePlain.slice(last, r[0]);
+            if (linkChunk) {
+              if (href) {
+                html +=
+                  '<a class="law-expc-item-hit" href="' +
+                  escapeHtml(href) +
+                  '" target="_blank" rel="noopener noreferrer">' +
+                  escapeHtml(linkChunk) +
+                  "</a>";
+              } else {
+                html += '<span class="law-expc-item-plain">' + escapeHtml(linkChunk) + "</span>";
+              }
+            }
+          }
+          html +=
+            '<span class="law-expc-title-hit-skip">' + escapeHtml(titlePlain.slice(r[0], r[1])) + "</span>";
+          last = r[1];
+        }
+        if (last < titlePlain.length) {
+          var tail = titlePlain.slice(last);
+          if (tail) {
+            if (href) {
+              html +=
+                '<a class="law-expc-item-hit" href="' +
+                escapeHtml(href) +
+                '" target="_blank" rel="noopener noreferrer">' +
+                escapeHtml(tail) +
+                "</a>";
+            } else {
+              html += '<span class="law-expc-item-plain">' + escapeHtml(tail) + "</span>";
+            }
+          }
+        }
+        return html;
+      }
+
       function interpretationListItemsHtml(rows, listOpts) {
         listOpts = listOpts || {};
         var singleRule = listOpts.expcSingleLinkRule || null;
+        var titleUnlinkParsed = listOpts.expcTitleUnlinkParsed || null;
         return (rows || [])
           .map(function (row) {
             var badge =
@@ -862,15 +971,8 @@
                 row.kind === "admrul" ? lawAdmrulPortalSearchUrl(fbQ) : lawExpcPortalSearchUrl(fbQ);
               href = detail || portalFb;
             }
-            var titleEsc = escapeHtml(titlePlain);
-            var bodyHtml = href
-              ? '<a class="law-expc-item-hit" href="' +
-                escapeHtml(href) +
-                '" target="_blank" rel="noopener noreferrer">' +
-                titleEsc +
-                "</a>" +
-                meta
-              : '<span class="law-expc-item-plain">' + titleEsc + "</span>" + meta;
+            var titleHtml = buildExpcInterpretationTitleHtml(titlePlain, href, titleUnlinkParsed);
+            var bodyHtml = titleHtml + meta;
             return "<li>" + badge + bodyHtml + "</li>";
           })
           .join("");
@@ -894,7 +996,10 @@
           '<section class="law-expc-block" aria-label="법령해석 검색 결과">' +
           '<h4 class="law-expc-head">관련 법령해석 (국가법령정보 Open API)</h4>' +
           '<ol class="law-expc-list">' +
-          interpretationListItemsHtml(rows, { expcSingleLinkRule: singleRule }) +
+          interpretationListItemsHtml(rows, {
+            expcSingleLinkRule: singleRule,
+            expcTitleUnlinkParsed: blockOpts.expcTitleUnlinkParsed || null,
+          }) +
           "</ol>" +
           foot +
           "</section>"
@@ -1051,7 +1156,10 @@
               '<p class="law-result-panel-lead law-result-panel-lead--warn">' + escapeHtml(String(data.message)) + "</p>";
           }
           var splitInterp = splitInterpretationRows(data.interpretations);
-          var expcBlockOpts = { expcSingleLinkRule: resolveExpcSingleLinkRule(parsed) };
+          var expcBlockOpts = {
+            expcSingleLinkRule: resolveExpcSingleLinkRule(parsed),
+            expcTitleUnlinkParsed: parsed,
+          };
           panelLaw.innerHTML =
             '<p class="law-article-meta">' +
             metaBits.join(" · ") +

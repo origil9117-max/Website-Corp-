@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700&family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="platform-pages.css?v=20260420d" />
-  <link rel="stylesheet" href="law-search-prd.css?v=20260505j" />
+  <link rel="stylesheet" href="law-search-prd.css?v=20260505k" />
 </head>
 <body class="law-prd-body" data-platform-slug="law-precedent-search">
   <header class="topbar">
@@ -281,6 +281,38 @@
       var PLACEHOLDER_ADMRUL =
         "<p class=\"law-result-panel-placeholder\">법령명+조문으로 검색하면 조문과 연관된 행정규칙 목록이 여기에 표시됩니다.</p>";
       var PLACEHOLDER_PREC = "<p class=\"law-result-panel-placeholder\">검색 후 대법원 종합법률정보 등 판례 검색으로 연결되는 링크가 여기에 표시됩니다.</p>";
+
+      var inputHadContent = String(input.value || "").trim().length > 0;
+
+      function triggerLawSearchButtonBlink() {
+        if (!button || button.disabled) return;
+        var finished = false;
+        function finish() {
+          if (finished) return;
+          finished = true;
+          button.classList.remove("law-topic-search-btn--blink");
+          button.removeEventListener("animationend", onAnimEnd);
+        }
+        function onAnimEnd(ev) {
+          if (ev && ev.animationName && String(ev.animationName).indexOf("law-topic-search-btn-blink") === -1) return;
+          finish();
+        }
+        button.classList.remove("law-topic-search-btn--blink");
+        void button.offsetWidth;
+        button.classList.add("law-topic-search-btn--blink");
+        button.addEventListener("animationend", onAnimEnd);
+        window.setTimeout(finish, 3400);
+      }
+
+      input.addEventListener("input", function () {
+        var has = String(input.value || "").trim().length > 0;
+        if (has && !inputHadContent) {
+          inputHadContent = true;
+          triggerLawSearchButtonBlink();
+        } else if (!has) {
+          inputHadContent = false;
+        }
+      });
 
       function normalize(value) {
         return String(value || "").trim().toLowerCase();

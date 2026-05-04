@@ -537,6 +537,30 @@ body[data-platform-slug="law-precedent-search"] .law-topic-search-row input {
   min-height: 2.85rem;
 }
 
+@keyframes law-topic-search-btn-blink {
+  0%,
+  100% {
+    opacity: 1;
+    filter: brightness(1);
+    box-shadow: none;
+  }
+  50% {
+    opacity: 0.7;
+    filter: brightness(1.28);
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.4);
+  }
+}
+
+body[data-platform-slug="law-precedent-search"] #law-topic-search-btn.law-topic-search-btn--blink {
+  animation: law-topic-search-btn-blink 0.28s ease-in-out 10;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body[data-platform-slug="law-precedent-search"] #law-topic-search-btn.law-topic-search-btn--blink {
+    animation: none;
+  }
+}
+
 .law-topic-status {
   margin-top: 0.55rem;
   font-size: 0.9rem;

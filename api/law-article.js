@@ -8,6 +8,9 @@
  *
  * 공동활용에 등록한 "도메인주소"와 동일한 출처를 알리기 위해 Referer·Origin을 보냅니다.
  * 사이트가 www를 쓰면 Vercel 환경 변수 LAW_API_SITE_URL=https://www.daehanminkuk.co.kr 로 맞추세요.
+ *
+ * Vercel에서 서버리스 실행 리전이 바뀌면 출구 IP가 달라질 수 있어, read ECONNRESET 이 나면
+ * /api/egress-ip 로 확인한 뒤 open.law.go.kr 공동활용 ‘API 허용 IP’를 갱신하세요.
  */
 const https = require("https");
 const dns = require("dns");
@@ -72,7 +75,7 @@ function siteHeadersForOrigin(originBase) {
  * @param {string} [siteOriginBase] https://host 형태(끝 슬래시 없음)
  * @returns {Promise<string>}
  */
-function httpsGetText(urlStr, siteOriginBase) {
+function httpsGetTextOnce(urlStr, siteOriginBase) {
   const u = new URL(urlStr);
   const site = siteHeadersForOrigin(siteOriginBase);
   return new Promise(function (resolve, reject) {
@@ -87,6 +90,7 @@ function httpsGetText(urlStr, siteOriginBase) {
         headers: Object.assign(
           {
             Host: u.hostname,
+            Connection: "close",
             Accept: "application/json, text/plain, */*",
             "Accept-Language": "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7",
             "User-Agent":
@@ -120,6 +124,37 @@ function httpsGetText(urlStr, siteOriginBase) {
       req.end();
     });
   });
+}
+
+function httpsGetTextRetriable(err) {
+  var msg = err && err.message ? String(err.message) : "";
+  return /ECONNRESET|ETIMEDOUT|ECONNREFUSED|EAI_AGAIN|socket hang up|TLS|SSL|reset/i.test(msg);
+}
+
+function sleep(ms) {
+  return new Promise(function (resolve) {
+    setTimeout(resolve, ms);
+  });
+}
+
+/** law.go.kr 호출: 일시적 끊김(ECONNRESET 등)에 짧게 재시도 */
+async function httpsGetText(urlStr, siteOriginBase) {
+  var maxAttempts = 3;
+  var baseDelayMs = 400;
+  var lastErr = null;
+  for (var attempt = 1; attempt <= maxAttempts; attempt++) {
+    try {
+      return await httpsGetTextOnce(urlStr, siteOriginBase);
+    } catch (e) {
+      lastErr = e;
+      if (attempt < maxAttempts && httpsGetTextRetriable(e)) {
+        await sleep(baseDelayMs * attempt);
+        continue;
+      }
+      throw e;
+    }
+  }
+  throw lastErr;
 }
 
 function arr(x) {
@@ -794,6 +829,10 @@ module.exports = async function lawArticleHandler(req, res) {
     }
 
     if (!searchJson) {
+      var transportFail = httpsGetTextRetriable({ message: lastApiMsg || "" });
+      var transportHint = transportFail
+        ? " 연결이 중간에 끊긴 경우(ECONNRESET 등): Vercel 서버리스 **실행 리전이 바뀌면 출구 IP가 달라질** 수 있어, 공동활용 ‘API 허용 IP’와 어긋나면 상대가 연결을 끊습니다. 사이트의 /api/egress-ip 를 여러 번 호출해 나온 IP를 모두 등록하고, LAW_API_SITE_URL·등록 도메인이 신청 건과 일치하는지 확인하세요."
+        : "";
       return res.status(502).json({
         ok: false,
         error: "SEARCH_API",
@@ -801,7 +840,8 @@ module.exports = async function lawArticleHandler(req, res) {
           (lastApiMsg || "법령 검색 실패") +
           " — Referer 출처를 순서대로 시도했습니다: " +
           tried.join(", ") +
-          ". Vercel의 LAW_API_SITE_URL이 플레이스홀더(api.example.com)가 아닌지 확인하고, 공동활용 IP·도메인·OC 신청 건이 승인·반영되었는지 확인하세요.",
+          ". Vercel의 LAW_API_SITE_URL이 플레이스홀더(api.example.com)가 아닌지 확인하고, 공동활용 IP·도메인·OC 신청 건이 승인·반영되었는지 확인하세요." +
+          (transportHint ? " " + transportHint : ""),
       });
     }
 
@@ -928,7 +968,7 @@ module.exports = async function lawArticleHandler(req, res) {
     var msg = err && err.message ? String(err.message) : "서버 오류";
     if (msg === "fetch failed" || /ECONNRESET|ETIMEDOUT|ENOTFOUND|certificate/i.test(msg)) {
       msg +=
-        " — law.go.kr 연결 실패입니다. 공동활용에 등록한 서버 IP가 최신인지(/api/egress-ip 여러 번 확인), OC·재배포를 확인하세요. Vercel은 icn1(서울) 리전 사용을 권장합니다.";
+        " — law.go.kr 연결 실패입니다. /api/egress-ip 로 출구 IP를 확인해 공동활용 ‘API 허용 IP’에 반영하세요. 리전·플랜 변경 직후에는 등록 IP와 불일치해 끊김이 날 수 있습니다.";
     }
     return res.status(500).json({
       ok: false,

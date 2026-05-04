@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700&family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="platform-pages.css?v=20260420d" />
-  <link rel="stylesheet" href="law-search-prd.css?v=20260505i" />
+  <link rel="stylesheet" href="law-search-prd.css?v=20260505j" />
 </head>
 <body class="law-prd-body" data-platform-slug="law-precedent-search">
   <header class="topbar">
@@ -113,46 +113,6 @@
             </div>
           </article>
         </div>
-        <p class="law-result-api-note">
-          <strong>2단계 IP 등록:</strong> 사이트가 Vercel에 배포된 뒤 브라우저에서
-          <code>/api/egress-ip</code> 경로를 열면(예: <code>https://(도메인)/api/egress-ip</code>) JSON의 <code>ip</code> 값이 나옵니다.
-          그 IP를 <strong>공동활용</strong> 마이페이지의 <strong>API 허용 IP</strong>에 등록하세요.
-          포털 주소는 <code class="law-open-data-url" translate="no">https://open.law.go.kr/LSO/main.do</code>
-          (링크로 열면 &quot;페이지 접속에 실패&quot;가 날 수 있어 <strong>주소 복사</strong> 후, 로그인·등록이 되어 있는 PC 브라우저에 붙여넣기 하세요.)
-          호출할 때마다 IP가 바뀌면 Vercel 동적 egress이므로, 막히면 고정 IP 플랜·별도 서버를 검토합니다.
-          <strong>3단계 환경 변수:</strong> Vercel → Settings → Environment Variables에서
-          <code>LAW_OC</code>(또는 <code>KOREAN_LAW_API_KEY</code>)에 발급 OC를 넣고,
-          공동활용에 적은 도메인이 <code>www</code>를 포함하면 <code>LAW_API_SITE_URL</code>을 예:
-          <code>https://www.daehanminkuk.co.kr</code> 로 맞춘 뒤 <strong>Redeploy</strong> 하세요.
-          값이 <code>https://api.example.com</code> 같은 **플레이스홀더**이면 반드시 실제 사이트 URL로 바꾸세요. (서버가 www 유무를 바꿔 자동 재시도합니다.)
-          OC는 프론트에 넣지 마세요. 조문 API는 <code>api/law-article.js</code>를 사용합니다.
-        </p>
-        <aside class="law-result-access-help" aria-label="접속 오류 시 대응">
-          <h4 class="law-result-access-help-title">「페이지 접속에 실패」가 나올 때</h4>
-          <ol class="law-result-access-help-list">
-            <li>
-              <strong>공동활용(open.law.go.kr)</strong>은 API 신청·IP 등록용이며, 일반 창에서 링크를 열면 &quot;페이지 접속에 실패&quot;가 자주 납니다.
-              이 사이트의 목록 링크는 <code>open.law.go.kr</code>·<code>/LSO/</code>·브라우저용이 아닌 <code>/DRF/</code>(Open API) 주소로 가지 않도록
-              <a href="https://www.law.go.kr/main.html" target="_blank" rel="noopener noreferrer">국가법령정보센터</a>
-              <strong>유형별 검색</strong>(통합 <code>lsAstSc</code>, 판례 <code>precAstSc</code>, 법령해석·해석례 <code>expcSc</code>(판례·해석례등), 행정규칙 <code>lsAdmRulAstSc</code>)으로 연결합니다.
-              구형 <code>lsAstListSc.do</code>·단일 <code>lsSc</code> 법령명 탭만으로는 판례·해석 문구가 0건으로 나올 수 있습니다.
-              통합 <code>lsAstSc</code>에 들어가도 화면 안쪽 탭이 「일괄·법령명」이면 긴 설명·판례 문구만으로는 0건일 수 있어, 센터에서 본문·해석·판례 탭을 바꾸거나 아래 목록의 <strong>유형별 링크</strong>(판례·법령해석 등)을 쓰는 편이 낫습니다.
-              IP·OC 등록은 위 안내의 <code>https://open.law.go.kr/LSO/main.do</code>를 <strong>복사</strong>해 등록 가능한 환경에서 여세요.
-            </li>
-            <li>
-              <strong>조문·목록 API가 막힌 경우</strong>는 서버 쪽입니다. 위의 IP·<code>LAW_OC</code>·<code>LAW_API_SITE_URL</code>을 확인하고,
-              <a href="/api/egress-ip" target="_blank" rel="noopener noreferrer">등록용 출구 IP</a>가 바뀌지 않았는지 점검합니다.
-              그래도 동일하면 법제처 공동활용 안내의 연락처로 등록 정보(도메인·허용 IP·OC)를 문의합니다.
-            </li>
-            <li>
-              <strong>링크만 실패하고 검색은 될 때</strong>는 해당 기관 사이트 점검·세션·<strong>DNS</strong> 이슈일 수 있습니다. 같은 제목으로
-              <a href="https://www.law.go.kr/main.html" target="_blank" rel="noopener noreferrer">국가법령정보센터</a>에서 검색하거나,
-              판례는 <a href="https://library.scourt.go.kr/search/judg/judgDetailSearch" target="_blank" rel="noopener noreferrer">법원도서관 판례·판결 상세검색</a>,
-              <a href="https://portal.scourt.go.kr/pgp/index.on?m=PGP1011M01&amp;l=N&amp;c=900" target="_blank" rel="noopener noreferrer">사법정보공개포털</a>(대법원 공개 경로)에서 확인해 보세요.
-              예전 도메인 <code>glaw.scourt.go.kr</code>는 환경에 따라 이름 해석이 되지 않을 수 있습니다.
-            </li>
-          </ol>
-        </aside>
       </section>
     </section>
 

@@ -954,29 +954,12 @@
         return r;
       }
 
-      /** 말미 꼬리(대법원 19670118·대법원 2200000103301 등)에서 첫 숫자 덩어리 앞까지를 기관명으로 씁니다. */
-      function courtFooterOrgNameBeforeDigits(footer) {
-        var f = String(footer || "").replace(/\s+/g, " ").trim();
-        if (!f) return "";
-        var idx = f.search(/\s+\d/);
-        if (idx <= 0) return f;
-        return f.slice(0, idx).trim();
-      }
-
       /**
-       * 행정규칙(lsAdmRulAstSc) 검색어: 행정규칙명 + 기관명(대법원 등)만.
-       * 말미 숫자(일자·등록번호)는 제외합니다.
+       * 행정규칙(lsAdmRulAstSc) 검색어: 화면에 링크된 규칙명만.
+       * 기관명(대법원)·발령번호·일련번호 등은 검색어에 붙이지 않습니다.
        */
-      function admrulPortalFallbackQuery(linkBody, splitFooter, row) {
-        var lb = String(linkBody || "").trim();
-        if (!splitFooter || !splitFooter.footer) {
-          return lawPortalFallbackQuery(lb, String(row.dept || "").trim(), row.id);
-        }
-        var org = courtFooterOrgNameBeforeDigits(splitFooter.footer);
-        if (org) {
-          return lawPortalCapQuery(sanitizeLawPortalQuery(lb + " " + org), 1100);
-        }
-        return lawPortalFallbackQuery(lb, "", "");
+      function admrulPortalFallbackQuery(linkBody) {
+        return lawPortalFallbackQuery(String(linkBody || "").trim(), "", "");
       }
 
       function mergeHighlightRanges(ranges) {
@@ -1105,7 +1088,7 @@
               var detail = lawGoKrBrowseHref(row.link);
               var fbQ;
               if (row.kind === "admrul") {
-                fbQ = admrulPortalFallbackQuery(linkBody, splitFooter, row);
+                fbQ = admrulPortalFallbackQuery(linkBody);
               } else {
                 var qDept = splitFooter.footer ? "" : String(row.dept || "").trim();
                 var qId = splitFooter.footer ? "" : row.id;

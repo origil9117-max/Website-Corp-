@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700&family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="platform-pages.css?v=20260420d" />
-  <link rel="stylesheet" href="law-search-prd.css?v=20260505f" />
+  <link rel="stylesheet" href="law-search-prd.css?v=20260505g" />
 </head>
 <body class="law-prd-body" data-platform-slug="law-precedent-search">
   <header class="topbar">
@@ -1300,6 +1300,7 @@
         var q = String(raw || "").trim();
         var safeLabel = escapeHtml(q || "키워드");
         if (!q) {
+          document.body.classList.remove("law-expc-hit-isolate");
           panelLaw.innerHTML = PLACEHOLDER_LAW;
           panelAdmrul.innerHTML = PLACEHOLDER_ADMRUL;
           panelPrec.innerHTML = PLACEHOLDER_PREC;
@@ -1351,6 +1352,8 @@
           renderResultPanels("");
           return;
         }
+
+        document.body.classList.remove("law-expc-hit-isolate");
 
         if (resultsEl) resultsEl.classList.add("law-search-results--active");
 
@@ -1425,7 +1428,13 @@
         onSubmit(e);
       });
 
-      /** 관련 법령해석 목록: 한 행만 본문 링크에 강조색(행정규칙·판례 패널과 무관). */
+      function syncLawExpcHitIsolateBodyClass() {
+        if (!document.body || !document.body.classList) return;
+        var on = !!document.querySelector(".law-expc-list--stat-interp li.law-expc-item--active");
+        document.body.classList.toggle("law-expc-hit-isolate", on);
+      }
+
+      /** 관련 법령해석: 한 행 선택 시 그 행의 검색 붉은 글자만 유지, 나머지 패널·행은 해제. */
       document.addEventListener(
         "mousedown",
         function (e) {
@@ -1441,6 +1450,7 @@
               ch[i].classList.remove("law-expc-item--active");
             }
             li.classList.add("law-expc-item--active");
+            syncLawExpcHitIsolateBodyClass();
             return;
           }
           var actives = document.querySelectorAll(".law-expc-list--stat-interp li.law-expc-item--active");
@@ -1448,6 +1458,7 @@
           for (j = 0; j < actives.length; j++) {
             actives[j].classList.remove("law-expc-item--active");
           }
+          syncLawExpcHitIsolateBodyClass();
         },
         true
       );

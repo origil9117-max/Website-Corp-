@@ -942,6 +942,22 @@ mark.law-query-hit {
   color: #991b1b;
 }
 
+/* 법령해석 한 행 선택 시: 선택 행 안의 mark만 붉은색 유지, 그 외 전부 기본색 */
+body.law-expc-hit-isolate .law-expc-list--stat-interp > li:not(.law-expc-item--active) mark.law-query-hit,
+body.law-expc-hit-isolate .law-prec-api-list mark.law-query-hit,
+body.law-expc-hit-isolate .law-article-meta mark.law-query-hit,
+body.law-expc-hit-isolate .law-article-title mark.law-query-hit,
+body.law-expc-hit-isolate section[aria-label="행정규칙 검색 결과"] mark.law-query-hit,
+body.law-expc-hit-isolate section[aria-label="행정규칙"] mark.law-query-hit {
+  color: inherit;
+  font-weight: inherit;
+}
+
+body.law-expc-hit-isolate .law-expc-list--stat-interp > li:not(.law-expc-item--active) .law-expc-item-hit:hover mark.law-query-hit,
+body.law-expc-hit-isolate .law-prec-api-list .law-prec-item-hit:hover mark.law-query-hit {
+  color: inherit;
+}
+
 .law-expc-list a {
   color: #1c4a7c;
   text-decoration: underline;

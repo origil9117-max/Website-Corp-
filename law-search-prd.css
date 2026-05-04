@@ -928,13 +928,6 @@
   color: #0f3558;
 }
 
-.law-expc-item-hit--subject {
-  display: inline;
-  background: rgba(255, 236, 160, 0.78);
-  border-radius: 2px;
-  padding: 0 0.08em;
-}
-
 .law-expc-item-plain {
   color: var(--ink-soft);
   text-decoration: none;

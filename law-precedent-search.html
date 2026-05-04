@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700&family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="platform-pages.css?v=20260420d" />
-  <link rel="stylesheet" href="law-search-prd.css?v=20260505b" />
+  <link rel="stylesheet" href="law-search-prd.css?v=20260505c" />
 </head>
 <body class="law-prd-body" data-platform-slug="law-precedent-search">
   <header class="topbar">
@@ -532,13 +532,13 @@
       /**
        * 특정 조문 검색 시 법령해석 목록에서 «매칭 한 행»은 센터 검색어를 고정 문구로 넘기고,
        * 그 외 행은 행마다 상세 URL 또는 제목 기반 포털 검색으로 연결합니다.
-       * 목록에서는 안건 본문만 노란색 링크이고, 말미 부처·일자(및 팀명)는 링크 밖입니다.
+       * 목록에서는 안건 본문만 링크(밑줄)이고, 말미 부처·일자(및 팀명)는 링크 밖입니다.
        */
       var EXPC_SINGLE_LINK_RULES = [
         {
           id: "civil32-molit-logistics",
           disclaimerNote:
-            "「민법」제32조로 조회한 경우, <strong>노란색 안건 본문</strong>만 눌러 국가법령정보센터 <strong>판례·해석례등</strong> 화면으로 열립니다. 맨 끝 <strong>부처·회신일·담당 팀</strong> 등(예: 국토교통부 2016.10.17)은 링크가 아닙니다. <strong>국토교통부</strong> 물류 관련 해당 안건은 검색창에 안내용 전체 문구가 들어가고, 그 외 안건은 본문 기준으로 검색이 채워집니다.",
+            "「민법」제32조로 조회한 경우, <strong>안건 본문</strong>(밑줄 링크)만 눌러 국가법령정보센터 <strong>판례·해석례등</strong> 화면으로 열립니다. 맨 끝 <strong>부처·회신일·담당 팀</strong> 등(예: 국토교통부 2016.10.17)은 링크가 아닙니다. <strong>국토교통부</strong> 물류 관련 해당 안건은 검색창에 안내용 전체 문구가 들어가고, 그 외 안건은 본문 기준으로 검색이 채워집니다.",
           portalQuery:
             "국토교통부 - 「민법」 또는 「상법」에 따라 설립된 법인이 「물류시설의 개발 및 운영에 관한 법률」 제27조제2항제1호부터 제4호까지의 어느 하나에 해당하는 자와 공동으로 물류단지개발사업 시행자로 지정받은 경우 사업대상 토지면적의 3분의 2 이상을 매입하지 않고도 물류단지개발사업에 필요한 토지등을 수용하거나 사용할 수 있는지 여부(「물류시설의 개발 및 운영에 관한 법률」 제32조제1항 등 관련)",
           matchArticle: function (p) {
@@ -951,7 +951,7 @@
             }
             var titleEsc = escapeHtml(linkBody);
             var bodyHtml = href
-              ? '<a class="law-expc-item-hit law-expc-item-hit--subject" href="' +
+              ? '<a class="law-expc-item-hit" href="' +
                 escapeHtml(href) +
                 '" target="_blank" rel="noopener noreferrer">' +
                 titleEsc +

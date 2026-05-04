@@ -928,6 +928,17 @@
   color: #0f3558;
 }
 
+.law-expc-item-plain {
+  color: var(--ink-soft);
+  text-decoration: none;
+  cursor: default;
+}
+
+.law-expc-item-plain .law-expc-meta {
+  color: var(--muted);
+  font-weight: 500;
+}
+
 .law-expc-item-hit .law-expc-meta {
   color: var(--muted);
   font-weight: 500;

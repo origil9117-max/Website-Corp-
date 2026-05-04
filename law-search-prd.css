@@ -785,25 +785,6 @@ body[data-platform-slug="law-precedent-search"] .law-topic-search-row input {
   color: #1c4a7c;
 }
 
-.law-result-roadmap-teaser {
-  margin-top: 0.85rem;
-  padding: 0.55rem 0.75rem;
-  font-size: 0.86rem;
-  color: var(--muted);
-  background: rgba(184, 146, 106, 0.08);
-  border-radius: 8px;
-  border: 1px solid rgba(184, 146, 106, 0.22);
-}
-
-.law-result-roadmap-teaser p {
-  margin: 0;
-}
-
-.law-result-roadmap-teaser a {
-  font-weight: 700;
-  color: var(--law-portal-p1);
-}
-
 .law-topic-search-desc kbd {
   font-family: inherit;
   font-size: 0.88em;

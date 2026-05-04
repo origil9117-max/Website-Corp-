@@ -849,8 +849,8 @@
       }
 
       /**
-       * 사건번호(+법원명) 링크: 법원도서관 판례·판결 상세검색 상단 검색창에 `keyword`로 넘겨 자동 채움(예: «2023두30833 대법원»).
-       * 하급심은 law.go.kr에서 0건인 경우가 많아 국가법령정보센터보다 이쪽이 낫습니다.
+       * 사건번호(+법원명) 링크: 법원도서관 판례·판결 상세검색에서
+       * 통합 `keyword`와 «결과 내 검색» 폼의 `search_text1`에 동일 문구를 넘기고 `reSearch=1`로 결과 내 검색을 켭니다.
        */
       function scourtCaseDetailSearchUrl(caseNo, courtOpt) {
         var c = capQueryForGetUrl(String(caseNo || "").trim(), 120);
@@ -858,7 +858,15 @@
         var court = String(courtOpt || "").trim();
         var keyword = court ? (c + " " + court).replace(/\s+/g, " ").trim() : c;
         var safe = capQueryForGetUrl(keyword, 900);
-        return SCOURT_LIBRARY_JUDG_DETAIL + "?source=ref&keyword=" + encodeURIComponent(safe);
+        var enc = encodeURIComponent(safe);
+        return (
+          SCOURT_LIBRARY_JUDG_DETAIL +
+          "?source=ref&keyword=" +
+          enc +
+          "&search_text1=" +
+          enc +
+          "&reSearch=1"
+        );
       }
 
       /** 선고일자(YYYYMMDD·YYYY.M.D 등)를 목록에 보기 좋게 한 칸 띄운 문자열로. */
@@ -1659,7 +1667,7 @@
           "\" target=\"_blank\" rel=\"noopener noreferrer\">사법정보공개포털</a></li>" +
           "<li><a href=\"https://www.simpan.go.kr/\" target=\"_blank\" rel=\"noopener noreferrer\">행정심판 정보 포털 (재결·안내)</a></li>" +
           "</ul>" +
-          "<p class=\"law-result-disclaimer\">사건번호·심급·판시사항은 각 포털 검색 결과를 기준으로 하세요. 관련 판례에서 <strong>사건번호·법원</strong>만 밑줄 링크를 누르면 법원도서관 상세검색 상단 검색창에 동일 문구가 넘어가고, 클릭 직전 통합 검색창에도 같은 값이 채워집니다.</p>";
+          "<p class=\"law-result-disclaimer\">사건번호·심급·판시사항은 각 포털 검색 결과를 기준으로 하세요. 관련 판례에서 <strong>사건번호·법원</strong>만 밑줄 링크를 누르면 법원도서관 상세검색에 <code>keyword</code>·<code>search_text1</code>·<code>reSearch=1</code>로 넘겨 상단 검색·결과 내 검색란에 동일 문구가 들어가도록 하고, 클릭 직전 이 사이트 통합 검색창에도 같은 값이 채워집니다.</p>";
 
         if (precRows && precRows.length) {
           var listItems = precRows
@@ -1689,7 +1697,7 @@
             '<ol class="law-prec-api-list">' +
             listItems +
             "</ol>" +
-            '<p class="law-result-disclaimer">목록은 키워드 검색 결과입니다. 하급심 사건번호는 국가법령정보센터에서 0건일 수 있어, 사건번호가 있으면 <strong>법원도서관 판례 상세검색</strong>으로 연결합니다(<code>?keyword=사건번호+법원</code>로 상단 검색창에 반영). 일부 환경에서 구형 <code>glaw.scourt.go.kr</code>는 DNS 오류가 납니다. 원문 링크가 있으면 해당 링크를 우선합니다.</p>' +
+            '<p class="law-result-disclaimer">목록은 키워드 검색 결과입니다. 하급심 사건번호는 국가법령정보센터에서 0건일 수 있어, 사건번호가 있으면 <strong>법원도서관 판례 상세검색</strong>으로 연결합니다(<code>keyword</code>·<code>search_text1</code>·<code>reSearch=1</code>). 일부 환경에서 구형 <code>glaw.scourt.go.kr</code>는 DNS 오류가 납니다. 원문 링크가 있으면 해당 링크를 우선합니다.</p>' +
             '<p class="law-result-subhead">공개 포털에서 추가 검색</p>' +
             portalBlock;
           return;

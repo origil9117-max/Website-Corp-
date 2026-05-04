@@ -1348,14 +1348,8 @@
               highlightPhrases && highlightPhrases.length
                 ? highlightQuerySpansInPlainText(linkBody, highlightPhrases)
                 : escapeHtml(linkBody);
-            var dataExpc =
-              row.kind === "expc" && linkBody
-                ? ' data-expc-search-text="' + encodeURIComponent(String(linkBody).trim()) + '"'
-                : "";
             var bodyHtml = href
-              ? '<a class="law-expc-item-hit"' +
-                dataExpc +
-                ' href="' +
+              ? '<a class="law-expc-item-hit" href="' +
                 escapeHtml(href) +
                 '" target="_blank" rel="noopener noreferrer">' +
                 titleInner +
@@ -1761,15 +1755,6 @@
           if (!t || !t.closest) return;
           var list = t.closest(".law-expc-list--stat-interp");
           if (list) {
-            var aHit = t.closest && t.closest("a.law-expc-item-hit[data-expc-search-text]");
-            if (aHit && input) {
-              try {
-                var fill = decodeURIComponent(aHit.getAttribute("data-expc-search-text") || "");
-                if (fill) input.value = fill;
-              } catch (eFill) {
-                /* ignore */
-              }
-            }
             var li = t.closest("li");
             if (!li || !list.contains(li)) return;
             var ch = list.children;

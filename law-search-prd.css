@@ -929,16 +929,16 @@
   box-shadow: none;
 }
 
-/* 검색어와 일치하는 제목 일부만 붉은 글자(브라우저 기본 mark 배경 제거) */
-.law-expc-list .law-expc-item-hit mark.law-expc-query-hit,
-.law-expc-list .law-expc-item-plain mark.law-expc-query-hit {
+/* 검색어 일치 구간: 법령해석·행정규칙·판례·조문 제목·메타 공통 */
+mark.law-query-hit {
   background: transparent;
   color: #b91c1c;
   font-weight: 700;
   padding: 0;
 }
 
-.law-expc-list .law-expc-item-hit:hover mark.law-expc-query-hit {
+.law-expc-list .law-expc-item-hit:hover mark.law-query-hit,
+.law-prec-api-list .law-prec-item-hit:hover mark.law-query-hit {
   color: #991b1b;
 }
 

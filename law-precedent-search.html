@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700&family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="platform-pages.css?v=20260420d" />
-  <link rel="stylesheet" href="law-search-prd.css?v=20260505e" />
+  <link rel="stylesheet" href="law-search-prd.css?v=20260505f" />
 </head>
 <body class="law-prd-body" data-platform-slug="law-precedent-search">
   <header class="topbar">
@@ -966,7 +966,7 @@
         for (ri = 0; ri < ranges.length; ri++) {
           var rg = ranges[ri];
           if (rg[0] > last) html += escapeHtml(t.slice(last, rg[0]));
-          html += '<mark class="law-expc-query-hit">' + escapeHtml(t.slice(rg[0], rg[1])) + "</mark>";
+          html += '<mark class="law-query-hit">' + escapeHtml(t.slice(rg[0], rg[1])) + "</mark>";
           last = rg[1];
         }
         if (last < t.length) html += escapeHtml(t.slice(last));
@@ -1001,6 +1001,15 @@
             add(ln + lab);
             add(compactLawArticleWhitespace(ln + lab));
           }
+          if (parsed.main) {
+            var m0 = String(parsed.main);
+            add("제" + m0 + "조");
+            add(ln + " 제" + m0 + "조");
+            add(ln + "제" + m0 + "조");
+            if (parsed.branch) {
+              add("제" + m0 + "조의" + String(parsed.branch));
+            }
+          }
         }
         expandQuery(r0).forEach(function (tok) {
           add(tok);
@@ -1008,7 +1017,7 @@
         out.sort(function (a, b) {
           return b.length - a.length;
         });
-        if (out.length > 32) out = out.slice(0, 32);
+        if (out.length > 40) out = out.slice(0, 40);
         return out;
       }
 
@@ -1115,7 +1124,8 @@
           lawPanelOfficialLinksHtml(safeLabel, q);
       }
 
-      function renderPrecPanel(safeLabel, q, precRows) {
+      function renderPrecPanel(safeLabel, q, precRows, highlightPhrasesOpt) {
+        var highlightPhrases = highlightPhrasesOpt && highlightPhrasesOpt.length ? highlightPhrasesOpt : null;
         var precUrl = scourtPrecedentSearchUrl(q);
         var portalBlock =
           "<ul class=\"law-result-actions\">" +
@@ -1132,7 +1142,11 @@
         if (precRows && precRows.length) {
           var listItems = precRows
             .map(function (row) {
-              var title = escapeHtml(row.title || "(사건명 없음)");
+              var titlePlain = row.title || "(사건명 없음)";
+              var titleInner =
+                highlightPhrases && highlightPhrases.length
+                  ? highlightQuerySpansInPlainText(titlePlain, highlightPhrases)
+                  : escapeHtml(titlePlain);
               var meta = "";
               if (row.caseNo) meta += ' <span class="law-prec-meta">' + escapeHtml(row.caseNo) + "</span>";
               if (row.court) meta += ' <span class="law-prec-meta">' + escapeHtml(row.court) + "</span>";
@@ -1143,8 +1157,12 @@
               var precFb = lawPrecFallbackQuery(row);
               var href = detail || scourtCase || lawPrecPortalSearchUrl(precFb);
               var titleHtml = href
-                ? '<a class="law-prec-item-hit" href="' + escapeHtml(href) + '" target="_blank" rel="noopener noreferrer">' + title + "</a>"
-                : title;
+                ? '<a class="law-prec-item-hit" href="' +
+                  escapeHtml(href) +
+                  '" target="_blank" rel="noopener noreferrer">' +
+                  titleInner +
+                  "</a>"
+                : titleInner;
               return "<li>" + titleHtml + meta + "</li>";
             })
             .join("");
@@ -1168,7 +1186,7 @@
           portalBlock;
       }
 
-      async function renderLawPanelWithApi(raw, q, safeLabel, parsed) {
+      async function renderLawPanelWithApi(raw, q, safeLabel, parsed, highlightPhrasesOpt) {
         var loadingMsg =
           '<p class="law-result-loading" role="status">' +
           "국가법령정보 API에서 「" +
@@ -1221,12 +1239,28 @@
             panelAdmrul.innerHTML = PLACEHOLDER_ADMRUL;
             return { status: "api_err", precedents: [] };
           }
+          var highlightPhrases =
+            highlightPhrasesOpt && highlightPhrasesOpt.length > 0
+              ? highlightPhrasesOpt
+              : buildInterpretationHighlightPhrases(raw, parsed);
           var metaBits = [];
-          metaBits.push(escapeHtml(data.lawName || parsed.lawName) + " " + escapeHtml(data.label || parsed.label));
+          var lawMetaLine =
+            String(data.lawName || parsed.lawName || "") + " " + String(data.label || parsed.label || "");
+          lawMetaLine = lawMetaLine.replace(/\s+/g, " ").trim();
+          metaBits.push(
+            highlightPhrases.length
+              ? highlightQuerySpansInPlainText(lawMetaLine, highlightPhrases)
+              : escapeHtml(lawMetaLine)
+          );
           if (data.조문번호) metaBits.push(escapeHtml(String(data.조문번호)));
           if (data.시행일자) metaBits.push("시행 " + escapeHtml(String(data.시행일자)));
-          var titleBlock = data.articleTitle
-            ? '<h4 class="law-article-title">' + escapeHtml(String(data.articleTitle)) + "</h4>"
+          var artTitle = data.articleTitle ? String(data.articleTitle).trim() : "";
+          var titleBlock = artTitle
+            ? '<h4 class="law-article-title">' +
+              (highlightPhrases.length
+                ? highlightQuerySpansInPlainText(artTitle, highlightPhrases)
+                : escapeHtml(artTitle)) +
+              "</h4>"
             : "";
           var articleBlock = "";
           if (data.articleHtml) {
@@ -1237,7 +1271,6 @@
               '<p class="law-result-panel-lead law-result-panel-lead--warn">' + escapeHtml(String(data.message)) + "</p>";
           }
           var splitInterp = splitInterpretationRows(data.interpretations);
-          var highlightPhrases = buildInterpretationHighlightPhrases(raw, parsed);
           var expcBlockOpts = {
             expcSingleLinkRule: resolveExpcSingleLinkRule(parsed),
             highlightPhrases: highlightPhrases,
@@ -1277,7 +1310,8 @@
 
         renderLawPanelLinksOnly(safeLabel, q);
         panelAdmrul.innerHTML = PLACEHOLDER_ADMRUL;
-        renderPrecPanel(safeLabel, q);
+        var hpGuess = buildInterpretationHighlightPhrases(q, parseLawArticleQuery(q));
+        renderPrecPanel(safeLabel, q, [], hpGuess);
       }
 
       function applySpecFilter(raw) {
@@ -1322,10 +1356,11 @@
 
         var lawStatus = "links";
         var precFromApi = [];
+        var highlightPhrases = buildInterpretationHighlightPhrases(raw, parsed);
         if (parsed) {
           button.disabled = true;
           try {
-            var lawPack = await renderLawPanelWithApi(raw, raw, safeLabel, parsed);
+            var lawPack = await renderLawPanelWithApi(raw, raw, safeLabel, parsed, highlightPhrases);
             lawStatus = lawPack && lawPack.status ? lawPack.status : "links";
             precFromApi = lawPack && lawPack.precedents ? lawPack.precedents : [];
           } finally {
@@ -1336,7 +1371,7 @@
           panelAdmrul.innerHTML = PLACEHOLDER_ADMRUL;
         }
 
-        renderPrecPanel(safeLabel, raw, precFromApi);
+        renderPrecPanel(safeLabel, raw, precFromApi, highlightPhrases);
 
         if (parsed && lawStatus === "ok") {
           status.textContent =

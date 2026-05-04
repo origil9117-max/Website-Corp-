@@ -572,12 +572,35 @@
         return null;
       }
 
+      /**
+       * 행정규칙 검색(lsAdmRulAstSc) URL 저수준 빌더.
+       * `query`는 반드시 `lawAdmrulSearchQueryFromRuleTitle`로 만든 값만 넣는 것을 원칙으로 한다(규칙명만).
+       */
       function lawAdmrulPortalSearchUrl(q) {
         var safe = lawPortalCapQuery(q, 1100);
         return (
           "https://www.law.go.kr/LSW/lsAdmRulAstSc.do?menuId=591&subMenuId=599&tabMenuId=453&query=" +
           encodeURIComponent(safe)
         );
+      }
+
+      /** 행정규칙 검색창 `query` 공통: 규칙 표시명만(소관부처·일련번호·법원·날짜 꼬리 제외). */
+      function lawAdmrulSearchQueryFromRuleTitle(ruleTitlePlain) {
+        return lawPortalFallbackQuery(String(ruleTitlePlain || "").trim(), "", "");
+      }
+
+      /** 행정규칙 검색 포털 URL — 목록·기타 UI에서 이 함수만 쓰면 동일 규칙이 적용된다. */
+      function lawAdmrulPortalSearchUrlFromRuleTitle(ruleTitlePlain) {
+        return lawAdmrulPortalSearchUrl(lawAdmrulSearchQueryFromRuleTitle(ruleTitlePlain));
+      }
+
+      /** API 행만 있을 때: 제목 꼬리 분리 후 위와 동일한 행정규칙 검색 URL. */
+      function lawAdmrulPortalSearchUrlFromRow(row) {
+        var tp = (row && row.title) || "";
+        var sf = stripListRowFooter(tp, row);
+        var lb = sf.body || tp;
+        if (!lb) lb = tp;
+        return lawAdmrulPortalSearchUrlFromRuleTitle(lb);
       }
 
       function lawPrecPortalSearchUrl(q) {
@@ -954,14 +977,6 @@
         return r;
       }
 
-      /**
-       * 행정규칙(lsAdmRulAstSc) 검색어: 화면에 링크된 규칙명만.
-       * 기관명(대법원)·발령번호·일련번호 등은 검색어에 붙이지 않습니다.
-       */
-      function admrulPortalFallbackQuery(linkBody) {
-        return lawPortalFallbackQuery(String(linkBody || "").trim(), "", "");
-      }
-
       function mergeHighlightRanges(ranges) {
         if (!ranges.length) return [];
         ranges.sort(function (a, b) {
@@ -1086,16 +1101,14 @@
               href = lawExpcScInterpretPrecMenuUrl(singleRule.portalQuery);
             } else {
               var detail = lawGoKrBrowseHref(row.link);
-              var fbQ;
+              var portalFb;
               if (row.kind === "admrul") {
-                fbQ = admrulPortalFallbackQuery(linkBody);
+                portalFb = lawAdmrulPortalSearchUrlFromRow(row);
               } else {
                 var qDept = splitFooter.footer ? "" : String(row.dept || "").trim();
                 var qId = splitFooter.footer ? "" : row.id;
-                fbQ = lawPortalFallbackQuery(linkBody, qDept, qId);
+                portalFb = lawExpcPortalSearchUrl(lawPortalFallbackQuery(linkBody, qDept, qId));
               }
-              var portalFb =
-                row.kind === "admrul" ? lawAdmrulPortalSearchUrl(fbQ) : lawExpcPortalSearchUrl(fbQ);
               href = detail || portalFb;
             }
             var titleInner =
@@ -1159,7 +1172,7 @@
           '<ol class="law-expc-list">' +
           interpretationListItemsHtml(rows, { highlightPhrases: blockOpts.highlightPhrases || null }) +
           "</ol>" +
-          '<p class="law-result-disclaimer">행정규칙(admrul) 검색 결과입니다. 상세 링크가 없거나 비호환이면 센터의 <strong>행정규칙</strong> 검색(lsAdmRulAstSc)으로 연결됩니다. 적용 여부는 각 원문에서 확인해야 합니다.</p>' +
+          '<p class="law-result-disclaimer">행정규칙(admrul) 검색 결과입니다. 상세 링크가 없거나 비호환이면 센터 <strong>행정규칙</strong> 검색(lsAdmRulAstSc)으로 연결되며, 검색창에는 <strong>규칙명만</strong>(소관부처·법원·번호 꼬리 제외)이 넘어갑니다. 적용 여부는 각 원문에서 확인해야 합니다.</p>' +
           "</section>"
         );
       }

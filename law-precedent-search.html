@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700&family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="platform-pages.css?v=20260420d" />
-  <link rel="stylesheet" href="law-search-prd.css?v=20260505c" />
+  <link rel="stylesheet" href="law-search-prd.css?v=20260505d" />
 </head>
 <body class="law-prd-body" data-platform-slug="law-precedent-search">
   <header class="topbar">
@@ -980,7 +980,7 @@
         return (
           '<section class="law-expc-block" aria-label="법령해석 검색 결과">' +
           '<h4 class="law-expc-head">관련 법령해석 (국가법령정보 Open API)</h4>' +
-          '<ol class="law-expc-list">' +
+          '<ol class="law-expc-list law-expc-list--stat-interp">' +
           interpretationListItemsHtml(rows, { expcSingleLinkRule: singleRule }) +
           "</ol>" +
           foot +
@@ -1286,6 +1286,33 @@
         e.preventDefault();
         onSubmit(e);
       });
+
+      /** 관련 법령해석 목록: 한 행만 본문 링크에 강조색(행정규칙·판례 패널과 무관). */
+      document.addEventListener(
+        "mousedown",
+        function (e) {
+          var t = e.target;
+          if (!t || !t.closest) return;
+          var list = t.closest(".law-expc-list--stat-interp");
+          if (list) {
+            var li = t.closest("li");
+            if (!li || !list.contains(li)) return;
+            var ch = list.children;
+            var i;
+            for (i = 0; i < ch.length; i++) {
+              ch[i].classList.remove("law-expc-item--active");
+            }
+            li.classList.add("law-expc-item--active");
+            return;
+          }
+          var actives = document.querySelectorAll(".law-expc-list--stat-interp li.law-expc-item--active");
+          var j;
+          for (j = 0; j < actives.length; j++) {
+            actives[j].classList.remove("law-expc-item--active");
+          }
+        },
+        true
+      );
     })();
   </script>
 </body>

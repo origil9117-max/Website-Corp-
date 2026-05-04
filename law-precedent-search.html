@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700&family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="platform-pages.css?v=20260420d" />
-  <link rel="stylesheet" href="law-search-prd.css?v=20260505g" />
+  <link rel="stylesheet" href="law-search-prd.css?v=20260505h" />
 </head>
 <body class="law-prd-body" data-platform-slug="law-precedent-search">
   <header class="topbar">
@@ -84,7 +84,7 @@
         <input id="law-topic-input" name="q" type="search" autocomplete="off" placeholder="예: 민법제1조, 민법1조 등으로 검색해주세요" />
         <button id="law-topic-search-btn" type="submit">검색</button>
       </form>
-      <p id="law-topic-status" class="law-topic-status" role="status" aria-live="polite">검색어를 입력한 뒤 검색을 누르면 공식 포털 링크와 세 패널 안내가 표시됩니다.</p>
+      <p id="law-topic-status" class="law-topic-status" role="status" aria-live="polite"></p>
 
       <section id="law-search-results" class="law-search-results" aria-label="검색 결과">
         <div class="law-result-panels">
@@ -1408,7 +1408,7 @@
         var specInfo = applySpecFilter(raw);
 
         if (!specInfo.tokens.length) {
-          status.textContent = "검색어를 입력한 뒤 검색을 누르면 공식 포털 링크와 세 패널 안내가 표시됩니다. (아래는 전체 기능 명세 표시)";
+          status.textContent = "아래는 전체 기능 명세를 표시합니다.";
           renderResultPanels("");
           return;
         }

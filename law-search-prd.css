@@ -523,10 +523,29 @@
   cursor: pointer;
 }
 
+/* 법령 검색: 검색창 그룹 테두리 강조·입력 세로 여유 */
+body[data-platform-slug="law-precedent-search"] .law-topic-search-row {
+  border: 2px solid rgba(28, 74, 124, 0.42);
+  border-radius: 10px;
+  padding: 0.45rem 0.5rem;
+  background: #f5f9fd;
+  box-sizing: border-box;
+}
+
+body[data-platform-slug="law-precedent-search"] .law-topic-search-row input {
+  padding: 0.95rem 1rem;
+  min-height: 2.85rem;
+}
+
 .law-topic-status {
   margin-top: 0.55rem;
   font-size: 0.9rem;
   color: #1c4a7c;
+}
+
+.law-topic-status:empty {
+  display: none;
+  margin-top: 0;
 }
 
 .law-result-plan {

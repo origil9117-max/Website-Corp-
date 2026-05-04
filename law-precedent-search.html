@@ -921,6 +921,29 @@
         return { body: t, footer: "" };
       }
 
+      /**
+       * 행정규칙 등: 제목 끝 «대법원 19670118»·«○○법원 1998.03.24»(API dept/date와 무관) 분리.
+       */
+      function stripTrailingCourtDateFooterIfAny(body) {
+        var t = String(body || "").replace(/\s+/g, " ").trim();
+        if (!t) return { body: "", footer: "" };
+        var re =
+          /\s+((?:대법원|헌법재판소|[\uAC00-\uD7A3]{2,22}(?:법원|재판소)))\s+((?:\d{8})|(?:\d{4}[.\-/]\d{1,2}[.\-/]\d{1,2}))\s*$/;
+        var m = t.match(re);
+        if (!m) return { body: t, footer: "" };
+        var footer = (m[1] + " " + m[2]).trim();
+        var bodyOut = t.slice(0, t.length - m[0].length).trim();
+        return { body: bodyOut, footer: footer };
+      }
+
+      function stripListRowFooter(titlePlain, row) {
+        var r = stripInterpretationFooterFromTitle(titlePlain, row.dept, row.date);
+        if (r.footer) return r;
+        var r2 = stripTrailingCourtDateFooterIfAny(r.body);
+        if (r2.footer) return { body: r2.body, footer: r2.footer };
+        return r;
+      }
+
       function mergeHighlightRanges(ranges) {
         if (!ranges.length) return [];
         ranges.sort(function (a, b) {
@@ -1030,7 +1053,7 @@
             var badge =
               '<span class="law-expc-kind">' + escapeHtml(interpretationKindLabel(row.kind)) + "</span> ";
             var titlePlain = row.title || "(제목 없음)";
-            var splitFooter = stripInterpretationFooterFromTitle(titlePlain, row.dept, row.date);
+            var splitFooter = stripListRowFooter(titlePlain, row);
             var linkBody = splitFooter.body || titlePlain;
             if (!linkBody) linkBody = titlePlain;
             var meta = "";

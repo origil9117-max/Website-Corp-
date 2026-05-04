@@ -1,5 +1,4 @@
 {
-  "regions": ["icn1"],
   "functions": {
     "api/law-article.js": {
       "maxDuration": 30

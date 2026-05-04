@@ -474,7 +474,7 @@
        * 메뉴 ID는 센터 메뉴 개편 후 페이지 기준 `menuId=591`·`subMenuId=597`에 맞춥니다.
        */
       function lawCenterSearchUrl(q) {
-        var safe = lawPortalCapQuery(q, 1100);
+        var safe = lawPortalCapQuery(lawPortalSearchQueryFromUserInput(String(q || "")), 1100);
         return (
           "https://www.law.go.kr/LSW/lsAstSc.do?menuId=591&subMenuId=597&tabMenuId=437&query=" +
           encodeURIComponent(safe)
@@ -486,7 +486,7 @@
        * 법령해석 목록에서 포털로 넘길 때 공통으로 사용합니다(법제처 해석례 탭 tabMenuId=237).
        */
       function lawExpcScInterpretPrecMenuUrl(queryText) {
-        var safe = lawPortalCapQuery(String(queryText || ""), 1100);
+        var safe = lawPortalCapQuery(lawPortalSearchQueryFromUserInput(String(queryText || "")), 1100);
         return (
           "https://www.law.go.kr/expcSc.do?menuId=7&subMenuId=51&tabMenuId=237&query=" +
           encodeURIComponent(safe)
@@ -528,7 +528,7 @@
 
       /** 키워드 검색 시 법령해석(expcSc)용 — 좁은 순서대로 여러 링크(동일 URL 제거). */
       function buildLawExpcNarrowPortalLinkRows(q) {
-        var raw = String(q || "").trim();
+        var raw = lawPortalSearchQueryFromUserInput(String(q || "").trim());
         if (!raw) return [];
         var fullSan = sanitizeLawPortalQuery(raw);
         var seen = {};
@@ -757,7 +757,7 @@
        * `query`는 반드시 `lawAdmrulSearchQueryFromRuleTitle`로 만든 값만 넣는 것을 원칙으로 한다(규칙명만).
        */
       function lawAdmrulPortalSearchUrl(q) {
-        var safe = lawPortalCapQuery(q, 1100);
+        var safe = lawPortalCapQuery(lawPortalSearchQueryFromUserInput(String(q || "")), 1100);
         return (
           "https://www.law.go.kr/LSW/lsAdmRulAstSc.do?menuId=591&subMenuId=599&tabMenuId=453&query=" +
           encodeURIComponent(safe)
@@ -784,7 +784,7 @@
       }
 
       function lawPrecPortalSearchUrl(q) {
-        var safe = lawPortalCapQuery(q, 1100);
+        var safe = lawPortalCapQuery(lawPortalSearchQueryFromUserInput(String(q || "")), 1100);
         return (
           "https://www.law.go.kr/LSW/precAstSc.do?menuId=591&subMenuId=597&tabMenuId=443&query=" +
           encodeURIComponent(safe)
@@ -799,7 +799,9 @@
         if (caseNo && caseNo.length <= 50) return lawPortalCapQuery(caseNo, 450);
         if (/^\d{6,22}$/.test(idStr)) return idStr;
         if (title) {
-          return lawPortalCapQuery(title.length > 100 ? title.slice(0, 100) + "…" : title, 550);
+          var tClean = lawPortalSearchQueryFromUserInput(title);
+          var use = tClean || title;
+          return lawPortalCapQuery(use.length > 100 ? use.slice(0, 100) + "…" : use, 550);
         }
         return "판례";
       }
@@ -810,7 +812,7 @@
 
       /** 키워드·조문 검색: 상세검색 화면으로 연결(긴 문장은 화면에서 짧게 나눠 검색). */
       function scourtPrecedentSearchUrl(q) {
-        var safe = capQueryForGetUrl(q, 900);
+        var safe = capQueryForGetUrl(lawPortalSearchQueryFromUserInput(String(q || "")), 900);
         if (!safe || safe === "법령") return SCOURT_PGP_ENTRY;
         return SCOURT_LIBRARY_JUDG_DETAIL + "?source=ref&keyword=" + encodeURIComponent(safe);
       }
@@ -1212,6 +1214,16 @@
         return { body: bodyUse, footer: "" };
       }
 
+      /**
+       * 사용자 입력·포털 링크 검색어 공통: 말미 «○○부 YYYY.M.D» 등(회신일·소관부처 꼬리)를 제거하고 안건 본문만 남깁니다.
+       */
+      function lawPortalSearchQueryFromUserInput(raw) {
+        var t = String(raw || "").trim();
+        if (!t) return t;
+        var r = stripListRowFooter(t, { kind: "expc", dept: "", date: "" });
+        return (r.body || t).trim();
+      }
+
       function mergeHighlightRanges(ranges) {
         if (!ranges.length) return [];
         ranges.sort(function (a, b) {
@@ -1348,10 +1360,16 @@
               highlightPhrases && highlightPhrases.length
                 ? highlightQuerySpansInPlainText(linkBody, highlightPhrases)
                 : escapeHtml(linkBody);
+            var portalQueryAttr =
+              linkBody && String(linkBody).trim()
+                ? ' data-law-portal-query="' + escapeHtml(String(linkBody).trim()) + '"'
+                : "";
             var bodyHtml = href
               ? '<a class="law-expc-item-hit" href="' +
                 escapeHtml(href) +
-                '" target="_blank" rel="noopener noreferrer">' +
+                '"' +
+                portalQueryAttr +
+                ' target="_blank" rel="noopener noreferrer">' +
                 titleInner +
                 "</a>" +
                 meta
@@ -1610,7 +1628,7 @@
       }
 
       function renderResultPanels(raw) {
-        var q = String(raw || "").trim();
+        var q = lawPortalSearchQueryFromUserInput(String(raw || "").trim());
         var safeLabel = escapeHtml(q || "키워드");
         if (!q) {
           document.body.classList.remove("law-expc-hit-isolate");
@@ -1655,7 +1673,9 @@
       }
 
       async function runSearch() {
-        var raw = String(input.value || "").trim();
+        var raw0 = String(input.value || "").trim();
+        var raw = lawPortalSearchQueryFromUserInput(raw0);
+        if (input && raw !== raw0) input.value = raw;
         var safeLabel = escapeHtml(raw);
         var parsed = parseLawArticleQuery(raw);
         var specInfo = applySpecFilter(raw);
@@ -1753,6 +1773,11 @@
         function (e) {
           var t = e.target;
           if (!t || !t.closest) return;
+          var portalHit = t.closest("a.law-expc-item-hit[data-law-portal-query]");
+          if (portalHit && input) {
+            var qAttr = portalHit.getAttribute("data-law-portal-query");
+            if (qAttr) input.value = qAttr;
+          }
           var list = t.closest(".law-expc-list--stat-interp");
           if (list) {
             var li = t.closest("li");

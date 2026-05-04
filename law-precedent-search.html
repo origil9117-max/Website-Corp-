@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700&family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="platform-pages.css?v=20260420d" />
-  <link rel="stylesheet" href="law-search-prd.css?v=20260505k" />
+  <link rel="stylesheet" href="law-search-prd.css?v=20260505l" />
 </head>
 <body class="law-prd-body" data-platform-slug="law-precedent-search">
   <header class="topbar">
@@ -458,6 +458,10 @@
           if (!internalRowId && /^\d{6,22}$/.test(idStr)) chunks.push(idStr);
           return lawPortalCapQuery(chunks.join(" ").trim() || "법령", 1100);
         }
+        var serialNarrow = extractMolLegExpcSerialQuery(t + " " + d);
+        if (serialNarrow) {
+          return lawPortalCapQuery(serialNarrow, 1100);
+        }
         if (t) chunks.push(t.length > 72 ? t.slice(0, 72) + "…" : t);
         if (d) chunks.push(d.length > 28 ? d.slice(0, 28) : d);
         if (/^\d{6,22}$/.test(idStr)) chunks.push(idStr);
@@ -492,6 +496,73 @@
       /** 브라우저용 법령해석 포털 검색 — 항상 expcSc(판례·해석례등) 경로. */
       function lawExpcPortalSearchUrl(q) {
         return lawExpcScInterpretPrecMenuUrl(q);
+      }
+
+      /**
+       * 국가법령정보센터 해석례에 붙는 「법제처 YY-NNNN」.
+       * 긴 안건 제목을 통째로 넣으면 수천 건이 나오기 쉬워, 있으면 이 값만 넣는 링크를 따로 둡니다.
+       */
+      function extractMolLegExpcSerialQuery(q) {
+        var s = String(q || "").replace(/\s+/g, " ").trim();
+        if (!s) return "";
+        var m = s.match(/(?:[\[〔【])?법제처\s*(\d{2}-\d{4})/);
+        if (m) return "법제처 " + m[1];
+        m = s.match(/법제처\s*(\d{2}-\d{4})/);
+        if (m) return "법제처 " + m[1];
+        return "";
+      }
+
+      /**
+       * 긴 안건 제목: 뒤쪽만 잘라 검색(앞부·부처명 반복이 광범위 OR 매칭을 유발하는 경우 완화).
+       */
+      function narrowExpcPortalTailQuery(q, maxLen) {
+        var cap = typeof maxLen === "number" ? maxLen : 96;
+        var s = sanitizeLawPortalQuery(String(q || ""));
+        if (!s) return "";
+        if (s.length <= cap) return s;
+        var tail = s.slice(-cap).trim();
+        var sp = tail.indexOf(" ");
+        if (sp !== -1 && sp < 24) tail = tail.slice(sp + 1).trim();
+        return tail || s.slice(0, cap);
+      }
+
+      /** 키워드 검색 시 법령해석(expcSc)용 — 좁은 순서대로 여러 링크(동일 URL 제거). */
+      function buildLawExpcNarrowPortalLinkRows(q) {
+        var raw = String(q || "").trim();
+        if (!raw) return [];
+        var fullSan = sanitizeLawPortalQuery(raw);
+        var seen = {};
+        var rows = [];
+        function pushRow(href, label) {
+          if (!href || seen[href]) return;
+          seen[href] = 1;
+          rows.push({ href: href, label: label });
+        }
+        var serialQ = extractMolLegExpcSerialQuery(raw);
+        if (serialQ) {
+          pushRow(
+            lawExpcPortalSearchUrl(serialQ),
+            "법령해석 — 일련번호만 (" + serialQ + ") · 우선 시도"
+          );
+        }
+        if (raw.length >= 72) {
+          var tailQ = narrowExpcPortalTailQuery(raw, 96);
+          if (tailQ && tailQ !== serialQ && tailQ.length < fullSan.length) {
+            pushRow(
+              lawExpcPortalSearchUrl(tailQ),
+              "법령해석 — 제목 뒤쪽 구절(약 " + tailQ.length + "자)"
+            );
+          }
+        }
+        if (fullSan) {
+          pushRow(
+            lawExpcPortalSearchUrl(fullSan),
+            raw.length >= 100 || serialQ
+              ? "법령해석 — 전체 문장(건수가 많을 수 있음)"
+              : "법령해석(판례·해석례등)"
+          );
+        }
+        return rows;
       }
 
       function normExpcTitleOneSpace(s) {
@@ -818,6 +889,26 @@
 
       function lawPanelOfficialLinksHtml(safeLabel, q) {
         var lawUrl = lawCenterSearchUrl(q);
+        var expcRows = buildLawExpcNarrowPortalLinkRows(q);
+        var expcBlock = "";
+        if (expcRows.length) {
+          expcBlock =
+            '<p class="law-result-subhead">법령해석(센터) — 검색 범위 줄이기</p>' +
+            '<ul class="law-result-actions">' +
+            expcRows
+              .map(function (r) {
+                return (
+                  "<li><a href=\"" +
+                  r.href +
+                  "\" target=\"_blank\" rel=\"noopener noreferrer\">" +
+                  escapeHtml(r.label) +
+                  "</a></li>"
+                );
+              })
+              .join("") +
+            "</ul>" +
+            '<p class="law-result-disclaimer law-result-disclaimer--tight">긴 문장을 한 번에 넣으면 키워드가 넓게 잡혀 수천 건이 나올 수 있습니다. 목록·원문에 적힌 <strong>법제처 YY-NNNN</strong>이 있으면 위의 <strong>일련번호만</strong> 링크를 먼저 눌러 보세요. 센터 화면에서는 <strong>결과 내 검색</strong>으로 한 번 더 좁힐 수 있습니다.</p>';
+        }
         return (
           '<div class="law-result-divider" role="presentation"></div>' +
           '<p class="law-result-subhead">공식 포털에서 추가 확인</p>' +
@@ -828,6 +919,7 @@
           '<li><a href="https://www.law.go.kr/main.html" target="_blank" rel="noopener noreferrer">센터 메인 — 법령해석·행정규칙 메뉴</a></li>' +
           '<li><span class="law-muted">공동활용(API·IP 등록)</span> <code class="law-open-data-url" translate="no">https://open.law.go.kr/LSO/main.do</code> <span class="law-muted">(주소 복사 후 등록 PC에서 열기)</span></li>' +
           "</ul>" +
+          expcBlock +
           '<p class="law-result-disclaimer">검색어 <strong>' +
           safeLabel +
           "</strong> 기준입니다. 원문·연혁·시행일은 국가법령정보센터에서 최종 확인하세요.</p>"

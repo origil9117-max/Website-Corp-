@@ -739,6 +739,12 @@ body[data-platform-slug="law-precedent-search"] #law-topic-search-btn.law-topic-
   color: var(--law-portal-p1);
 }
 
+.law-result-disclaimer--tight {
+  margin-top: 0.4rem;
+  margin-bottom: 0;
+  font-size: 0.82rem;
+}
+
 .law-muted {
   color: var(--muted);
   font-weight: 500;

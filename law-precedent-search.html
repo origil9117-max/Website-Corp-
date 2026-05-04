@@ -858,6 +858,85 @@
         return SCOURT_LIBRARY_JUDG_DETAIL + "#caseNo=" + encodeURIComponent(c);
       }
 
+      /**
+       * 판례 한 줄을 «사건명 | 사건번호 법원 | 일자»로 나눕니다. 링크는 사건번호+법원만 감쌉니다.
+       * API에 사건번호·법원·일자가 있으면 제목 말미에서 제거하고, 없으면 제목 전체 정규식으로 시도합니다.
+       */
+      function precCaseLinkSegments(row) {
+        var titlePlain = String((row && row.title) || "").trim();
+        if (!titlePlain) titlePlain = "(사건명 없음)";
+        var caseNo = String((row && row.caseNo) || "").trim();
+        var court = String((row && row.court) || "").trim();
+        var date = String((row && row.date) || "").trim();
+
+        function escRe(s) {
+          return String(s || "").replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+        }
+
+        if (caseNo && court) {
+          var linkLabel = (caseNo + " " + court).replace(/\s+/g, " ").trim();
+          var reTail =
+            "\\s*" + escRe(caseNo) + "\\s+" + escRe(court) + (date ? "(\\s+" + escRe(date) + ")?" : "") + "\\s*$";
+          var r = new RegExp(reTail);
+          if (r.test(titlePlain)) {
+            var head = titlePlain.replace(r, "").trim();
+            return {
+              kind: "split",
+              head: head,
+              linkLabel: linkLabel,
+              tail: date ? " " + date : "",
+            };
+          }
+        }
+
+        var m = titlePlain.match(
+          /^(.+?)\s+([12]\d{3}[가-힣]{1,14}\d{2,})\s+((?:[가-힣A-Za-z0-9]+)(?:\s+(?:[가-힣A-Za-z0-9]+))*)\s+(\d{4}\.\d{1,2}\.\d{1,2})\s*$/
+        );
+        if (m) {
+          return {
+            kind: "split",
+            head: m[1].trim(),
+            linkLabel: m[2] + " " + m[3].trim(),
+            tail: " " + m[4],
+          };
+        }
+
+        return { kind: "full", head: titlePlain, linkLabel: "", tail: "" };
+      }
+
+      function precRowTitleHtml(row, highlightPhrases, href) {
+        var seg = precCaseLinkSegments(row);
+        var hp = highlightPhrases && highlightPhrases.length;
+
+        function hlPlain(s) {
+          return hp ? highlightQuerySpansInPlainText(s, highlightPhrases) : escapeHtml(s);
+        }
+
+        if (!href || seg.kind !== "split" || !seg.linkLabel) {
+          var titlePlain = row.title || "(사건명 없음)";
+          var titleInner = hp ? highlightQuerySpansInPlainText(titlePlain, highlightPhrases) : escapeHtml(titlePlain);
+          return href
+            ? '<a class="law-prec-item-hit" href="' +
+                escapeHtml(href) +
+                '" target="_blank" rel="noopener noreferrer">' +
+                titleInner +
+                "</a>"
+            : titleInner;
+        }
+
+        var headPart = seg.head ? hlPlain(seg.head) : "";
+        var linkPart =
+          '<a class="law-prec-item-hit law-prec-item-hit--case" href="' +
+          escapeHtml(href) +
+          '" target="_blank" rel="noopener noreferrer">' +
+          escapeHtml(seg.linkLabel) +
+          "</a>";
+        var tailPart = seg.tail ? hlPlain(seg.tail.trim()) : "";
+        var gapBeforeLink = headPart ? " " : "";
+        var gapBeforeTail = tailPart ? " " : "";
+        return headPart + gapBeforeLink + linkPart + (tailPart ? gapBeforeTail + tailPart : "");
+      }
+
       function expandQuery(query) {
         var lowered = normalize(query);
         if (!lowered) return [];
@@ -1501,27 +1580,19 @@
         if (precRows && precRows.length) {
           var listItems = precRows
             .map(function (row) {
-              var titlePlain = row.title || "(사건명 없음)";
-              var titleInner =
-                highlightPhrases && highlightPhrases.length
-                  ? highlightQuerySpansInPlainText(titlePlain, highlightPhrases)
-                  : escapeHtml(titlePlain);
+              var seg = precCaseLinkSegments(row);
               var meta = "";
-              if (row.caseNo) meta += ' <span class="law-prec-meta">' + escapeHtml(row.caseNo) + "</span>";
-              if (row.court) meta += ' <span class="law-prec-meta">' + escapeHtml(row.court) + "</span>";
-              if (row.date) meta += ' <span class="law-prec-meta">' + escapeHtml(row.date) + "</span>";
+              if (seg.kind !== "split") {
+                if (row.caseNo) meta += ' <span class="law-prec-meta">' + escapeHtml(row.caseNo) + "</span>";
+                if (row.court) meta += ' <span class="law-prec-meta">' + escapeHtml(row.court) + "</span>";
+                if (row.date) meta += ' <span class="law-prec-meta">' + escapeHtml(row.date) + "</span>";
+              }
               var detail = lawGoKrBrowseHref(row.link);
               var caseNoStr = String(row.caseNo || "").trim();
               var scourtCase = isKoreanLitigationCaseNo(caseNoStr) ? scourtCaseSearchUrl(caseNoStr) : "";
               var precFb = lawPrecFallbackQuery(row);
               var href = detail || scourtCase || lawPrecPortalSearchUrl(precFb);
-              var titleHtml = href
-                ? '<a class="law-prec-item-hit" href="' +
-                  escapeHtml(href) +
-                  '" target="_blank" rel="noopener noreferrer">' +
-                  titleInner +
-                  "</a>"
-                : titleInner;
+              var titleHtml = precRowTitleHtml(row, highlightPhrases, href);
               return "<li>" + titleHtml + meta + "</li>";
             })
             .join("");

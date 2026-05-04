@@ -921,6 +921,15 @@
         return { body: t, footer: "" };
       }
 
+      /** 제목 전체가 `[…]` 한 겹으로만 감싸진 경우 제거(행정규칙명 등). */
+      function stripSurroundingSquareBrackets(s) {
+        var t = String(s || "").replace(/\s+/g, " ").trim();
+        while (t.length >= 2 && t.charAt(0) === "[" && t.charAt(t.length - 1) === "]") {
+          t = t.slice(1, -1).replace(/\s+/g, " ").trim();
+        }
+        return t;
+      }
+
       /**
        * 행정규칙 등: 제목 끝 «대법원 19670118»·«○○법원 1998.03.24»(API dept/date와 무관) 분리.
        */
@@ -937,7 +946,8 @@
       }
 
       function stripListRowFooter(titlePlain, row) {
-        var r = stripInterpretationFooterFromTitle(titlePlain, row.dept, row.date);
+        var base = stripSurroundingSquareBrackets(titlePlain);
+        var r = stripInterpretationFooterFromTitle(base, row.dept, row.date);
         if (r.footer) return r;
         var r2 = stripTrailingCourtDateFooterIfAny(r.body);
         if (r2.footer) return { body: r2.body, footer: r2.footer };
@@ -1068,7 +1078,9 @@
               href = lawExpcScInterpretPrecMenuUrl(singleRule.portalQuery);
             } else {
               var detail = lawGoKrBrowseHref(row.link);
-              var fbQ = lawPortalFallbackQuery(linkBody, row.dept, row.id);
+              var qDept = splitFooter.footer ? "" : String(row.dept || "").trim();
+              var qId = splitFooter.footer ? "" : row.id;
+              var fbQ = lawPortalFallbackQuery(linkBody, qDept, qId);
               var portalFb =
                 row.kind === "admrul" ? lawAdmrulPortalSearchUrl(fbQ) : lawExpcPortalSearchUrl(fbQ);
               href = detail || portalFb;

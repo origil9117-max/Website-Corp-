@@ -512,6 +512,32 @@
         return "";
       }
 
+      /** Open API `안건번호`(예: 20-0478, 200478) → 센터 통합검색용 `법제처 YY-NNNN`. */
+      function molLegSerialFromExpcItemNo(itemNoStr) {
+        var s = String(itemNoStr || "")
+          .replace(/\s/g, "")
+          .replace(/[－–—]/g, "-");
+        if (!s) return "";
+        var m = s.match(/^(\d{2})-(\d{4})$/);
+        if (m) return "법제처 " + m[1] + "-" + m[2];
+        m = s.match(/^(\d{2})(\d{4})$/);
+        if (m) return "법제처 " + m[1] + "-" + m[2];
+        m = s.match(/^(\d{1,2})-(\d{4})$/);
+        if (m) {
+          var a = String(m[1]);
+          if (a.length === 1) a = "0" + a;
+          if (a.length === 2) return "법제처 " + a + "-" + m[2];
+        }
+        return "";
+      }
+
+      /** 제목·메타에 붙은 법제처 번호 또는 API 안건번호 — 긴 안건명 대신 센터 검색에 쓰면 건수가 크게 줄어듭니다. */
+      function molLegSerialForExpcPortal(row, titlePlain) {
+        var fromTitle = extractMolLegExpcSerialQuery(String(titlePlain || ""));
+        if (fromTitle) return fromTitle;
+        return molLegSerialFromExpcItemNo(row && row.itemNo);
+      }
+
       /**
        * 긴 안건 제목: 뒤쪽만 잘라 검색(앞부·부처명 반복이 광범위 OR 매칭을 유발하는 경우 완화).
        */
@@ -1352,7 +1378,10 @@
               if (row.kind === "admrul") {
                 portalFb = lawAdmrulPortalSearchUrlFromRow(row);
               } else {
-                portalFb = lawExpcPortalSearchUrl(lawPortalFallbackQuery(String(linkBody || "").trim(), "", ""));
+                var molSerial = molLegSerialForExpcPortal(row, titlePlain);
+                portalFb = molSerial
+                  ? lawExpcPortalSearchUrl(molSerial)
+                  : lawExpcPortalSearchUrl(lawPortalFallbackQuery(String(linkBody || "").trim(), "", ""));
               }
               href = detail || portalFb;
             }
@@ -1397,7 +1426,7 @@
         }
         var foot = singleRule
           ? '<p class="law-result-disclaimer">' + singleRule.disclaimerNote + "</p>"
-          : '<p class="law-result-disclaimer">법령해석(expc) 검색 결과입니다. 상세 링크가 없거나 비호환이면 국가법령정보센터 <strong>판례·해석례등</strong> 검색(<code>expcSc</code>)으로 연결됩니다. 적용 여부는 각 원문에서 확인해야 합니다.</p>';
+          : '<p class="law-result-disclaimer">법령해석(expc) 검색 결과입니다. 원문 상세 URL이 없을 때는 센터 <strong>판례·해석례등</strong>(<code>expcSc</code>)으로 연결하며, API에 <strong>안건번호·법제처 YY-NNNN</strong>이 있으면 긴 안건명 대신 그 검색어를 넣어 수천 건이 아닌 소수 결과로 좁힙니다. 긴 제목만 넣는 경우 센터에서 <strong>상세검색(안건명)</strong>으로 한 번 더 좁혀 주세요.</p>';
         var andNote = "";
         if (andCompressed) {
           if (andFromCount > 1) {

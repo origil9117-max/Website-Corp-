@@ -575,10 +575,11 @@ function mapExpcRow(row) {
     row.질의기관명 || row.담당부서 || row.소관부처 || row.회신기관명 || row.처리기관 || "";
   const date = row.회신일자 || row.공포일자 || row.신청일자 || "";
   const id = row.법령해석례일련번호 || row.행정해석일련번호 || row.해석례일련번호 || row.ID || row.id || "";
+  const itemNo = String(row.안건번호 || row.해석안건번호 || row.안건기호 || "").trim();
   const rawLink =
     row.법령해석례상세링크 || row.법령해석상세링크 || row.법령해석례링크 || row.상세링크 || "";
   const link = normalizeLawGoKrDetailUrl(rawLink);
-  return { kind: "expc", title: String(title), dept: String(dept), date: String(date), id: String(id), link };
+  return { kind: "expc", title: String(title), dept: String(dept), date: String(date), id: String(id), itemNo, link };
 }
 
 function mapAdmRulRow(row) {
@@ -630,7 +631,7 @@ async function fetchInterpretationRows(oc, origin, lawName, label, articleTitle)
       BASE +
       "/lawSearch.do?OC=" +
       encodeURIComponent(oc) +
-      "&target=expc&type=JSON&display=15&query=" +
+      "&target=expc&type=JSON&display=15&search=1&query=" +
       encodeURIComponent(expq);
     try {
       var expText = await httpsGetText(expUrl, origin);

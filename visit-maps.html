@@ -105,10 +105,65 @@
       font-weight: 800;
     }
 
+    .hero-title-row {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 0.65rem 1rem;
+      flex-wrap: wrap;
+    }
+
     .hero h1 {
       margin: 0;
       font-family: "Noto Serif KR", serif;
       font-size: clamp(1.4rem, 2.4vw, 2rem);
+    }
+
+    .hero-how-link {
+      text-decoration: none;
+      color: #37527f;
+      font-weight: 700;
+      font-size: 0.82rem;
+      white-space: nowrap;
+      border: 1px solid rgba(55, 82, 127, 0.28);
+      border-radius: 999px;
+      padding: 0.38rem 0.78rem;
+      background: rgba(255, 255, 255, 0.92);
+      box-shadow: 0 1px 0 rgba(255, 255, 255, 0.9) inset;
+    }
+
+    .hero-how-link:hover {
+      border-color: rgba(55, 82, 127, 0.45);
+      background: #fff;
+    }
+
+    .directions-how {
+      scroll-margin-top: 0.75rem;
+      border: 1px solid rgba(84, 103, 142, 0.28);
+      border-radius: 12px;
+      background: var(--card);
+      padding: 0.95rem 1.1rem 1rem;
+      margin-bottom: 0.95rem;
+      box-shadow: 0 6px 18px rgba(28, 40, 64, 0.08);
+    }
+
+    .directions-how h2 {
+      margin: 0 0 0.55rem;
+      font-size: 1.02rem;
+      font-weight: 800;
+      color: #2f3a50;
+    }
+
+    .directions-how ul {
+      margin: 0;
+      padding-left: 1.15rem;
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+
+    .directions-how li + li {
+      margin-top: 0.35rem;
     }
 
     .hero p {
@@ -224,8 +279,19 @@
   <main class="wrap">
     <section class="hero" aria-label="오시는 길 안내">
       <p class="label">Directions</p>
-      <h1>오시는 길</h1>
+      <div class="hero-title-row">
+        <h1>오시는 길</h1>
+        <a class="hero-how-link" href="#directions-how">오시는 방법</a>
+      </div>
       <p>상단은 카카오맵, 하단은 네이버지도로 구성된 2단 지도 화면입니다.</p>
+    </section>
+
+    <section id="directions-how" class="directions-how" aria-labelledby="directions-how-title">
+      <h2 id="directions-how-title">오시는 방법</h2>
+      <ul>
+        <li>지하철 1호선 <strong>부산대역</strong> <strong>4번 출구</strong> 인근 <strong>삼한스퀘어</strong> 건물로 오시면 됩니다.</li>
+        <li>주소: 부산광역시 금정구 중앙대로1629번길 16, 삼한스퀘어 2층 223호 (대한민국행정사사무소)</li>
+      </ul>
     </section>
 
     <section class="map-stack" aria-label="2단 지도 보기">

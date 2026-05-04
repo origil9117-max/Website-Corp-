@@ -1169,13 +1169,47 @@
         return { body: bodyOut, footer: footer };
       }
 
+      /**
+       * 법령해석: API의 dept·date와 맞물리지 않아도 말미 «○○부 2020.11.26» 형태를 분리(포털 검색어에 회신일·부처 꼬리 제외).
+       */
+      function stripTrailingExpcDeptDateLoose(body, dept, date) {
+        var t = String(body || "").replace(/\s+/g, " ").trim();
+        if (!t) return { body: "", footer: "" };
+        var d = String(dept || "").replace(/\s+/g, " ").trim();
+        if (d) {
+          var variants = interpretationDateFormatVariants(date || "");
+          var vi;
+          for (vi = 0; vi < variants.length; vi++) {
+            var suf = d + " " + variants[vi];
+            if (interpretationTitleEndsWithSuffix(t, suf)) {
+              return { body: t.slice(0, t.length - suf.length).trim(), footer: suf };
+            }
+            suf = d + variants[vi];
+            if (interpretationTitleEndsWithSuffix(t, suf)) {
+              return { body: t.slice(0, t.length - suf.length).trim(), footer: suf };
+            }
+          }
+        }
+        var reGen =
+          /\s+([\uAC00-\uD7A3]{2,28}(?:부|처|청|원|회|실))\s+(\d{4}\.\d{1,2}\.\d{1,2}|\d{4}-\d{1,2}-\d{1,2}|\d{8})\s*$/;
+        var m = t.match(reGen);
+        if (!m) return { body: t, footer: "" };
+        return { body: t.slice(0, t.length - m[0].length).trim(), footer: m[0].trim() };
+      }
+
       function stripListRowFooter(titlePlain, row) {
         var base = stripSurroundingSquareBrackets(titlePlain);
         var r = stripInterpretationFooterFromTitle(base, row.dept, row.date);
         if (r.footer) return r;
         var r2 = stripTrailingCourtDateFooterIfAny(r.body);
         if (r2.footer) return { body: r2.body, footer: r2.footer };
-        return r;
+        var bodyUse = r2.body;
+        if (row && row.kind === "expc") {
+          var r3 = stripTrailingExpcDeptDateLoose(bodyUse, row.dept, row.date);
+          if (r3.footer) return { body: r3.body, footer: r3.footer };
+          bodyUse = r3.body;
+        }
+        return { body: bodyUse, footer: "" };
       }
 
       function mergeHighlightRanges(ranges) {
@@ -1306,9 +1340,7 @@
               if (row.kind === "admrul") {
                 portalFb = lawAdmrulPortalSearchUrlFromRow(row);
               } else {
-                var qDept = splitFooter.footer ? "" : String(row.dept || "").trim();
-                var qId = splitFooter.footer ? "" : row.id;
-                portalFb = lawExpcPortalSearchUrl(lawPortalFallbackQuery(linkBody, qDept, qId));
+                portalFb = lawExpcPortalSearchUrl(lawPortalFallbackQuery(String(linkBody || "").trim(), "", ""));
               }
               href = detail || portalFb;
             }
@@ -1316,8 +1348,14 @@
               highlightPhrases && highlightPhrases.length
                 ? highlightQuerySpansInPlainText(linkBody, highlightPhrases)
                 : escapeHtml(linkBody);
+            var dataExpc =
+              row.kind === "expc" && linkBody
+                ? ' data-expc-search-text="' + encodeURIComponent(String(linkBody).trim()) + '"'
+                : "";
             var bodyHtml = href
-              ? '<a class="law-expc-item-hit" href="' +
+              ? '<a class="law-expc-item-hit"' +
+                dataExpc +
+                ' href="' +
                 escapeHtml(href) +
                 '" target="_blank" rel="noopener noreferrer">' +
                 titleInner +
@@ -1723,6 +1761,15 @@
           if (!t || !t.closest) return;
           var list = t.closest(".law-expc-list--stat-interp");
           if (list) {
+            var aHit = t.closest && t.closest("a.law-expc-item-hit[data-expc-search-text]");
+            if (aHit && input) {
+              try {
+                var fill = decodeURIComponent(aHit.getAttribute("data-expc-search-text") || "");
+                if (fill) input.value = fill;
+              } catch (eFill) {
+                /* ignore */
+              }
+            }
             var li = t.closest("li");
             if (!li || !list.contains(li)) return;
             var ch = list.children;

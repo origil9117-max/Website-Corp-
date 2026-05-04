@@ -858,9 +858,50 @@
         return SCOURT_LIBRARY_JUDG_DETAIL + "#caseNo=" + encodeURIComponent(c);
       }
 
+      /** 선고일자(YYYYMMDD·YYYY.M.D 등)를 목록에 보기 좋게 한 칸 띄운 문자열로. */
+      function formatPrecDisplayDate(dateStr) {
+        var raw = String(dateStr || "").trim();
+        if (!raw) return "";
+        var c = raw.replace(/\s/g, "");
+        var m = c.match(/^(\d{4})(\d{2})(\d{2})$/);
+        if (m) {
+          return (
+            " " + m[1] + "." + String(parseInt(m[2], 10)) + "." + String(parseInt(m[3], 10))
+          );
+        }
+        m = raw.match(/^(\d{4})\s*[.\-/]\s*(\d{1,2})\s*[.\-/]\s*(\d{1,2})/);
+        if (m) return " " + m[1] + "." + m[2] + "." + m[3];
+        return " " + raw;
+      }
+
+      function stripLeadingDateFromSuffix(suffix, dateRaw) {
+        var e = String(suffix || "").trim();
+        if (!e) return "";
+        var d = String(dateRaw || "").trim().replace(/\s/g, "");
+        var patterns = [];
+        if (/^\d{8}$/.test(d)) {
+          var y = d.slice(0, 4);
+          var mo = String(parseInt(d.slice(4, 6), 10));
+          var da = String(parseInt(d.slice(6, 8), 10));
+          patterns.push(
+            new RegExp(
+              "^" + y + "[.\\-\\/\\s]*0*" + mo + "[.\\-\\/\\s]*0*" + da + "\\b\\s*",
+              ""
+            )
+          );
+        }
+        if (dateRaw) patterns.push(new RegExp("^" + String(dateRaw).replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "\\s*"));
+        patterns.push(/^\d{4}\s*[.\-/]\s*\d{1,2}\s*[.\-/]\s*\d{1,2}\s*/);
+        var pi;
+        for (pi = 0; pi < patterns.length; pi++) {
+          if (patterns[pi].test(e)) return e.replace(patterns[pi], "").trim();
+        }
+        return e;
+      }
+
       /**
-       * 판례 한 줄을 «사건명 | 사건번호 법원 | 일자»로 나눕니다. 링크는 사건번호+법원만 감쌉니다.
-       * API에 사건번호·법원·일자가 있으면 제목 말미에서 제거하고, 없으면 제목 전체 정규식으로 시도합니다.
+       * 판례 한 줄을 «사건명 | 사건번호 법원 | 일자·부가문구»로 나눕니다. 링크는 사건번호+법원만 감쌉니다.
+       * 사건명만 오고 사건번호·법원은 API 별도 필드인 경우(민법제32조 판례 1~3번 흔적)에도 동일 규칙을 적용합니다.
        */
       function precCaseLinkSegments(row) {
         var titlePlain = String((row && row.title) || "").trim();
@@ -884,9 +925,45 @@
               kind: "split",
               head: head,
               linkLabel: linkLabel,
-              tail: date ? " " + date : "",
+              tail: formatPrecDisplayDate(date),
             };
           }
+
+          if (titlePlain.indexOf(caseNo) === -1) {
+            return {
+              kind: "split",
+              head: titlePlain,
+              linkLabel: linkLabel,
+              tail: formatPrecDisplayDate(date),
+            };
+          }
+
+          var idx0 = titlePlain.lastIndexOf(caseNo);
+          var headRemain = titlePlain.slice(0, idx0).trim();
+          var suf = titlePlain.slice(idx0).trim();
+          if (suf.indexOf(caseNo) !== 0) {
+            return { kind: "full", head: titlePlain, linkLabel: "", tail: "" };
+          }
+          var afterCase = suf.slice(caseNo.length).trim();
+          var extraAfter = afterCase;
+          if (afterCase.indexOf(court) === 0) {
+            extraAfter = afterCase.slice(court.length).trim();
+          } else {
+            var tok = afterCase.split(/\s+/)[0];
+            if (tok === court) {
+              extraAfter = afterCase.slice(tok.length).trim();
+            } else {
+              extraAfter = afterCase;
+            }
+          }
+          extraAfter = stripLeadingDateFromSuffix(extraAfter, date);
+          var tailBits = (formatPrecDisplayDate(date) + (extraAfter ? " " + extraAfter : "")).trim();
+          return {
+            kind: "split",
+            head: headRemain || titlePlain,
+            linkLabel: linkLabel,
+            tail: tailBits ? " " + tailBits : "",
+          };
         }
 
         var m = titlePlain.match(

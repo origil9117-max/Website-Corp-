@@ -135,7 +135,7 @@
               <strong>공동활용(open.law.go.kr)</strong>은 API 신청·IP 등록용이며, 일반 창에서 링크를 열면 &quot;페이지 접속에 실패&quot;가 자주 납니다.
               이 사이트의 목록 링크는 <code>open.law.go.kr</code>·<code>/LSO/</code>·브라우저용이 아닌 <code>/DRF/</code>(Open API) 주소로 가지 않도록
               <a href="https://www.law.go.kr/main.html" target="_blank" rel="noopener noreferrer">국가법령정보센터</a>
-              <strong>유형별 검색</strong>(통합 <code>lsAstSc</code>, 판례 <code>precAstSc</code>, 법령해석 <code>expcAstSc</code>, 행정규칙 <code>lsAdmRulAstSc</code>)으로 연결합니다.
+              <strong>유형별 검색</strong>(통합 <code>lsAstSc</code>, 판례 <code>precAstSc</code>, 법령해석·해석례 <code>expcSc</code>(판례·해석례등), 행정규칙 <code>lsAdmRulAstSc</code>)으로 연결합니다.
               구형 <code>lsAstListSc.do</code>·단일 <code>lsSc</code> 법령명 탭만으로는 판례·해석 문구가 0건으로 나올 수 있습니다.
               통합 <code>lsAstSc</code>에 들어가도 화면 안쪽 탭이 「일괄·법령명」이면 긴 설명·판례 문구만으로는 0건일 수 있어, 센터에서 본문·해석·판례 탭을 바꾸거나 아래 목록의 <strong>유형별 링크</strong>(판례·법령해석 등)을 쓰는 편이 낫습니다.
               IP·OC 등록은 위 안내의 <code>https://open.law.go.kr/LSO/main.do</code>를 <strong>복사</strong>해 등록 가능한 환경에서 여세요.
@@ -490,17 +490,9 @@
         );
       }
 
-      function lawExpcPortalSearchUrl(q) {
-        var safe = lawPortalCapQuery(q, 1100);
-        return (
-          "https://www.law.go.kr/LSW/expcAstSc.do?menuId=591&subMenuId=597&tabMenuId=447&query=" +
-          encodeURIComponent(safe)
-        );
-      }
-
       /**
        * 국가법령정보센터 — 「판례·해석례등(헌재결정례·행정심판재결례)」경로의 해석 검색(expcSc).
-       * 화면에서 법제처 해석례 탭(tabMenuId=237)이 선택된 상태로 열리도록 menuId·subMenuId는 센터 UI 기준으로 맞춤.
+       * 법령해석 목록에서 포털로 넘길 때 공통으로 사용합니다(법제처 해석례 탭 tabMenuId=237).
        */
       function lawExpcScInterpretPrecMenuUrl(queryText) {
         var safe = lawPortalCapQuery(String(queryText || ""), 1100);
@@ -510,9 +502,10 @@
         );
       }
 
-      /** 「민법」제32조 검색 시 법령해석 목록에서만 사용: 국토교통부 물류법 관련 해석 제목(센터 검색창에 그대로 넣음). */
-      var MOLIT_CIVIL32_EXPC_FULL_TITLE =
-        "국토교통부 - 「민법」 또는 「상법」에 따라 설립된 법인이 「물류시설의 개발 및 운영에 관한 법률」 제27조제2항제1호부터 제4호까지의 어느 하나에 해당하는 자와 공동으로 물류단지개발사업 시행자로 지정받은 경우 사업대상 토지면적의 3분의 2 이상을 매입하지 않고도 물류단지개발사업에 필요한 토지등을 수용하거나 사용할 수 있는지 여부(「물류시설의 개발 및 운영에 관한 법률」 제32조제1항 등 관련)";
+      /** 브라우저용 법령해석 포털 검색 — 항상 expcSc(판례·해석례등) 경로. */
+      function lawExpcPortalSearchUrl(q) {
+        return lawExpcScInterpretPrecMenuUrl(q);
+      }
 
       function normExpcTitleOneSpace(s) {
         return String(s || "")
@@ -520,27 +513,62 @@
           .trim();
       }
 
-      function isMolExpcCivil32Title(title) {
+      function titlesMatchForExpcPortalRow(title, canonicalTitle) {
         var n = normExpcTitleOneSpace(title);
-        var ref = normExpcTitleOneSpace(MOLIT_CIVIL32_EXPC_FULL_TITLE);
-        if (!n) return false;
+        var ref = normExpcTitleOneSpace(canonicalTitle);
+        if (!n || !ref) return false;
         if (n === ref) return true;
         if (ref.indexOf(n) === 0 || n.indexOf(ref) === 0) return true;
         if (n.length >= 60 && ref.indexOf(n.slice(0, 60)) === 0) return true;
-        return (
-          /^국토교통부\s*-/.test(n) &&
-          n.indexOf("「민법」 또는 「상법」") !== -1 &&
-          n.indexOf("물류시설의 개발 및 운영에 관한 법률") !== -1 &&
-          n.indexOf("제32조제1항") !== -1
-        );
+        return false;
       }
 
-      function isCivilLawArticle32Parsed(parsed) {
-        if (!parsed) return false;
-        if (String(parsed.lawName || "") !== "민법") return false;
-        if (String(parsed.main || "") !== "32") return false;
-        if (parsed.branch) return false;
-        return true;
+      function ruleRowMatchesExpcSingleLink(rule, titlePlain) {
+        if (!rule) return false;
+        if (typeof rule.matchTitle === "function") return rule.matchTitle(titlePlain, rule);
+        return titlesMatchForExpcPortalRow(titlePlain, rule.portalQuery);
+      }
+
+      /**
+       * 특정 조문 검색 시 법령해석 목록에서 «한 행만» 센터로 링크하고, 그 외 행은 텍스트만 표시하는 규칙.
+       * 항목을 추가하면 동일 패턴이 공통 적용됩니다.
+       */
+      var EXPC_SINGLE_LINK_RULES = [
+        {
+          id: "civil32-molit-logistics",
+          disclaimerNote:
+            "「민법」제32조로 조회한 경우, 위 목록 중 <strong>국토교통부</strong> 안건 제목만 클릭 가능하며 국가법령정보센터 <strong>판례·해석례등</strong> 화면(법제처 해석례)으로 열립니다. 검색창에는 해당 안건 전체 제목이 채워집니다. 그 외 해석 행은 링크 없이 참고용으로만 표시합니다.",
+          portalQuery:
+            "국토교통부 - 「민법」 또는 「상법」에 따라 설립된 법인이 「물류시설의 개발 및 운영에 관한 법률」 제27조제2항제1호부터 제4호까지의 어느 하나에 해당하는 자와 공동으로 물류단지개발사업 시행자로 지정받은 경우 사업대상 토지면적의 3분의 2 이상을 매입하지 않고도 물류단지개발사업에 필요한 토지등을 수용하거나 사용할 수 있는지 여부(「물류시설의 개발 및 운영에 관한 법률」 제32조제1항 등 관련)",
+          matchArticle: function (p) {
+            return (
+              !!p &&
+              String(p.lawName || "") === "민법" &&
+              String(p.main || "") === "32" &&
+              !p.branch
+            );
+          },
+          matchTitle: function (title, rule) {
+            if (titlesMatchForExpcPortalRow(title, rule.portalQuery)) return true;
+            var n = normExpcTitleOneSpace(title);
+            return (
+              /^국토교통부\s*-/.test(n) &&
+              n.indexOf("「민법」 또는 「상법」") !== -1 &&
+              n.indexOf("물류시설의 개발 및 운영에 관한 법률") !== -1 &&
+              n.indexOf("제32조제1항") !== -1
+            );
+          },
+        },
+      ];
+
+      function resolveExpcSingleLinkRule(parsed) {
+        if (!parsed) return null;
+        var i;
+        for (i = 0; i < EXPC_SINGLE_LINK_RULES.length; i++) {
+          var r = EXPC_SINGLE_LINK_RULES[i];
+          if (r.matchArticle(parsed)) return r;
+        }
+        return null;
       }
 
       function lawAdmrulPortalSearchUrl(q) {
@@ -814,7 +842,7 @@
 
       function interpretationListItemsHtml(rows, listOpts) {
         listOpts = listOpts || {};
-        var restrictMol = listOpts.restrictExpcLinksToMolCivil32 === true;
+        var singleRule = listOpts.expcSingleLinkRule || null;
         return (rows || [])
           .map(function (row) {
             var badge =
@@ -825,9 +853,9 @@
             if (row.date) meta += ' <span class="law-expc-meta">' + escapeHtml(row.date) + "</span>";
             var inner = escapeHtml(titlePlain) + meta;
             var href = "";
-            if (restrictMol && row.kind === "expc") {
-              if (isMolExpcCivil32Title(titlePlain)) {
-                href = lawExpcScInterpretPrecMenuUrl(MOLIT_CIVIL32_EXPC_FULL_TITLE);
+            if (singleRule && row.kind === "expc") {
+              if (ruleRowMatchesExpcSingleLink(singleRule, titlePlain)) {
+                href = lawExpcScInterpretPrecMenuUrl(singleRule.portalQuery);
               }
             } else {
               var detail = lawGoKrBrowseHref(row.link);
@@ -846,7 +874,7 @@
 
       function buildExpcBlock(rows, blockOpts) {
         blockOpts = blockOpts || {};
-        var restrictMol = blockOpts.restrictExpcLinksToMolCivil32 === true;
+        var singleRule = blockOpts.expcSingleLinkRule || null;
         if (!rows || !rows.length) {
           return (
             '<section class="law-expc-block" aria-label="법령해석">' +
@@ -855,14 +883,14 @@
             "</section>"
           );
         }
-        var foot = restrictMol
-          ? '<p class="law-result-disclaimer">「민법」제32조로 조회한 경우, 위 목록 중 <strong>국토교통부</strong> 안건 제목만 클릭 가능하며 국가법령정보센터 <strong>판례·해석례등</strong> 화면(법제처 해석례)으로 열립니다. 검색창에는 해당 안건 전체 제목이 채워집니다. 그 외 해석 행은 링크 없이 참고용으로만 표시합니다.</p>'
-          : '<p class="law-result-disclaimer">법령해석(expc) 검색 결과입니다. 상세 링크가 없거나 비호환이면 센터의 <strong>법령해석</strong> 검색(expcAstSc)으로 연결됩니다. 적용 여부는 각 원문에서 확인해야 합니다.</p>';
+        var foot = singleRule
+          ? '<p class="law-result-disclaimer">' + singleRule.disclaimerNote + "</p>"
+          : '<p class="law-result-disclaimer">법령해석(expc) 검색 결과입니다. 상세 링크가 없거나 비호환이면 국가법령정보센터 <strong>판례·해석례등</strong> 검색(<code>expcSc</code>)으로 연결됩니다. 적용 여부는 각 원문에서 확인해야 합니다.</p>';
         return (
           '<section class="law-expc-block" aria-label="법령해석 검색 결과">' +
           '<h4 class="law-expc-head">관련 법령해석 (국가법령정보 Open API)</h4>' +
           '<ol class="law-expc-list">' +
-          interpretationListItemsHtml(rows, { restrictExpcLinksToMolCivil32: restrictMol }) +
+          interpretationListItemsHtml(rows, { expcSingleLinkRule: singleRule }) +
           "</ol>" +
           foot +
           "</section>"
@@ -1019,7 +1047,7 @@
               '<p class="law-result-panel-lead law-result-panel-lead--warn">' + escapeHtml(String(data.message)) + "</p>";
           }
           var splitInterp = splitInterpretationRows(data.interpretations);
-          var expcBlockOpts = { restrictExpcLinksToMolCivil32: isCivilLawArticle32Parsed(parsed) };
+          var expcBlockOpts = { expcSingleLinkRule: resolveExpcSingleLinkRule(parsed) };
           panelLaw.innerHTML =
             '<p class="law-article-meta">' +
             metaBits.join(" · ") +

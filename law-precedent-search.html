@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700&family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="platform-pages.css?v=20260420d" />
-  <link rel="stylesheet" href="law-search-prd.css?v=20260505d" />
+  <link rel="stylesheet" href="law-search-prd.css?v=20260505e" />
 </head>
 <body class="law-prd-body" data-platform-slug="law-precedent-search">
   <header class="topbar">
@@ -921,9 +921,101 @@
         return { body: t, footer: "" };
       }
 
+      function mergeHighlightRanges(ranges) {
+        if (!ranges.length) return [];
+        ranges.sort(function (a, b) {
+          return a[0] - b[0];
+        });
+        var out = [ranges[0].slice()];
+        var i;
+        for (i = 1; i < ranges.length; i++) {
+          var cur = ranges[i];
+          var last = out[out.length - 1];
+          if (cur[0] <= last[1]) {
+            last[1] = Math.max(last[1], cur[1]);
+          } else {
+            out.push(cur.slice());
+          }
+        }
+        return out;
+      }
+
+      /** 안건 제목 안에서만 검색어 일치 구간을 붉은 글자로 표시(나머지는 기본 링크색). */
+      function highlightQuerySpansInPlainText(text, phrases) {
+        var t = String(text || "");
+        if (!t) return "";
+        var list = (phrases || []).filter(function (p) {
+          return String(p).length >= 2;
+        });
+        if (!list.length) return escapeHtml(t);
+        var ranges = [];
+        list.forEach(function (p) {
+          var needle = String(p);
+          var pos = 0;
+          var idx;
+          while ((idx = t.indexOf(needle, pos)) !== -1) {
+            ranges.push([idx, idx + needle.length]);
+            pos = idx + Math.max(1, needle.length);
+          }
+        });
+        ranges = mergeHighlightRanges(ranges);
+        if (!ranges.length) return escapeHtml(t);
+        var html = "";
+        var last = 0;
+        var ri;
+        for (ri = 0; ri < ranges.length; ri++) {
+          var rg = ranges[ri];
+          if (rg[0] > last) html += escapeHtml(t.slice(last, rg[0]));
+          html += '<mark class="law-expc-query-hit">' + escapeHtml(t.slice(rg[0], rg[1])) + "</mark>";
+          last = rg[1];
+        }
+        if (last < t.length) html += escapeHtml(t.slice(last));
+        return html;
+      }
+
+      function buildInterpretationHighlightPhrases(raw, parsed) {
+        var seen = {};
+        var out = [];
+        function add(x) {
+          var s = String(x || "").replace(/\s+/g, " ").trim();
+          if (s.length < 2) return;
+          if (seen[s]) return;
+          seen[s] = 1;
+          out.push(s);
+        }
+        var r0 = String(raw || "").trim();
+        if (!r0) return [];
+        add(r0);
+        var cleaned = normalizeLawQueryTypos(stripLawQueryNoise(r0));
+        add(cleaned);
+        add(compactLawArticleWhitespace(cleaned));
+        if (parsed && parsed.lawName) {
+          var ln = String(parsed.lawName);
+          add(ln);
+          add("「" + ln + "」");
+          add("『" + ln + "』");
+          if (parsed.label) {
+            var lab = String(parsed.label);
+            add(lab);
+            add(ln + " " + lab);
+            add(ln + lab);
+            add(compactLawArticleWhitespace(ln + lab));
+          }
+        }
+        expandQuery(r0).forEach(function (tok) {
+          add(tok);
+        });
+        out.sort(function (a, b) {
+          return b.length - a.length;
+        });
+        if (out.length > 32) out = out.slice(0, 32);
+        return out;
+      }
+
       function interpretationListItemsHtml(rows, listOpts) {
         listOpts = listOpts || {};
         var singleRule = listOpts.expcSingleLinkRule || null;
+        var highlightPhrases = listOpts.highlightPhrases || null;
         return (rows || [])
           .map(function (row) {
             var badge =
@@ -949,15 +1041,18 @@
                 row.kind === "admrul" ? lawAdmrulPortalSearchUrl(fbQ) : lawExpcPortalSearchUrl(fbQ);
               href = detail || portalFb;
             }
-            var titleEsc = escapeHtml(linkBody);
+            var titleInner =
+              highlightPhrases && highlightPhrases.length
+                ? highlightQuerySpansInPlainText(linkBody, highlightPhrases)
+                : escapeHtml(linkBody);
             var bodyHtml = href
               ? '<a class="law-expc-item-hit" href="' +
                 escapeHtml(href) +
                 '" target="_blank" rel="noopener noreferrer">' +
-                titleEsc +
+                titleInner +
                 "</a>" +
                 meta
-              : '<span class="law-expc-item-plain">' + titleEsc + "</span>" + meta;
+              : '<span class="law-expc-item-plain">' + titleInner + "</span>" + meta;
             return "<li>" + badge + bodyHtml + "</li>";
           })
           .join("");
@@ -981,14 +1076,18 @@
           '<section class="law-expc-block" aria-label="법령해석 검색 결과">' +
           '<h4 class="law-expc-head">관련 법령해석 (국가법령정보 Open API)</h4>' +
           '<ol class="law-expc-list law-expc-list--stat-interp">' +
-          interpretationListItemsHtml(rows, { expcSingleLinkRule: singleRule }) +
+          interpretationListItemsHtml(rows, {
+            expcSingleLinkRule: singleRule,
+            highlightPhrases: blockOpts.highlightPhrases || null,
+          }) +
           "</ol>" +
           foot +
           "</section>"
         );
       }
 
-      function buildAdmrulBlock(rows) {
+      function buildAdmrulBlock(rows, blockOpts) {
+        blockOpts = blockOpts || {};
         if (!rows || !rows.length) {
           return (
             '<section class="law-expc-block" aria-label="행정규칙">' +
@@ -1001,7 +1100,7 @@
           '<section class="law-expc-block" aria-label="행정규칙 검색 결과">' +
           '<h4 class="law-expc-head">관련 행정규칙 (국가법령정보 Open API)</h4>' +
           '<ol class="law-expc-list">' +
-          interpretationListItemsHtml(rows) +
+          interpretationListItemsHtml(rows, { highlightPhrases: blockOpts.highlightPhrases || null }) +
           "</ol>" +
           '<p class="law-result-disclaimer">행정규칙(admrul) 검색 결과입니다. 상세 링크가 없거나 비호환이면 센터의 <strong>행정규칙</strong> 검색(lsAdmRulAstSc)으로 연결됩니다. 적용 여부는 각 원문에서 확인해야 합니다.</p>' +
           "</section>"
@@ -1138,7 +1237,11 @@
               '<p class="law-result-panel-lead law-result-panel-lead--warn">' + escapeHtml(String(data.message)) + "</p>";
           }
           var splitInterp = splitInterpretationRows(data.interpretations);
-          var expcBlockOpts = { expcSingleLinkRule: resolveExpcSingleLinkRule(parsed) };
+          var highlightPhrases = buildInterpretationHighlightPhrases(raw, parsed);
+          var expcBlockOpts = {
+            expcSingleLinkRule: resolveExpcSingleLinkRule(parsed),
+            highlightPhrases: highlightPhrases,
+          };
           panelLaw.innerHTML =
             '<p class="law-article-meta">' +
             metaBits.join(" · ") +
@@ -1147,7 +1250,7 @@
             articleBlock +
             buildExpcBlock(splitInterp.expc, expcBlockOpts) +
             lawPanelOfficialLinksHtml(safeLabel, q);
-          panelAdmrul.innerHTML = buildAdmrulBlock(splitInterp.admrul);
+          panelAdmrul.innerHTML = buildAdmrulBlock(splitInterp.admrul, { highlightPhrases: highlightPhrases });
           var precOut = data.precedents && data.precedents.length ? data.precedents : [];
           return { status: data.articleHtml ? "ok" : "partial", precedents: precOut };
         } catch (err) {

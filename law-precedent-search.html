@@ -576,6 +576,7 @@
 
       function tokenizeForExpcAndQuery(userRaw) {
         var s = sanitizeLawPortalQuery(String(userRaw || "").trim());
+        s = s.replace(/[,，、]/g, " ");
         if (!s) return [];
         var parts = s.split(/\s+/);
         var out = [];
@@ -622,32 +623,40 @@
       }
 
       /**
-       * 긴 검색어: 제목에 검색어 전체·접두·어절 AND가 맞는 항목만 남기고 1건만 표시(센터 상세검색 AND에 가깝게).
+       * 법령해석(expc) 목록 공통 정책: 제목 전체 일치·접두 유일·어절 AND(2개 이상) 후 1건 표시.
+       * 토큰이 1개뿐이면 AND로 여러 건을 1건으로 강제하지 않고, 전체/접두 일치가 유일할 때만 압축합니다.
        * AND 일치 0건이면 API 목록을 그대로 둡니다.
        */
       function compressExpcRowsWithAndLogic(rows, userRaw) {
         var orig = rows && rows.length ? rows : [];
         var raw = String(userRaw || "").trim();
-        if (orig.length <= 1 || raw.length < 48) {
+        if (orig.length <= 1) {
+          return { rows: orig, applied: false, fromCount: orig.length };
+        }
+        if (!raw) {
           return { rows: orig, applied: false, fromCount: orig.length };
         }
         var qn = normalizeForExpcAndMatch(raw);
         var tokens = tokenizeForExpcAndQuery(raw);
-        if (tokens.length < (raw.length >= 120 ? 4 : 5)) {
-          return { rows: orig, applied: false, fromCount: orig.length };
-        }
+
         var contained = orig.filter(function (r) {
           return normalizeForExpcAndMatch((r && r.title) || "").indexOf(qn) !== -1;
         });
         if (contained.length === 1) {
           return { rows: contained, applied: true, fromCount: orig.length };
         }
-        if (qn.length > 110) {
-          var prefixCandidates = [qn.slice(0, 200), qn.slice(0, 160), normalizeForExpcAndMatch(narrowExpcPortalTailQuery(raw, 140))];
+
+        if (qn.length >= 56) {
+          var prefixCandidates = [
+            qn.slice(0, 220),
+            qn.slice(0, 180),
+            qn.slice(0, 140),
+            normalizeForExpcAndMatch(narrowExpcPortalTailQuery(raw, 140)),
+          ];
           var pi;
           for (pi = 0; pi < prefixCandidates.length; pi++) {
             var px = prefixCandidates[pi] || "";
-            if (px.length < 80) continue;
+            if (px.length < 48) continue;
             var hit = orig.filter(function (r) {
               return normalizeForExpcAndMatch((r && r.title) || "").indexOf(px) !== -1;
             });
@@ -656,6 +665,11 @@
             }
           }
         }
+
+        if (tokens.length < 2) {
+          return { rows: orig, applied: false, fromCount: orig.length };
+        }
+
         var filtered = orig.filter(function (r) {
           return rowContainsAllExpcTokens(r, tokens);
         });
@@ -1317,6 +1331,11 @@
 
       function buildExpcBlock(rows, blockOpts) {
         blockOpts = blockOpts || {};
+        var searchRaw = blockOpts.searchRaw != null ? String(blockOpts.searchRaw) : "";
+        var pack = compressExpcRowsWithAndLogic(rows || [], searchRaw);
+        rows = pack.rows;
+        var andCompressed = pack.applied;
+        var andFromCount = pack.fromCount;
         var singleRule = blockOpts.expcSingleLinkRule || null;
         if (!rows || !rows.length) {
           return (
@@ -1330,11 +1349,11 @@
           ? '<p class="law-result-disclaimer">' + singleRule.disclaimerNote + "</p>"
           : '<p class="law-result-disclaimer">법령해석(expc) 검색 결과입니다. 상세 링크가 없거나 비호환이면 국가법령정보센터 <strong>판례·해석례등</strong> 검색(<code>expcSc</code>)으로 연결됩니다. 적용 여부는 각 원문에서 확인해야 합니다.</p>';
         var andNote = "";
-        if (blockOpts.expcAndCompressed) {
-          if (blockOpts.expcAndFromCount > 1) {
+        if (andCompressed) {
+          if (andFromCount > 1) {
             andNote =
               '<p class="law-result-disclaimer law-result-disclaimer--tight">검색어를 주요 어절로 나눈 뒤, 제목에 <strong>모두 포함</strong>(논리적 AND)된 항목만 남기고 그중 가장 일치하는 <strong>1건</strong>만 표시했습니다. (Open API가 돌려준 목록 ' +
-              String(blockOpts.expcAndFromCount || "") +
+              String(andFromCount || "") +
               "건 중)</p>";
           } else {
             andNote =
@@ -1532,12 +1551,10 @@
               '<p class="law-result-panel-lead law-result-panel-lead--warn">' + escapeHtml(String(data.message)) + "</p>";
           }
           var splitInterp = splitInterpretationRows(data.interpretations);
-          var expcPack = compressExpcRowsWithAndLogic(splitInterp.expc, raw);
           var expcBlockOpts = {
             expcSingleLinkRule: resolveExpcSingleLinkRule(parsed),
             highlightPhrases: highlightPhrases,
-            expcAndCompressed: expcPack.applied,
-            expcAndFromCount: expcPack.fromCount,
+            searchRaw: raw,
           };
           panelLaw.innerHTML =
             '<p class="law-article-meta">' +
@@ -1545,7 +1562,7 @@
             "</p>" +
             titleBlock +
             articleBlock +
-            buildExpcBlock(expcPack.rows, expcBlockOpts) +
+            buildExpcBlock(splitInterp.expc, expcBlockOpts) +
             lawPanelOfficialLinksHtml(safeLabel, q);
           panelAdmrul.innerHTML = buildAdmrulBlock(splitInterp.admrul, { highlightPhrases: highlightPhrases });
           var precOut = data.precedents && data.precedents.length ? data.precedents : [];

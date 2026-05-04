@@ -154,6 +154,19 @@
       color: #2f3a50;
     }
 
+    .directions-how-body {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 1rem 1.35rem;
+      flex-wrap: wrap;
+    }
+
+    .directions-how-text {
+      flex: 1 1 240px;
+      min-width: min(100%, 200px);
+    }
+
     .directions-how ul {
       margin: 0;
       padding-left: 1.15rem;
@@ -164,6 +177,57 @@
 
     .directions-how li + li {
       margin-top: 0.35rem;
+    }
+
+    .directions-how-aside {
+      flex: 0 1 auto;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      margin-left: auto;
+    }
+
+    .directions-how-youtube {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.45rem;
+      min-height: 2.75rem;
+      padding: 0.5rem 1rem;
+      border-radius: 10px;
+      border: 1px solid rgba(200, 48, 48, 0.35);
+      background: linear-gradient(145deg, #fff5f5 0%, #fff 55%);
+      color: #b31217;
+      font-weight: 800;
+      font-size: 0.84rem;
+      text-decoration: none;
+      white-space: nowrap;
+      box-shadow: 0 2px 10px rgba(179, 18, 23, 0.12);
+    }
+
+    .directions-how-youtube:hover {
+      border-color: rgba(179, 18, 23, 0.55);
+      background: #fff;
+    }
+
+    .directions-how-youtube svg {
+      flex-shrink: 0;
+      width: 1.15rem;
+      height: 1.15rem;
+    }
+
+    @media (max-width: 520px) {
+      .directions-how-aside {
+        width: 100%;
+        margin-left: 0;
+        justify-content: stretch;
+      }
+
+      .directions-how-youtube {
+        width: 100%;
+        white-space: normal;
+        text-align: center;
+      }
     }
 
     .hero p {
@@ -288,10 +352,28 @@
 
     <section id="directions-how" class="directions-how" aria-labelledby="directions-how-title">
       <h2 id="directions-how-title">오시는 방법</h2>
-      <ul>
-        <li>지하철 1호선 <strong>부산대역</strong> <strong>4번 출구</strong> 인근 <strong>삼한스퀘어</strong> 건물로 오시면 됩니다.</li>
-        <li>주소: 부산광역시 금정구 중앙대로1629번길 16, 삼한스퀘어 2층 223호 (대한민국행정사사무소)</li>
-      </ul>
+      <div class="directions-how-body">
+        <div class="directions-how-text">
+          <ul>
+            <li>지하철 1호선 <strong>부산대역</strong> <strong>4번 출구</strong> 인근 <strong>삼한스퀘어</strong> 건물로 오시면 됩니다.</li>
+            <li>주소: 부산광역시 금정구 중앙대로1629번길 16, 삼한스퀘어 2층 223호 (대한민국행정사사무소)</li>
+          </ul>
+        </div>
+        <div class="directions-how-aside">
+          <a
+            class="directions-how-youtube"
+            href="https://youtu.be/ql9RWgDG5JQ?si=YUbQcyQpOCcONury"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="YouTube에서 오시는 길 안내 영상 열기"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor">
+              <path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31.7 31.7 0 0 0 0 12a31.7 31.7 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1 31.7 31.7 0 0 0 .5-5.8 31.7 31.7 0 0 0-.5-5.8zM9.75 15.02V8.98L15.5 12l-5.75 3.02z"/>
+            </svg>
+            동영상 안내 (YouTube)
+          </a>
+        </div>
+      </div>
     </section>
 
     <section class="map-stack" aria-label="2단 지도 보기">

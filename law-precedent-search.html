@@ -73,8 +73,8 @@
       </button>
     </div>
 
-    <section class="law-topic-search" aria-label="법령 검색">
-      <h2>법령 검색</h2>
+    <section class="law-topic-search" id="law-topic-search-section" aria-label="법령 검색">
+      <h2 id="law-topic-search-title">법령 검색</h2>
       <form id="law-topic-search-form" class="law-topic-search-row" role="search" action="#" method="get">
         <label class="visually-hidden" for="law-topic-input">법령 검색어</label>
         <input id="law-topic-input" name="q" type="search" autocomplete="off" placeholder="예: 민법제1조, 민법1조 등으로 검색해주세요" />
@@ -131,7 +131,7 @@
           <input id="law-prd-kw-input" type="search" autocomplete="off" placeholder="예: 전세 사기, 민법제32조" />
           <button type="submit" id="law-prd-kw-btn">검색</button>
         </form>
-        <p class="law-prd-inline-search-note">상단 「법령 검색」과 같은 검색이며, 결과는 그 아래 패널에 표시됩니다.</p>
+        <p class="law-prd-inline-search-note">위 검색창과 동일합니다. 여기서 검색하면 상단 제목이 「통합 키워드 검색」으로 바뀌며, 결과는 그 아래 패널에 표시됩니다.</p>
       </section>
 
       <section
@@ -192,7 +192,20 @@
       var panelAdmrul = document.getElementById("law-panel-admrul-body");
       var panelPrec = document.getElementById("law-panel-prec-body");
       var resultsEl = document.getElementById("law-search-results");
+      var lawTopicSearchSection = document.getElementById("law-topic-search-section");
+      var lawTopicSearchTitleEl = document.getElementById("law-topic-search-title");
       if (!input || !button || !status || !spec || !panelLaw || !panelAdmrul || !panelPrec) return;
+
+      var LAW_TOPIC_HEADING_STATUTE = "법령 검색";
+      var LAW_TOPIC_HEADING_INTEGRATED = "통합 키워드 검색";
+      /** 다음 `runSearch` 완료 시 상단 `<h2>`에 쓸 제목: `"statute"`(상단 폼) 또는 `"integrated"`(P1 카드 폼). */
+      var nextLawTopicHeadingKind = "statute";
+
+      function applyLawTopicSearchHeading(kind) {
+        var text = kind === "integrated" ? LAW_TOPIC_HEADING_INTEGRATED : LAW_TOPIC_HEADING_STATUTE;
+        if (lawTopicSearchTitleEl) lawTopicSearchTitleEl.textContent = text;
+        if (lawTopicSearchSection) lawTopicSearchSection.setAttribute("aria-label", text);
+      }
 
       var sections = Array.prototype.slice.call(spec.querySelectorAll(".law-prd-feature"));
       var topicAliases = {
@@ -1803,6 +1816,7 @@
         if (!specInfo.tokens.length) {
           status.textContent = "아래는 전체 기능 명세를 표시합니다.";
           renderResultPanels("");
+          applyLawTopicSearchHeading(nextLawTopicHeadingKind);
           return;
         }
 
@@ -1865,6 +1879,7 @@
 
         scrollToResults();
         syncMainSearchToPrdKw();
+        applyLawTopicSearchHeading(nextLawTopicHeadingKind);
       }
 
       function onSubmit(event) {
@@ -1878,15 +1893,21 @@
         runSearch();
       }
 
-      if (form) form.addEventListener("submit", onSubmit);
+      if (form)
+        form.addEventListener("submit", function (ev) {
+          nextLawTopicHeadingKind = "statute";
+          onSubmit(ev);
+        });
       button.addEventListener("click", function (e) {
         e.preventDefault();
+        nextLawTopicHeadingKind = "statute";
         onSubmit(e);
       });
 
       if (formPrdKw && inputPrdKw && input) {
         formPrdKw.addEventListener("submit", function (ev) {
           if (ev) ev.preventDefault();
+          nextLawTopicHeadingKind = "integrated";
           input.value = String(inputPrdKw.value || "");
           input.focus();
           onSubmit(ev);

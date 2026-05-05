@@ -780,15 +780,14 @@
         return "판례";
       }
 
-      /** 구형 <code>glaw.scourt.go.kr</code>는 DNS 미해결·서비스 이전으로 접속이 안 되는 경우가 있어, 공개 포털·법원도서관 URL을 씁니다. */
+      /** 구형 <code>glaw.scourt.go.kr</code>는 DNS 미해결·서비스 이전으로 접속이 안 되는 경우가 있어, 공개 포털 URL을 씁니다. */
       var SCOURT_PGP_ENTRY = "https://portal.scourt.go.kr/pgp/index.on?m=PGP1011M01&l=N&c=900";
-      var SCOURT_LIBRARY_JUDG_DETAIL = "https://library.scourt.go.kr/search/judg/judgDetailSearch";
 
-      /** 키워드·조문 검색: 상세검색 화면으로 연결(긴 문장은 화면에서 짧게 나눠 검색). */
-      function scourtPrecedentSearchUrl(q) {
-        var safe = capQueryForGetUrl(lawPortalSearchQueryFromUserInput(String(q || "")), 900);
+      /** 관련 판례의 「사법정보공개포털」단일 링크: 현재 검색어를 <code>q</code>로 넘겨 상단 검색란에 채우고 자동 검색합니다. */
+      function scourtPgpPortalUrlWithKeyword(q) {
+        var safe = capQueryForGetUrl(lawPortalSearchQueryFromUserInput(String(q || "").trim()), 900);
         if (!safe || safe === "법령") return SCOURT_PGP_ENTRY;
-        return SCOURT_LIBRARY_JUDG_DETAIL + "?source=ref&keyword=" + encodeURIComponent(safe);
+        return SCOURT_PGP_ENTRY + "&q=" + encodeURIComponent(safe);
       }
 
       /** 「2021누63176」「2020구합71710」 등 재판상 사건번호(하급심 포함). */
@@ -1595,18 +1594,20 @@
 
       function renderPrecPanel(safeLabel, q, precRows, highlightPhrasesOpt) {
         var highlightPhrases = highlightPhrasesOpt && highlightPhrasesOpt.length ? highlightPhrasesOpt : null;
-        var precUrl = scourtPrecedentSearchUrl(q);
+        var pgpPortalKwUrl = scourtPgpPortalUrlWithKeyword(q);
+        var portalQueryAttr =
+          ' data-law-portal-query="' +
+          escapeHtml(lawPortalSearchQueryFromUserInput(String(q || "").trim())) +
+          '"';
         var portalBlock =
           "<ul class=\"law-result-actions\">" +
           "<li><a href=\"" +
-          precUrl +
-          "\" target=\"_blank\" rel=\"noopener noreferrer\">법원도서관 — 판례·판결 상세검색 (새 창)</a></li>" +
-          "<li><a href=\"" +
-          SCOURT_PGP_ENTRY +
-          "\" target=\"_blank\" rel=\"noopener noreferrer\">사법정보공개포털</a></li>" +
-          "<li><a href=\"https://www.simpan.go.kr/\" target=\"_blank\" rel=\"noopener noreferrer\">행정심판 정보 포털 (재결·안내)</a></li>" +
+          pgpPortalKwUrl +
+          "\" target=\"_blank\" rel=\"noopener noreferrer\"" +
+          portalQueryAttr +
+          ">사법정보공개포털</a></li>" +
           "</ul>" +
-          "<p class=\"law-result-disclaimer\">사건번호·심급·판시사항은 각 포털 검색 결과를 기준으로 하세요. 관련 판례에서 <strong>사건번호·법원</strong>만 밑줄 링크는 사법정보공개포털 판례 검색(<code>m=PGP1011M01</code>)으로 열리며, 주소에 <code>q=</code>로 넘긴 문구가 상단 검색어 입력란에 들어가 자동 검색됩니다. 클릭 직전 이 사이트 통합 검색창에도 같은 값이 들어갑니다.</p>";
+          "<p class=\"law-result-disclaimer\">사건번호·심급·판시사항은 각 포털 검색 결과를 기준으로 하세요. 목록의 <strong>사건번호·법원</strong> 밑줄은 <code>q=</code>로 사법정보공개포털(<code>m=PGP1011M01</code>)을 엽니다. 위 <strong>사법정보공개포털</strong>은 현재 검색어로 동일합니다. 클릭 직전 이 사이트 통합 검색창에도 같은 값이 들어갑니다.</p>";
 
         if (precRows && precRows.length) {
           var listItems = precRows
@@ -1636,7 +1637,7 @@
             '<ol class="law-prec-api-list">' +
             listItems +
             "</ol>" +
-            '<p class="law-result-disclaimer">목록은 키워드 검색 결과입니다. 하급심 사건번호는 국가법령정보센터에서 0건일 수 있어, 사건번호가 있으면 <strong>사법정보공개포털 판례 검색</strong>(<code>…&amp;q=사건번호+법원</code>)으로 연결합니다. 일부 환경에서 구형 <code>glaw.scourt.go.kr</code>는 DNS 오류가 납니다. 원문 링크가 있으면 해당 링크를 우선합니다.</p>' +
+            '<p class="law-result-disclaimer">목록은 키워드 검색 결과입니다. 하급심 사건번호는 국가법령정보센터에서 0건일 수 있어, 사건번호가 있으면 행의 <strong>사건번호·법원</strong> 링크가 포털 <code>q=</code>로 열립니다. 위 <strong>사법정보공개포털</strong>은 현재 검색어로 동일합니다. 일부 환경에서 구형 <code>glaw.scourt.go.kr</code>는 DNS 오류가 납니다. 원문 링크가 있으면 해당 링크를 우선합니다.</p>' +
             '<p class="law-result-subhead">공개 포털에서 추가 검색</p>' +
             portalBlock;
           return;

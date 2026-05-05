@@ -780,6 +780,57 @@ body[data-platform-slug="platform-faq"] .law-result-plan-col .law-result-plan-co
   min-width: 0;
 }
 
+body[data-platform-slug="platform-faq"] .immigration-portal-menu {
+  margin-top: 1.15rem;
+  padding-top: 0.95rem;
+  border-top: 1px solid rgba(28, 74, 124, 0.14);
+}
+
+body[data-platform-slug="platform-faq"] .immigration-portal-menu-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  width: 100%;
+  box-sizing: border-box;
+  font-size: 0.96rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: #0f2744;
+  text-decoration: none;
+  padding: 0.72rem 1rem;
+  border: 2px solid rgba(28, 74, 124, 0.42);
+  border-radius: 10px;
+  background: linear-gradient(180deg, #ffffff 0%, #e8f1fa 100%);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.95) inset,
+    0 2px 8px rgba(28, 74, 124, 0.12);
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+body[data-platform-slug="platform-faq"] .immigration-portal-menu-link:hover {
+  background: linear-gradient(180deg, #f5f9ff 0%, #dceaf7 100%);
+  border-color: #14365c;
+  color: #061018;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.9) inset,
+    0 3px 12px rgba(28, 74, 124, 0.18);
+}
+
+body[data-platform-slug="platform-faq"] .immigration-portal-menu-link:focus-visible {
+  outline: 3px solid rgba(37, 99, 168, 0.35);
+  outline-offset: 2px;
+}
+
+body[data-platform-slug="platform-faq"] .immigration-portal-menu-ext {
+  font-weight: 700;
+  opacity: 0.85;
+}
+
 .law-result-plan-col ul {
   list-style: none;
   display: grid;

@@ -1514,28 +1514,29 @@ body[data-platform-slug="platform-faq"] .law-doc-list-box h4 {
   letter-spacing: -0.02em;
 }
 
-body[data-platform-slug="platform-faq"] .law-doc-list-circles {
+body[data-platform-slug="platform-faq"] .law-doc-list-dots {
   list-style: none;
   margin: 0;
   padding: 0;
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 0.38rem 0.42rem;
+  gap: 0.26rem;
 }
 
-body[data-platform-slug="platform-faq"] .law-doc-list-circles li {
+body[data-platform-slug="platform-faq"] .law-doc-list-dots li {
   margin: 0;
-  width: 1.72rem;
-  height: 1.72rem;
-  border-radius: 50%;
-  border: 1px solid rgba(28, 74, 124, 0.38);
-  background: #fff;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.78rem;
-  font-weight: 800;
+  position: relative;
+  padding-left: 0.75rem;
+  font-size: 0.82rem;
   color: #14365c;
+}
+
+body[data-platform-slug="platform-faq"] .law-doc-list-dots li::before {
+  content: "·";
+  position: absolute;
+  left: 0;
+  top: 0;
+  font-weight: 800;
+  color: #0f3f64;
 }
 
 .law-prd-note {

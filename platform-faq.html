@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700&family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="platform-pages.css?v=20260420d" />
-  <link rel="stylesheet" href="law-search-prd.css?v=20260506x" />
+  <link rel="stylesheet" href="law-search-prd.css?v=20260506y" />
 </head>
 <body class="law-prd-body" data-platform-slug="platform-faq">
   <header class="topbar">
@@ -183,6 +183,12 @@
 
           <p id="immigration-gvrn-search-status" class="immigration-gvrn-search-status" role="status" aria-live="polite"></p>
           <ul id="immigration-gvrn-search-hits" class="immigration-gvrn-search-hits" hidden></ul>
+          <div
+            id="immigration-gvrn-region-list-wrap"
+            class="immigration-gvrn-region-list-wrap"
+            hidden
+            aria-label="권역별 출입국·외국인관서 상세 목록"
+          ></div>
 
           <div id="immigration-office-detail" class="immigration-office-detail" hidden>
             <dl class="immigration-office-dl">
@@ -656,6 +662,7 @@ window.EMBASSY_GROUPS=JSON.parse(new TextDecoder("utf-8").decode(_u8));
       var searchBtn = document.getElementById("immigration-gvrn-search-btn");
       var searchStatus = document.getElementById("immigration-gvrn-search-status");
       var searchHits = document.getElementById("immigration-gvrn-search-hits");
+      var regionListWrap = document.getElementById("immigration-gvrn-region-list-wrap");
       var resetBtn = document.getElementById("immigration-gvrn-reset-btn");
       var lastGvrnJurisdictionSearchQuery = "";
       var gvrnSuppressQueryClear = false;
@@ -671,6 +678,7 @@ window.EMBASSY_GROUPS=JSON.parse(new TextDecoder("utf-8").decode(_u8));
         !searchBtn ||
         !searchStatus ||
         !searchHits ||
+        !regionListWrap ||
         !resetBtn
       ) {
         return;
@@ -789,6 +797,58 @@ window.EMBASSY_GROUPS=JSON.parse(new TextDecoder("utf-8").decode(_u8));
         }
       }
 
+      function clearRegionList() {
+        regionListWrap.innerHTML = "";
+        regionListWrap.hidden = true;
+      }
+
+      function renderRegionList(region) {
+        clearRegionList();
+        var list = SAMPLE_BY_REGION[region] || [];
+        if (!list.length) return;
+
+        var title = document.createElement("h4");
+        title.className = "immigration-gvrn-region-list-title";
+        title.textContent = "「" + region + "」 권역 출입국·외국인관서 " + list.length + "곳";
+        regionListWrap.appendChild(title);
+
+        var ul = document.createElement("ul");
+        ul.className = "immigration-gvrn-region-list";
+
+        list.forEach(function (row) {
+          var li = document.createElement("li");
+          li.className = "immigration-gvrn-region-item";
+
+          var nameEl = document.createElement("div");
+          nameEl.className = "immigration-gvrn-region-item-name";
+          nameEl.textContent = row.name || "—";
+
+          var dl = document.createElement("dl");
+          dl.className = "immigration-gvrn-region-item-dl";
+
+          var dtAddr = document.createElement("dt");
+          dtAddr.textContent = "주소";
+          var ddAddr = document.createElement("dd");
+          ddAddr.textContent = row.address || "—";
+
+          var dtJur = document.createElement("dt");
+          dtJur.textContent = "관할구역";
+          var ddJur = document.createElement("dd");
+          ddJur.textContent = row.jurisdiction || "—";
+
+          dl.appendChild(dtAddr);
+          dl.appendChild(ddAddr);
+          dl.appendChild(dtJur);
+          dl.appendChild(ddJur);
+          li.appendChild(nameEl);
+          li.appendChild(dl);
+          ul.appendChild(li);
+        });
+
+        regionListWrap.appendChild(ul);
+        regionListWrap.hidden = false;
+      }
+
       function applyOfficeSelection(region, index) {
         gvrnSuppressQueryClear = true;
         regionSel.value = region;
@@ -798,6 +858,7 @@ window.EMBASSY_GROUPS=JSON.parse(new TextDecoder("utf-8").decode(_u8));
         gvrnSuppressQueryClear = false;
         searchHits.hidden = true;
         searchHits.innerHTML = "";
+        clearRegionList();
       }
 
       /** 관할 검색으로 「해운대」 맥락일 때 부산청 표시에서 경남 양산 줄만 숨김(본청 관할에는 여전히 포함될 수 있음) */
@@ -830,6 +891,7 @@ window.EMBASSY_GROUPS=JSON.parse(new TextDecoder("utf-8").decode(_u8));
         var raw = String(searchInput.value || "").trim();
         searchHits.innerHTML = "";
         searchHits.hidden = true;
+        clearRegionList();
         lastGvrnJurisdictionSearchQuery = "";
         if (!raw) {
           searchStatus.textContent = "주소·행정구역 등을 입력한 뒤 관할검색을 눌러 주세요.";
@@ -843,6 +905,7 @@ window.EMBASSY_GROUPS=JSON.parse(new TextDecoder("utf-8").decode(_u8));
           rebuildOfficeOptions(regionKeyHit);
           officeSel.value = "";
           clearDetail();
+          renderRegionList(regionKeyHit);
           gvrnSuppressQueryClear = false;
           var cnt = (SAMPLE_BY_REGION[regionKeyHit] || []).length;
           searchStatus.textContent =
@@ -850,7 +913,7 @@ window.EMBASSY_GROUPS=JSON.parse(new TextDecoder("utf-8").decode(_u8));
             regionKeyHit +
             "」 권역 출입국·외국인관서 " +
             cnt +
-            "곳입니다. 관서명에서 선택해 주세요.";
+            "곳입니다. 아래 목록에서 구체 정보를 확인해 주세요.";
           return;
         }
         var out = findJurisdictionHits(raw);
@@ -892,6 +955,7 @@ window.EMBASSY_GROUPS=JSON.parse(new TextDecoder("utf-8").decode(_u8));
         searchStatus.textContent = "";
         searchHits.hidden = true;
         searchHits.innerHTML = "";
+        clearRegionList();
         dName.textContent = "";
         dAddr.textContent = "";
         dJur.textContent = "";
@@ -958,6 +1022,7 @@ window.EMBASSY_GROUPS=JSON.parse(new TextDecoder("utf-8").decode(_u8));
 
       regionSel.addEventListener("change", function () {
         if (!gvrnSuppressQueryClear) lastGvrnJurisdictionSearchQuery = "";
+        clearRegionList();
         rebuildOfficeOptions(regionSel.value);
       });
 

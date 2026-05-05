@@ -1365,6 +1365,64 @@ body[data-platform-slug="platform-faq"] .immigration-gvrn-search-hits {
   gap: 0.35rem;
 }
 
+body[data-platform-slug="platform-faq"] .immigration-gvrn-region-list-wrap {
+  margin-top: 0.55rem;
+}
+
+body[data-platform-slug="platform-faq"] .immigration-gvrn-region-list-title {
+  margin: 0 0 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: #114a75;
+}
+
+body[data-platform-slug="platform-faq"] .immigration-gvrn-region-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+body[data-platform-slug="platform-faq"] .immigration-gvrn-region-item {
+  border: 1px solid rgba(20, 96, 146, 0.3);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: 0 1px 5px rgba(20, 96, 146, 0.07);
+  padding: 0.6rem 0.7rem;
+}
+
+body[data-platform-slug="platform-faq"] .immigration-gvrn-region-item-name {
+  margin-bottom: 0.42rem;
+  font-size: 0.88rem;
+  font-weight: 800;
+  color: #0f3f64;
+  line-height: 1.45;
+}
+
+body[data-platform-slug="platform-faq"] .immigration-gvrn-region-item-dl {
+  margin: 0;
+  display: grid;
+  gap: 0.24rem 0.5rem;
+  grid-template-columns: 4.6rem 1fr;
+  font-size: 0.8rem;
+  line-height: 1.52;
+}
+
+body[data-platform-slug="platform-faq"] .immigration-gvrn-region-item-dl dt {
+  margin: 0;
+  font-weight: 700;
+  color: #195884;
+}
+
+body[data-platform-slug="platform-faq"] .immigration-gvrn-region-item-dl dd {
+  margin: 0;
+  color: var(--ink-soft);
+  word-break: break-word;
+}
+
 body[data-platform-slug="platform-faq"] .immigration-gvrn-search-hit-btn {
   margin: 0;
   padding: 0.38rem 0.55rem;

@@ -649,6 +649,8 @@
       var searchStatus = document.getElementById("immigration-gvrn-search-status");
       var searchHits = document.getElementById("immigration-gvrn-search-hits");
       var resetBtn = document.getElementById("immigration-gvrn-reset-btn");
+      var lastGvrnJurisdictionSearchQuery = "";
+      var gvrnSuppressQueryClear = false;
 
       if (
         !regionSel ||
@@ -780,18 +782,36 @@
       }
 
       function applyOfficeSelection(region, index) {
+        gvrnSuppressQueryClear = true;
         regionSel.value = region;
         rebuildOfficeOptions(region);
         officeSel.value = String(index);
         showDetail(region);
+        gvrnSuppressQueryClear = false;
         searchHits.hidden = true;
         searchHits.innerHTML = "";
+      }
+
+      /** 관할 검색으로 「해운대」 맥락일 때 부산청 표시에서 경남 양산 줄만 숨김(본청 관할에는 여전히 포함될 수 있음) */
+      function formatJurisdictionForDisplay(row) {
+        var jur = row.jurisdiction || "";
+        if (
+          row.name === "부산출입국·외국인청" &&
+          lastGvrnJurisdictionSearchQuery.indexOf("해운대") !== -1
+        ) {
+          jur = jur
+            .replace(/\s*■\s*경상남도\s*:\s*양산시\s*/g, " ")
+            .replace(/\s+/g, " ")
+            .trim();
+        }
+        return jur;
       }
 
       function runJurisdictionSearch() {
         var raw = String(searchInput.value || "").trim();
         searchHits.innerHTML = "";
         searchHits.hidden = true;
+        lastGvrnJurisdictionSearchQuery = "";
         if (!raw) {
           searchStatus.textContent = "주소·행정구역 등을 입력한 뒤 관할검색을 눌러 주세요.";
           return;
@@ -806,6 +826,7 @@
             "일치하는 관서를 찾지 못했습니다. 권역·관서 선택을 병행하거나 검색어를 바꿔 보세요.";
           return;
         }
+        lastGvrnJurisdictionSearchQuery = raw;
         applyOfficeSelection(out.hits[0].region, out.hits[0].index);
         if (out.hits.length === 1) {
           searchStatus.textContent = "「" + out.hits[0].row.name + "」이(가) 검색되었습니다.";
@@ -827,6 +848,7 @@
       });
 
       function resetImmigrationGvrnPanel() {
+        lastGvrnJurisdictionSearchQuery = "";
         regionSel.value = "";
         rebuildOfficeOptions("");
         searchInput.value = "";
@@ -893,15 +915,17 @@
         var row = list[idx];
         dName.textContent = row.name;
         dAddr.textContent = row.address;
-        dJur.textContent = row.jurisdiction;
+        dJur.textContent = formatJurisdictionForDisplay(row);
         detail.hidden = false;
       }
 
       regionSel.addEventListener("change", function () {
+        if (!gvrnSuppressQueryClear) lastGvrnJurisdictionSearchQuery = "";
         rebuildOfficeOptions(regionSel.value);
       });
 
       officeSel.addEventListener("change", function () {
+        if (!gvrnSuppressQueryClear) lastGvrnJurisdictionSearchQuery = "";
         if (officeSel.disabled) return;
         if (!officeSel.value) {
           detail.hidden = true;

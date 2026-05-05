@@ -780,10 +780,19 @@ body[data-platform-slug="platform-faq"] .law-result-plan-col .law-result-plan-co
   min-width: 0;
 }
 
-body[data-platform-slug="platform-faq"] .immigration-portal-menu {
+body[data-platform-slug="platform-faq"] .immigration-portal-stack {
   margin-top: 1.15rem;
   padding-top: 0.95rem;
   border-top: 1px solid rgba(28, 74, 124, 0.14);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+body[data-platform-slug="platform-faq"] .immigration-portal-menu {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: none;
 }
 
 body[data-platform-slug="platform-faq"] .immigration-portal-menu-link {
@@ -829,6 +838,148 @@ body[data-platform-slug="platform-faq"] .immigration-portal-menu-link:focus-visi
 body[data-platform-slug="platform-faq"] .immigration-portal-menu-ext {
   font-weight: 700;
   opacity: 0.85;
+}
+
+body[data-platform-slug="platform-faq"] .immigration-portal-menu-link--secondary {
+  font-size: 0.92rem;
+  font-weight: 700;
+  background: linear-gradient(180deg, #fbfdff 0%, #f0f6fc 100%);
+  border-width: 1px;
+  border-color: rgba(28, 74, 124, 0.35);
+  box-shadow: 0 1px 4px rgba(28, 74, 124, 0.08);
+}
+
+body[data-platform-slug="platform-faq"] .immigration-gvrn-panel {
+  padding: 0.85rem 0.95rem;
+  border: 1px solid rgba(28, 74, 124, 0.18);
+  border-radius: 10px;
+  background: #f8fbff;
+}
+
+body[data-platform-slug="platform-faq"] .immigration-gvrn-title {
+  margin: 0 0 0.4rem 0;
+  font-size: 1rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: #14365c;
+}
+
+body[data-platform-slug="platform-faq"] .immigration-gvrn-lead {
+  margin: 0 0 0.85rem 0;
+  font-size: 0.84rem;
+  line-height: 1.62;
+  color: var(--ink-soft);
+}
+
+body[data-platform-slug="platform-faq"] .immigration-gvrn-lead a {
+  color: #1c4a7c;
+  font-weight: 700;
+}
+
+body[data-platform-slug="platform-faq"] .immigration-gvrn-controls {
+  display: grid;
+  gap: 0.65rem;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 640px) {
+  body[data-platform-slug="platform-faq"] .immigration-gvrn-controls {
+    grid-template-columns: 1fr 1fr;
+    align-items: end;
+  }
+}
+
+body[data-platform-slug="platform-faq"] .immigration-gvrn-field label {
+  display: block;
+  margin-bottom: 0.28rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #163b63;
+}
+
+body[data-platform-slug="platform-faq"] .immigration-gvrn-field select {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.58rem 0.65rem;
+  font-size: 0.92rem;
+  border: 1px solid rgba(28, 74, 124, 0.35);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--ink);
+}
+
+body[data-platform-slug="platform-faq"] .immigration-gvrn-field select:focus-visible {
+  outline: 2px solid rgba(37, 99, 168, 0.35);
+  outline-offset: 1px;
+  border-color: rgba(37, 99, 168, 0.55);
+}
+
+body[data-platform-slug="platform-faq"] .immigration-gvrn-field select:disabled {
+  opacity: 0.72;
+  cursor: not-allowed;
+  background: #f2f5f8;
+}
+
+body[data-platform-slug="platform-faq"] .immigration-office-detail {
+  margin-top: 0.75rem;
+  padding: 0.65rem 0.75rem;
+  border-radius: 8px;
+  border: 1px solid rgba(28, 74, 124, 0.14);
+  background: #fff;
+}
+
+body[data-platform-slug="platform-faq"] .immigration-office-dl {
+  margin: 0;
+  display: grid;
+  gap: 0.35rem 0.65rem;
+  grid-template-columns: auto 1fr;
+  font-size: 0.86rem;
+  line-height: 1.55;
+}
+
+body[data-platform-slug="platform-faq"] .immigration-office-dl dt {
+  margin: 0;
+  font-weight: 800;
+  color: #163b63;
+}
+
+body[data-platform-slug="platform-faq"] .immigration-office-dl dd {
+  margin: 0;
+  color: var(--ink-soft);
+}
+
+body[data-platform-slug="platform-faq"] .immigration-office-fallback {
+  margin: 0.65rem 0 0;
+  font-size: 0.84rem;
+  line-height: 1.6;
+  color: #1c4a7c;
+  padding: 0.55rem 0.65rem;
+  border-radius: 8px;
+  background: rgba(28, 74, 124, 0.06);
+}
+
+body[data-platform-slug="platform-faq"] .immigration-gvrn-actions {
+  margin-top: 0.85rem;
+}
+
+body[data-platform-slug="platform-faq"] .immigration-gvrn-tips {
+  margin-top: 0.75rem;
+  font-size: 0.82rem;
+  line-height: 1.55;
+  color: var(--ink-soft);
+}
+
+body[data-platform-slug="platform-faq"] .immigration-gvrn-tips summary {
+  cursor: pointer;
+  font-weight: 700;
+  color: #163b63;
+}
+
+body[data-platform-slug="platform-faq"] .immigration-gvrn-tips-list {
+  margin: 0.45rem 0 0;
+  padding-left: 1.15rem;
+  display: grid;
+  gap: 0.35rem;
 }
 
 .law-result-plan-col ul {

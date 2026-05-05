@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700&family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="platform-pages.css?v=20260420d" />
-  <link rel="stylesheet" href="law-search-prd.css?v=20260506j" />
+  <link rel="stylesheet" href="law-search-prd.css?v=20260506k" />
 </head>
 <body class="law-prd-body" data-platform-slug="platform-faq">
   <header class="topbar">
@@ -107,17 +107,95 @@
           </ul>
         </div>
       </div>
-      <nav class="immigration-portal-menu" aria-label="공식 비자포털 바로가기">
-        <a
-          class="immigration-portal-menu-link"
-          href="https://www.visa.go.kr/openPage.do?MENU_ID=10301"
-          target="_blank"
-          rel="noopener noreferrer"
-          title="대한민국 비자포털(법무부) 사증 조회 페이지가 새 창에서 열립니다."
-        >
-          비자포털: 사증조회<span class="immigration-portal-menu-ext" aria-hidden="true"> ↗</span>
-        </a>
-      </nav>
+      <div class="immigration-portal-stack">
+        <nav class="immigration-portal-menu" aria-label="공식 비자포털 바로가기">
+          <a
+            class="immigration-portal-menu-link"
+            href="https://www.visa.go.kr/openPage.do?MENU_ID=10301"
+            target="_blank"
+            rel="noopener noreferrer"
+            title="대한민국 비자포털(법무부) 사증 조회 페이지가 새 창에서 열립니다."
+          >
+            비자포털: 사증조회<span class="immigration-portal-menu-ext" aria-hidden="true"> ↗</span>
+          </a>
+        </nav>
+
+        <section class="immigration-gvrn-panel" aria-labelledby="immigration-gvrn-heading">
+          <h3 id="immigration-gvrn-heading" class="immigration-gvrn-title">출입국·외국인청 조회</h3>
+          <p class="immigration-gvrn-lead">
+            권역은 법무부 하이코리아
+            <a href="https://www.hikorea.go.kr/gvrnsrch/GvrnSrchPageR.pt" target="_blank" rel="noopener noreferrer">「관할 출입국·외국인관서 조회」</a>
+            화면의 「구분지역」 분류와 같습니다. 아래 목록은 참고용 발췌이며, <strong>명칭·주소·관할 변경 시 공식 페이지가 우선</strong>입니다.
+          </p>
+
+          <div class="immigration-gvrn-controls">
+            <div class="immigration-gvrn-field">
+              <label for="immigration-region-select">권역 선택</label>
+              <select id="immigration-region-select" autocomplete="off">
+                <option value="">권역을 선택하세요</option>
+                <option value="서울">서울</option>
+                <option value="경기">경기</option>
+                <option value="인천">인천</option>
+                <option value="강원">강원</option>
+                <option value="충남">충남</option>
+                <option value="대전">대전</option>
+                <option value="충북">충북</option>
+                <option value="부산">부산</option>
+                <option value="울산">울산</option>
+                <option value="대구">대구</option>
+                <option value="경북">경북</option>
+                <option value="경남">경남</option>
+                <option value="전남">전남</option>
+                <option value="광주">광주</option>
+                <option value="전북">전북</option>
+                <option value="제주">제주</option>
+              </select>
+            </div>
+            <div class="immigration-gvrn-field">
+              <label for="immigration-office-select">출입국·외국인관서</label>
+              <select id="immigration-office-select" autocomplete="off" disabled aria-disabled="true">
+                <option value="">먼저 권역을 선택하세요</option>
+              </select>
+            </div>
+          </div>
+
+          <div id="immigration-office-detail" class="immigration-office-detail" hidden>
+            <dl class="immigration-office-dl">
+              <dt>기관명</dt>
+              <dd id="immigration-office-detail-name"></dd>
+              <dt>주소</dt>
+              <dd id="immigration-office-detail-address"></dd>
+              <dt>관할구역</dt>
+              <dd id="immigration-office-detail-jurisdiction"></dd>
+            </dl>
+          </div>
+
+          <p id="immigration-office-fallback" class="immigration-office-fallback" hidden role="status"></p>
+
+          <div class="immigration-gvrn-actions">
+            <a
+              class="immigration-portal-menu-link immigration-portal-menu-link--secondary"
+              href="https://www.hikorea.go.kr/gvrnsrch/GvrnSrchPageR.pt"
+              target="_blank"
+              rel="noopener noreferrer"
+              title="하이코리아 관할 출입국·외국인관서 조회가 새 창에서 열립니다."
+            >
+              하이코리아 공식 조회 페이지<span class="immigration-portal-menu-ext" aria-hidden="true"> ↗</span>
+            </a>
+          </div>
+
+          <details class="immigration-gvrn-tips">
+            <summary>참고 · 특이사항</summary>
+            <ul class="immigration-gvrn-tips-list">
+              <li><strong>공항 출장소</strong>는 종종 출입국 심사 업무 위주로 안내됩니다. 체류민원 창구는 본청·출장소별로 다를 수 있어 방문 전 확인이 필요합니다.</li>
+              <li><strong>세종특별자치시</strong>는 하이코리아 목록상 대전출입국·외국인사무소 관할로 표시되는 경우가 많습니다(개별 주소·관할은 공식 조회 결과를 따르세요).</li>
+              <li><strong>「출장소」「플러스센터」</strong> 등 명칭이 다른 경우에도 관할 업무가 분리되어 있을 수 있습니다.</li>
+              <li><strong>재외공관 비자</strong> 발급과 국내 <strong>체류 민원</strong> 창구는 체계가 다릅니다. 사증 진행 조회는 비자포털, 관할 관서 확인은 하이코리아 조회를 함께 활용하는 편이 안전합니다.</li>
+              <li>이 웹페이지의 발췌 목록은 전체 관서를 포함하지 않습니다. <strong>이전·폐지·통합</strong> 등 변경 가능성이 있으므로 최종 확인은 반드시 공식 페이지 또는 해당 기관 안내를 이용하세요.</li>
+            </ul>
+          </details>
+        </section>
+      </div>
     </section>
 
     <div class="platform-middle-box" aria-hidden="true"></div>
@@ -178,6 +256,166 @@
           renderByTopic("stay");
         }
       });
+    })();
+
+    (function () {
+      /** 하이코리아 「관할 출입국·외국인관서 조회」 목록 발췌 — 전체·최신 정보는 공식 페이지 우선 */
+      var SAMPLE_BY_REGION = {
+        서울: [
+          {
+            name: "김포공항출입국·외국인사무소",
+            address: "서울시 강서구 하늘길38 (방화동 886-3)",
+            jurisdiction: "김포공항 출입국심사업무 전담",
+          },
+        ],
+        경기: [
+          {
+            name: "김포다문화이주민플러스센터",
+            address: "경기도 김포시 양촌읍 황금로110번길 52 김포시외국인주민지원센터 1층",
+            jurisdiction: "■ 인천광역시 ■ 경기도 : 부천시·김포시 (하이코리아 목록 발췌)",
+          },
+        ],
+        부산: [
+          {
+            name: "김해공항출입국·외국인사무소",
+            address: "부산시 강서구 공항진입로 108 (대저2동 2350)",
+            jurisdiction: "김해국제공항 출입국심사업무 전담",
+          },
+        ],
+        대구: [
+          {
+            name: "대구출입국·외국인사무소",
+            address: "대구광역시 동구 이노밸리로 345",
+            jurisdiction:
+              "■ 대구광역시 ■ 경상북도 일부(포항시·울릉군·영덕군·울진군·구미시·김천시·상주시·칠곡군·문경시·경주시 등 제외 구역은 하이코리아에서 확인)",
+          },
+        ],
+        경북: [
+          {
+            name: "대구출입국·외국인사무소 구미출장소",
+            address: "경북 구미시 구미대로 350-27 구미시종합비즈니스지원센터 2,3층",
+            jurisdiction: "■ 경상북도 : 구미시·김천시·상주시·칠곡군·문경시",
+          },
+          {
+            name: "대구출입국·외국인사무소 포항출장소",
+            address: "경북 포항시 북구 우창동로 135",
+            jurisdiction: "■ 경상북도 : 포항시·울릉군·영덕군·울진군",
+          },
+        ],
+        대전: [
+          {
+            name: "대전출입국·외국인사무소",
+            address: "대전광역시 중구 목중로26번길 7",
+            jurisdiction:
+              "■ 대전광역시·세종특별자치시 ■ 충청북도 : 영동군·옥천군 ■ 충청남도 일부 제외 구역은 하이코리아에서 확인",
+          },
+        ],
+        광주: [
+          {
+            name: "광주출입국·외국인사무소",
+            address: "광주광역시 서구 상무대로911번길 22",
+            jurisdiction:
+              "■ 광주광역시 ■ 전라남도 일부(목포·여수·순천·광양·신안·무안·진도·해남·완도·영암 등은 제외 — 하이코리아 원문 참고)",
+          },
+          {
+            name: "광주출입국·외국인사무소 목포출장소",
+            address: "전남 목포시 백년대로412번길 26",
+            jurisdiction: "■ 전라남도 : 목포시·신안군·무안군·진도군·해남군·완도군·영암군",
+          },
+          {
+            name: "광주출입국·외국인사무소 무안공항출장소",
+            address: "전남 무안군 망운명 공항로 970-260",
+            jurisdiction: "무안공항 출입국심사업무 전담",
+          },
+        ],
+      };
+
+      var regionSel = document.getElementById("immigration-region-select");
+      var officeSel = document.getElementById("immigration-office-select");
+      var detail = document.getElementById("immigration-office-detail");
+      var fb = document.getElementById("immigration-office-fallback");
+      var dName = document.getElementById("immigration-office-detail-name");
+      var dAddr = document.getElementById("immigration-office-detail-address");
+      var dJur = document.getElementById("immigration-office-detail-jurisdiction");
+
+      if (!regionSel || !officeSel || !detail || !fb || !dName || !dAddr || !dJur) return;
+
+      function clearDetail() {
+        detail.hidden = true;
+        fb.hidden = true;
+        fb.textContent = "";
+      }
+
+      function rebuildOfficeOptions(region) {
+        officeSel.innerHTML = "";
+        var list = SAMPLE_BY_REGION[region] || [];
+        if (!region) {
+          officeSel.disabled = true;
+          officeSel.setAttribute("aria-disabled", "true");
+          var o0 = document.createElement("option");
+          o0.value = "";
+          o0.textContent = "먼저 권역을 선택하세요";
+          officeSel.appendChild(o0);
+          clearDetail();
+          return;
+        }
+        if (!list.length) {
+          officeSel.disabled = true;
+          officeSel.setAttribute("aria-disabled", "true");
+          var o1 = document.createElement("option");
+          o1.value = "";
+          o1.textContent = "이 권역은 샘플 미수록 — 공식 조회 이용";
+          officeSel.appendChild(o1);
+          fb.hidden = false;
+          fb.textContent =
+            "선택한 권역은 이 페이지에 발췌 목록이 없습니다. 아래 「하이코리아 공식 조회 페이지」에서 동일하게 권역을 고른 뒤 기관명·주소·관할구역을 확인해 주세요.";
+          detail.hidden = true;
+          return;
+        }
+        officeSel.disabled = false;
+        officeSel.removeAttribute("aria-disabled");
+        var ph = document.createElement("option");
+        ph.value = "";
+        ph.textContent = "관서를 선택하세요";
+        officeSel.appendChild(ph);
+        list.forEach(function (row, idx) {
+          var opt = document.createElement("option");
+          opt.value = String(idx);
+          opt.textContent = row.name;
+          officeSel.appendChild(opt);
+        });
+        fb.hidden = true;
+        clearDetail();
+      }
+
+      function showDetail(region) {
+        var idx = officeSel.value;
+        var list = SAMPLE_BY_REGION[region] || [];
+        if (!idx || !list[idx]) {
+          detail.hidden = true;
+          return;
+        }
+        var row = list[idx];
+        dName.textContent = row.name;
+        dAddr.textContent = row.address;
+        dJur.textContent = row.jurisdiction;
+        detail.hidden = false;
+      }
+
+      regionSel.addEventListener("change", function () {
+        rebuildOfficeOptions(regionSel.value);
+      });
+
+      officeSel.addEventListener("change", function () {
+        if (officeSel.disabled) return;
+        if (!officeSel.value) {
+          detail.hidden = true;
+          return;
+        }
+        showDetail(regionSel.value);
+      });
+
+      rebuildOfficeOptions("");
     })();
   </script>
 </body>

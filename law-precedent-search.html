@@ -113,6 +113,27 @@
     </section>
 
     <article class="law-prd-features law-portal-spec" id="law-prd-spec" aria-label="서비스 구성 안내">
+      <section class="law-prd-feature" data-feature-id="keyword-search" data-topic-keywords="공통 통합 키워드 검색 법령 판례" data-core="true">
+        <div class="law-prd-feature-head">
+          <span class="law-prd-p law-prd-p1" aria-label="우선순위 1">P1</span>
+          <h2>통합 키워드 검색</h2>
+        </div>
+        <p class="law-prd-desc">
+          자연어 키워드로 법령 명칭·조문·판례를 한 번에 검색합니다. 오타 교정 및 동의어 확장(예: 「전세 사기」→ 주택임대차보호법 관련)을 포함하고,
+          검색창은 화면 상단에 고정합니다.
+        </p>
+        <ul class="law-prd-tags">
+          <li>국가법령정보 API</li>
+          <li>대법원 판례 API</li>
+        </ul>
+        <form id="law-prd-kw-search-form" class="law-prd-inline-search law-topic-search-row" role="search" action="#" method="get" aria-label="통합 키워드 검색 입력">
+          <label class="visually-hidden" for="law-prd-kw-input">통합 검색어</label>
+          <input id="law-prd-kw-input" type="search" autocomplete="off" placeholder="예: 전세 사기, 민법제32조" />
+          <button type="submit" id="law-prd-kw-btn">검색</button>
+        </form>
+        <p class="law-prd-inline-search-note">위 검색창과 동일합니다. 여기서 검색하면 상단 제목이 「통합 키워드 검색」으로 바뀌며, 결과는 그 아래 패널에 표시됩니다.</p>
+      </section>
+
       <section
         class="law-prd-feature law-prd-feature--future"
         data-feature-id="future-p2-roadmap"
@@ -162,13 +183,29 @@
       var form = document.getElementById("law-topic-search-form");
       var input = document.getElementById("law-topic-input");
       var button = document.getElementById("law-topic-search-btn");
+      var formPrdKw = document.getElementById("law-prd-kw-search-form");
+      var inputPrdKw = document.getElementById("law-prd-kw-input");
+      var buttonPrdKw = document.getElementById("law-prd-kw-btn");
       var status = document.getElementById("law-topic-status");
       var spec = document.getElementById("law-prd-spec");
       var panelLaw = document.getElementById("law-panel-law-body");
       var panelAdmrul = document.getElementById("law-panel-admrul-body");
       var panelPrec = document.getElementById("law-panel-prec-body");
       var resultsEl = document.getElementById("law-search-results");
+      var lawTopicSearchSection = document.getElementById("law-topic-search-section");
+      var lawTopicSearchTitleEl = document.getElementById("law-topic-search-title");
       if (!input || !button || !status || !spec || !panelLaw || !panelAdmrul || !panelPrec) return;
+
+      var LAW_TOPIC_HEADING_STATUTE = "법령 검색";
+      var LAW_TOPIC_HEADING_INTEGRATED = "통합 키워드 검색";
+      /** 다음 `runSearch` 완료 시 상단 `<h2>`에 쓸 제목: `"statute"`(상단 폼) 또는 `"integrated"`(P1 카드 폼). */
+      var nextLawTopicHeadingKind = "statute";
+
+      function applyLawTopicSearchHeading(kind) {
+        var text = kind === "integrated" ? LAW_TOPIC_HEADING_INTEGRATED : LAW_TOPIC_HEADING_STATUTE;
+        if (lawTopicSearchTitleEl) lawTopicSearchTitleEl.textContent = text;
+        if (lawTopicSearchSection) lawTopicSearchSection.setAttribute("aria-label", text);
+      }
 
       var sections = Array.prototype.slice.call(spec.querySelectorAll(".law-prd-feature"));
       var topicAliases = {
@@ -188,6 +225,10 @@
       var PLACEHOLDER_PREC = "<p class=\"law-result-panel-placeholder\">검색 후 대법원 종합법률정보 등 판례 검색으로 연결되는 링크가 여기에 표시됩니다.</p>";
 
       var inputHadContent = String(input.value || "").trim().length > 0;
+
+      function syncMainSearchToPrdKw() {
+        if (inputPrdKw && input) inputPrdKw.value = input.value;
+      }
 
       function triggerLawSearchButtonBlink() {
         if (!button || button.disabled) return;
@@ -210,6 +251,7 @@
       }
 
       input.addEventListener("input", function () {
+        syncMainSearchToPrdKw();
         var has = String(input.value || "").trim().length > 0;
         if (has && !inputHadContent) {
           inputHadContent = true;
@@ -218,6 +260,7 @@
           inputHadContent = false;
         }
       });
+      syncMainSearchToPrdKw();
 
       function normalize(value) {
         return String(value || "").trim().toLowerCase();
@@ -1740,7 +1783,7 @@
       function applySpecFilter(raw) {
         var tokens = expandQuery(raw);
         var visibleCount = 0;
-        var keywordFlowIds = ["future-p2-roadmap"];
+        var keywordFlowIds = ["keyword-search", "future-p2-roadmap"];
         sections.forEach(function (section) {
           var keywords = normalize(section.getAttribute("data-topic-keywords"));
           var featureId = section.getAttribute("data-feature-id");
@@ -1774,6 +1817,7 @@
         if (!specInfo.tokens.length) {
           status.textContent = "아래는 전체 기능 명세를 표시합니다.";
           renderResultPanels("");
+          applyLawTopicSearchHeading(nextLawTopicHeadingKind);
           return;
         }
 
@@ -1786,12 +1830,14 @@
         var highlightPhrases = buildInterpretationHighlightPhrases(raw, parsed);
         if (parsed) {
           button.disabled = true;
+          if (buttonPrdKw) buttonPrdKw.disabled = true;
           try {
             var lawPack = await renderLawPanelWithApi(raw, raw, safeLabel, parsed, highlightPhrases);
             lawStatus = lawPack && lawPack.status ? lawPack.status : "links";
             precFromApi = lawPack && lawPack.precedents ? lawPack.precedents : [];
           } finally {
             button.disabled = false;
+            if (buttonPrdKw) buttonPrdKw.disabled = false;
           }
         } else {
           renderLawPanelLinksOnly(safeLabel, raw);
@@ -1833,6 +1879,8 @@
         }
 
         scrollToResults();
+        syncMainSearchToPrdKw();
+        applyLawTopicSearchHeading(nextLawTopicHeadingKind);
       }
 
       function onSubmit(event) {
@@ -1846,11 +1894,26 @@
         runSearch();
       }
 
-      if (form) form.addEventListener("submit", onSubmit);
+      if (form)
+        form.addEventListener("submit", function (ev) {
+          nextLawTopicHeadingKind = "statute";
+          onSubmit(ev);
+        });
       button.addEventListener("click", function (e) {
         e.preventDefault();
+        nextLawTopicHeadingKind = "statute";
         onSubmit(e);
       });
+
+      if (formPrdKw && inputPrdKw && input) {
+        formPrdKw.addEventListener("submit", function (ev) {
+          if (ev) ev.preventDefault();
+          nextLawTopicHeadingKind = "integrated";
+          input.value = String(inputPrdKw.value || "");
+          input.focus();
+          onSubmit(ev);
+        });
+      }
 
       function syncLawExpcHitIsolateBodyClass() {
         if (!document.body || !document.body.classList) return;

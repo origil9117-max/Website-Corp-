@@ -972,15 +972,11 @@ body[data-platform-slug="platform-faq"] .embassy-mofa-controls {
   grid-template-columns: 1fr;
 }
 
-@media (min-width: 640px) {
+@media (min-width: 768px) {
   body[data-platform-slug="platform-faq"] .embassy-mofa-controls {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.5fr);
     align-items: end;
   }
-}
-
-body[data-platform-slug="platform-faq"] .embassy-mofa-field.embassy-mofa-search-field {
-  grid-column: 1 / -1;
 }
 
 body[data-platform-slug="platform-faq"] .embassy-mofa-search-row {

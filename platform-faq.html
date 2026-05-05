@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700&family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="platform-pages.css?v=20260420d" />
-  <link rel="stylesheet" href="law-search-prd.css?v=20260506r" />
+  <link rel="stylesheet" href="law-search-prd.css?v=20260506s" />
 </head>
 <body class="law-prd-body" data-platform-slug="platform-faq">
   <header class="topbar">
@@ -203,7 +203,7 @@
               type="button"
               id="embassy-mofa-reset-btn"
               class="embassy-mofa-reset-btn"
-              aria-label="주재국·공관 선택 및 표시 내용 초기화"
+              aria-label="주재국·공관·공관검색 입력 초기화 및 표시 내용 초기화"
             >
               초기화
             </button>
@@ -225,7 +225,22 @@
                 <option value="">먼저 주재국을 선택하세요</option>
               </select>
             </div>
+            <div class="embassy-mofa-field embassy-mofa-search-field">
+              <label for="embassy-mofa-search-input">공관검색</label>
+              <div class="embassy-mofa-search-row">
+                <input
+                  id="embassy-mofa-search-input"
+                  type="search"
+                  autocomplete="off"
+                  class="embassy-mofa-search-input"
+                  placeholder="예: 도쿄, 주미국대사관, 해외출장소"
+                  aria-describedby="embassy-mofa-search-status"
+                />
+                <button type="button" id="embassy-mofa-search-btn" class="embassy-mofa-search-btn">공관검색</button>
+              </div>
+            </div>
           </div>
+          <p id="embassy-mofa-search-status" class="embassy-mofa-search-status" role="status" aria-live="polite"></p>
 
           <p class="embassy-mofa-official-row">
             <a
@@ -949,6 +964,9 @@ window.EMBASSY_GROUPS=JSON.parse(new TextDecoder("utf-8").decode(_u8));
       var dAddr = document.getElementById("embassy-mofa-detail-address");
       var homeLink = document.getElementById("embassy-mofa-detail-home");
       var resetBtn = document.getElementById("embassy-mofa-reset-btn");
+      var searchInput = document.getElementById("embassy-mofa-search-input");
+      var searchBtn = document.getElementById("embassy-mofa-search-btn");
+      var searchStatus = document.getElementById("embassy-mofa-search-status");
 
       if (
         !countrySel ||
@@ -958,7 +976,10 @@ window.EMBASSY_GROUPS=JSON.parse(new TextDecoder("utf-8").decode(_u8));
         !dPhone ||
         !dAddr ||
         !homeLink ||
-        !resetBtn
+        !resetBtn ||
+        !searchInput ||
+        !searchBtn ||
+        !searchStatus
       ) {
         return;
       }
@@ -1051,6 +1072,96 @@ window.EMBASSY_GROUPS=JSON.parse(new TextDecoder("utf-8").decode(_u8));
         dAddr.textContent = "";
         homeLink.href = "https://www.mofa.go.kr/www/pgm/m_4179/uss/emblgbd/emblgbdAdres.do";
         clearMissionDetail();
+        searchInput.value = "";
+        searchStatus.textContent = "";
+      }
+
+      function normalizeEmbassySearch(s) {
+        return String(s || "")
+          .trim()
+          .toLowerCase()
+          .replace(/\s+/g, " ");
+      }
+
+      function digitsOnlyEmbassy(s) {
+        return String(s || "").replace(/\D/g, "");
+      }
+
+      function selectMissionAt(gi, mi) {
+        countrySel.value = String(gi);
+        rebuildMissionOptions(countrySel.value);
+        missionSel.value = String(mi);
+        showMissionDetail(countrySel.value);
+      }
+
+      function runEmbassySearch() {
+        var raw = searchInput.value;
+        var q = normalizeEmbassySearch(raw);
+        if (!q) {
+          searchStatus.textContent = "검색어를 입력한 뒤 공관검색을 눌러 주세요.";
+          return;
+        }
+
+        var scored = [];
+        GROUPS.forEach(function (g, gi) {
+          (g.missions || []).forEach(function (row, mi) {
+            var name = normalizeEmbassySearch(row.name);
+            var addr = normalizeEmbassySearch(row.address || "");
+            var phoneNorm = normalizeEmbassySearch(row.phone || "");
+            var phoneDig = digitsOnlyEmbassy(row.phone || "");
+            var score = 0;
+            if (name === q) score = 100;
+            else if (name.indexOf(q) !== -1) score = 90;
+            else if (addr.indexOf(q) !== -1) score = 70;
+            else {
+              var qd = digitsOnlyEmbassy(q);
+              if (qd.length >= 4 && phoneDig.indexOf(qd) !== -1) score = 65;
+            }
+            if (score > 0) scored.push({ gi: gi, mi: mi, score: score });
+          });
+        });
+
+        scored.sort(function (a, b) {
+          if (b.score !== a.score) return b.score - a.score;
+          if (a.gi !== b.gi) return a.gi - b.gi;
+          return a.mi - b.mi;
+        });
+
+        if (scored.length) {
+          selectMissionAt(scored[0].gi, scored[0].mi);
+          searchStatus.textContent = "일치하는 공관을 선택했습니다.";
+          return;
+        }
+
+        var labelHits = [];
+        GROUPS.forEach(function (g, gi) {
+          if (normalizeEmbassySearch(g.label).indexOf(q) !== -1) labelHits.push(gi);
+        });
+
+        if (labelHits.length === 1) {
+          var gi2 = labelHits[0];
+          var g2 = GROUPS[gi2];
+          var missions = g2.missions || [];
+          countrySel.value = String(gi2);
+          rebuildMissionOptions(countrySel.value);
+          if (missions.length === 1) {
+            missionSel.value = "0";
+            showMissionDetail(countrySel.value);
+            searchStatus.textContent = "일치하는 공관을 표시했습니다.";
+          } else {
+            searchStatus.textContent =
+              "주재국을 선택했습니다. 공관명에서 이어서 선택해 주세요.";
+          }
+          return;
+        }
+
+        if (labelHits.length > 1) {
+          searchStatus.textContent =
+            "검색어에 해당하는 주재국이 여러 개입니다. 공관명·도시 등으로 더 구체적으로 입력해 주세요.";
+          return;
+        }
+
+        searchStatus.textContent = "일치하는 공관이 없습니다.";
       }
 
       countrySel.addEventListener("change", function () {
@@ -1067,6 +1178,14 @@ window.EMBASSY_GROUPS=JSON.parse(new TextDecoder("utf-8").decode(_u8));
       });
 
       resetBtn.addEventListener("click", resetEmbassyPanel);
+
+      searchBtn.addEventListener("click", runEmbassySearch);
+      searchInput.addEventListener("keydown", function (ev) {
+        if (ev.key === "Enter") {
+          ev.preventDefault();
+          runEmbassySearch();
+        }
+      });
 
       fillCountryOptions();
       rebuildMissionOptions("");

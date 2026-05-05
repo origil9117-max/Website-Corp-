@@ -979,6 +979,74 @@ body[data-platform-slug="platform-faq"] .embassy-mofa-controls {
   }
 }
 
+body[data-platform-slug="platform-faq"] .embassy-mofa-field.embassy-mofa-search-field {
+  grid-column: 1 / -1;
+}
+
+body[data-platform-slug="platform-faq"] .embassy-mofa-search-row {
+  display: flex;
+  gap: 0.45rem;
+  align-items: stretch;
+}
+
+body[data-platform-slug="platform-faq"] .embassy-mofa-search-input {
+  flex: 1;
+  min-width: 0;
+  box-sizing: border-box;
+  padding: 0.58rem 0.65rem;
+  font-size: 0.92rem;
+  border: 1px solid rgba(88, 62, 118, 0.38);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--ink);
+}
+
+body[data-platform-slug="platform-faq"] .embassy-mofa-search-input:focus-visible {
+  outline: 2px solid rgba(95, 55, 140, 0.35);
+  outline-offset: 1px;
+  border-color: rgba(95, 55, 140, 0.55);
+}
+
+body[data-platform-slug="platform-faq"] .embassy-mofa-search-input::placeholder {
+  color: rgba(61, 47, 85, 0.42);
+  font-size: 0.86rem;
+}
+
+body[data-platform-slug="platform-faq"] .embassy-mofa-search-btn {
+  flex-shrink: 0;
+  padding: 0.55rem 0.85rem;
+  font-size: 0.86rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: #fff;
+  background: linear-gradient(180deg, #6f5494 0%, #4a3565 100%);
+  border: 1px solid rgba(58, 40, 82, 0.55);
+  border-radius: 8px;
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(72, 52, 98, 0.22);
+}
+
+body[data-platform-slug="platform-faq"] .embassy-mofa-search-btn:hover {
+  filter: brightness(1.04);
+}
+
+body[data-platform-slug="platform-faq"] .embassy-mofa-search-btn:focus-visible {
+  outline: 2px solid rgba(95, 55, 140, 0.45);
+  outline-offset: 2px;
+}
+
+body[data-platform-slug="platform-faq"] .embassy-mofa-search-status {
+  margin: 0.45rem 0 0;
+  min-height: 1.25em;
+  font-size: 0.82rem;
+  line-height: 1.45;
+  color: #4a3565;
+}
+
+body[data-platform-slug="platform-faq"] .embassy-mofa-search-status:empty {
+  display: none;
+}
+
 body[data-platform-slug="platform-faq"] .embassy-mofa-field label {
   display: block;
   margin-bottom: 0.28rem;

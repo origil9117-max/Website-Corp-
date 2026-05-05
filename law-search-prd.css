@@ -847,12 +847,46 @@ body[data-platform-slug="platform-faq"] .immigration-gvrn-panel {
   background: #f8fbff;
 }
 
+body[data-platform-slug="platform-faq"] .immigration-gvrn-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.65rem;
+  margin-bottom: 0.55rem;
+}
+
 body[data-platform-slug="platform-faq"] .immigration-gvrn-title {
-  margin: 0 0 0.4rem 0;
+  margin: 0;
+  flex: 1;
+  min-width: 0;
   font-size: 1rem;
   font-weight: 800;
   letter-spacing: -0.02em;
   color: #14365c;
+}
+
+body[data-platform-slug="platform-faq"] .immigration-gvrn-reset-btn {
+  flex-shrink: 0;
+  padding: 0.38rem 0.72rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: #163b63;
+  background: #fff;
+  border: 1px solid rgba(28, 74, 124, 0.38);
+  border-radius: 8px;
+  cursor: pointer;
+  box-shadow: 0 1px 2px rgba(28, 74, 124, 0.06);
+}
+
+body[data-platform-slug="platform-faq"] .immigration-gvrn-reset-btn:hover {
+  border-color: rgba(28, 74, 124, 0.55);
+  background: rgba(28, 74, 124, 0.05);
+}
+
+body[data-platform-slug="platform-faq"] .immigration-gvrn-reset-btn:focus-visible {
+  outline: 2px solid rgba(37, 99, 168, 0.35);
+  outline-offset: 2px;
 }
 
 body[data-platform-slug="platform-faq"] .immigration-gvrn-controls {

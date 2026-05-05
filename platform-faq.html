@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700&family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="platform-pages.css?v=20260420d" />
-  <link rel="stylesheet" href="law-search-prd.css?v=20260506m" />
+  <link rel="stylesheet" href="law-search-prd.css?v=20260506n" />
 </head>
 <body class="law-prd-body" data-platform-slug="platform-faq">
   <header class="topbar">
@@ -121,7 +121,17 @@
         </nav>
 
         <section class="immigration-gvrn-panel" aria-labelledby="immigration-gvrn-heading">
-          <h3 id="immigration-gvrn-heading" class="immigration-gvrn-title">관할출입국·외국인관서 조회</h3>
+          <div class="immigration-gvrn-header">
+            <h3 id="immigration-gvrn-heading" class="immigration-gvrn-title">관할출입국·외국인관서 조회</h3>
+            <button
+              type="button"
+              id="immigration-gvrn-reset-btn"
+              class="immigration-gvrn-reset-btn"
+              aria-label="권역·관서 선택 및 관할 검색 상태 초기화"
+            >
+              초기화
+            </button>
+          </div>
 
           <div class="immigration-gvrn-controls">
             <div class="immigration-gvrn-field">
@@ -564,6 +574,7 @@
       var searchBtn = document.getElementById("immigration-gvrn-search-btn");
       var searchStatus = document.getElementById("immigration-gvrn-search-status");
       var searchHits = document.getElementById("immigration-gvrn-search-hits");
+      var resetBtn = document.getElementById("immigration-gvrn-reset-btn");
 
       if (
         !regionSel ||
@@ -575,7 +586,8 @@
         !searchInput ||
         !searchBtn ||
         !searchStatus ||
-        !searchHits
+        !searchHits ||
+        !resetBtn
       ) {
         return;
       }
@@ -739,6 +751,21 @@
           runJurisdictionSearch();
         }
       });
+
+      function resetImmigrationGvrnPanel() {
+        regionSel.value = "";
+        rebuildOfficeOptions("");
+        searchInput.value = "";
+        searchStatus.textContent = "";
+        searchHits.hidden = true;
+        searchHits.innerHTML = "";
+        dName.textContent = "";
+        dAddr.textContent = "";
+        dJur.textContent = "";
+        clearDetail();
+      }
+
+      resetBtn.addEventListener("click", resetImmigrationGvrnPanel);
 
       function clearDetail() {
         detail.hidden = true;

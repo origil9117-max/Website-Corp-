@@ -756,6 +756,15 @@ body[data-platform-slug="law-precedent-search"] #law-topic-search-btn.law-topic-
   line-height: 1.25;
 }
 
+/* 출입국민원 페이지: 통합 검색 구역 외곽 카드 테두리 제거 */
+body[data-platform-slug="platform-faq"] .law-topic-search {
+  border: none;
+  background: transparent;
+  box-shadow: none;
+  padding-left: 0;
+  padding-right: 0;
+}
+
 /* 출입국민원 페이지: 열별 검색창 강조 테두리 */
 body[data-platform-slug="platform-faq"] .law-result-plan-col .law-result-plan-col-search-row {
   margin-top: 0;

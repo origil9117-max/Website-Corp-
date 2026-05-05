@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700&family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="platform-pages.css?v=20260420d" />
-  <link rel="stylesheet" href="law-search-prd.css?v=20260506e" />
+  <link rel="stylesheet" href="law-search-prd.css?v=20260506f" />
 </head>
 <body class="law-prd-body" data-platform-slug="platform-faq">
   <header class="topbar">
@@ -79,9 +79,12 @@
         <button id="immigration-topic-search-btn" type="button">검색</button>
       </div>
       <p id="immigration-topic-status" class="law-topic-status" role="status" aria-live="polite"></p>
-      <div class="law-result-plan" aria-label="검색 결과 기본 구성">
+      <div class="law-result-plan" aria-label="민원 자격 안내 구성">
         <div class="law-result-plan-col">
-          <h3>1차 구성 (기본 안내)</h3>
+          <div class="law-result-plan-col-head">
+            <h3>사증민원 자격</h3>
+            <button type="button" class="law-result-plan-col-search-btn" id="immigration-search-visa-eligibility-btn" aria-label="사증민원 자격 검색">검색</button>
+          </div>
           <ul>
             <li>민원유형 키워드 검색</li>
             <li>체류자격별 기본 요건</li>
@@ -91,7 +94,10 @@
           </ul>
         </div>
         <div class="law-result-plan-col">
-          <h3>2차 구성 (고도화)</h3>
+          <div class="law-result-plan-col-head">
+            <h3>체류민원 자격</h3>
+            <button type="button" class="law-result-plan-col-search-btn" id="immigration-search-stay-eligibility-btn" aria-label="체류민원 자격 검색">검색</button>
+          </div>
           <ul>
             <li>상황별 서류 안내 자동 분기</li>
             <li>변경·연장 일정 리마인드</li>
@@ -124,25 +130,51 @@
       var input = document.getElementById("immigration-topic-input");
       var button = document.getElementById("immigration-topic-search-btn");
       var status = document.getElementById("immigration-topic-status");
+      var btnVisa = document.getElementById("immigration-search-visa-eligibility-btn");
+      var btnStay = document.getElementById("immigration-search-stay-eligibility-btn");
       if (!input || !button || !status) return;
 
-      function renderByTopic() {
+      function renderByTopic(scope) {
+        scope = scope || "main";
         var raw = String(input.value || "").trim();
         if (!raw) {
-          status.textContent = "검색어를 입력한 뒤 검색을 눌러 주세요.";
+          if (scope === "visa") {
+            status.textContent = "사증민원 자격: 상단 검색창에 키워드를 입력한 뒤 검색을 눌러 주세요.";
+          } else if (scope === "stay") {
+            status.textContent = "체류민원 자격: 상단 검색창에 키워드를 입력한 뒤 검색을 눌러 주세요.";
+          } else {
+            status.textContent = "검색어를 입력한 뒤 검색을 눌러 주세요.";
+          }
           return;
         }
-        status.textContent = "\"" + raw + "\"에 대해 검색했습니다. 상세 맞춤 안내는 준비 중입니다.";
+        if (scope === "visa") {
+          status.textContent = "사증민원 자격 기준으로 \"" + raw + "\"에 대해 검색했습니다. 상세 맞춤 안내는 준비 중입니다.";
+        } else if (scope === "stay") {
+          status.textContent = "체류민원 자격 기준으로 \"" + raw + "\"에 대해 검색했습니다. 상세 맞춤 안내는 준비 중입니다.";
+        } else {
+          status.textContent = "\"" + raw + "\"에 대해 검색했습니다. 상세 맞춤 안내는 준비 중입니다.";
+        }
       }
 
       button.addEventListener("click", function () {
-        renderByTopic();
+        renderByTopic("main");
       });
+
+      if (btnVisa) {
+        btnVisa.addEventListener("click", function () {
+          renderByTopic("visa");
+        });
+      }
+      if (btnStay) {
+        btnStay.addEventListener("click", function () {
+          renderByTopic("stay");
+        });
+      }
 
       input.addEventListener("keydown", function (event) {
         if (event.key === "Enter") {
           event.preventDefault();
-          renderByTopic();
+          renderByTopic("main");
         }
       });
     })();

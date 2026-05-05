@@ -748,11 +748,49 @@ body[data-platform-slug="law-precedent-search"] #law-topic-search-btn.law-topic-
   padding: 0.7rem 0.8rem;
 }
 
-.law-result-plan-col h3 {
+.law-result-plan-col-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.35rem;
+}
+
+.law-result-plan-col-head h3 {
   font-size: 0.96rem;
   font-weight: 800;
   color: #163b63;
-  margin-bottom: 0.35rem;
+  margin: 0;
+  line-height: 1.25;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.law-result-plan-col-search-btn {
+  flex: 0 0 auto;
+  border: 1px solid rgba(28, 74, 124, 0.3);
+  background: linear-gradient(180deg, #2d71b8, #1c4a7c);
+  color: #fff;
+  border-radius: 7px;
+  padding: 0.45rem 0.75rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.law-result-plan-col-search-btn:hover {
+  filter: brightness(1.05);
+}
+
+.law-result-plan-col-search-btn:active {
+  transform: translateY(1px);
+}
+
+.law-result-plan-col-search-btn:focus-visible {
+  outline: 2px solid rgba(37, 99, 168, 0.45);
+  outline-offset: 2px;
 }
 
 .law-result-plan-col ul {

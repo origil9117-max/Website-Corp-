@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700&family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="platform-pages.css?v=20260420d" />
-  <link rel="stylesheet" href="law-search-prd.css?v=20260506k" />
+  <link rel="stylesheet" href="law-search-prd.css?v=20260506l" />
 </head>
 <body class="law-prd-body" data-platform-slug="platform-faq">
   <header class="topbar">
@@ -122,11 +122,6 @@
 
         <section class="immigration-gvrn-panel" aria-labelledby="immigration-gvrn-heading">
           <h3 id="immigration-gvrn-heading" class="immigration-gvrn-title">관할출입국·외국인관서 조회</h3>
-          <p class="immigration-gvrn-lead">
-            권역은 법무부 하이코리아
-            <a href="https://www.hikorea.go.kr/gvrnsrch/GvrnSrchPageR.pt" target="_blank" rel="noopener noreferrer">「관할 출입국·외국인관서 조회」</a>
-            화면의 「구분지역」 분류와 같습니다. 아래 목록은 참고용 발췌이며, <strong>명칭·주소·관할 변경 시 공식 페이지가 우선</strong>입니다.
-          </p>
 
           <div class="immigration-gvrn-controls">
             <div class="immigration-gvrn-field">
@@ -169,31 +164,6 @@
               <dd id="immigration-office-detail-jurisdiction"></dd>
             </dl>
           </div>
-
-          <p id="immigration-office-fallback" class="immigration-office-fallback" hidden role="status"></p>
-
-          <div class="immigration-gvrn-actions">
-            <a
-              class="immigration-portal-menu-link immigration-portal-menu-link--secondary"
-              href="https://www.hikorea.go.kr/gvrnsrch/GvrnSrchPageR.pt"
-              target="_blank"
-              rel="noopener noreferrer"
-              title="하이코리아 관할 출입국·외국인관서 조회가 새 창에서 열립니다."
-            >
-              하이코리아 공식 조회 페이지<span class="immigration-portal-menu-ext" aria-hidden="true"> ↗</span>
-            </a>
-          </div>
-
-          <details class="immigration-gvrn-tips">
-            <summary>참고 · 특이사항</summary>
-            <ul class="immigration-gvrn-tips-list">
-              <li><strong>공항 출장소</strong>는 종종 출입국 심사 업무 위주로 안내됩니다. 체류민원 창구는 본청·출장소별로 다를 수 있어 방문 전 확인이 필요합니다.</li>
-              <li><strong>세종특별자치시</strong>는 하이코리아 목록상 대전출입국·외국인사무소 관할로 표시되는 경우가 많습니다(개별 주소·관할은 공식 조회 결과를 따르세요).</li>
-              <li><strong>「출장소」「플러스센터」</strong> 등 명칭이 다른 경우에도 관할 업무가 분리되어 있을 수 있습니다.</li>
-              <li><strong>재외공관 비자</strong> 발급과 국내 <strong>체류 민원</strong> 창구는 체계가 다릅니다. 사증 진행 조회는 비자포털, 관할 관서 확인은 하이코리아 조회를 함께 활용하는 편이 안전합니다.</li>
-              <li>이 웹페이지의 발췌 목록은 전체 관서를 포함하지 않습니다. <strong>이전·폐지·통합</strong> 등 변경 가능성이 있으므로 최종 확인은 반드시 공식 페이지 또는 해당 기관 안내를 이용하세요.</li>
-            </ul>
-          </details>
         </section>
       </div>
     </section>
@@ -565,17 +535,14 @@
       var regionSel = document.getElementById("immigration-region-select");
       var officeSel = document.getElementById("immigration-office-select");
       var detail = document.getElementById("immigration-office-detail");
-      var fb = document.getElementById("immigration-office-fallback");
       var dName = document.getElementById("immigration-office-detail-name");
       var dAddr = document.getElementById("immigration-office-detail-address");
       var dJur = document.getElementById("immigration-office-detail-jurisdiction");
 
-      if (!regionSel || !officeSel || !detail || !fb || !dName || !dAddr || !dJur) return;
+      if (!regionSel || !officeSel || !detail || !dName || !dAddr || !dJur) return;
 
       function clearDetail() {
         detail.hidden = true;
-        fb.hidden = true;
-        fb.textContent = "";
       }
 
       function rebuildOfficeOptions(region) {
@@ -598,9 +565,6 @@
           o1.value = "";
           o1.textContent = "이 권역은 샘플 미수록 — 공식 조회 이용";
           officeSel.appendChild(o1);
-          fb.hidden = false;
-          fb.textContent =
-            "선택한 권역은 이 페이지에 발췌 목록이 없습니다. 아래 「하이코리아 공식 조회 페이지」에서 동일하게 권역을 고른 뒤 기관명·주소·관할구역을 확인해 주세요.";
           detail.hidden = true;
           return;
         }
@@ -616,7 +580,6 @@
           opt.textContent = row.name;
           officeSel.appendChild(opt);
         });
-        fb.hidden = true;
         clearDetail();
       }
 

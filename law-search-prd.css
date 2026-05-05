@@ -394,6 +394,18 @@
   color: var(--ink-soft);
 }
 
+.law-portal-spec .law-prd-inline-search.law-topic-search-row {
+  margin-top: 0.9rem;
+}
+
+.law-prd-inline-search-note {
+  margin-top: 0.42rem;
+  margin-bottom: 0;
+  font-size: 0.82rem;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
 .law-prd-cats {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1026,7 +1038,8 @@ body.law-expc-hit-isolate .law-prec-api-list .law-prec-item-hit:hover mark.law-q
   line-height: 1.55;
 }
 
-button#law-topic-search-btn:disabled {
+button#law-topic-search-btn:disabled,
+button#law-prd-kw-btn:disabled {
   opacity: 0.65;
   cursor: wait;
 }

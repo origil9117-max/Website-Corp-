@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700&family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="platform-pages.css?v=20260420d" />
-  <link rel="stylesheet" href="law-search-prd.css?v=20260505l" />
+  <link rel="stylesheet" href="law-search-prd.css?v=20260505m" />
 </head>
 <body class="law-prd-body" data-platform-slug="law-precedent-search">
   <header class="topbar">
@@ -130,6 +130,12 @@
           <li>국가법령정보 API</li>
           <li>대법원 판례 API</li>
         </ul>
+        <form id="law-prd-kw-search-form" class="law-prd-inline-search law-topic-search-row" role="search" action="#" method="get" aria-label="통합 키워드 검색 입력">
+          <label class="visually-hidden" for="law-prd-kw-input">통합 검색어</label>
+          <input id="law-prd-kw-input" type="search" autocomplete="off" placeholder="예: 전세 사기, 민법제32조" />
+          <button type="submit" id="law-prd-kw-btn">검색</button>
+        </form>
+        <p class="law-prd-inline-search-note">상단 「법령 검색」과 같은 검색이며, 결과는 그 아래 패널에 표시됩니다.</p>
       </section>
 
       <section class="law-prd-feature" data-feature-id="ai-summary" data-topic-keywords="AI 판례 요약 요약 보증금 임대차 근로 임금 외국인 비자 소비자 분쟁">
@@ -196,6 +202,9 @@
       var form = document.getElementById("law-topic-search-form");
       var input = document.getElementById("law-topic-input");
       var button = document.getElementById("law-topic-search-btn");
+      var formPrdKw = document.getElementById("law-prd-kw-search-form");
+      var inputPrdKw = document.getElementById("law-prd-kw-input");
+      var buttonPrdKw = document.getElementById("law-prd-kw-btn");
       var status = document.getElementById("law-topic-status");
       var spec = document.getElementById("law-prd-spec");
       var panelLaw = document.getElementById("law-panel-law-body");
@@ -223,6 +232,10 @@
 
       var inputHadContent = String(input.value || "").trim().length > 0;
 
+      function syncMainSearchToPrdKw() {
+        if (inputPrdKw && input) inputPrdKw.value = input.value;
+      }
+
       function triggerLawSearchButtonBlink() {
         if (!button || button.disabled) return;
         var finished = false;
@@ -244,6 +257,7 @@
       }
 
       input.addEventListener("input", function () {
+        syncMainSearchToPrdKw();
         var has = String(input.value || "").trim().length > 0;
         if (has && !inputHadContent) {
           inputHadContent = true;
@@ -252,6 +266,7 @@
           inputHadContent = false;
         }
       });
+      syncMainSearchToPrdKw();
 
       function normalize(value) {
         return String(value || "").trim().toLowerCase();
@@ -1819,12 +1834,14 @@
         var highlightPhrases = buildInterpretationHighlightPhrases(raw, parsed);
         if (parsed) {
           button.disabled = true;
+          if (buttonPrdKw) buttonPrdKw.disabled = true;
           try {
             var lawPack = await renderLawPanelWithApi(raw, raw, safeLabel, parsed, highlightPhrases);
             lawStatus = lawPack && lawPack.status ? lawPack.status : "links";
             precFromApi = lawPack && lawPack.precedents ? lawPack.precedents : [];
           } finally {
             button.disabled = false;
+            if (buttonPrdKw) buttonPrdKw.disabled = false;
           }
         } else {
           renderLawPanelLinksOnly(safeLabel, raw);
@@ -1866,6 +1883,7 @@
         }
 
         scrollToResults();
+        syncMainSearchToPrdKw();
       }
 
       function onSubmit(event) {
@@ -1884,6 +1902,15 @@
         e.preventDefault();
         onSubmit(e);
       });
+
+      if (formPrdKw && inputPrdKw && input) {
+        formPrdKw.addEventListener("submit", function (ev) {
+          if (ev) ev.preventDefault();
+          input.value = String(inputPrdKw.value || "");
+          input.focus();
+          onSubmit(ev);
+        });
+      }
 
       function syncLawExpcHitIsolateBodyClass() {
         if (!document.body || !document.body.classList) return;

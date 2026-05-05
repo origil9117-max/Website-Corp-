@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700&family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="platform-pages.css?v=20260420d" />
-  <link rel="stylesheet" href="law-search-prd.css?v=20260506u" />
+  <link rel="stylesheet" href="law-search-prd.css?v=20260506v" />
 </head>
 <body class="law-prd-body" data-platform-slug="platform-faq">
   <header class="topbar">
@@ -241,6 +241,13 @@
             </div>
           </div>
           <p id="embassy-mofa-search-status" class="embassy-mofa-search-status" role="status" aria-live="polite"></p>
+
+          <div
+            id="embassy-mofa-country-list-wrap"
+            class="embassy-mofa-country-list-wrap"
+            hidden
+            aria-label="검색된 주재국 소재 공관 목록"
+          ></div>
 
           <p class="embassy-mofa-official-row">
             <a
@@ -996,6 +1003,9 @@ window.EMBASSY_GROUPS=JSON.parse(new TextDecoder("utf-8").decode(_u8));
       var searchInput = document.getElementById("embassy-mofa-search-input");
       var searchBtn = document.getElementById("embassy-mofa-search-btn");
       var searchStatus = document.getElementById("embassy-mofa-search-status");
+      var countryListWrap = document.getElementById("embassy-mofa-country-list-wrap");
+      var MOFA_EMB_DEFAULT =
+        "https://www.mofa.go.kr/www/pgm/m_4179/uss/emblgbd/emblgbdAdres.do";
 
       if (
         !countrySel ||
@@ -1008,7 +1018,8 @@ window.EMBASSY_GROUPS=JSON.parse(new TextDecoder("utf-8").decode(_u8));
         !resetBtn ||
         !searchInput ||
         !searchBtn ||
-        !searchStatus
+        !searchStatus ||
+        !countryListWrap
       ) {
         return;
       }
@@ -1039,6 +1050,74 @@ window.EMBASSY_GROUPS=JSON.parse(new TextDecoder("utf-8").decode(_u8));
 
       function clearMissionDetail() {
         detailEl.hidden = true;
+      }
+
+      function clearEmbassyCountryList() {
+        countryListWrap.innerHTML = "";
+        countryListWrap.hidden = true;
+      }
+
+      function renderEmbassyCountryList(gi) {
+        clearEmbassyCountryList();
+        var g = GROUPS[gi];
+        var missions = (g && g.missions) || [];
+        var label = (g && g.label) || "";
+        if (!missions.length) return;
+
+        var title = document.createElement("h4");
+        title.className = "embassy-mofa-country-list-title";
+        title.textContent = "「" + label + "」 소재 공관 " + missions.length + "곳";
+        countryListWrap.appendChild(title);
+
+        var ul = document.createElement("ul");
+        ul.className = "embassy-mofa-country-list";
+
+        missions.forEach(function (row) {
+          var li = document.createElement("li");
+          li.className = "embassy-mofa-country-item";
+
+          var nameEl = document.createElement("div");
+          nameEl.className = "embassy-mofa-country-item-name";
+          nameEl.textContent = row.name || "—";
+
+          var dl = document.createElement("dl");
+          dl.className = "embassy-mofa-country-item-dl";
+
+          var dtPhone = document.createElement("dt");
+          dtPhone.textContent = "전화번호";
+          var ddPhone = document.createElement("dd");
+          ddPhone.textContent = row.phone || "—";
+
+          var dtAddr = document.createElement("dt");
+          dtAddr.textContent = "주소";
+          var ddAddr = document.createElement("dd");
+          ddAddr.textContent = row.address || "—";
+
+          var dtHome = document.createElement("dt");
+          dtHome.textContent = "홈페이지";
+          var ddHome = document.createElement("dd");
+          var a = document.createElement("a");
+          a.href = row.homepage || MOFA_EMB_DEFAULT;
+          a.target = "_blank";
+          a.rel = "noopener noreferrer";
+          a.className = "embassy-mofa-country-home";
+          a.textContent = "바로 가기 ↗";
+          ddHome.appendChild(a);
+
+          dl.appendChild(dtPhone);
+          dl.appendChild(ddPhone);
+          dl.appendChild(dtAddr);
+          dl.appendChild(ddAddr);
+          dl.appendChild(dtHome);
+          dl.appendChild(ddHome);
+
+          li.appendChild(nameEl);
+          li.appendChild(dl);
+          ul.appendChild(li);
+        });
+
+        countryListWrap.appendChild(ul);
+        countryListWrap.hidden = false;
       }
 
       function rebuildMissionOptions(countryIdxVal) {
@@ -1099,8 +1178,9 @@ window.EMBASSY_GROUPS=JSON.parse(new TextDecoder("utf-8").decode(_u8));
         dName.textContent = "";
         dPhone.textContent = "";
         dAddr.textContent = "";
-        homeLink.href = "https://www.mofa.go.kr/www/pgm/m_4179/uss/emblgbd/emblgbdAdres.do";
+        homeLink.href = MOFA_EMB_DEFAULT;
         clearMissionDetail();
+        clearEmbassyCountryList();
         searchInput.value = "";
         searchStatus.textContent = "";
       }
@@ -1147,10 +1227,12 @@ window.EMBASSY_GROUPS=JSON.parse(new TextDecoder("utf-8").decode(_u8));
         var missions = (g && g.missions) || [];
         countrySel.value = String(gi);
         rebuildMissionOptions(countrySel.value);
+        renderEmbassyCountryList(gi);
         if (missions.length === 1) {
           missionSel.value = "0";
-          showMissionDetail(countrySel.value);
-          searchStatus.textContent = "일치하는 공관을 표시했습니다.";
+          clearMissionDetail();
+          searchStatus.textContent =
+            "「" + labelForMsg + "」 소재 공관입니다. 아래에서 연락처를 확인할 수 있습니다.";
           return;
         }
         missionSel.value = "";
@@ -1160,10 +1242,11 @@ window.EMBASSY_GROUPS=JSON.parse(new TextDecoder("utf-8").decode(_u8));
           labelForMsg +
           "」 소재 공관 " +
           missions.length +
-          "곳입니다. 공관명에서 선택해 주세요.";
+          "곳입니다. 아래 목록 또는 공관명에서 선택해 주세요.";
       }
 
       function runEmbassySearch() {
+        clearEmbassyCountryList();
         var raw = searchInput.value;
         var q = normalizeEmbassySearch(raw);
         if (!q) {
@@ -1208,6 +1291,7 @@ window.EMBASSY_GROUPS=JSON.parse(new TextDecoder("utf-8").decode(_u8));
         });
 
         if (scored.length) {
+          clearEmbassyCountryList();
           selectMissionAt(scored[0].gi, scored[0].mi);
           searchStatus.textContent = "일치하는 공관을 선택했습니다.";
           return;
@@ -1217,6 +1301,7 @@ window.EMBASSY_GROUPS=JSON.parse(new TextDecoder("utf-8").decode(_u8));
       }
 
       countrySel.addEventListener("change", function () {
+        clearEmbassyCountryList();
         rebuildMissionOptions(countrySel.value);
       });
 

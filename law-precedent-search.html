@@ -132,53 +132,6 @@
         </ul>
       </section>
 
-      <section class="law-prd-feature" data-feature-id="topic-category" data-topic-keywords="부동산 임대차 가족 상속 근로 임금 외국인 비자 소비자 분쟁 행정처분 불복 사업 법인 형사 범죄 주제 카테고리" data-core="true">
-        <div class="law-prd-feature-head">
-          <span class="law-prd-p law-prd-p1" aria-label="우선순위 1">P1</span>
-          <h2>생활주제 카테고리</h2>
-        </div>
-        <p class="law-prd-desc">
-          부동산·임대차, 가족·상속, 근로·임금, 외국인·비자, 소비자 분쟁, 행정처분·불복, 사업·법인, 형사·범죄 등 8개 주제를 아이콘 기반으로 빠르게 탐색합니다.
-        </p>
-        <div class="law-prd-cats">
-          <div class="law-prd-cat"><span class="law-prd-cat-icon">🏠</span>부동산·임대차</div>
-          <div class="law-prd-cat"><span class="law-prd-cat-icon">👨‍👩‍👧</span>가족·상속</div>
-          <div class="law-prd-cat"><span class="law-prd-cat-icon">⚙️</span>근로·임금</div>
-          <div class="law-prd-cat"><span class="law-prd-cat-icon">🌐</span>외국인·비자</div>
-          <div class="law-prd-cat"><span class="law-prd-cat-icon">🛒</span>소비자 분쟁</div>
-          <div class="law-prd-cat"><span class="law-prd-cat-icon">📋</span>행정처분·불복</div>
-          <div class="law-prd-cat"><span class="law-prd-cat-icon">🏢</span>사업·법인</div>
-          <div class="law-prd-cat"><span class="law-prd-cat-icon">⚖️</span>형사·범죄</div>
-        </div>
-      </section>
-
-      <section class="law-prd-feature" data-feature-id="law-text" data-topic-keywords="법령 조문 시행일 원문 조회 부동산 임대차 가족 상속 근로 임금 외국인 비자 소비자 분쟁 행정처분 불복 사업 법인 형사 범죄">
-        <div class="law-prd-feature-head">
-          <span class="law-prd-p law-prd-p1" aria-label="우선순위 1">P1</span>
-          <h2>법령 원문 조회</h2>
-        </div>
-        <p class="law-prd-desc">
-          법령명 또는 조문번호로 조회하고, 연혁·시행일 선택을 지원합니다. 어려운 용어는 툴팁으로 간단히 설명합니다.
-        </p>
-        <ul class="law-prd-tags">
-          <li>국가법령정보 Open API</li>
-        </ul>
-      </section>
-
-      <section class="law-prd-feature" data-feature-id="precedent-list" data-topic-keywords="판례 목록 사건번호 판시요지 부동산 임대차 가족 상속 근로 임금 외국인 비자 소비자 분쟁 행정처분 불복 사업 법인 형사 범죄 대법원 API">
-        <div class="law-prd-feature-head">
-          <span class="law-prd-p law-prd-p1" aria-label="우선순위 1">P1</span>
-          <h2>판례 목록 (대법원 API)</h2>
-        </div>
-        <p class="law-prd-desc">
-          사건번호·키워드로 판례 목록을 조회하고, 대법원 종합법률정보 등 원문 링크를 함께 제공합니다. 하급심 판결 연계는 단계적으로 확장합니다.
-        </p>
-        <ul class="law-prd-tags">
-          <li>대법원 Open API</li>
-          <li>판례 목록 결과</li>
-        </ul>
-      </section>
-
       <section class="law-prd-feature" data-feature-id="ai-summary" data-topic-keywords="AI 판례 요약 요약 보증금 임대차 근로 임금 외국인 비자 소비자 분쟁">
         <div class="law-prd-feature-head">
           <span class="law-prd-p law-prd-p2" aria-label="우선순위 2">P2</span>
@@ -1834,7 +1787,7 @@
       function applySpecFilter(raw) {
         var tokens = expandQuery(raw);
         var visibleCount = 0;
-        var keywordFlowIds = ["keyword-search", "law-text", "precedent-list", "ai-summary"];
+        var keywordFlowIds = ["keyword-search", "ai-summary"];
         sections.forEach(function (section) {
           var keywords = normalize(section.getAttribute("data-topic-keywords"));
           var featureId = section.getAttribute("data-feature-id");

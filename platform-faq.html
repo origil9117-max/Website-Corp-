@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700&family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="platform-pages.css?v=20260420d" />
-  <link rel="stylesheet" href="law-search-prd.css?v=20260506g" />
+  <link rel="stylesheet" href="law-search-prd.css?v=20260506h" />
 </head>
 <body class="law-prd-body" data-platform-slug="platform-faq">
   <header class="topbar">
@@ -73,11 +73,7 @@
 
     <section class="law-topic-search" id="immigration-search-main" aria-label="출입국 민원 통합 검색">
       <h2>출입국민원 통합 검색</h2>
-      <p class="law-topic-search-desc">민원 주제를 입력하면 관련된 준비 단계와 안내 항목 중심으로 정리됩니다.</p>
-      <div class="law-topic-search-row">
-        <input id="immigration-topic-input" type="search" placeholder="예: F-4, F-5, 체류기간 연장, 국적 취득" />
-        <button id="immigration-topic-search-btn" type="button">검색</button>
-      </div>
+      <p class="law-topic-search-desc">사증·체류 서류 주제를 아래 각 검색창에 입력하면 관련된 준비 단계와 안내 항목 중심으로 정리됩니다.</p>
       <p id="immigration-topic-status" class="law-topic-status" role="status" aria-live="polite"></p>
       <div class="law-result-plan" aria-label="민원 서류 안내 구성">
         <div class="law-result-plan-col">
@@ -131,77 +127,50 @@
   </div>
   <script>
     (function () {
-      var input = document.getElementById("immigration-topic-input");
-      var button = document.getElementById("immigration-topic-search-btn");
       var status = document.getElementById("immigration-topic-status");
       var inputVisa = document.getElementById("immigration-visa-docs-input");
       var inputStay = document.getElementById("immigration-stay-docs-input");
       var btnVisa = document.getElementById("immigration-search-visa-docs-btn");
       var btnStay = document.getElementById("immigration-search-stay-docs-btn");
-      if (!input || !button || !status) return;
+      if (!status || !inputVisa || !inputStay || !btnVisa || !btnStay) return;
 
       function renderByTopic(scope) {
-        scope = scope || "main";
-        var field =
-          scope === "visa" ? inputVisa : scope === "stay" ? inputStay : input;
-        if (!field) return;
+        var field = scope === "visa" ? inputVisa : inputStay;
         var raw = String(field.value || "").trim();
         if (!raw) {
           if (scope === "visa") {
             status.textContent = "사증민원서류: 해당 검색창에 키워드를 입력한 뒤 검색을 눌러 주세요.";
-          } else if (scope === "stay") {
-            status.textContent = "체류민원서류: 해당 검색창에 키워드를 입력한 뒤 검색을 눌러 주세요.";
           } else {
-            status.textContent = "검색어를 입력한 뒤 검색을 눌러 주세요.";
+            status.textContent = "체류민원서류: 해당 검색창에 키워드를 입력한 뒤 검색을 눌러 주세요.";
           }
           return;
         }
         if (scope === "visa") {
           status.textContent = "사증민원서류 기준으로 \"" + raw + "\"에 대해 검색했습니다. 상세 맞춤 안내는 준비 중입니다.";
-        } else if (scope === "stay") {
-          status.textContent = "체류민원서류 기준으로 \"" + raw + "\"에 대해 검색했습니다. 상세 맞춤 안내는 준비 중입니다.";
         } else {
-          status.textContent = "\"" + raw + "\"에 대해 검색했습니다. 상세 맞춤 안내는 준비 중입니다.";
+          status.textContent = "체류민원서류 기준으로 \"" + raw + "\"에 대해 검색했습니다. 상세 맞춤 안내는 준비 중입니다.";
         }
       }
 
-      button.addEventListener("click", function () {
-        renderByTopic("main");
+      btnVisa.addEventListener("click", function () {
+        renderByTopic("visa");
+      });
+      btnStay.addEventListener("click", function () {
+        renderByTopic("stay");
       });
 
-      if (btnVisa) {
-        btnVisa.addEventListener("click", function () {
-          renderByTopic("visa");
-        });
-      }
-      if (btnStay) {
-        btnStay.addEventListener("click", function () {
-          renderByTopic("stay");
-        });
-      }
-
-      input.addEventListener("keydown", function (event) {
+      inputVisa.addEventListener("keydown", function (event) {
         if (event.key === "Enter") {
           event.preventDefault();
-          renderByTopic("main");
+          renderByTopic("visa");
         }
       });
-      if (inputVisa) {
-        inputVisa.addEventListener("keydown", function (event) {
-          if (event.key === "Enter") {
-            event.preventDefault();
-            renderByTopic("visa");
-          }
-        });
-      }
-      if (inputStay) {
-        inputStay.addEventListener("keydown", function (event) {
-          if (event.key === "Enter") {
-            event.preventDefault();
-            renderByTopic("stay");
-          }
-        });
-      }
+      inputStay.addEventListener("keydown", function (event) {
+        if (event.key === "Enter") {
+          event.preventDefault();
+          renderByTopic("stay");
+        }
+      });
     })();
   </script>
 </body>

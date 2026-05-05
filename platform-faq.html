@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700&family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="platform-pages.css?v=20260420d" />
-  <link rel="stylesheet" href="law-search-prd.css?v=20260506l" />
+  <link rel="stylesheet" href="law-search-prd.css?v=20260506m" />
 </head>
 <body class="law-prd-body" data-platform-slug="platform-faq">
   <header class="topbar">
@@ -152,7 +152,27 @@
                 <option value="">먼저 권역을 선택하세요</option>
               </select>
             </div>
+            <div class="immigration-gvrn-field immigration-gvrn-search-field">
+              <label for="immigration-gvrn-search-input">관할 검색</label>
+              <div class="immigration-gvrn-search-row">
+                <input
+                  id="immigration-gvrn-search-input"
+                  type="search"
+                  class="immigration-gvrn-search-input"
+                  placeholder="예: 부산 해운대구, 해운대구"
+                  autocomplete="off"
+                  enterkeyhint="search"
+                  aria-describedby="immigration-gvrn-search-status"
+                />
+                <button type="button" id="immigration-gvrn-search-btn" class="immigration-gvrn-search-btn">
+                  관할검색
+                </button>
+              </div>
+            </div>
           </div>
+
+          <p id="immigration-gvrn-search-status" class="immigration-gvrn-search-status" role="status" aria-live="polite"></p>
+          <ul id="immigration-gvrn-search-hits" class="immigration-gvrn-search-hits" hidden></ul>
 
           <div id="immigration-office-detail" class="immigration-office-detail" hidden>
             <dl class="immigration-office-dl">
@@ -399,6 +419,8 @@
             name: "부산출입국·외국인청",
             address: "부산광역시 중구 충장대로 22-1",
             jurisdiction: "■ 부산광역시 ■ 경상남도 : 양산시",
+            searchBoost:
+              "부산시 부산광역시 중구 서구 동구 영도구 부산진구 동래구 남구 북구 해운대구 사하구 금정구 강서구 연제구 수영구 사상구 기장군 행정구 일반 체류 민원",
           },
           {
             name: "부산출입국·외국인청 감천출장소",
@@ -538,8 +560,174 @@
       var dName = document.getElementById("immigration-office-detail-name");
       var dAddr = document.getElementById("immigration-office-detail-address");
       var dJur = document.getElementById("immigration-office-detail-jurisdiction");
+      var searchInput = document.getElementById("immigration-gvrn-search-input");
+      var searchBtn = document.getElementById("immigration-gvrn-search-btn");
+      var searchStatus = document.getElementById("immigration-gvrn-search-status");
+      var searchHits = document.getElementById("immigration-gvrn-search-hits");
 
-      if (!regionSel || !officeSel || !detail || !dName || !dAddr || !dJur) return;
+      if (
+        !regionSel ||
+        !officeSel ||
+        !detail ||
+        !dName ||
+        !dAddr ||
+        !dJur ||
+        !searchInput ||
+        !searchBtn ||
+        !searchStatus ||
+        !searchHits
+      ) {
+        return;
+      }
+
+      function normalizeForSearch(s) {
+        return String(s || "")
+          .replace(/\u00B7/g, " ")
+          .replace(/[■:]/g, " ")
+          .replace(/\s+/g, " ")
+          .trim();
+      }
+
+      function tokenizeQuery(raw) {
+        var n = normalizeForSearch(raw);
+        if (!n) return [];
+        return n.split(" ").filter(function (t) {
+          return t.length >= 2;
+        });
+      }
+
+      function haystackParts(row) {
+        return {
+          name: normalizeForSearch(row.name),
+          address: normalizeForSearch(row.address),
+          jurisdiction: normalizeForSearch(row.jurisdiction),
+          boost: normalizeForSearch(row.searchBoost || ""),
+        };
+      }
+
+      function matchesOffice(parts, tokens) {
+        var full =
+          parts.name + " " + parts.address + " " + parts.jurisdiction + " " + parts.boost;
+        for (var i = 0; i < tokens.length; i++) {
+          if (full.indexOf(tokens[i]) === -1) return false;
+        }
+        return true;
+      }
+
+      function tokenScore(parts, token) {
+        var j = parts.jurisdiction.indexOf(token) !== -1 ? 4 : 0;
+        var n = parts.name.indexOf(token) !== -1 ? 3 : 0;
+        var a = parts.address.indexOf(token) !== -1 ? 2 : 0;
+        var b = parts.boost.indexOf(token) !== -1 ? 2 : 0;
+        return Math.max(j, n, a, b);
+      }
+
+      function totalScore(parts, tokens) {
+        var s = 0;
+        for (var i = 0; i < tokens.length; i++) {
+          s += tokenScore(parts, tokens[i]);
+        }
+        return s;
+      }
+
+      function findJurisdictionHits(query) {
+        var tokens = tokenizeQuery(query);
+        if (!tokens.length) return { error: "empty", tokens: tokens, hits: [] };
+        var hits = [];
+        Object.keys(SAMPLE_BY_REGION).forEach(function (region) {
+          var list = SAMPLE_BY_REGION[region];
+          list.forEach(function (row, idx) {
+            var parts = haystackParts(row);
+            if (matchesOffice(parts, tokens)) {
+              hits.push({
+                region: region,
+                index: idx,
+                row: row,
+                score: totalScore(parts, tokens),
+              });
+            }
+          });
+        });
+        hits.sort(function (a, b) {
+          if (b.score !== a.score) return b.score - a.score;
+          return String(a.row.name).localeCompare(String(b.row.name), "ko");
+        });
+        return { error: null, tokens: tokens, hits: hits };
+      }
+
+      function renderHitButtons(hits) {
+        searchHits.innerHTML = "";
+        if (!hits || hits.length <= 1) {
+          searchHits.hidden = true;
+          return;
+        }
+        searchHits.hidden = false;
+        hits.slice(0, 14).forEach(function (hit) {
+          var li = document.createElement("li");
+          var btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "immigration-gvrn-search-hit-btn";
+          btn.textContent = hit.row.name + " (" + hit.region + ")";
+          btn.addEventListener("click", function () {
+            applyOfficeSelection(hit.region, hit.index);
+            searchStatus.textContent = "「" + hit.row.name + "」 정보를 표시합니다.";
+          });
+          li.appendChild(btn);
+          searchHits.appendChild(li);
+        });
+        if (hits.length > 14) {
+          searchStatus.textContent =
+            searchStatus.textContent +
+            " 검색 결과가 많아 상위 14건만 표시했습니다. 검색어를 더 구체적으로 입력해 보세요.";
+        }
+      }
+
+      function applyOfficeSelection(region, index) {
+        regionSel.value = region;
+        rebuildOfficeOptions(region);
+        officeSel.value = String(index);
+        showDetail(region);
+        searchHits.hidden = true;
+        searchHits.innerHTML = "";
+      }
+
+      function runJurisdictionSearch() {
+        var raw = String(searchInput.value || "").trim();
+        searchHits.innerHTML = "";
+        searchHits.hidden = true;
+        if (!raw) {
+          searchStatus.textContent = "주소·행정구역 등을 입력한 뒤 관할검색을 눌러 주세요.";
+          return;
+        }
+        var out = findJurisdictionHits(raw);
+        if (out.error === "empty") {
+          searchStatus.textContent = "검색어를 두 글자 이상(공백으로 구분) 입력해 주세요.";
+          return;
+        }
+        if (!out.hits.length) {
+          searchStatus.textContent =
+            "일치하는 관서를 찾지 못했습니다. 권역·관서 선택을 병행하거나 검색어를 바꿔 보세요.";
+          return;
+        }
+        applyOfficeSelection(out.hits[0].region, out.hits[0].index);
+        if (out.hits.length === 1) {
+          searchStatus.textContent = "「" + out.hits[0].row.name + "」이(가) 검색되었습니다.";
+        } else {
+          searchStatus.textContent =
+            "검색 결과 " +
+            out.hits.length +
+            "건입니다. 아래 버튼으로 다른 후보를 선택할 수 있습니다.";
+          renderHitButtons(out.hits);
+        }
+      }
+
+      searchBtn.addEventListener("click", runJurisdictionSearch);
+      searchInput.addEventListener("keydown", function (event) {
+        if (event.key === "Enter") {
+          event.preventDefault();
+          runJurisdictionSearch();
+        }
+      });
 
       function clearDetail() {
         detail.hidden = true;

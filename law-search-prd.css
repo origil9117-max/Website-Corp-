@@ -868,6 +868,13 @@ body[data-platform-slug="platform-faq"] .immigration-gvrn-controls {
   }
 }
 
+@media (min-width: 860px) {
+  body[data-platform-slug="platform-faq"] .immigration-gvrn-controls {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(12.5rem, 1.15fr);
+    align-items: end;
+  }
+}
+
 body[data-platform-slug="platform-faq"] .immigration-gvrn-field label {
   display: block;
   margin-bottom: 0.28rem;
@@ -897,6 +904,101 @@ body[data-platform-slug="platform-faq"] .immigration-gvrn-field select:disabled 
   opacity: 0.72;
   cursor: not-allowed;
   background: #f2f5f8;
+}
+
+body[data-platform-slug="platform-faq"] .immigration-gvrn-search-row {
+  display: flex;
+  gap: 0.45rem;
+  align-items: stretch;
+}
+
+body[data-platform-slug="platform-faq"] .immigration-gvrn-search-input {
+  flex: 1;
+  min-width: 0;
+  box-sizing: border-box;
+  padding: 0.58rem 0.65rem;
+  font-size: 0.92rem;
+  border: 1px solid rgba(28, 74, 124, 0.35);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--ink);
+}
+
+body[data-platform-slug="platform-faq"] .immigration-gvrn-search-input:focus-visible {
+  outline: 2px solid rgba(37, 99, 168, 0.35);
+  outline-offset: 1px;
+  border-color: rgba(37, 99, 168, 0.55);
+}
+
+body[data-platform-slug="platform-faq"] .immigration-gvrn-search-input::placeholder {
+  color: rgba(22, 59, 99, 0.45);
+  font-size: 0.86rem;
+}
+
+body[data-platform-slug="platform-faq"] .immigration-gvrn-search-btn {
+  flex-shrink: 0;
+  padding: 0.55rem 0.85rem;
+  font-size: 0.86rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: #fff;
+  background: linear-gradient(180deg, #2563a8 0%, #1c4a7c 100%);
+  border: 1px solid rgba(17, 58, 102, 0.55);
+  border-radius: 8px;
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(28, 74, 124, 0.2);
+}
+
+body[data-platform-slug="platform-faq"] .immigration-gvrn-search-btn:hover {
+  filter: brightness(1.04);
+}
+
+body[data-platform-slug="platform-faq"] .immigration-gvrn-search-btn:focus-visible {
+  outline: 2px solid rgba(37, 99, 168, 0.45);
+  outline-offset: 2px;
+}
+
+body[data-platform-slug="platform-faq"] .immigration-gvrn-search-status {
+  margin: 0.45rem 0 0;
+  min-height: 1.25em;
+  font-size: 0.82rem;
+  line-height: 1.45;
+  color: #1c4a7c;
+}
+
+body[data-platform-slug="platform-faq"] .immigration-gvrn-search-status:empty:not(:focus):not(:hover) {
+  display: none;
+}
+
+body[data-platform-slug="platform-faq"] .immigration-gvrn-search-hits {
+  list-style: none;
+  margin: 0.35rem 0 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+body[data-platform-slug="platform-faq"] .immigration-gvrn-search-hit-btn {
+  margin: 0;
+  padding: 0.38rem 0.55rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #14365c;
+  background: #fff;
+  border: 1px solid rgba(28, 74, 124, 0.28);
+  border-radius: 7px;
+  cursor: pointer;
+}
+
+body[data-platform-slug="platform-faq"] .immigration-gvrn-search-hit-btn:hover {
+  border-color: rgba(28, 74, 124, 0.5);
+  background: rgba(28, 74, 124, 0.04);
+}
+
+body[data-platform-slug="platform-faq"] .immigration-gvrn-search-hit-btn:focus-visible {
+  outline: 2px solid rgba(37, 99, 168, 0.35);
+  outline-offset: 1px;
 }
 
 body[data-platform-slug="platform-faq"] .immigration-office-detail {

@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700&family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="platform-pages.css?v=20260420d" />
-  <link rel="stylesheet" href="law-search-prd.css?v=20260505r" />
+  <link rel="stylesheet" href="law-search-prd.css?v=20260505s" />
 </head>
 <body class="law-prd-body" data-platform-slug="law-precedent-search">
   <header class="topbar">
@@ -81,6 +81,9 @@
         <button id="law-topic-search-btn" type="submit">검색</button>
       </form>
       <p id="law-topic-status" class="law-topic-status" role="status" aria-live="polite"></p>
+      <p class="law-topic-back-row" id="law-topic-back-row" hidden>
+        <button type="button" id="law-topic-back-btn" class="law-topic-back-btn">← 이전 화면</button>
+      </p>
 
       <section id="law-search-results" class="law-search-results" aria-label="검색 결과">
         <div class="law-result-panels">
@@ -192,6 +195,8 @@
       var panelAdmrul = document.getElementById("law-panel-admrul-body");
       var panelPrec = document.getElementById("law-panel-prec-body");
       var resultsEl = document.getElementById("law-search-results");
+      var backRow = document.getElementById("law-topic-back-row");
+      var backBtn = document.getElementById("law-topic-back-btn");
       var lawTopicSearchSection = document.getElementById("law-topic-search-section");
       var lawTopicSearchTitleEl = document.getElementById("law-topic-search-title");
       if (!input || !button || !status || !spec || !panelLaw || !panelAdmrul || !panelPrec) return;
@@ -205,6 +210,26 @@
         var text = kind === "integrated" ? LAW_TOPIC_HEADING_INTEGRATED : LAW_TOPIC_HEADING_STATUTE;
         if (lawTopicSearchTitleEl) lawTopicSearchTitleEl.textContent = text;
         if (lawTopicSearchSection) lawTopicSearchSection.setAttribute("aria-label", text);
+      }
+
+      function updateLawSearchBackUi() {
+        var on = !!(resultsEl && resultsEl.classList.contains("law-search-results--active"));
+        if (backRow) backRow.hidden = !on;
+      }
+
+      function resetLawSearchToPreResults() {
+        document.body.classList.remove("law-expc-hit-isolate");
+        renderResultPanels("");
+        applySpecFilter("");
+        status.textContent = "";
+        nextLawTopicHeadingKind = "statute";
+        applyLawTopicSearchHeading("statute");
+        syncMainSearchToPrdKw();
+        updateLawSearchBackUi();
+        var hero = document.querySelector(".law-prd-hero");
+        if (hero && typeof hero.scrollIntoView === "function") {
+          hero.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
       }
 
       var sections = Array.prototype.slice.call(spec.querySelectorAll(".law-prd-feature"));
@@ -1770,6 +1795,7 @@
           panelAdmrul.innerHTML = PLACEHOLDER_ADMRUL;
           panelPrec.innerHTML = PLACEHOLDER_PREC;
           if (resultsEl) resultsEl.classList.remove("law-search-results--active");
+          updateLawSearchBackUi();
           return;
         }
         if (resultsEl) resultsEl.classList.add("law-search-results--active");
@@ -1778,6 +1804,7 @@
         panelAdmrul.innerHTML = PLACEHOLDER_ADMRUL;
         var hpGuess = buildInterpretationHighlightPhrases(q, parseLawArticleQuery(q));
         renderPrecPanel(safeLabel, q, [], hpGuess);
+        updateLawSearchBackUi();
       }
 
       function applySpecFilter(raw) {
@@ -1881,6 +1908,7 @@
         scrollToResults();
         syncMainSearchToPrdKw();
         applyLawTopicSearchHeading(nextLawTopicHeadingKind);
+        updateLawSearchBackUi();
       }
 
       function onSubmit(event) {
@@ -1914,6 +1942,9 @@
           onSubmit(ev);
         });
       }
+
+      if (backBtn) backBtn.addEventListener("click", resetLawSearchToPreResults);
+      updateLawSearchBackUi();
 
       function syncLawExpcHitIsolateBodyClass() {
         if (!document.body || !document.body.classList) return;

@@ -500,6 +500,45 @@
         return tail || s.slice(0, cap);
       }
 
+      /** 키워드 검색 시 법령해석(expcSc)용 — 좁은 순서대로 여러 링크(동일 URL 제거). */
+      function buildLawExpcNarrowPortalLinkRows(q) {
+        var raw = lawPortalSearchQueryFromUserInput(String(q || "").trim());
+        if (!raw) return [];
+        var fullSan = sanitizeLawPortalQuery(raw);
+        var seen = {};
+        var rows = [];
+        function pushRow(href, label) {
+          if (!href || seen[href]) return;
+          seen[href] = 1;
+          rows.push({ href: href, label: label });
+        }
+        var serialQ = extractMolLegExpcSerialQuery(raw);
+        if (serialQ) {
+          pushRow(
+            lawExpcPortalSearchUrl(serialQ),
+            "법령해석 — 일련번호만 (" + serialQ + ") · 우선 시도"
+          );
+        }
+        if (raw.length >= 72) {
+          var tailQ = narrowExpcPortalTailQuery(raw, 96);
+          if (tailQ && tailQ !== serialQ && tailQ.length < fullSan.length) {
+            pushRow(
+              lawExpcPortalSearchUrl(tailQ),
+              "법령해석 — 제목 뒤쪽 구절(약 " + tailQ.length + "자)"
+            );
+          }
+        }
+        if (fullSan) {
+          pushRow(
+            lawExpcPortalSearchUrl(fullSan),
+            raw.length >= 100 || serialQ
+              ? "법령해석 — 전체 문장(건수가 많을 수 있음)"
+              : "법령해석(판례·해석례등)"
+          );
+        }
+        return rows;
+      }
+
       /** 법령해석 제목 AND 매칭용(대소문·괄호·공백 정리). */
       function normalizeForExpcAndMatch(s) {
         return sanitizeLawPortalQuery(String(s || ""))
@@ -1110,12 +1149,40 @@
 
       function lawPanelOfficialLinksHtml(safeLabel, q) {
         var lawUrl = lawCenterSearchUrl(q);
+        var expcRows = buildLawExpcNarrowPortalLinkRows(q);
+        var expcBlock = "";
+        if (expcRows.length) {
+          expcBlock =
+            '<p class="law-result-subhead">법령해석(센터) — 검색 범위 줄이기</p>' +
+            '<ul class="law-result-actions">' +
+            expcRows
+              .map(function (r) {
+                return (
+                  "<li><a href=\"" +
+                  r.href +
+                  "\" target=\"_blank\" rel=\"noopener noreferrer\">" +
+                  escapeHtml(r.label) +
+                  "</a></li>"
+                );
+              })
+              .join("") +
+            "</ul>" +
+            '<p class="law-result-disclaimer law-result-disclaimer--tight">긴 문장을 한 번에 넣으면 키워드가 넓게 잡혀 수천 건이 나올 수 있습니다. 목록·원문에 적힌 <strong>법제처 YY-NNNN</strong>이 있으면 위의 <strong>일련번호만</strong> 링크를 먼저 눌러 보세요. 센터 화면에서는 <strong>결과 내 검색</strong>으로 한 번 더 좁힐 수 있습니다.</p>';
+        }
         return (
+          '<div class="law-result-divider" role="presentation"></div>' +
+          '<p class="law-result-subhead">공식 포털에서 추가 확인</p>' +
           '<ul class="law-result-actions">' +
           '<li><a href="' +
           lawUrl +
           '" target="_blank" rel="noopener noreferrer">국가법령정보센터 통합검색 (새 창)</a></li>' +
-          "</ul>"
+          '<li><a href="https://www.law.go.kr/main.html" target="_blank" rel="noopener noreferrer">센터 메인 — 법령해석·행정규칙 메뉴</a></li>' +
+          '<li><span class="law-muted">공동활용(API·IP 등록)</span> <code class="law-open-data-url" translate="no">https://open.law.go.kr/LSO/main.do</code> <span class="law-muted">(주소 복사 후 등록 PC에서 열기)</span></li>' +
+          "</ul>" +
+          expcBlock +
+          '<p class="law-result-disclaimer">검색어 <strong>' +
+          safeLabel +
+          "</strong> 기준입니다. 원문·연혁·시행일은 국가법령정보센터에서 최종 확인하세요.</p>"
         );
       }
 
@@ -1747,7 +1814,7 @@
         var specInfo = applySpecFilter(raw);
 
         if (!specInfo.tokens.length) {
-          if (status) status.textContent = "";
+          status.textContent = "아래는 전체 기능 명세를 표시합니다.";
           renderResultPanels("");
           applyLawTopicSearchHeading(nextLawTopicHeadingKind);
           return;
@@ -1778,7 +1845,37 @@
 
         renderPrecPanel(safeLabel, raw, precFromApi, highlightPhrases);
 
-        if (status) status.textContent = "";
+        if (parsed && lawStatus === "ok") {
+          status.textContent =
+            "\"" +
+            raw +
+            "\" 기준: ①에 조문·법령해석, ②에 행정규칙, ③에 판례 목록(가능 시)을 국가법령정보 API로 표시했습니다. 아래 명세 " +
+            specInfo.visibleCount +
+            "개 항목을 강조합니다.";
+        } else if (parsed && lawStatus === "partial") {
+          status.textContent =
+            "\"" +
+            raw +
+            "\" 기준: 법령은 찾았으나 조문 본문을 채우지 못했습니다. 법령해석·행정규칙·판례 목록은 제공될 수 있습니다. ①·②·③ 안내와 아래 명세 " +
+            specInfo.visibleCount +
+            "개 항목을 확인해 주세요.";
+        } else if (parsed) {
+          status.textContent =
+            "\"" +
+            raw +
+            "\" 기준: 조문 API를 사용하지 못해 ①은 링크 위주로 표시했습니다. (" +
+            lawStatus +
+            ") 아래 명세 " +
+            specInfo.visibleCount +
+            "개 항목을 강조합니다.";
+        } else {
+          status.textContent =
+            "\"" +
+            raw +
+            "\" 기준: 공식 포털 링크를 표시했습니다. 조문 원문은 「법령명제N조」「법령명N조」「법령명N」처럼 검색해 보세요. 아래 명세 " +
+            specInfo.visibleCount +
+            "개 항목을 강조합니다.";
+        }
 
         scrollToResults();
         syncMainSearchToPrdKw();

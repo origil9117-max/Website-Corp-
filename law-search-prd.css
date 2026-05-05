@@ -675,7 +675,13 @@ body[data-platform-slug="law-precedent-search"] #law-topic-search-btn.law-topic-
 }
 
 .law-topic-back-row {
-  margin: 0.35rem 0 0;
+  margin: 0.75rem 0 0;
+  padding: 0.6rem 0.75rem;
+  border-radius: 10px;
+  background: linear-gradient(180deg, #fbfdff 0%, #eef5fc 100%);
+  border: 2px solid rgba(28, 74, 124, 0.38);
+  border-left: 5px solid var(--law-portal-gold);
+  box-shadow: 0 3px 14px rgba(10, 22, 40, 0.08);
 }
 
 .law-topic-back-row[hidden] {
@@ -685,26 +691,40 @@ body[data-platform-slug="law-precedent-search"] #law-topic-search-btn.law-topic-
 .law-topic-back-btn {
   display: inline-flex;
   align-items: center;
-  gap: 0.25rem;
-  padding: 0.45rem 0.75rem;
-  font-size: 0.88rem;
-  font-weight: 600;
-  color: #163b63;
-  background: #f0f5fb;
-  border: 1px solid rgba(28, 74, 124, 0.28);
-  border-radius: 7px;
+  justify-content: center;
+  gap: 0.45rem;
+  min-height: 2.75rem;
+  padding: 0.55rem 1.2rem;
+  font-size: 1rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: #0c2238;
+  background: linear-gradient(180deg, #ffffff 0%, #e8f1fa 100%);
+  border: 2px solid #1c4a7c;
+  border-radius: 8px;
   cursor: pointer;
-  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.95) inset,
+    0 2px 8px rgba(28, 74, 124, 0.18);
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease,
+    transform 0.12s ease;
 }
 
 .law-topic-back-btn:hover {
-  background: #e4edf7;
-  border-color: rgba(28, 74, 124, 0.42);
-  color: #0f2744;
+  background: linear-gradient(180deg, #f5f9ff 0%, #dceaf7 100%);
+  border-color: #14365c;
+  color: #061018;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.9) inset,
+    0 3px 12px rgba(28, 74, 124, 0.22);
+}
+
+.law-topic-back-btn:active {
+  transform: translateY(1px);
 }
 
 .law-topic-back-btn:focus-visible {
-  outline: 2px solid rgba(37, 99, 168, 0.35);
+  outline: 3px solid rgba(184, 146, 106, 0.65);
   outline-offset: 2px;
 }
 

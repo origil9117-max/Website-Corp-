@@ -315,6 +315,39 @@
   padding-top: 0.15rem;
 }
 
+/* 명세 하단 P1「통합 키워드 검색」: 보조 영역으로 희미·살짝 블러, 호버·포커스 시 선명 */
+body[data-platform-slug="law-precedent-search"] #law-prd-spec .law-prd-feature[data-feature-id="keyword-search"] {
+  position: relative;
+}
+
+body[data-platform-slug="law-precedent-search"] #law-prd-spec .law-prd-feature[data-feature-id="keyword-search"]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.52);
+  backdrop-filter: blur(1.1px);
+  -webkit-backdrop-filter: blur(1.1px);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.35);
+  opacity: 1;
+  transition: opacity 0.22s ease;
+}
+
+body[data-platform-slug="law-precedent-search"] #law-prd-spec .law-prd-feature[data-feature-id="keyword-search"]:hover::after,
+body[data-platform-slug="law-precedent-search"] #law-prd-spec .law-prd-feature[data-feature-id="keyword-search"]:focus-within::after {
+  opacity: 0;
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  body[data-platform-slug="law-precedent-search"] #law-prd-spec .law-prd-feature[data-feature-id="keyword-search"]::after {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background: rgba(255, 255, 255, 0.68);
+  }
+}
+
 .law-prd-feature {
   padding: 1.25rem 0;
   border-bottom: 1px solid rgba(36, 48, 64, 0.1);

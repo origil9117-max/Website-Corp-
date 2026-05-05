@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>재외공관 조회 | 지능형 행정 플랫폼 | 대한민국행정사사무소</title>
+  <meta
+    name="description"
+    content="외교부 재외공관 주소록을 참고하여 주한 외교공관의 공관명, 전화번호, 주소, 홈페이지를 빠르게 찾을 수 있도록 안내합니다."
+  />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="platform-pages.css?v=20260420d" />
+  <link rel="stylesheet" href="law-search-prd.css?v=20260506o" />
+</head>
+<body class="law-prd-body" data-platform-slug="embassy-lookup">
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a href="index.html" class="brand">
+        대한민국행정사사무소
+        <span>Republic of Korea Administrative Scrivener Office</span>
+      </a>
+      <div class="links">
+        <a href="index.html">메인</a>
+      </div>
+    </div>
+  </header>
+
+  <div class="platform-wip-banner" role="status" aria-live="polite">
+    <p class="platform-wip-banner-inner">
+      공관 연락처는 변경될 수 있습니다.
+      <strong>최종 확인은 외교부 공식 「재외공관 주소록」</strong>을 이용해 주세요. 급한 문의는
+      <a href="tel:051-515-5459">대표전화</a> 또는 <a href="index.html#contact">연락처</a>를 이용해 주세요.
+    </p>
+  </div>
+
+  <div class="wrap">
+    <nav class="platform-breadcrumb" aria-label="경로">
+      <a href="index.html">홈</a><span class="sep" aria-hidden="true">/</span>
+      <a href="platform.html">지능형 행정 플랫폼</a><span class="sep" aria-hidden="true">/</span>
+      <span>재외공관 조회</span>
+    </nav>
+
+    <section class="law-prd-hero law-portal-hero embassy-page-hero" aria-labelledby="embassy-page-title">
+      <div class="law-portal-hero-inner embassy-page-hero-inner">
+        <h1 id="embassy-page-title" class="law-portal-title">재외공관 조회</h1>
+        <div class="law-portal-rule" aria-hidden="true"></div>
+        <p class="law-portal-lead embassy-page-lead">
+          대한민국에 주재하는 외국 공관(대사관·부영사관 등) 연락처를 안내합니다. 아래 카드는 참고용 발췌이며,
+          <strong>명칭·전화·주소·홈페이지는 외교부 공식 검색 결과가 우선</strong>입니다.
+        </p>
+      </div>
+    </section>
+
+    <section class="embassy-official-panel" aria-labelledby="embassy-official-heading">
+      <h2 id="embassy-official-heading" class="visually-hidden">외교부 공식 검색</h2>
+      <a
+        class="embassy-official-btn"
+        href="https://www.mofa.go.kr/www/pgm/m_4179/uss/emblgbd/emblgbdAdres.do"
+        target="_blank"
+        rel="noopener noreferrer"
+        title="외교부 재외공관 주소록 검색 페이지가 새 창에서 열립니다."
+      >
+        외교부 재외공관 주소록 공식 검색<span class="embassy-official-ext" aria-hidden="true"> ↗</span>
+      </a>
+      <p class="embassy-official-note">
+        참조:
+        <a href="https://www.mofa.go.kr/www/pgm/m_4179/uss/emblgbd/emblgbdAdres.do" target="_blank" rel="noopener noreferrer"
+          >외교부 재외공관 주소록</a
+        >
+      </p>
+    </section>
+
+    <section class="embassy-tools" aria-labelledby="embassy-tools-heading">
+      <h2 id="embassy-tools-heading" class="embassy-tools-title">발췌 목록에서 찾기</h2>
+      <div class="embassy-search-row" role="search">
+        <label class="visually-hidden" for="embassy-keyword-input">공관명·국가명 검색</label>
+        <input
+          id="embassy-keyword-input"
+          type="search"
+          class="embassy-keyword-input"
+          autocomplete="off"
+          placeholder="예: 미국, 베트남, 부산 영사관"
+          aria-describedby="embassy-search-status"
+        />
+        <button type="button" id="embassy-search-btn" class="embassy-search-btn">검색</button>
+      </div>
+      <p id="embassy-search-status" class="embassy-search-status" role="status" aria-live="polite"></p>
+    </section>
+
+    <div id="embassy-grid" class="embassy-grid" aria-live="polite"></div>
+
+    <div class="platform-middle-box" aria-hidden="true"></div>
+    <p class="platform-back"><a href="platform.html">← 지능형 행정 플랫폼 목차로 돌아가기</a></p>
+    <p class="platform-back"><a href="platform-faq.html">← 출입국민원 검색 서비스로 돌아가기</a></p>
+    <nav class="platform-sibling-nav" aria-label="다른 플랫폼 카테고리">
+      <strong>다른 카테고리</strong>
+      <ul>
+        <li><a href="platform-faq.html">출입국민원 검색</a></li>
+        <li><a href="minwon-roadmap.html">민원 로드맵</a></li>
+        <li><a href="law-precedent-search.html">법령·판례 통합 검색 서비스</a></li>
+        <li><a href="platform-check.html">서류·준비 체크</a></li>
+        <li><a href="resources.html">자료검색</a></li>
+      </ul>
+    </nav>
+  </div>
+
+  <script>
+    (function () {
+      /** 참고용 발췌 — 최신 정보는 외교부 공식 검색(m_4179 emblgbdAdres) 우선 */
+      var SAMPLE_EMBASSIES = [
+        {
+          country: "미국",
+          name: "주한미국대사관",
+          phoneDisplay: "02-397-4114",
+          phoneTel: "+8223974114",
+          address: "서울특별시 종로구 세종대로 188",
+          homepage: "https://kr.usembassy.gov/ko/",
+        },
+        {
+          country: "일본",
+          name: "주한일본국대사관",
+          phoneDisplay: "02-2170-5200",
+          phoneTel: "+82221705200",
+          address: "서울특별시 종로구 율곡로34길 17",
+          homepage: "https://www.kr.emb-japan.go.jp/itprtop/ko/",
+        },
+        {
+          country: "중국",
+          name: "주한중국대사관",
+          phoneDisplay: "02-738-1038",
+          phoneTel: "+8227381038",
+          address: "서울특별시 종로구 범실로 54",
+          homepage: "http://kr.china-embassy.gov.cn/kor/",
+        },
+        {
+          country: "영국",
+          name: "주한영국대사관",
+          phoneDisplay: "02-3210-5800",
+          phoneTel: "+82232105800",
+          address: "서울특별시 종로구 세종대로19길 24",
+          homepage: "https://www.gov.uk/world/organisations/british-embassy-seoul.korean",
+        },
+        {
+          country: "프랑스",
+          name: "주한프랑스대사관",
+          phoneDisplay: "02-3149-4300",
+          phoneTel: "+82231494300",
+          address: "서울특별시 종로구 세종대로 209",
+          homepage: "https://kr.ambafrance.org/",
+        },
+        {
+          country: "독일",
+          name: "주한독일대사관",
+          phoneDisplay: "02-748-4114",
+          phoneTel: "+8227484114",
+          address: "서울특별시 종로구 종로33길 34",
+          homepage: "https://southkorea.diplo.de/",
+        },
+        {
+          country: "캐나다",
+          name: "주한캐나다대사관",
+          phoneDisplay: "02-3783-6000",
+          phoneTel: "+82237836000",
+          address: "서울특별시 중구 세종대로21길 21",
+          homepage: "https://www.international.gc.ca/country-pays/korea-corée/index.aspx?lang=kor",
+        },
+        {
+          country: "호주",
+          name: "주한호주대사관",
+          phoneDisplay: "02-2003-0100",
+          phoneTel: "+82220030100",
+          address: "서울특별시 종로구 종로38길 10",
+          homepage: "https://southkorea.embassy.gov.au/",
+        },
+        {
+          country: "베트남",
+          name: "주한베트남대사관",
+          phoneDisplay: "02-733-9660",
+          phoneTel: "+8227339660",
+          address: "서울특별시 종로구 이화장길 43",
+          homepage: "https://vietnamembassy-seoul.org/ko/",
+        },
+        {
+          country: "필리핀",
+          name: "주한필리핀대사관",
+          phoneDisplay: "02-786-8238",
+          phoneTel: "+8227868238",
+          address: "서울특별시 종로구 종로91길 34",
+          homepage: "http://www.philembassy-seoul.com/",
+        },
+        {
+          country: "태국",
+          name: "주한태국대사관",
+          phoneDisplay: "02-797-3096",
+          phoneTel: "+8227973096",
+          address: "서울특별시 용산구 한남대로 137",
+          homepage: "http://www.thaiembassy.org/seoul/",
+        },
+        {
+          country: "인도네시아",
+          name: "주한인도네시아대사관",
+          phoneDisplay: "02-786-6309",
+          phoneTel: "+8227866309",
+          address: "서울특별시 종로구 종로43길 8",
+          homepage: "https://www.kemlu.go.id/seoul/ko",
+        },
+        {
+          country: "미국",
+          name: "주미국대사관 부산영사관",
+          phoneDisplay: "051-863-0731",
+          phoneTel: "+82518630731",
+          address: "부산광역시 동구 동대로 334 성민빌딩 23층",
+          homepage: "https://kr.usembassy.gov/ko/embassy-consulates/busan/",
+        },
+      ];
+
+      var grid = document.getElementById("embassy-grid");
+      var input = document.getElementById("embassy-keyword-input");
+      var btn = document.getElementById("embassy-search-btn");
+      var statusEl = document.getElementById("embassy-search-status");
+      if (!grid || !input || !btn || !statusEl) return;
+
+      function norm(s) {
+        return String(s || "")
+          .trim()
+          .toLowerCase();
+      }
+
+      function matches(row, q) {
+        if (!q) return true;
+        var hay =
+          row.country +
+          " " +
+          row.name +
+          " " +
+          row.phoneDisplay +
+          " " +
+          row.address +
+          " " +
+          row.homepage;
+        hay = hay.toLowerCase();
+        return q.split(/\s+/).every(function (tok) {
+          return tok.length === 0 || hay.indexOf(tok.toLowerCase()) !== -1;
+        });
+      }
+
+      function render(list, query) {
+        grid.innerHTML = "";
+        list.forEach(function (row) {
+          var art = document.createElement("article");
+          art.className = "embassy-card";
+          art.setAttribute("itemscope", "");
+          art.setAttribute("itemtype", "https://schema.org/GovernmentOrganization");
+
+          var h = document.createElement("h3");
+          h.className = "embassy-card-name";
+          h.textContent = row.name;
+          h.setAttribute("itemprop", "name");
+          art.appendChild(h);
+
+          var country = document.createElement("p");
+          country.className = "embassy-card-country";
+          country.textContent = row.country;
+          art.appendChild(country);
+
+          var dl = document.createElement("dl");
+          dl.className = "embassy-card-dl";
+
+          var dtPhone = document.createElement("dt");
+          dtPhone.textContent = "전화번호";
+          var ddPhone = document.createElement("dd");
+          var aTel = document.createElement("a");
+          aTel.href = "tel:" + row.phoneTel;
+          aTel.textContent = row.phoneDisplay;
+          aTel.setAttribute("itemprop", "telephone");
+          ddPhone.appendChild(aTel);
+
+          var dtAddr = document.createElement("dt");
+          dtAddr.textContent = "주소";
+          var ddAddr = document.createElement("dd");
+          ddAddr.textContent = row.address;
+          ddAddr.setAttribute("itemprop", "address");
+
+          dl.appendChild(dtPhone);
+          dl.appendChild(ddPhone);
+          dl.appendChild(dtAddr);
+          dl.appendChild(ddAddr);
+          art.appendChild(dl);
+
+          var linkRow = document.createElement("div");
+          linkRow.className = "embassy-card-actions";
+          var home = document.createElement("a");
+          home.className = "embassy-card-home";
+          home.href = row.homepage;
+          home.target = "_blank";
+          home.rel = "noopener noreferrer";
+          home.textContent = "홈페이지 바로가기";
+          home.setAttribute("itemprop", "url");
+          var ext = document.createElement("span");
+          ext.className = "embassy-card-home-ext";
+          ext.setAttribute("aria-hidden", "true");
+          ext.textContent = " ↗";
+          home.appendChild(ext);
+          linkRow.appendChild(home);
+          art.appendChild(linkRow);
+
+          grid.appendChild(art);
+        });
+
+        var n = list.length;
+        if (!query) {
+          statusEl.textContent = "발췌 공관 " + n + "건을 표시합니다. 검색으로 좁힐 수 있습니다.";
+        } else if (n === 0) {
+          statusEl.textContent =
+            "일치하는 항목이 없습니다. 검색어를 바꾸거나 상단 「외교부 재외공관 주소록 공식 검색」을 이용해 주세요.";
+        } else {
+          statusEl.textContent = "검색 결과 " + n + "건입니다.";
+        }
+      }
+
+      function runFilter() {
+        var q = norm(input.value);
+        var filtered = SAMPLE_EMBASSIES.filter(function (row) {
+          return matches(row, q);
+        });
+        render(filtered, q);
+      }
+
+      btn.addEventListener("click", runFilter);
+      input.addEventListener("keydown", function (e) {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          runFilter();
+        }
+      });
+
+      render(SAMPLE_EMBASSIES, "");
+    })();
+  </script>
+</body>
+</html>

@@ -1495,3 +1495,252 @@ button#law-prd-kw-btn:disabled {
   opacity: 0.65;
   cursor: wait;
 }
+
+/* ---------- 재외공관 조회 (embassy-lookup.html) ---------- */
+
+body[data-platform-slug="platform-faq"] .immigration-portal-menu {
+  display: grid;
+  gap: 0.65rem;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 520px) {
+  body[data-platform-slug="platform-faq"] .immigration-portal-menu {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+body[data-platform-slug="embassy-lookup"] .embassy-page-hero {
+  margin-bottom: 1rem;
+}
+
+body[data-platform-slug="embassy-lookup"] .embassy-page-hero-inner {
+  max-width: 46rem;
+}
+
+body[data-platform-slug="embassy-lookup"] .embassy-page-lead {
+  margin-top: 0.35rem;
+}
+
+body[data-platform-slug="embassy-lookup"] .embassy-official-panel {
+  margin-bottom: 1.35rem;
+  padding: 1rem 1.1rem;
+  border-radius: 12px;
+  border: 1px solid rgba(28, 74, 124, 0.22);
+  background: linear-gradient(180deg, #f8fbff 0%, #eef6fc 100%);
+}
+
+body[data-platform-slug="embassy-lookup"] .embassy-official-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  width: 100%;
+  box-sizing: border-box;
+  font-size: 1rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: #0f2744;
+  text-decoration: none;
+  padding: 0.85rem 1rem;
+  border: 2px solid rgba(28, 74, 124, 0.45);
+  border-radius: 10px;
+  background: linear-gradient(180deg, #ffffff 0%, #e8f1fa 100%);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.95) inset,
+    0 2px 10px rgba(28, 74, 124, 0.12);
+}
+
+body[data-platform-slug="embassy-lookup"] .embassy-official-btn:hover {
+  border-color: #14365c;
+  background: linear-gradient(180deg, #f5f9ff 0%, #dceaf7 100%);
+}
+
+body[data-platform-slug="embassy-lookup"] .embassy-official-btn:focus-visible {
+  outline: 3px solid rgba(37, 99, 168, 0.35);
+  outline-offset: 2px;
+}
+
+body[data-platform-slug="embassy-lookup"] .embassy-official-ext {
+  font-weight: 700;
+  opacity: 0.85;
+}
+
+body[data-platform-slug="embassy-lookup"] .embassy-official-note {
+  margin: 0.55rem 0 0;
+  font-size: 0.82rem;
+  color: var(--ink-soft);
+}
+
+body[data-platform-slug="embassy-lookup"] .embassy-official-note a {
+  color: #1c4a7c;
+  font-weight: 700;
+}
+
+body[data-platform-slug="embassy-lookup"] .embassy-tools {
+  margin-bottom: 1rem;
+}
+
+body[data-platform-slug="embassy-lookup"] .embassy-tools-title {
+  margin: 0 0 0.55rem;
+  font-size: 1.02rem;
+  font-weight: 800;
+  color: #14365c;
+}
+
+body[data-platform-slug="embassy-lookup"] .embassy-search-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: stretch;
+}
+
+body[data-platform-slug="embassy-lookup"] .embassy-keyword-input {
+  flex: 1;
+  min-width: 12rem;
+  box-sizing: border-box;
+  padding: 0.58rem 0.72rem;
+  font-size: 0.94rem;
+  border: 1px solid rgba(28, 74, 124, 0.35);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--ink);
+}
+
+body[data-platform-slug="embassy-lookup"] .embassy-keyword-input:focus-visible {
+  outline: 2px solid rgba(37, 99, 168, 0.35);
+  outline-offset: 1px;
+  border-color: rgba(37, 99, 168, 0.55);
+}
+
+body[data-platform-slug="embassy-lookup"] .embassy-search-btn {
+  padding: 0.55rem 1rem;
+  font-size: 0.88rem;
+  font-weight: 800;
+  color: #fff;
+  background: linear-gradient(180deg, #2563a8 0%, #1c4a7c 100%);
+  border: 1px solid rgba(17, 58, 102, 0.55);
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+body[data-platform-slug="embassy-lookup"] .embassy-search-btn:focus-visible {
+  outline: 2px solid rgba(37, 99, 168, 0.45);
+  outline-offset: 2px;
+}
+
+body[data-platform-slug="embassy-lookup"] .embassy-search-status {
+  margin: 0.45rem 0 0;
+  font-size: 0.84rem;
+  line-height: 1.5;
+  color: #1c4a7c;
+}
+
+body[data-platform-slug="embassy-lookup"] .embassy-grid {
+  display: grid;
+  gap: 0.85rem;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 560px) {
+  body[data-platform-slug="embassy-lookup"] .embassy-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 960px) {
+  body[data-platform-slug="embassy-lookup"] .embassy-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+body[data-platform-slug="embassy-lookup"] .embassy-card {
+  box-sizing: border-box;
+  padding: 1rem 1.05rem;
+  border-radius: 10px;
+  border: 1px solid rgba(28, 74, 124, 0.16);
+  background: #fff;
+  box-shadow: 0 1px 6px rgba(28, 74, 124, 0.06);
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+body[data-platform-slug="embassy-lookup"] .embassy-card-name {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: #14365c;
+  order: 1;
+}
+
+body[data-platform-slug="embassy-lookup"] .embassy-card-country {
+  margin: 0;
+  order: 2;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: rgba(22, 59, 99, 0.72);
+}
+
+body[data-platform-slug="embassy-lookup"] .embassy-card-dl {
+  order: 3;
+  margin: 0.35rem 0 0;
+  display: grid;
+  gap: 0.28rem 0.55rem;
+  grid-template-columns: auto 1fr;
+  font-size: 0.84rem;
+  line-height: 1.52;
+}
+
+body[data-platform-slug="embassy-lookup"] .embassy-card-dl dt {
+  margin: 0;
+  font-weight: 800;
+  color: #163b63;
+}
+
+body[data-platform-slug="embassy-lookup"] .embassy-card-dl dd {
+  margin: 0;
+  color: var(--ink-soft);
+}
+
+body[data-platform-slug="embassy-lookup"] .embassy-card-dl a {
+  color: #1c4a7c;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+body[data-platform-slug="embassy-lookup"] .embassy-card-actions {
+  order: 4;
+  margin-top: auto;
+  padding-top: 0.65rem;
+}
+
+body[data-platform-slug="embassy-lookup"] .embassy-card-home {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+  font-size: 0.84rem;
+  font-weight: 800;
+  color: #fff;
+  text-decoration: none;
+  padding: 0.48rem 0.75rem;
+  border-radius: 8px;
+  background: linear-gradient(180deg, #2563a8 0%, #1c4a7c 100%);
+  border: 1px solid rgba(17, 58, 102, 0.45);
+}
+
+body[data-platform-slug="embassy-lookup"] .embassy-card-home:hover {
+  filter: brightness(1.05);
+}
+
+body[data-platform-slug="embassy-lookup"] .embassy-card-home:focus-visible {
+  outline: 2px solid rgba(37, 99, 168, 0.45);
+  outline-offset: 2px;
+}
+
+body[data-platform-slug="embassy-lookup"] .embassy-card-home-ext {
+  font-weight: 700;
+  opacity: 0.92;
+}

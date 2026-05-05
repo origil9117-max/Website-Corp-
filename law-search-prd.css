@@ -836,10 +836,6 @@ body[data-platform-slug="platform-faq"] .immigration-portal-menu-ext--muted {
   opacity: 0.65;
 }
 
-body[data-platform-slug="platform-faq"] .immigration-portal-menu-link--anchor {
-  cursor: pointer;
-}
-
 body[data-platform-slug="platform-faq"] .immigration-portal-menu-link {
   display: flex;
   align-items: center;

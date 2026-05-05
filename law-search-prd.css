@@ -1524,19 +1524,10 @@ body[data-platform-slug="platform-faq"] .law-doc-list-dots {
 
 body[data-platform-slug="platform-faq"] .law-doc-list-dots li {
   margin: 0;
-  position: relative;
-  padding-left: 0.75rem;
-  font-size: 0.82rem;
+  font-size: 1.02rem;
+  line-height: 1;
   color: #14365c;
-}
-
-body[data-platform-slug="platform-faq"] .law-doc-list-dots li::before {
-  content: "·";
-  position: absolute;
-  left: 0;
-  top: 0;
   font-weight: 800;
-  color: #0f3f64;
 }
 
 .law-prd-note {

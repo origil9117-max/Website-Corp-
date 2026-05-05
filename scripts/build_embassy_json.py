@@ -1,5 +1,9 @@
 # -*- coding: utf-8 -*-
-"""Build embassy-groups.json array from 재외공관정보.xlsx."""
+"""Build embassy-groups.json + embassy-data.js from 재외공관정보.xlsx.
+
+After updating the sheet, run ``python scripts/embed_embassy_in_platform_faq.py``
+so ``platform-faq.html`` carries the same data inline (dropdown works without a separate request).
+"""
 import json
 import re
 import sys

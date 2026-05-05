@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700&family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="platform-pages.css?v=20260420d" />
-  <link rel="stylesheet" href="law-search-prd.css?v=20260502h" />
+  <link rel="stylesheet" href="law-search-prd.css?v=20260506e" />
 </head>
 <body class="law-prd-body" data-platform-slug="platform-faq">
   <header class="topbar">
@@ -65,13 +65,13 @@
       <button
         type="button"
         aria-label="기능 명세로 스크롤"
-        onclick="document.getElementById('immigration-prd-spec').scrollIntoView({ behavior: 'smooth', block: 'start' })"
+        onclick="document.getElementById('immigration-search-main').scrollIntoView({ behavior: 'smooth', block: 'start' })"
       >
         ↓
       </button>
     </div>
 
-    <section class="law-topic-search" aria-label="출입국 민원 통합 검색">
+    <section class="law-topic-search" id="immigration-search-main" aria-label="출입국 민원 통합 검색">
       <h2>출입국민원 통합 검색</h2>
       <p class="law-topic-search-desc">민원 주제를 입력하면 관련된 준비 단계와 안내 항목 중심으로 정리됩니다.</p>
       <div class="law-topic-search-row">
@@ -101,118 +101,11 @@
           </ul>
         </div>
       </div>
-    </section>
-
-    <article class="law-prd-features law-portal-spec" id="immigration-prd-spec" aria-label="출입국민원 검색 서비스 구성 안내">
-      <section class="law-prd-feature" data-feature-id="immigration-search" data-topic-keywords="공통 통합 검색 민원유형 출입국 비자 체류 국적" data-core="true">
-        <div class="law-prd-feature-head">
-          <span class="law-prd-p law-prd-p1" aria-label="우선순위 1">P1</span>
-          <h2>민원유형 통합 검색</h2>
-        </div>
-        <p class="law-prd-desc">
-          비자명(F-4, F-5 등), 민원명(체류기간 연장, 체류자격 변경 등), 일반 키워드(외국인등록, 국적회복)로 필요한 안내 항목을 빠르게 찾습니다.
-        </p>
-        <ul class="law-prd-tags">
-          <li>키워드 통합 탐색</li>
-          <li>민원유형 자동 분류</li>
-        </ul>
-      </section>
-
-      <section class="law-prd-feature" data-feature-id="visa-category" data-topic-keywords="비자 체류자격 f-4 f-5 e-7 d-2 d-10 h-2 변경 연장 취업 결혼이민 방문취업" data-core="true">
-        <div class="law-prd-feature-head">
-          <span class="law-prd-p law-prd-p1" aria-label="우선순위 1">P1</span>
-          <h2>체류자격·비자 카테고리</h2>
-        </div>
-        <p class="law-prd-desc">
-          재외동포(F-4), 영주(F-5), 취업(E-7), 유학(D-2), 구직(D-10), 방문취업(H-2), 결혼이민(F-6) 등 핵심 유형을 카드형으로 제공합니다.
-        </p>
-        <div class="law-prd-cats">
-          <div class="law-prd-cat"><span class="law-prd-cat-icon">🛂</span>재외동포(F-4)</div>
-          <div class="law-prd-cat"><span class="law-prd-cat-icon">🏡</span>영주(F-5)</div>
-          <div class="law-prd-cat"><span class="law-prd-cat-icon">💼</span>취업(E-7)</div>
-          <div class="law-prd-cat"><span class="law-prd-cat-icon">🎓</span>유학(D-2)</div>
-          <div class="law-prd-cat"><span class="law-prd-cat-icon">🔎</span>구직(D-10)</div>
-          <div class="law-prd-cat"><span class="law-prd-cat-icon">🤝</span>방문취업(H-2)</div>
-          <div class="law-prd-cat"><span class="law-prd-cat-icon">💍</span>결혼이민(F-6)</div>
-          <div class="law-prd-cat"><span class="law-prd-cat-icon">🧾</span>국적·귀화</div>
-        </div>
-      </section>
-
-      <section class="law-prd-feature" data-feature-id="document-check" data-topic-keywords="서류 준비서류 체크리스트 신청서 여권 체류지 입증 고용계약 납세 소득 입증">
-        <div class="law-prd-feature-head">
-          <span class="law-prd-p law-prd-p1" aria-label="우선순위 1">P1</span>
-          <h2>필수서류 체크리스트</h2>
-        </div>
-        <p class="law-prd-desc">
-          민원유형별 공통서류와 추가서류를 분리해 확인할 수 있도록 지원합니다. 신청 전 누락 위험을 줄일 수 있게 단계별 체크 구조를 제공합니다.
-        </p>
-        <ul class="law-prd-tags">
-          <li>유형별 필수서류</li>
-          <li>누락 방지 체크</li>
-        </ul>
-      </section>
-
-      <section class="law-prd-feature" data-feature-id="process-flow" data-topic-keywords="절차 접수 심사 보완 통지 처리기간 방문예약 하이코리아 출입국청">
-        <div class="law-prd-feature-head">
-          <span class="law-prd-p law-prd-p1" aria-label="우선순위 1">P1</span>
-          <h2>신청 절차 흐름 안내</h2>
-        </div>
-        <p class="law-prd-desc">
-          사전 확인, 서류 준비, 접수, 보완 요청 대응, 결과 확인까지의 흐름을 단계별로 보여줍니다. 처리기간은 유형별 참고 범위로 표시합니다.
-        </p>
-        <ul class="law-prd-tags">
-          <li>단계별 프로세스</li>
-          <li>처리기간 참고</li>
-        </ul>
-      </section>
-
-      <section class="law-prd-feature" data-feature-id="rejection-guide" data-topic-keywords="반려 거절 보완 사유 재신청 주의사항">
-        <div class="law-prd-feature-head">
-          <span class="law-prd-p law-prd-p2" aria-label="우선순위 2">P2</span>
-          <h2>자주 발생하는 반려·보완 사유</h2>
-        </div>
-        <p class="law-prd-desc">
-          제출서류 불일치, 요건 미충족, 번역·공증 누락 등 자주 발생하는 사유를 정리해 사전 점검에 활용할 수 있도록 제공합니다.
-        </p>
-        <ul class="law-prd-tags">
-          <li>반려사유 요약</li>
-          <li>사전점검 가이드</li>
-        </ul>
-      </section>
-
-      <section class="law-prd-feature" data-feature-id="faq-guide" data-topic-keywords="FAQ 자주 묻는 질문 체류기간 연장 준비서류 온라인 신청 방문예약">
-        <div class="law-prd-feature-head">
-          <span class="law-prd-p law-prd-p2" aria-label="우선순위 2">P2</span>
-          <h2>출입국민원 FAQ 안내</h2>
-        </div>
-        <p class="law-prd-desc">
-          실제 문의가 많은 질문을 유형별로 제공해, 방문 전에 기본 정보를 빠르게 점검할 수 있도록 구성합니다.
-        </p>
-        <ul class="law-prd-tags">
-          <li>유형별 FAQ</li>
-          <li>사전 문의 정리</li>
-        </ul>
-      </section>
-
-      <section class="law-prd-feature" data-feature-id="consulting-cta" data-topic-keywords="상담 문의 전화 방문예약 전문가 검토">
-        <div class="law-prd-feature-head">
-          <span class="law-prd-p law-prd-p3" aria-label="우선순위 3">P3</span>
-          <h2>상담 연계 CTA</h2>
-        </div>
-        <p class="law-prd-desc">
-          검색 결과 하단에서 바로 상담 문의로 전환할 수 있는 버튼을 제공해, 복잡한 사안은 빠르게 전문가 검토로 연결합니다.
-        </p>
-        <ul class="law-prd-tags">
-          <li>상담 전환 최적화</li>
-          <li>전화·문의 동선 강화</li>
-        </ul>
-      </section>
-
       <p class="law-prd-note">
         <strong>출입국민원 검색 서비스</strong>는 안내 중심의 정보 페이지이며, 실제 심사 결과나 허가 여부를 보장하지 않습니다.
         개별 사안은 신청인 신분·체류이력·제출자료 등에 따라 달라질 수 있으므로 최종 진행 전 상담을 권장합니다.
       </p>
-    </article>
+    </section>
 
     <div class="platform-middle-box" aria-hidden="true"></div>
     <p class="platform-back"><a href="platform.html">← 지능형 행정 플랫폼 목차로 돌아가기</a></p>
@@ -231,61 +124,15 @@
       var input = document.getElementById("immigration-topic-input");
       var button = document.getElementById("immigration-topic-search-btn");
       var status = document.getElementById("immigration-topic-status");
-      var spec = document.getElementById("immigration-prd-spec");
-      if (!input || !button || !status || !spec) return;
-
-      var sections = Array.prototype.slice.call(spec.querySelectorAll(".law-prd-feature"));
-      var topicAliases = {
-        "재외동포(F-4)": ["f-4", "재외동포", "동포"],
-        "영주(F-5)": ["f-5", "영주"],
-        "취업(E-7)": ["e-7", "취업", "고용"],
-        "유학(D-2)": ["d-2", "유학", "학생"],
-        "구직(D-10)": ["d-10", "구직", "취업준비"],
-        "방문취업(H-2)": ["h-2", "방문취업"],
-        "결혼이민(F-6)": ["f-6", "결혼이민"],
-        "국적·귀화": ["국적", "귀화", "국적회복"]
-      };
-
-      function normalize(value) {
-        return String(value || "").trim().toLowerCase();
-      }
-
-      function expandQuery(query) {
-        var lowered = normalize(query);
-        if (!lowered) return [];
-        var expanded = [lowered];
-        Object.keys(topicAliases).forEach(function (topic) {
-          var list = topicAliases[topic];
-          var matched = list.some(function (word) { return lowered.indexOf(normalize(word)) !== -1; });
-          if (matched) {
-            expanded.push(normalize(topic));
-            list.forEach(function (word) { expanded.push(normalize(word)); });
-          }
-        });
-        return expanded;
-      }
+      if (!input || !button || !status) return;
 
       function renderByTopic() {
-        var raw = input.value;
-        var tokens = expandQuery(raw);
-        var visibleCount = 0;
-        var keywordFlowIds = ["immigration-search", "visa-category", "document-check", "process-flow"];
-
-        sections.forEach(function (section) {
-          var keywords = normalize(section.getAttribute("data-topic-keywords"));
-          var featureId = section.getAttribute("data-feature-id");
-          var matched = tokens.some(function (token) { return keywords.indexOf(token) !== -1; });
-          var show = !tokens.length ? true : (keywordFlowIds.indexOf(featureId) !== -1 || matched);
-          section.style.display = show ? "" : "none";
-          if (show) visibleCount += 1;
-        });
-
-        if (!tokens.length) {
-          status.textContent = "전체 구성 표시 중입니다.";
+        var raw = String(input.value || "").trim();
+        if (!raw) {
+          status.textContent = "검색어를 입력한 뒤 검색을 눌러 주세요.";
           return;
         }
-
-        status.textContent = "\"" + raw + "\" 입력 결과: 출입국민원 기본 안내 흐름(유형 검색 · 비자 카테고리 · 서류 체크 · 절차 안내)을 중심으로 " + visibleCount + "개 항목을 표시합니다.";
+        status.textContent = "\"" + raw + "\"에 대해 검색했습니다. 상세 맞춤 안내는 준비 중입니다.";
       }
 
       button.addEventListener("click", function () {

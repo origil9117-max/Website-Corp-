@@ -216,9 +216,9 @@
             </button>
           </div>
           <p class="embassy-mofa-lead">
-            외교부 <strong>재외공관 주소록</strong> 체계를 참고하여 주재국과 공관을 고르면 연락처·주소·공관 홈페이지를 순서대로 확인할 수 있습니다.
-            <strong>명칭·관할·연락처 변경 시</strong>
-            <a href="https://www.mofa.go.kr/www/pgm/m_4179/uss/emblgbd/emblgbdAdres.do" target="_blank" rel="noopener noreferrer">외교부 공식 재외공관 주소록</a>을 우선합니다.
+            아래 목록은 외교부 <a href="https://www.mofa.go.kr/www/pgm/m_4179/uss/emblgbd/emblgbdAdres.do" target="_blank" rel="noopener noreferrer">재외공관 주소록</a>과 동일한
+            <strong>공관 공식 홈페이지(overseas·www.mofa.go.kr)</strong> 체계를 따르는 발췌 데이터(<strong>공관 194개·주재국 131개 권역</strong>)입니다.
+            공관명·전화·주소·홈페이지는 <strong>엑셀 원본과 2차 대조</strong>했으나 변경 시에는 반드시 외교부 주소록과 해당 공관 사이트를 확인해 주세요.
           </p>
 
           <div class="embassy-mofa-controls">
@@ -284,6 +284,7 @@
       </ul>
     </nav>
   </div>
+  <script src="data/embassy-data.js?v=20260506p"></script>
   <script>
     (function () {
       var status = document.getElementById("immigration-topic-status");
@@ -938,135 +939,10 @@
     })();
 
     (function () {
-      /** 발췌 목록 — 최신·전체는 외교부 재외공관 주소록(https://www.mofa.go.kr/www/pgm/m_4179/uss/emblgbd/emblgbdAdres.do) 우선 */
-      var EMBASSY_BY_COUNTRY = {
-        미국: [
-          {
-            name: "주미국 대한민국대사관",
-            phone: "+1-202-939-5663",
-            address: "2450 Massachusetts Ave NW, Washington, D.C. 20008, USA",
-            homepage: "https://www.mofa.go.kr/us-ko/index.do",
-          },
-          {
-            name: "주뉴욕 대한민국총영사관",
-            phone: "+1-646-674-6000",
-            address: "335 East 45th Street, New York, NY 10017, USA",
-            homepage: "https://www.mofa.go.kr/us-ny/index.do",
-          },
-          {
-            name: "주로스앤젤레스 대한민국총영사관",
-            phone: "+1-213-385-9300",
-            address: "3243 Wilshire Blvd, Los Angeles, CA 90010, USA",
-            homepage: "https://www.mofa.go.kr/us-la/index.do",
-          },
-        ],
-        일본: [
-          {
-            name: "주일본 대한민국대사관",
-            phone: "+81-3-3452-7611",
-            address: "〒107-8427 도쿄도 미나토구 미타 2-16-14",
-            homepage: "https://www.mofa.go.kr/jp-ko/index.do",
-          },
-          {
-            name: "주오사카 대한민국총영사관",
-            phone: "+81-6-6446-0991",
-            address: "〒541-0046 오사카시 주오구 교바시 3-6-16 미츠이 스미토모 금융그룹 교바시 빌딩 18층",
-            homepage: "https://www.mofa.go.kr/jp-osaka-ko/index.do",
-          },
-        ],
-        중국: [
-          {
-            name: "주중국 대한민국대사관",
-            phone: "+86-10-8531-0700",
-            address: "중국 베이징시 차오양구 산리툰 동 5가 11번지",
-            homepage: "https://www.mofa.go.kr/cn-ko/index.do",
-          },
-          {
-            name: "주상하이 대한민국총영사관",
-            phone: "+86-21-6295-5199",
-            address: "중국 상하이시 장닝구 우유 로 60번 금두 빌딩 301호",
-            homepage: "https://www.mofa.go.kr/cn-shanghai-ko/index.do",
-          },
-        ],
-        베트남: [
-          {
-            name: "주베트남 대한민국대사관",
-            phone: "+84-24-3831-5118",
-            address: "베트남 하노이 바딘구 깐저 스트리트 63번지 대우청사 18층",
-            homepage: "https://www.mofa.go.kr/vn-ko/index.do",
-          },
-        ],
-        캐나다: [
-          {
-            name: "주캐나다 대한민국대사관",
-            phone: "+1-613-244-5030",
-            address: "150 Colonel By Drive, Ottawa, Ontario K1N 6N5, Canada",
-            homepage: "https://www.mofa.go.kr/ca-ko/index.do",
-          },
-          {
-            name: "주토론토 대한민국총영사관",
-            phone: "+1-416-617-6798",
-            address: "555 Avenue Rd, Toronto, Ontario M4V 2J7, Canada",
-            homepage: "https://www.mofa.go.kr/ca-toronto-ko/index.do",
-          },
-        ],
-        호주: [
-          {
-            name: "주호주 대한민국대사관",
-            phone: "+61-2-6270-4147",
-            address: "113 Empire Circuit, Yarralumla ACT 2600, Australia",
-            homepage: "https://www.mofa.go.kr/au-ko/index.do",
-          },
-        ],
-        독일: [
-          {
-            name: "주독일 대한민국대사관",
-            phone: "+49-30-2609-7517",
-            address: "Leipziger Platz 110, 10117 Berlin, Germany",
-            homepage: "https://www.mofa.go.kr/de-ko/index.do",
-          },
-        ],
-        영국: [
-          {
-            name: "주영국 대한민국대사관",
-            phone: "+44-20-7227-5500",
-            address: "60 Buckingham Gate, London SW1E 6AJ, United Kingdom",
-            homepage: "https://www.mofa.go.kr/gb-ko/index.do",
-          },
-        ],
-        프랑스: [
-          {
-            name: "주프랑스 대한민국대사관",
-            phone: "+33-1-5689-4026",
-            address: "125 Rue de Grenelle, 75007 Paris, France",
-            homepage: "https://www.mofa.go.kr/fr-ko/index.do",
-          },
-        ],
-        태국: [
-          {
-            name: "주태국 대한민국대사관",
-            phone: "+66-2-247-7537",
-            address: "23 Thanon Witthayu (Wireless Rd.), Lumpini, Pathumwan, Bangkok 10330, Thailand",
-            homepage: "https://www.mofa.go.kr/th-ko/index.do",
-          },
-        ],
-        인도네시아: [
-          {
-            name: "주인도네시아 대한민국대사관",
-            phone: "+62-21-2938-6118",
-            address: "Jl. Gatot Subroto Kav. 57, Jakarta Selatan 12950, Indonesia",
-            homepage: "https://www.mofa.go.kr/id-ko/index.do",
-          },
-        ],
-        필리핀: [
-          {
-            name: "주필리핀 대한민국대사관",
-            phone: "+63-2-8344-9327",
-            address: "122 Upper McKinley Rd., McKinley Town Center, Fort Bonifacio, Taguig City 1634, Philippines",
-            homepage: "https://www.mofa.go.kr/ph-ko/index.do",
-          },
-        ],
-      };
+      var GROUPS = Array.isArray(window.EMBASSY_GROUPS) ? window.EMBASSY_GROUPS.slice() : [];
+      GROUPS.sort(function (a, b) {
+        return String(a.label).localeCompare(String(b.label), "ko");
+      });
 
       var countrySel = document.getElementById("embassy-country-select");
       var missionSel = document.getElementById("embassy-mission-select");
@@ -1090,32 +966,38 @@
         return;
       }
 
+      if (!GROUPS.length) {
+        console.warn("EMBASSY_GROUPS: data/embassy-data.js 로드를 확인하세요.");
+      }
+
+      function groupByIndex(val) {
+        var i = parseInt(val, 10);
+        if (isNaN(i) || i < 0 || i >= GROUPS.length) return null;
+        return GROUPS[i];
+      }
+
       function fillCountryOptions() {
         countrySel.innerHTML = "";
         var ph = document.createElement("option");
         ph.value = "";
         ph.textContent = "주재국을 선택하세요";
         countrySel.appendChild(ph);
-        Object.keys(EMBASSY_BY_COUNTRY)
-          .sort(function (a, b) {
-            return a.localeCompare(b, "ko");
-          })
-          .forEach(function (c) {
-            var opt = document.createElement("option");
-            opt.value = c;
-            opt.textContent = c;
-            countrySel.appendChild(opt);
-          });
+        GROUPS.forEach(function (g, idx) {
+          var opt = document.createElement("option");
+          opt.value = String(idx);
+          opt.textContent = g.label;
+          countrySel.appendChild(opt);
+        });
       }
 
       function clearMissionDetail() {
         detailEl.hidden = true;
       }
 
-      function rebuildMissionOptions(country) {
+      function rebuildMissionOptions(countryIdxVal) {
         missionSel.innerHTML = "";
-        var list = EMBASSY_BY_COUNTRY[country] || [];
-        if (!country) {
+        var group = groupByIndex(countryIdxVal);
+        if (!countryIdxVal || !group) {
           missionSel.disabled = true;
           missionSel.setAttribute("aria-disabled", "true");
           var o0 = document.createElement("option");
@@ -1125,6 +1007,7 @@
           clearMissionDetail();
           return;
         }
+        var list = group.missions || [];
         missionSel.disabled = false;
         missionSel.removeAttribute("aria-disabled");
         var ph = document.createElement("option");
@@ -1140,9 +1023,14 @@
         clearMissionDetail();
       }
 
-      function showMissionDetail(country) {
+      function showMissionDetail(countryIdxVal) {
         var idx = missionSel.value;
-        var list = EMBASSY_BY_COUNTRY[country] || [];
+        var group = groupByIndex(countryIdxVal);
+        if (!group) {
+          clearMissionDetail();
+          return;
+        }
+        var list = group.missions || [];
         if (!idx || !list[idx]) {
           clearMissionDetail();
           return;

@@ -13,55 +13,6 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Validate deployment secrets
-        env:
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-          VERCEL_DEPLOY_HOOK_URL: ${{ secrets.VERCEL_DEPLOY_HOOK_URL }}
-        run: |
-          if [ -n "$VERCEL_DEPLOY_HOOK_URL" ]; then
-            echo "Deploy hook mode enabled."
-            exit 0
-          fi
-
-          if [ -z "$VERCEL_TOKEN" ] || [ -z "$VERCEL_ORG_ID" ] || [ -z "$VERCEL_PROJECT_ID" ]; then
-            echo "Missing required secrets."
-            echo "Either set VERCEL_DEPLOY_HOOK_URL, or set all of:"
-            echo "VERCEL_TOKEN, VERCEL_ORG_ID, VERCEL_PROJECT_ID"
-            exit 1
-          fi
-
       - name: Trigger Vercel Deploy Hook
-        if: ${{ secrets.VERCEL_DEPLOY_HOOK_URL != '' }}
         run: |
           curl -fsSL -X POST "${{ secrets.VERCEL_DEPLOY_HOOK_URL }}"
-
-      - name: Setup Node
-        if: ${{ secrets.VERCEL_DEPLOY_HOOK_URL == '' }}
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
-      - name: Install Vercel CLI
-        if: ${{ secrets.VERCEL_DEPLOY_HOOK_URL == '' }}
-        run: npm i -g vercel@latest
-
-      - name: Pull Vercel Environment
-        if: ${{ secrets.VERCEL_DEPLOY_HOOK_URL == '' }}
-        env:
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-        run: vercel pull --yes --environment=production --token="$VERCEL_TOKEN"
-
-      - name: Deploy to Production
-        if: ${{ secrets.VERCEL_DEPLOY_HOOK_URL == '' }}
-        env:
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-        run: vercel deploy --prod --token="$VERCEL_TOKEN"

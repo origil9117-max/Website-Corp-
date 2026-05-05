@@ -1190,8 +1190,7 @@
                 );
               })
               .join("") +
-            "</ul>" +
-            '<p class="law-result-disclaimer law-result-disclaimer--tight">긴 문장을 한 번에 넣으면 키워드가 넓게 잡혀 수천 건이 나올 수 있습니다. 목록·원문에 적힌 <strong>법제처 YY-NNNN</strong>이 있으면 위의 <strong>일련번호만</strong> 링크를 먼저 눌러 보세요. 센터 화면에서는 <strong>결과 내 검색</strong>으로 한 번 더 좁힐 수 있습니다.</p>';
+            "</ul>";
         }
         return (
           '<div class="law-result-divider" role="presentation"></div>' +
@@ -1203,10 +1202,7 @@
           '<li><a href="https://www.law.go.kr/main.html" target="_blank" rel="noopener noreferrer">센터 메인 — 법령해석·행정규칙 메뉴</a></li>' +
           '<li><span class="law-muted">공동활용(API·IP 등록)</span> <code class="law-open-data-url" translate="no">https://open.law.go.kr/LSO/main.do</code> <span class="law-muted">(주소 복사 후 등록 PC에서 열기)</span></li>' +
           "</ul>" +
-          expcBlock +
-          '<p class="law-result-disclaimer">검색어 <strong>' +
-          safeLabel +
-          "</strong> 기준입니다. 원문·연혁·시행일은 국가법령정보센터에서 최종 확인하세요.</p>"
+          expcBlock
         );
       }
 
@@ -1631,8 +1627,7 @@
           "\" target=\"_blank\" rel=\"noopener noreferrer\"" +
           portalQueryAttr +
           ">사법정보공개포털</a></li>" +
-          "</ul>" +
-          "<p class=\"law-result-disclaimer\">사건번호·심급·판시사항은 각 포털 검색 결과를 기준으로 하세요. 목록의 <strong>사건번호·법원</strong> 밑줄은 <code>q=</code>로 사법정보공개포털(<code>m=PGP1011M01</code>)을 엽니다. 위 <strong>사법정보공개포털</strong>은 현재 검색어로 동일합니다. 클릭 직전 이 사이트 통합 검색창에도 같은 값이 들어갑니다.</p>";
+          "</ul>";
 
         if (precRows && precRows.length) {
           var listItems = precRows
@@ -1852,7 +1847,6 @@
 
         if (resultsEl) resultsEl.classList.add("law-search-results--active");
 
-        var lawStatus = "links";
         var precFromApi = [];
         var highlightPhrases = buildInterpretationHighlightPhrases(raw, parsed);
         if (parsed) {
@@ -1860,7 +1854,6 @@
           if (buttonPrdKw) buttonPrdKw.disabled = true;
           try {
             var lawPack = await renderLawPanelWithApi(raw, raw, safeLabel, parsed, highlightPhrases);
-            lawStatus = lawPack && lawPack.status ? lawPack.status : "links";
             precFromApi = lawPack && lawPack.precedents ? lawPack.precedents : [];
           } finally {
             button.disabled = false;
@@ -1873,37 +1866,7 @@
 
         renderPrecPanel(safeLabel, raw, precFromApi, highlightPhrases);
 
-        if (parsed && lawStatus === "ok") {
-          status.textContent =
-            "\"" +
-            raw +
-            "\" 기준: ①에 조문·법령해석, ②에 행정규칙, ③에 판례 목록(가능 시)을 국가법령정보 API로 표시했습니다. 아래 명세 " +
-            specInfo.visibleCount +
-            "개 항목을 강조합니다.";
-        } else if (parsed && lawStatus === "partial") {
-          status.textContent =
-            "\"" +
-            raw +
-            "\" 기준: 법령은 찾았으나 조문 본문을 채우지 못했습니다. 법령해석·행정규칙·판례 목록은 제공될 수 있습니다. ①·②·③ 안내와 아래 명세 " +
-            specInfo.visibleCount +
-            "개 항목을 확인해 주세요.";
-        } else if (parsed) {
-          status.textContent =
-            "\"" +
-            raw +
-            "\" 기준: 조문 API를 사용하지 못해 ①은 링크 위주로 표시했습니다. (" +
-            lawStatus +
-            ") 아래 명세 " +
-            specInfo.visibleCount +
-            "개 항목을 강조합니다.";
-        } else {
-          status.textContent =
-            "\"" +
-            raw +
-            "\" 기준: 공식 포털 링크를 표시했습니다. 조문 원문은 「법령명제N조」「법령명N조」「법령명N」처럼 검색해 보세요. 아래 명세 " +
-            specInfo.visibleCount +
-            "개 항목을 강조합니다.";
-        }
+        status.textContent = "";
 
         scrollToResults();
         syncMainSearchToPrdKw();

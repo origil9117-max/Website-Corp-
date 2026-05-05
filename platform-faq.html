@@ -596,11 +596,22 @@
         });
       }
 
+      /** 관할 문구 속 「… 제외」(괄호 안) 설명은 검색 대상에서 빼 부분 문자열 오매칭을 막음 (예: 김해 ↔ 김해시 제외 문구) */
+      function jurisdictionForSearch(raw) {
+        var s = String(raw || "");
+        var prev;
+        do {
+          prev = s;
+          s = s.replace(/\([^)]*\)/g, " ");
+        } while (s !== prev);
+        return s;
+      }
+
       function haystackParts(row) {
         return {
           name: normalizeForSearch(row.name),
           address: normalizeForSearch(row.address),
-          jurisdiction: normalizeForSearch(row.jurisdiction),
+          jurisdiction: normalizeForSearch(jurisdictionForSearch(row.jurisdiction)),
           boost: normalizeForSearch(row.searchBoost || ""),
         };
       }

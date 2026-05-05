@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700&family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="platform-pages.css?v=20260420d" />
-  <link rel="stylesheet" href="law-search-prd.css?v=20260506f" />
+  <link rel="stylesheet" href="law-search-prd.css?v=20260506g" />
 </head>
 <body class="law-prd-body" data-platform-slug="platform-faq">
   <header class="topbar">
@@ -79,11 +79,13 @@
         <button id="immigration-topic-search-btn" type="button">검색</button>
       </div>
       <p id="immigration-topic-status" class="law-topic-status" role="status" aria-live="polite"></p>
-      <div class="law-result-plan" aria-label="민원 자격 안내 구성">
+      <div class="law-result-plan" aria-label="민원 서류 안내 구성">
         <div class="law-result-plan-col">
-          <div class="law-result-plan-col-head">
-            <h3>사증민원 자격</h3>
-            <button type="button" class="law-result-plan-col-search-btn" id="immigration-search-visa-eligibility-btn" aria-label="사증민원 자격 검색">검색</button>
+          <h3>사증민원서류</h3>
+          <div class="law-topic-search-row law-result-plan-col-search-row" role="search">
+            <label class="visually-hidden" for="immigration-visa-docs-input">사증민원서류 검색어</label>
+            <input id="immigration-visa-docs-input" type="search" autocomplete="off" placeholder="예: 초청장, 사증발급" />
+            <button type="button" id="immigration-search-visa-docs-btn">검색</button>
           </div>
           <ul>
             <li>민원유형 키워드 검색</li>
@@ -94,9 +96,11 @@
           </ul>
         </div>
         <div class="law-result-plan-col">
-          <div class="law-result-plan-col-head">
-            <h3>체류민원 자격</h3>
-            <button type="button" class="law-result-plan-col-search-btn" id="immigration-search-stay-eligibility-btn" aria-label="체류민원 자격 검색">검색</button>
+          <h3>체류민원서류</h3>
+          <div class="law-topic-search-row law-result-plan-col-search-row" role="search">
+            <label class="visually-hidden" for="immigration-stay-docs-input">체류민원서류 검색어</label>
+            <input id="immigration-stay-docs-input" type="search" autocomplete="off" placeholder="예: F-4, 체류기간 연장" />
+            <button type="button" id="immigration-search-stay-docs-btn">검색</button>
           </div>
           <ul>
             <li>상황별 서류 안내 자동 분기</li>
@@ -130,27 +134,32 @@
       var input = document.getElementById("immigration-topic-input");
       var button = document.getElementById("immigration-topic-search-btn");
       var status = document.getElementById("immigration-topic-status");
-      var btnVisa = document.getElementById("immigration-search-visa-eligibility-btn");
-      var btnStay = document.getElementById("immigration-search-stay-eligibility-btn");
+      var inputVisa = document.getElementById("immigration-visa-docs-input");
+      var inputStay = document.getElementById("immigration-stay-docs-input");
+      var btnVisa = document.getElementById("immigration-search-visa-docs-btn");
+      var btnStay = document.getElementById("immigration-search-stay-docs-btn");
       if (!input || !button || !status) return;
 
       function renderByTopic(scope) {
         scope = scope || "main";
-        var raw = String(input.value || "").trim();
+        var field =
+          scope === "visa" ? inputVisa : scope === "stay" ? inputStay : input;
+        if (!field) return;
+        var raw = String(field.value || "").trim();
         if (!raw) {
           if (scope === "visa") {
-            status.textContent = "사증민원 자격: 상단 검색창에 키워드를 입력한 뒤 검색을 눌러 주세요.";
+            status.textContent = "사증민원서류: 해당 검색창에 키워드를 입력한 뒤 검색을 눌러 주세요.";
           } else if (scope === "stay") {
-            status.textContent = "체류민원 자격: 상단 검색창에 키워드를 입력한 뒤 검색을 눌러 주세요.";
+            status.textContent = "체류민원서류: 해당 검색창에 키워드를 입력한 뒤 검색을 눌러 주세요.";
           } else {
             status.textContent = "검색어를 입력한 뒤 검색을 눌러 주세요.";
           }
           return;
         }
         if (scope === "visa") {
-          status.textContent = "사증민원 자격 기준으로 \"" + raw + "\"에 대해 검색했습니다. 상세 맞춤 안내는 준비 중입니다.";
+          status.textContent = "사증민원서류 기준으로 \"" + raw + "\"에 대해 검색했습니다. 상세 맞춤 안내는 준비 중입니다.";
         } else if (scope === "stay") {
-          status.textContent = "체류민원 자격 기준으로 \"" + raw + "\"에 대해 검색했습니다. 상세 맞춤 안내는 준비 중입니다.";
+          status.textContent = "체류민원서류 기준으로 \"" + raw + "\"에 대해 검색했습니다. 상세 맞춤 안내는 준비 중입니다.";
         } else {
           status.textContent = "\"" + raw + "\"에 대해 검색했습니다. 상세 맞춤 안내는 준비 중입니다.";
         }
@@ -177,6 +186,22 @@
           renderByTopic("main");
         }
       });
+      if (inputVisa) {
+        inputVisa.addEventListener("keydown", function (event) {
+          if (event.key === "Enter") {
+            event.preventDefault();
+            renderByTopic("visa");
+          }
+        });
+      }
+      if (inputStay) {
+        inputStay.addEventListener("keydown", function (event) {
+          if (event.key === "Enter") {
+            event.preventDefault();
+            renderByTopic("stay");
+          }
+        });
+      }
     })();
   </script>
 </body>

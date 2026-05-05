@@ -1373,7 +1373,7 @@ body[data-platform-slug="platform-faq"] .immigration-gvrn-search-hits {
 }
 
 body[data-platform-slug="platform-faq"] .immigration-gvrn-help-note {
-  margin: 0.6rem 0 0;
+  margin: 0.6rem 0 0.95rem;
   font-size: 0.81rem;
   line-height: 1.6;
   color: rgba(17, 74, 117, 0.9);

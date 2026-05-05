@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700&family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="platform-pages.css?v=20260420d" />
-  <link rel="stylesheet" href="law-search-prd.css?v=20260506t" />
+  <link rel="stylesheet" href="law-search-prd.css?v=20260506u" />
 </head>
 <body class="law-prd-body" data-platform-slug="platform-faq">
   <header class="topbar">
@@ -820,6 +820,17 @@ window.EMBASSY_GROUPS=JSON.parse(new TextDecoder("utf-8").decode(_u8));
         return jur;
       }
 
+      function immigrationRegionKeyExactMatch(raw) {
+        var n = normalizeForSearch(raw);
+        if (!n) return null;
+        var keys = Object.keys(SAMPLE_BY_REGION);
+        for (var i = 0; i < keys.length; i++) {
+          var k = keys[i];
+          if (normalizeForSearch(k) === n) return k;
+        }
+        return null;
+      }
+
       function runJurisdictionSearch() {
         var raw = String(searchInput.value || "").trim();
         searchHits.innerHTML = "";
@@ -827,6 +838,24 @@ window.EMBASSY_GROUPS=JSON.parse(new TextDecoder("utf-8").decode(_u8));
         lastGvrnJurisdictionSearchQuery = "";
         if (!raw) {
           searchStatus.textContent = "주소·행정구역 등을 입력한 뒤 관할검색을 눌러 주세요.";
+          return;
+        }
+        var regionKeyHit = immigrationRegionKeyExactMatch(raw);
+        if (regionKeyHit) {
+          lastGvrnJurisdictionSearchQuery = raw;
+          gvrnSuppressQueryClear = true;
+          regionSel.value = regionKeyHit;
+          rebuildOfficeOptions(regionKeyHit);
+          officeSel.value = "";
+          clearDetail();
+          gvrnSuppressQueryClear = false;
+          var cnt = (SAMPLE_BY_REGION[regionKeyHit] || []).length;
+          searchStatus.textContent =
+            "「" +
+            regionKeyHit +
+            "」 권역 출입국·외국인관서 " +
+            cnt +
+            "곳입니다. 관서명에서 선택해 주세요.";
           return;
         }
         var out = findJurisdictionHits(raw);
@@ -1094,6 +1123,46 @@ window.EMBASSY_GROUPS=JSON.parse(new TextDecoder("utf-8").decode(_u8));
         showMissionDetail(countrySel.value);
       }
 
+      /** 주재국 라벨 일치 시 해당 주재국의 모든 공관을 드롭다운에 두고, 단일 공관만 있으면 바로 표시 */
+      function embassyCountryLabelMatchesQuery(q, label) {
+        var lab = normalizeEmbassySearch(label);
+        if (!q || !lab) return false;
+        if (lab === q) return true;
+        if (q.length < 2) return false;
+        if (lab.indexOf(q) !== -1) return true;
+        if (q.indexOf(lab) !== -1) return true;
+        return false;
+      }
+
+      function collectEmbassyCountryLabelHits(q) {
+        var hits = [];
+        GROUPS.forEach(function (g, gi) {
+          if (embassyCountryLabelMatchesQuery(q, g.label)) hits.push(gi);
+        });
+        return hits;
+      }
+
+      function applyEmbassyCountryWide(gi, labelForMsg) {
+        var g = GROUPS[gi];
+        var missions = (g && g.missions) || [];
+        countrySel.value = String(gi);
+        rebuildMissionOptions(countrySel.value);
+        if (missions.length === 1) {
+          missionSel.value = "0";
+          showMissionDetail(countrySel.value);
+          searchStatus.textContent = "일치하는 공관을 표시했습니다.";
+          return;
+        }
+        missionSel.value = "";
+        clearMissionDetail();
+        searchStatus.textContent =
+          "「" +
+          labelForMsg +
+          "」 소재 공관 " +
+          missions.length +
+          "곳입니다. 공관명에서 선택해 주세요.";
+      }
+
       function runEmbassySearch() {
         var raw = searchInput.value;
         var q = normalizeEmbassySearch(raw);
@@ -1102,12 +1171,23 @@ window.EMBASSY_GROUPS=JSON.parse(new TextDecoder("utf-8").decode(_u8));
           return;
         }
 
+        var labelHits = collectEmbassyCountryLabelHits(q);
+        if (labelHits.length === 1) {
+          var gi0 = labelHits[0];
+          applyEmbassyCountryWide(gi0, GROUPS[gi0].label || "");
+          return;
+        }
+        if (labelHits.length > 1) {
+          searchStatus.textContent =
+            "검색어에 해당하는 주재국이 여러 개입니다. 더 구체적인 국가명·도시명으로 입력해 주세요.";
+          return;
+        }
+
         var scored = [];
         GROUPS.forEach(function (g, gi) {
           (g.missions || []).forEach(function (row, mi) {
             var name = normalizeEmbassySearch(row.name);
             var addr = normalizeEmbassySearch(row.address || "");
-            var phoneNorm = normalizeEmbassySearch(row.phone || "");
             var phoneDig = digitsOnlyEmbassy(row.phone || "");
             var score = 0;
             if (name === q) score = 100;
@@ -1130,34 +1210,6 @@ window.EMBASSY_GROUPS=JSON.parse(new TextDecoder("utf-8").decode(_u8));
         if (scored.length) {
           selectMissionAt(scored[0].gi, scored[0].mi);
           searchStatus.textContent = "일치하는 공관을 선택했습니다.";
-          return;
-        }
-
-        var labelHits = [];
-        GROUPS.forEach(function (g, gi) {
-          if (normalizeEmbassySearch(g.label).indexOf(q) !== -1) labelHits.push(gi);
-        });
-
-        if (labelHits.length === 1) {
-          var gi2 = labelHits[0];
-          var g2 = GROUPS[gi2];
-          var missions = g2.missions || [];
-          countrySel.value = String(gi2);
-          rebuildMissionOptions(countrySel.value);
-          if (missions.length === 1) {
-            missionSel.value = "0";
-            showMissionDetail(countrySel.value);
-            searchStatus.textContent = "일치하는 공관을 표시했습니다.";
-          } else {
-            searchStatus.textContent =
-              "주재국을 선택했습니다. 공관명에서 이어서 선택해 주세요.";
-          }
-          return;
-        }
-
-        if (labelHits.length > 1) {
-          searchStatus.textContent =
-            "검색어에 해당하는 주재국이 여러 개입니다. 공관명·도시 등으로 더 구체적으로 입력해 주세요.";
           return;
         }
 

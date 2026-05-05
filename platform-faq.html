@@ -108,7 +108,7 @@
         </div>
       </div>
       <div class="immigration-portal-stack">
-        <nav class="immigration-portal-menu" aria-label="출입국 관련 공식 안내 및 재외공관 조회">
+        <nav class="immigration-portal-menu" aria-label="공식 안내 바로가기">
           <a
             class="immigration-portal-menu-link"
             href="https://www.visa.go.kr/openPage.do?MENU_ID=10301"
@@ -118,8 +118,12 @@
           >
             비자포털: 사증조회<span class="immigration-portal-menu-ext" aria-hidden="true"> ↗</span>
           </a>
-          <a class="immigration-portal-menu-link immigration-portal-menu-link--embassy-local" href="embassy-lookup.html">
-            재외공관 조회<span class="immigration-portal-menu-ext immigration-portal-menu-ext--local" aria-hidden="true"> →</span>
+          <a
+            class="immigration-portal-menu-link immigration-portal-menu-link--anchor"
+            href="#embassy-lookup-panel"
+            title="이 페이지 아래 재외공관 조회 패널로 이동합니다."
+          >
+            재외공관 조회<span class="immigration-portal-menu-ext immigration-portal-menu-ext--muted" aria-hidden="true"> ↓</span>
           </a>
         </nav>
 
@@ -198,6 +202,73 @@
             </dl>
           </div>
         </section>
+
+        <section id="embassy-lookup-panel" class="embassy-mofa-panel" aria-labelledby="embassy-mofa-heading">
+          <div class="embassy-mofa-header">
+            <h3 id="embassy-mofa-heading" class="embassy-mofa-title">재외공관 조회</h3>
+            <button
+              type="button"
+              id="embassy-mofa-reset-btn"
+              class="embassy-mofa-reset-btn"
+              aria-label="주재국·공관 선택 및 표시 내용 초기화"
+            >
+              초기화
+            </button>
+          </div>
+          <p class="embassy-mofa-lead">
+            외교부 <strong>재외공관 주소록</strong> 체계를 참고하여 주재국과 공관을 고르면 연락처·주소·공관 홈페이지를 순서대로 확인할 수 있습니다.
+            <strong>명칭·관할·연락처 변경 시</strong>
+            <a href="https://www.mofa.go.kr/www/pgm/m_4179/uss/emblgbd/emblgbdAdres.do" target="_blank" rel="noopener noreferrer">외교부 공식 재외공관 주소록</a>을 우선합니다.
+          </p>
+
+          <div class="embassy-mofa-controls">
+            <div class="embassy-mofa-field">
+              <label for="embassy-country-select">주재국</label>
+              <select id="embassy-country-select" autocomplete="off">
+                <option value="">주재국을 선택하세요</option>
+              </select>
+            </div>
+            <div class="embassy-mofa-field">
+              <label for="embassy-mission-select">공관명</label>
+              <select id="embassy-mission-select" autocomplete="off" disabled aria-disabled="true">
+                <option value="">먼저 주재국을 선택하세요</option>
+              </select>
+            </div>
+          </div>
+
+          <p class="embassy-mofa-official-row">
+            <a
+              class="embassy-mofa-official-link"
+              href="https://www.mofa.go.kr/www/pgm/m_4179/uss/emblgbd/emblgbdAdres.do"
+              target="_blank"
+              rel="noopener noreferrer"
+              title="외교부 재외공관 주소록이 새 창에서 열립니다."
+            >
+              외교부 재외공관 주소록(공식) 보러 가기<span aria-hidden="true"> ↗</span>
+            </a>
+          </p>
+
+          <div id="embassy-mofa-detail" class="embassy-mofa-detail" hidden>
+            <dl class="embassy-mofa-dl">
+              <dt>공관명</dt>
+              <dd id="embassy-mofa-detail-name"></dd>
+              <dt>전화번호</dt>
+              <dd id="embassy-mofa-detail-phone"></dd>
+              <dt>주소</dt>
+              <dd id="embassy-mofa-detail-address"></dd>
+              <dt>홈페이지</dt>
+              <dd class="embassy-mofa-dd-home">
+                <a
+                  id="embassy-mofa-detail-home"
+                  class="embassy-mofa-home-link"
+                  href="https://www.mofa.go.kr/www/pgm/m_4179/uss/emblgbd/emblgbdAdres.do"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  >공관 홈페이지 바로 가기<span aria-hidden="true"> ↗</span></a>
+              </dd>
+            </dl>
+          </div>
+        </section>
       </div>
     </section>
 
@@ -206,7 +277,6 @@
     <nav class="platform-sibling-nav" aria-label="다른 플랫폼 카테고리">
       <strong>다른 카테고리</strong>
       <ul>
-        <li><a href="embassy-lookup.html">재외공관 조회</a></li>
         <li><a href="minwon-roadmap.html">민원 로드맵</a></li>
         <li><a href="law-precedent-search.html">법령·판례 통합 검색 서비스</a></li>
         <li><a href="platform-check.html">서류·준비 체크</a></li>
@@ -841,6 +911,256 @@
       });
 
       rebuildOfficeOptions("");
+    })();
+
+    (function () {
+      /** 발췌 목록 — 최신·전체는 외교부 재외공관 주소록(https://www.mofa.go.kr/www/pgm/m_4179/uss/emblgbd/emblgbdAdres.do) 우선 */
+      var EMBASSY_BY_COUNTRY = {
+        미국: [
+          {
+            name: "주미국 대한민국대사관",
+            phone: "+1-202-939-5663",
+            address: "2450 Massachusetts Ave NW, Washington, D.C. 20008, USA",
+            homepage: "https://www.mofa.go.kr/us-ko/index.do",
+          },
+          {
+            name: "주뉴욕 대한민국총영사관",
+            phone: "+1-646-674-6000",
+            address: "335 East 45th Street, New York, NY 10017, USA",
+            homepage: "https://www.mofa.go.kr/us-ny/index.do",
+          },
+          {
+            name: "주로스앤젤레스 대한민국총영사관",
+            phone: "+1-213-385-9300",
+            address: "3243 Wilshire Blvd, Los Angeles, CA 90010, USA",
+            homepage: "https://www.mofa.go.kr/us-la/index.do",
+          },
+        ],
+        일본: [
+          {
+            name: "주일본 대한민국대사관",
+            phone: "+81-3-3452-7611",
+            address: "〒107-8427 도쿄도 미나토구 미타 2-16-14",
+            homepage: "https://www.mofa.go.kr/jp-ko/index.do",
+          },
+          {
+            name: "주오사카 대한민국총영사관",
+            phone: "+81-6-6446-0991",
+            address: "〒541-0046 오사카시 주오구 교바시 3-6-16 미츠이 스미토모 금융그룹 교바시 빌딩 18층",
+            homepage: "https://www.mofa.go.kr/jp-osaka-ko/index.do",
+          },
+        ],
+        중국: [
+          {
+            name: "주중국 대한민국대사관",
+            phone: "+86-10-8531-0700",
+            address: "중국 베이징시 차오양구 산리툰 동 5가 11번지",
+            homepage: "https://www.mofa.go.kr/cn-ko/index.do",
+          },
+          {
+            name: "주상하이 대한민국총영사관",
+            phone: "+86-21-6295-5199",
+            address: "중국 상하이시 장닝구 우유 로 60번 금두 빌딩 301호",
+            homepage: "https://www.mofa.go.kr/cn-shanghai-ko/index.do",
+          },
+        ],
+        베트남: [
+          {
+            name: "주베트남 대한민국대사관",
+            phone: "+84-24-3831-5118",
+            address: "베트남 하노이 바딘구 깐저 스트리트 63번지 대우청사 18층",
+            homepage: "https://www.mofa.go.kr/vn-ko/index.do",
+          },
+        ],
+        캐나다: [
+          {
+            name: "주캐나다 대한민국대사관",
+            phone: "+1-613-244-5030",
+            address: "150 Colonel By Drive, Ottawa, Ontario K1N 6N5, Canada",
+            homepage: "https://www.mofa.go.kr/ca-ko/index.do",
+          },
+          {
+            name: "주토론토 대한민국총영사관",
+            phone: "+1-416-617-6798",
+            address: "555 Avenue Rd, Toronto, Ontario M4V 2J7, Canada",
+            homepage: "https://www.mofa.go.kr/ca-toronto-ko/index.do",
+          },
+        ],
+        호주: [
+          {
+            name: "주호주 대한민국대사관",
+            phone: "+61-2-6270-4147",
+            address: "113 Empire Circuit, Yarralumla ACT 2600, Australia",
+            homepage: "https://www.mofa.go.kr/au-ko/index.do",
+          },
+        ],
+        독일: [
+          {
+            name: "주독일 대한민국대사관",
+            phone: "+49-30-2609-7517",
+            address: "Leipziger Platz 110, 10117 Berlin, Germany",
+            homepage: "https://www.mofa.go.kr/de-ko/index.do",
+          },
+        ],
+        영국: [
+          {
+            name: "주영국 대한민국대사관",
+            phone: "+44-20-7227-5500",
+            address: "60 Buckingham Gate, London SW1E 6AJ, United Kingdom",
+            homepage: "https://www.mofa.go.kr/gb-ko/index.do",
+          },
+        ],
+        프랑스: [
+          {
+            name: "주프랑스 대한민국대사관",
+            phone: "+33-1-5689-4026",
+            address: "125 Rue de Grenelle, 75007 Paris, France",
+            homepage: "https://www.mofa.go.kr/fr-ko/index.do",
+          },
+        ],
+        태국: [
+          {
+            name: "주태국 대한민국대사관",
+            phone: "+66-2-247-7537",
+            address: "23 Thanon Witthayu (Wireless Rd.), Lumpini, Pathumwan, Bangkok 10330, Thailand",
+            homepage: "https://www.mofa.go.kr/th-ko/index.do",
+          },
+        ],
+        인도네시아: [
+          {
+            name: "주인도네시아 대한민국대사관",
+            phone: "+62-21-2938-6118",
+            address: "Jl. Gatot Subroto Kav. 57, Jakarta Selatan 12950, Indonesia",
+            homepage: "https://www.mofa.go.kr/id-ko/index.do",
+          },
+        ],
+        필리핀: [
+          {
+            name: "주필리핀 대한민국대사관",
+            phone: "+63-2-8344-9327",
+            address: "122 Upper McKinley Rd., McKinley Town Center, Fort Bonifacio, Taguig City 1634, Philippines",
+            homepage: "https://www.mofa.go.kr/ph-ko/index.do",
+          },
+        ],
+      };
+
+      var countrySel = document.getElementById("embassy-country-select");
+      var missionSel = document.getElementById("embassy-mission-select");
+      var detailEl = document.getElementById("embassy-mofa-detail");
+      var dName = document.getElementById("embassy-mofa-detail-name");
+      var dPhone = document.getElementById("embassy-mofa-detail-phone");
+      var dAddr = document.getElementById("embassy-mofa-detail-address");
+      var homeLink = document.getElementById("embassy-mofa-detail-home");
+      var resetBtn = document.getElementById("embassy-mofa-reset-btn");
+
+      if (
+        !countrySel ||
+        !missionSel ||
+        !detailEl ||
+        !dName ||
+        !dPhone ||
+        !dAddr ||
+        !homeLink ||
+        !resetBtn
+      ) {
+        return;
+      }
+
+      function fillCountryOptions() {
+        countrySel.innerHTML = "";
+        var ph = document.createElement("option");
+        ph.value = "";
+        ph.textContent = "주재국을 선택하세요";
+        countrySel.appendChild(ph);
+        Object.keys(EMBASSY_BY_COUNTRY)
+          .sort(function (a, b) {
+            return a.localeCompare(b, "ko");
+          })
+          .forEach(function (c) {
+            var opt = document.createElement("option");
+            opt.value = c;
+            opt.textContent = c;
+            countrySel.appendChild(opt);
+          });
+      }
+
+      function clearMissionDetail() {
+        detailEl.hidden = true;
+      }
+
+      function rebuildMissionOptions(country) {
+        missionSel.innerHTML = "";
+        var list = EMBASSY_BY_COUNTRY[country] || [];
+        if (!country) {
+          missionSel.disabled = true;
+          missionSel.setAttribute("aria-disabled", "true");
+          var o0 = document.createElement("option");
+          o0.value = "";
+          o0.textContent = "먼저 주재국을 선택하세요";
+          missionSel.appendChild(o0);
+          clearMissionDetail();
+          return;
+        }
+        missionSel.disabled = false;
+        missionSel.removeAttribute("aria-disabled");
+        var ph = document.createElement("option");
+        ph.value = "";
+        ph.textContent = "공관을 선택하세요";
+        missionSel.appendChild(ph);
+        list.forEach(function (row, idx) {
+          var opt = document.createElement("option");
+          opt.value = String(idx);
+          opt.textContent = row.name;
+          missionSel.appendChild(opt);
+        });
+        clearMissionDetail();
+      }
+
+      function showMissionDetail(country) {
+        var idx = missionSel.value;
+        var list = EMBASSY_BY_COUNTRY[country] || [];
+        if (!idx || !list[idx]) {
+          clearMissionDetail();
+          return;
+        }
+        var row = list[idx];
+        dName.textContent = row.name;
+        dPhone.textContent = row.phone || "—";
+        dAddr.textContent = row.address || "—";
+        homeLink.href =
+          row.homepage ||
+          "https://www.mofa.go.kr/www/pgm/m_4179/uss/emblgbd/emblgbdAdres.do";
+        homeLink.hidden = false;
+        detailEl.hidden = false;
+      }
+
+      function resetEmbassyPanel() {
+        countrySel.value = "";
+        rebuildMissionOptions("");
+        dName.textContent = "";
+        dPhone.textContent = "";
+        dAddr.textContent = "";
+        homeLink.href = "https://www.mofa.go.kr/www/pgm/m_4179/uss/emblgbd/emblgbdAdres.do";
+        clearMissionDetail();
+      }
+
+      countrySel.addEventListener("change", function () {
+        rebuildMissionOptions(countrySel.value);
+      });
+
+      missionSel.addEventListener("change", function () {
+        if (missionSel.disabled) return;
+        if (!missionSel.value) {
+          clearMissionDetail();
+          return;
+        }
+        showMissionDetail(countrySel.value);
+      });
+
+      resetBtn.addEventListener("click", resetEmbassyPanel);
+
+      fillCountryOptions();
+      rebuildMissionOptions("");
     })();
   </script>
 </body>

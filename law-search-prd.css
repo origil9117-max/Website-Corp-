@@ -790,33 +790,33 @@ body[data-platform-slug="platform-faq"] .law-result-plan-col:not(.faq-tone-stay-
 
 /* 출입국민원 페이지: 체류민원서류 열 — 잔잔한 민트·세이지 톤 */
 body[data-platform-slug="platform-faq"] .law-result-plan-col.faq-tone-stay-docs {
-  background: linear-gradient(165deg, #f8fbf9 0%, #eef6f1 52%, #e7f1ea 100%);
-  border: 2px solid rgba(42, 94, 78, 0.45);
+  background: linear-gradient(165deg, #f6fcf9 0%, #eaf8ef 50%, #dff3e8 100%);
+  border: 2px solid rgba(35, 118, 86, 0.44);
   box-shadow:
     0 1px 0 rgba(255, 255, 255, 0.88) inset,
-    0 4px 22px rgba(46, 102, 82, 0.055);
+    0 4px 22px rgba(34, 111, 81, 0.07);
 }
 
 body[data-platform-slug="platform-faq"] .law-result-plan-col.faq-tone-stay-docs > h3 {
-  color: #2a5e50;
+  color: #1f6a4d;
 }
 
 body[data-platform-slug="platform-faq"] .law-result-plan-col.faq-tone-stay-docs .law-result-plan-col-search-row {
-  border-color: rgba(52, 112, 94, 0.34);
+  border-color: rgba(35, 118, 86, 0.36);
   background: rgba(255, 255, 255, 0.72);
 }
 
 body[data-platform-slug="platform-faq"] .law-result-plan-col.faq-tone-stay-docs li {
-  color: rgba(24, 58, 48, 0.88);
+  color: rgba(19, 70, 51, 0.9);
 }
 
 body[data-platform-slug="platform-faq"] .immigration-portal-stack {
-  margin-top: 1.15rem;
-  padding-top: 0.95rem;
+  margin-top: 1.95rem;
+  padding-top: 1.3rem;
   border-top: 1px solid rgba(28, 74, 124, 0.14);
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 1.45rem;
 }
 
 body[data-platform-slug="platform-faq"] .immigration-portal-menu {
@@ -893,22 +893,22 @@ body[data-platform-slug="platform-faq"] .immigration-portal-menu-ext {
 body[data-platform-slug="platform-faq"] .immigration-gvrn-panel {
   padding: 1.28rem 1.05rem;
   border-radius: 10px;
-  border: 2px solid rgba(38, 72, 118, 0.42);
-  background: linear-gradient(165deg, #f6f9fd 0%, #ecf2fa 48%, #e5edf6 100%);
+  border: 2px solid rgba(20, 96, 146, 0.42);
+  background: linear-gradient(165deg, #f3f9ff 0%, #e5f2ff 48%, #daebfb 100%);
   box-shadow:
     0 1px 0 rgba(255, 255, 255, 0.92) inset,
-    0 4px 22px rgba(38, 72, 118, 0.065);
+    0 4px 22px rgba(23, 96, 146, 0.08);
 }
 
-/* 재외공관 조회 — 은은한 라벤더·회보라 톤 */
+/* 재외공관 조회 — 은은한 코랄·살구 톤 */
 body[data-platform-slug="platform-faq"] .embassy-mofa-panel {
   padding: 1.28rem 1.05rem;
   border-radius: 10px;
-  border: 2px solid rgba(88, 62, 118, 0.42);
-  background: linear-gradient(165deg, #fbf9fc 0%, #f3eef8 46%, #ebe4f3 100%);
+  border: 2px solid rgba(178, 92, 84, 0.42);
+  background: linear-gradient(165deg, #fff9f7 0%, #ffefe9 46%, #fde5de 100%);
   box-shadow:
     0 1px 0 rgba(255, 255, 255, 0.94) inset,
-    0 4px 22px rgba(72, 52, 98, 0.055);
+    0 4px 22px rgba(171, 90, 82, 0.08);
   scroll-margin-top: 1rem;
 }
 

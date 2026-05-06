@@ -42,7 +42,7 @@ jobs:
             exit 1
           fi
           # 줄바꿈(CRLF/LF) 차이로 오탐이 나지 않도록 CR 제거 후 해시 계산
-          EXPECTED_SHA="$(tr -d '\r' < platform-faq.html | sha256sum | awk '{print $1}')"
+          EXPECTED_SHA="$(tr -d '\r' < platform-faq.html | sha256sum | awk '{print $1}' | tr -d '\r\n ')"
           if [ -z "$EXPECTED_SHA" ]; then
             echo "::error::Cannot calculate expected SHA256 for platform-faq.html"
             exit 1
@@ -87,11 +87,16 @@ jobs:
             printf '%s' "$1" | tr -d '\r' | sha256sum | awk '{print $1}' | tr -d '\r\n '
           }
 
+          debug_expected_live() {
+            echo "::notice::DEBUG expected_css=$EXPECTED_CSS_NORM expected_sha=$EXPECTED_SHA_NORM live_css=$1 live_sha=$2"
+          }
+
           LIVE_PRE_BODY="$(fetch_live_body "pre-${GITHUB_RUN_ID}")"
           LIVE_PRE_CSS="$(parse_css_from_body "$LIVE_PRE_BODY")"
           LIVE_PRE_SHA="$(calc_sha_from_body "$LIVE_PRE_BODY")"
           echo "Precheck Expected CSS=$EXPECTED_CSS_NORM / Live CSS=$LIVE_PRE_CSS"
           echo "Precheck Expected SHA=$EXPECTED_SHA_NORM / Live SHA=$LIVE_PRE_SHA"
+          debug_expected_live "$LIVE_PRE_CSS" "$LIVE_PRE_SHA"
           if [ "$LIVE_PRE_CSS" = "$EXPECTED_CSS_NORM" ] && [ "$LIVE_PRE_SHA" = "$EXPECTED_SHA_NORM" ]; then
             echo "Production already matches expected HTML content."
             exit 0
@@ -128,6 +133,7 @@ jobs:
             LIVE_SHA="$(calc_sha_from_body "$LIVE_BODY")"
             echo "Expected CSS=$EXPECTED_CSS_NORM / Live CSS=$LIVE_CSS"
             echo "Expected SHA=$EXPECTED_SHA_NORM / Live SHA=$LIVE_SHA"
+            debug_expected_live "$LIVE_CSS" "$LIVE_SHA"
 
             if [ "$LIVE_CSS" = "$EXPECTED_CSS_NORM" ] && [ "$LIVE_SHA" = "$EXPECTED_SHA_NORM" ]; then
               echo "Production is synced."

@@ -1162,8 +1162,11 @@ window.EMBASSY_GROUPS=JSON.parse(new TextDecoder("utf-8").decode(_u8));
         if (n.indexOf("주칭다오") !== -1 && n.indexOf("총영사관") !== -1) {
           return "산동성";
         }
-        if ((n.indexOf("주청뚜") !== -1 || n.indexOf("주청두") !== -1) && n.indexOf("총영사관") !== -1) {
-          return "중경, 사천성, 운남성, 귀주선";
+        if (
+          (n.indexOf("주청뚜") !== -1 || n.indexOf("주청두") !== -1) &&
+          n.indexOf("총영사관") !== -1
+        ) {
+          return "중경, 사천성, 운남성, 귀주성";
         }
         if (n.indexOf("주시안") !== -1 && n.indexOf("총영사관") !== -1) {
           return "섬서성, 감숙성, 영하회족자치구";
@@ -1171,7 +1174,10 @@ window.EMBASSY_GROUPS=JSON.parse(new TextDecoder("utf-8").decode(_u8));
         if (n.indexOf("주우한") !== -1 && n.indexOf("총영사관") !== -1) {
           return "하남성, 호북성, 호남성, 강서성";
         }
-        if (n.indexOf("주다렌") !== -1 && n.indexOf("출장소") !== -1) {
+        if (
+          (n.indexOf("주다렌") !== -1 || n.indexOf("주다롄") !== -1) &&
+          n.indexOf("출장소") !== -1
+        ) {
           return "중산, 서강, 사하구, 감정자, 여순구, 금주신강(금주구, 개발구, 보세구)";
         }
         return "";

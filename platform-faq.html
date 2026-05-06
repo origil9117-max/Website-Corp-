@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700&family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="platform-pages.css?v=20260420d" />
-  <link rel="stylesheet" href="law-search-prd.css?v=20260506an" />
+  <link rel="stylesheet" href="law-search-prd.css?v=20260506ao" />
 </head>
 <body class="law-prd-body" data-platform-slug="platform-faq">
   <header class="topbar">
@@ -1140,6 +1140,43 @@ window.EMBASSY_GROUPS=JSON.parse(new TextDecoder("utf-8").decode(_u8));
         countryListWrap.hidden = true;
       }
 
+      function normalizeEmbassyMissionName(name) {
+        return String(name || "").replace(/\s+/g, "").trim();
+      }
+
+      function chinaMissionJurisdictionByName(name) {
+        var n = normalizeEmbassyMissionName(name);
+        if (!n) return "";
+        if (n.indexOf("주중국") !== -1 && n.indexOf("대사관") !== -1) {
+          return "북경, 천진, 하북성, 산서성, 내몽고자치구, 신강위구르족자치구, 서장지구, 청해성";
+        }
+        if (n.indexOf("주선양") !== -1 && n.indexOf("총영사관") !== -1) {
+          return "요녕성, 흑룡강성, 길림성";
+        }
+        if (n.indexOf("주상하이") !== -1 && n.indexOf("총영사관") !== -1) {
+          return "상해, 안휘성, 강소성, 절강성";
+        }
+        if (n.indexOf("주광저우") !== -1 && n.indexOf("총영사관") !== -1) {
+          return "광동성, 광서장족자치구, 해남성, 복건성";
+        }
+        if (n.indexOf("주칭다오") !== -1 && n.indexOf("총영사관") !== -1) {
+          return "산동성";
+        }
+        if (n.indexOf("주청뚜") !== -1 && n.indexOf("총영사관") !== -1) {
+          return "중경, 사천성, 운남성, 귀주성";
+        }
+        if (n.indexOf("주시안") !== -1 && n.indexOf("총영사관") !== -1) {
+          return "섬서성, 감숙성, 영하회족자치구";
+        }
+        if (n.indexOf("주우한") !== -1 && n.indexOf("총영사관") !== -1) {
+          return "하남성, 호북성, 호남성, 강서성";
+        }
+        if (n.indexOf("주다렌") !== -1 && n.indexOf("출장소") !== -1) {
+          return "중산, 서강, 사하구, 감정자, 여순구, 금주신강 (금주구, 개발구, 보세구)";
+        }
+        return "";
+      }
+
       function renderEmbassyCountryList(gi) {
         clearEmbassyCountryList();
         var g = GROUPS[gi];
@@ -1176,6 +1213,18 @@ window.EMBASSY_GROUPS=JSON.parse(new TextDecoder("utf-8").decode(_u8));
           var ddAddr = document.createElement("dd");
           ddAddr.textContent = row.address || "—";
 
+          var chinaJur = "";
+          if (normalizeEmbassySearch(label) === normalizeEmbassySearch("중국")) {
+            chinaJur = chinaMissionJurisdictionByName(row.name);
+          }
+
+          var dtJur = document.createElement("dt");
+          dtJur.textContent = "공관관할";
+          dtJur.className = "embassy-mofa-country-item-dt-jurisdiction";
+          var ddJur = document.createElement("dd");
+          ddJur.className = "embassy-mofa-country-item-dd-jurisdiction";
+          ddJur.textContent = chinaJur || "확인 중";
+
           var dtHome = document.createElement("dt");
           dtHome.textContent = "홈페이지";
           var ddHome = document.createElement("dd");
@@ -1191,6 +1240,8 @@ window.EMBASSY_GROUPS=JSON.parse(new TextDecoder("utf-8").decode(_u8));
           dl.appendChild(ddPhone);
           dl.appendChild(dtAddr);
           dl.appendChild(ddAddr);
+          dl.appendChild(dtJur);
+          dl.appendChild(ddJur);
           dl.appendChild(dtHome);
           dl.appendChild(ddHome);
 

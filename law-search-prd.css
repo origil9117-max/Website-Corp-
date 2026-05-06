@@ -1108,6 +1108,15 @@ body[data-platform-slug="platform-faq"] .embassy-mofa-country-item-dl dd {
   word-break: break-word;
 }
 
+body[data-platform-slug="platform-faq"] .embassy-mofa-country-item-dl .embassy-mofa-country-item-dt-jurisdiction {
+  color: #c02222;
+}
+
+body[data-platform-slug="platform-faq"] .embassy-mofa-country-item-dl .embassy-mofa-country-item-dd-jurisdiction {
+  color: #c02222;
+  font-weight: 700;
+}
+
 body[data-platform-slug="platform-faq"] .embassy-mofa-country-home {
   font-weight: 800;
   color: #1c4a7c;

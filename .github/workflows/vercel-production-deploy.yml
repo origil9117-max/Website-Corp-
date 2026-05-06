@@ -1,3 +1,9 @@
+# main 푸시 시 Vercel Deploy Hook 으로 프로덕션 배포를 재트리거합니다.
+# 필수 시크릿: VERCEL_DEPLOY_HOOK_URL (Vercel 프로젝트 → Settings → Git → Deploy Hooks)
+#
+# 저장소에서 Actions 기본 차단 또는 시크릿 미설정이면 실행이 즉시 실패하며,
+# GitHub Actions 로그에 원인 안내가 표시되도록 구성했습니다.
+
 name: Vercel Production Deploy
 
 on:
@@ -9,10 +15,26 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: vercel-prod-${{ github.repository }}
+  cancel-in-progress: true
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Trigger Vercel Deploy Hook
+      - name: Deploy hook 시크릿 확인
+        env:
+          DEPLOY_HOOK: ${{ secrets.VERCEL_DEPLOY_HOOK_URL }}
         run: |
-          curl -fsSL -X POST "${{ secrets.VERCEL_DEPLOY_HOOK_URL }}"
+          if [ -z "$DEPLOY_HOOK" ]; then
+            echo "::error::GitHub 저장소 Settings → Secrets and variables → Actions 에 VERCEL_DEPLOY_HOOK_URL 을 추가하세요."
+            echo "::error::Vercel 대시보드 → 해당 프로젝트 → Settings → Git → Deploy Hooks 에서 Production 용 Hook URL 을 복사합니다."
+            exit 1
+          fi
+
+      - name: Vercel 프로덕션 배포 트리거
+        env:
+          DEPLOY_HOOK: ${{ secrets.VERCEL_DEPLOY_HOOK_URL }}
+        run: |
+          curl -fsSL --retry 2 --retry-delay 3 -X POST "$DEPLOY_HOOK"

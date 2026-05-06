@@ -1,0 +1,145 @@
+name: Vercel Production Deploy Guard
+
+# Production 동기화 확인: VERCEL_DEPLOY_HOOK_URL은 www.daehanminkuk.co.kr을 서빙하는
+# 동일 Vercel 프로젝트의 Production 훅이어야 합니다(다른 프로젝트면 main과 live가 불일치).
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: vercel-prod-${{ github.repository }}
+  cancel-in-progress: true
+
+jobs:
+  deploy-and-verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate deploy hook secret
+        env:
+          DEPLOY_HOOK: ${{ secrets.VERCEL_DEPLOY_HOOK_URL }}
+        run: |
+          if [ -z "$DEPLOY_HOOK" ]; then
+            echo "::error::Missing secret VERCEL_DEPLOY_HOOK_URL"
+            echo "::error::Set it in GitHub -> Settings -> Secrets and variables -> Actions."
+            exit 1
+          fi
+
+      - name: Read expected markers from repository
+        id: expected
+        run: |
+          EXPECTED_CSS="$(tr -d '\r' < platform-faq.html | sed -n 's/.*law-search-prd.css?v=\([0-9a-z]\+\).*/\1/p' | head -n 1 | tr -d '\r\n ')"
+          if [ -z "$EXPECTED_CSS" ]; then
+            echo "::error::Cannot parse expected CSS version from platform-faq.html"
+            exit 1
+          fi
+          EXPECTED_SHA="$(sha256sum platform-faq.html | awk '{print $1}')"
+          if [ -z "$EXPECTED_SHA" ]; then
+            echo "::error::Cannot calculate expected SHA256 for platform-faq.html"
+            exit 1
+          fi
+          echo "css=$EXPECTED_CSS" >> "$GITHUB_OUTPUT"
+          echo "sha=$EXPECTED_SHA" >> "$GITHUB_OUTPUT"
+          echo "Expected CSS version: $EXPECTED_CSS"
+          echo "Expected HTML SHA256: $EXPECTED_SHA"
+
+      - name: Deploy and verify live sync (auto-retry)
+        env:
+          DEPLOY_HOOK: ${{ secrets.VERCEL_DEPLOY_HOOK_URL }}
+          EXPECTED_CSS: ${{ steps.expected.outputs.css }}
+          EXPECTED_SHA: ${{ steps.expected.outputs.sha }}
+        run: |
+          set -u
+          HOOK_URL="$(printf '%s' "$DEPLOY_HOOK" | tr -d '\r\n ')"
+          EXPECTED_CSS_NORM="$(printf '%s' "$EXPECTED_CSS" | tr -d '\r\n ')"
+          EXPECTED_SHA_NORM="$(printf '%s' "$EXPECTED_SHA" | tr -d '\r\n ')"
+
+          if [ -z "$HOOK_URL" ]; then
+            echo "::error::VERCEL_DEPLOY_HOOK_URL is empty after trimming."
+            exit 1
+          fi
+
+          LIVE_URL="https://www.daehanminkuk.co.kr/platform-faq.html"
+          ATTEMPTS=8
+
+          fetch_live_body() {
+            local cb="$1"
+            curl -sS -L \
+              -H 'Cache-Control: no-cache' \
+              -H 'Pragma: no-cache' \
+              "$LIVE_URL?cb=${cb}-$(date +%s)"
+          }
+
+          parse_css_from_body() {
+            printf '%s' "$1" | tr -d '\r' | sed -n 's/.*law-search-prd.css?v=\([0-9a-z]\+\).*/\1/p' | head -n 1 | tr -d '\r\n '
+          }
+
+          calc_sha_from_body() {
+            printf '%s' "$1" | sha256sum | awk '{print $1}' | tr -d '\r\n '
+          }
+
+          LIVE_PRE_BODY="$(fetch_live_body "pre-${GITHUB_RUN_ID}")"
+          LIVE_PRE_CSS="$(parse_css_from_body "$LIVE_PRE_BODY")"
+          LIVE_PRE_SHA="$(calc_sha_from_body "$LIVE_PRE_BODY")"
+          echo "Precheck Expected CSS=$EXPECTED_CSS_NORM / Live CSS=$LIVE_PRE_CSS"
+          echo "Precheck Expected SHA=$EXPECTED_SHA_NORM / Live SHA=$LIVE_PRE_SHA"
+          if [ "$LIVE_PRE_CSS" = "$EXPECTED_CSS_NORM" ] && [ "$LIVE_PRE_SHA" = "$EXPECTED_SHA_NORM" ]; then
+            echo "Production already matches expected HTML content."
+            exit 0
+          fi
+
+          for i in $(seq 1 $ATTEMPTS); do
+            echo "== Attempt $i/$ATTEMPTS =="
+            code="$(curl -sS -o /tmp/hook.body -w "%{http_code}" -X POST "$HOOK_URL")"
+            echo "Deploy hook HTTP status: $code"
+            echo "Deploy hook response (first 600 bytes):"
+            head -c 600 /tmp/hook.body || true
+            echo
+            if command -v jq >/dev/null 2>&1; then
+              if jq -e . /tmp/hook.body >/dev/null 2>&1; then
+                echo "Deploy hook JSON (selected fields):"
+                jq -c '{id, url, job: {id: .job.id, state: .job.state}}' /tmp/hook.body 2>/dev/null || true
+              fi
+            fi
+            if [ "$code" -lt 200 ] || [ "$code" -ge 300 ]; then
+              echo "::warning::Deploy hook returned non-success HTTP status."
+            fi
+            echo "Waiting for propagation..."
+            sleep 60
+
+            echo "Live HEAD (selected headers, cache-busting query):"
+            curl -sS -D /tmp/live.head -o /dev/null \
+              -H 'Cache-Control: no-cache' \
+              -H 'Pragma: no-cache' \
+              "$LIVE_URL?cb=head-${GITHUB_RUN_ID}-${i}-$(date +%s)" || true
+            tr -d '\r' < /tmp/live.head | awk 'BEGIN{IGNORECASE=1} /^last-modified:|^age:|^etag:|^server:|^x-vercel-|^cache-control:/ {print}'
+
+            LIVE_BODY="$(fetch_live_body "${GITHUB_RUN_ID}-${i}")"
+            LIVE_CSS="$(parse_css_from_body "$LIVE_BODY")"
+            LIVE_SHA="$(calc_sha_from_body "$LIVE_BODY")"
+            echo "Expected CSS=$EXPECTED_CSS_NORM / Live CSS=$LIVE_CSS"
+            echo "Expected SHA=$EXPECTED_SHA_NORM / Live SHA=$LIVE_SHA"
+
+            if [ "$LIVE_CSS" = "$EXPECTED_CSS_NORM" ] && [ "$LIVE_SHA" = "$EXPECTED_SHA_NORM" ]; then
+              echo "Production is synced."
+              exit 0
+            fi
+
+            if [ "$i" -lt "$ATTEMPTS" ]; then
+              echo "Not synced yet. Retrying..."
+              sleep 45
+            fi
+          done
+
+          echo "::error::Production did not sync to expected HTML markers after $ATTEMPTS attempts."
+          echo "::error::Expected CSS=$EXPECTED_CSS_NORM, Expected SHA=$EXPECTED_SHA_NORM"
+          echo "::error::Next checks: Vercel Deploy Hook must belong to the SAME project that serves $LIVE_URL (Production), and Production Git branch must be main."
+          exit 1

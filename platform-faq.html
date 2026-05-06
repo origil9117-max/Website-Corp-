@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700&family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="platform-pages.css?v=20260420d" />
-  <link rel="stylesheet" href="law-search-prd.css?v=20260506al" />
+  <link rel="stylesheet" href="law-search-prd.css?v=20260506am" />
 </head>
 <body class="law-prd-body" data-platform-slug="platform-faq">
   <header class="topbar">
@@ -138,7 +138,9 @@
 
         <section class="immigration-gvrn-panel" aria-labelledby="immigration-gvrn-heading">
           <div class="immigration-gvrn-header">
-            <h3 id="immigration-gvrn-heading" class="immigration-gvrn-title">관할출입국·외국인관서 조회</h3>
+            <h3 id="immigration-gvrn-heading" class="immigration-gvrn-title">
+              관할출입국·<mark class="immigration-gvrn-key">외국인관서</mark> 조회
+            </h3>
             <button
               type="button"
               id="immigration-gvrn-reset-btn"
@@ -175,11 +177,21 @@
                 <option value="제주">제주</option>
               </select>
             </div>
-            <div class="immigration-gvrn-field">
-              <label for="immigration-office-select">출입국·외국인관서</label>
-              <select id="immigration-office-select" autocomplete="off" disabled aria-disabled="true">
-                <option value="">먼저 권역을 선택하세요</option>
-              </select>
+            <div class="immigration-gvrn-field immigration-gvrn-field-office">
+              <label for="immigration-office-select">출입국·<span class="immigration-gvrn-key">외국인관서</span></label>
+              <div class="immigration-gvrn-office-row">
+                <select id="immigration-office-select" autocomplete="off" disabled aria-disabled="true">
+                  <option value="">먼저 권역을 선택하세요</option>
+                </select>
+                <button
+                  type="button"
+                  id="immigration-gvrn-foreign-office-search-btn"
+                  class="immigration-gvrn-foreign-office-search-btn"
+                  aria-label="외국인관서(출장소·사무소 등)만 검색"
+                >
+                  외국인관서 검색
+                </button>
+              </div>
             </div>
             <div class="immigration-gvrn-field immigration-gvrn-search-field">
               <label for="immigration-gvrn-search-input">관할 검색</label>
@@ -679,6 +691,7 @@ window.EMBASSY_GROUPS=JSON.parse(new TextDecoder("utf-8").decode(_u8));
       var dJur = document.getElementById("immigration-office-detail-jurisdiction");
       var searchInput = document.getElementById("immigration-gvrn-search-input");
       var searchBtn = document.getElementById("immigration-gvrn-search-btn");
+      var foreignOfficeSearchBtn = document.getElementById("immigration-gvrn-foreign-office-search-btn");
       var searchStatus = document.getElementById("immigration-gvrn-search-status");
       var searchHits = document.getElementById("immigration-gvrn-search-hits");
       var regionListWrap = document.getElementById("immigration-gvrn-region-list-wrap");
@@ -695,6 +708,7 @@ window.EMBASSY_GROUPS=JSON.parse(new TextDecoder("utf-8").decode(_u8));
         !dJur ||
         !searchInput ||
         !searchBtn ||
+        !foreignOfficeSearchBtn ||
         !searchStatus ||
         !searchHits ||
         !regionListWrap ||
@@ -764,6 +778,19 @@ window.EMBASSY_GROUPS=JSON.parse(new TextDecoder("utf-8").decode(_u8));
         return s;
       }
 
+      /** 출입국·외국인청 본청이 아닌 출장소·사무소·지점 등 외국인관서 편의시설 위주(샘플 기준) */
+      function isMainImmigrationHallName(name) {
+        var n = String(name || "").replace(/\s+/g, "");
+        return /출입국·외국인청$/.test(n) && !/(출장소|사무소|지점)/.test(n);
+      }
+
+      function isForeignOfficeFacility(row) {
+        var n = String(row.name || "");
+        if (/출장소|외국인사무소|지점/.test(n)) return true;
+        if (/사무소/.test(n) && !isMainImmigrationHallName(n)) return true;
+        return false;
+      }
+
       function findJurisdictionHits(query) {
         var tokens = tokenizeQuery(query);
         if (!tokens.length) return { error: "empty", tokens: tokens, hits: [] };
@@ -821,20 +848,18 @@ window.EMBASSY_GROUPS=JSON.parse(new TextDecoder("utf-8").decode(_u8));
         regionListWrap.hidden = true;
       }
 
-      function renderRegionList(region) {
+      function renderOfficeRowsList(regionKey, rows, titleText) {
         clearRegionList();
-        var list = SAMPLE_BY_REGION[region] || [];
-        if (!list.length) return;
+        if (!rows || !rows.length) return;
 
         var title = document.createElement("h4");
         title.className = "immigration-gvrn-region-list-title";
-        title.textContent = "「" + region + "」 권역 출입국·외국인관서 " + list.length + "곳";
-        regionListWrap.appendChild(title);
+        title.textContent = titleText;
 
         var ul = document.createElement("ul");
         ul.className = "immigration-gvrn-region-list";
 
-        list.forEach(function (row) {
+        rows.forEach(function (row) {
           var li = document.createElement("li");
           li.className = "immigration-gvrn-region-item";
 
@@ -864,8 +889,19 @@ window.EMBASSY_GROUPS=JSON.parse(new TextDecoder("utf-8").decode(_u8));
           ul.appendChild(li);
         });
 
+        regionListWrap.appendChild(title);
         regionListWrap.appendChild(ul);
         regionListWrap.hidden = false;
+      }
+
+      function renderRegionList(region) {
+        var list = SAMPLE_BY_REGION[region] || [];
+        if (!list.length) return;
+        renderOfficeRowsList(
+          region,
+          list,
+          "「" + region + "」 권역 출입국·외국인관서 " + list.length + "곳"
+        );
       }
 
       function applyOfficeSelection(region, index) {
@@ -904,6 +940,100 @@ window.EMBASSY_GROUPS=JSON.parse(new TextDecoder("utf-8").decode(_u8));
           if (normalizeForSearch(k) === n) return k;
         }
         return null;
+      }
+
+      function runForeignOfficeSearch() {
+        var raw = String(searchInput.value || "").trim();
+        var selectedRegion = regionSel.value;
+        searchHits.innerHTML = "";
+        searchHits.hidden = true;
+        lastGvrnJurisdictionSearchQuery = "";
+        clearDetail();
+
+        if (!raw && !selectedRegion) {
+          clearRegionList();
+          searchStatus.textContent =
+            "권역을 선택하거나 관할 검색창에 지역·구·관서 키워드를 입력한 뒤 외국인관서 검색을 눌러 주세요.";
+          return;
+        }
+
+        if (!raw && selectedRegion) {
+          var listR = SAMPLE_BY_REGION[selectedRegion] || [];
+          var onlyF = listR.filter(isForeignOfficeFacility);
+          if (!onlyF.length) {
+            clearRegionList();
+            searchStatus.textContent =
+              "「" +
+              selectedRegion +
+              "」 권역 샘플에는 출장소·사무소 형태의 외국인관서만 골라 표시할 항목이 없습니다. 관할검색으로 전체 관서를 확인해 보세요.";
+            return;
+          }
+          renderOfficeRowsList(
+            selectedRegion,
+            onlyF,
+            "「" + selectedRegion + "」 권역 외국인관서(출장소·사무소 등) " + onlyF.length + "곳"
+          );
+          searchStatus.textContent =
+            "출장소·사무소·지점 등 외국인관서 위주로 「" + selectedRegion + "」 권역 " + onlyF.length + "곳을 표시합니다.";
+          return;
+        }
+
+        var regionKeyHit = immigrationRegionKeyExactMatch(raw);
+        if (regionKeyHit) {
+          gvrnSuppressQueryClear = true;
+          regionSel.value = regionKeyHit;
+          rebuildOfficeOptions(regionKeyHit);
+          officeSel.value = "";
+          clearDetail();
+          gvrnSuppressQueryClear = false;
+
+          var listK = SAMPLE_BY_REGION[regionKeyHit] || [];
+          var onlyK = listK.filter(isForeignOfficeFacility);
+          if (!onlyK.length) {
+            clearRegionList();
+            searchStatus.textContent =
+              "「" +
+              regionKeyHit +
+              "」 권역 샘플에는 외국인관서(출장소·사무소 등)만 골라 표시할 항목이 없습니다. 관할검색을 이용해 주세요.";
+            return;
+          }
+          renderOfficeRowsList(
+            regionKeyHit,
+            onlyK,
+            "「" + regionKeyHit + "」 권역 외국인관서(출장소·사무소 등) " + onlyK.length + "곳"
+          );
+          searchStatus.textContent =
+            "「" + regionKeyHit + "」 권역 외국인관서(출장소·사무소 등) " + onlyK.length + "곳입니다.";
+          return;
+        }
+
+        var out = findJurisdictionHits(raw);
+        if (out.error === "empty") {
+          clearRegionList();
+          searchStatus.textContent =
+            "검색어를 두 글자 이상(공백으로 구분) 입력하거나, 권역만 선택한 뒤 외국인관서 검색을 다시 시도해 주세요.";
+          return;
+        }
+        var foreignHits = out.hits.filter(function (h) {
+          return isForeignOfficeFacility(h.row);
+        });
+        if (!foreignHits.length) {
+          clearRegionList();
+          searchStatus.textContent =
+            "조건에 맞는 외국인관서(출장소·사무소 등)를 찾지 못했습니다. 관할검색으로 전체 관서를 검색해 보세요.";
+          return;
+        }
+        lastGvrnJurisdictionSearchQuery = raw;
+        applyOfficeSelection(foreignHits[0].region, foreignHits[0].index);
+        if (foreignHits.length === 1) {
+          searchStatus.textContent = "「" + foreignHits[0].row.name + "」이(가) 외국인관서 검색에 일치했습니다.";
+        } else {
+          searchStatus.textContent =
+            "외국인관서 검색 결과 " +
+            foreignHits.length +
+            "건입니다. 아래에서 후보를 선택해 주세요.";
+          renderHitButtons(foreignHits);
+        }
       }
 
       function runJurisdictionSearch() {
@@ -959,6 +1089,7 @@ window.EMBASSY_GROUPS=JSON.parse(new TextDecoder("utf-8").decode(_u8));
       }
 
       searchBtn.addEventListener("click", runJurisdictionSearch);
+      foreignOfficeSearchBtn.addEventListener("click", runForeignOfficeSearch);
       searchInput.addEventListener("keydown", function (event) {
         if (event.key === "Enter") {
           event.preventDefault();

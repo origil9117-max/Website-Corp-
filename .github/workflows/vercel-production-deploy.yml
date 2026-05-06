@@ -41,7 +41,8 @@ jobs:
             echo "::error::Cannot parse expected CSS version from platform-faq.html"
             exit 1
           fi
-          EXPECTED_SHA="$(sha256sum platform-faq.html | awk '{print $1}')"
+          # 줄바꿈(CRLF/LF) 차이로 오탐이 나지 않도록 CR 제거 후 해시 계산
+          EXPECTED_SHA="$(tr -d '\r' < platform-faq.html | sha256sum | awk '{print $1}')"
           if [ -z "$EXPECTED_SHA" ]; then
             echo "::error::Cannot calculate expected SHA256 for platform-faq.html"
             exit 1
@@ -83,7 +84,7 @@ jobs:
           }
 
           calc_sha_from_body() {
-            printf '%s' "$1" | sha256sum | awk '{print $1}' | tr -d '\r\n '
+            printf '%s' "$1" | tr -d '\r' | sha256sum | awk '{print $1}' | tr -d '\r\n '
           }
 
           LIVE_PRE_BODY="$(fetch_live_body "pre-${GITHUB_RUN_ID}")"

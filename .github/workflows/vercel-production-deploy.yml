@@ -1,0 +1,75 @@
+name: Vercel Production Deploy Guard
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: vercel-prod-${{ github.repository }}
+  cancel-in-progress: true
+
+jobs:
+  deploy-and-verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate deploy hook secret
+        env:
+          DEPLOY_HOOK: ${{ secrets.VERCEL_DEPLOY_HOOK_URL }}
+        run: |
+          if [ -z "$DEPLOY_HOOK" ]; then
+            echo "::error::Missing secret VERCEL_DEPLOY_HOOK_URL"
+            echo "::error::Set it in GitHub -> Settings -> Secrets and variables -> Actions."
+            exit 1
+          fi
+
+      - name: Read expected CSS version from repository
+        id: expected
+        run: |
+          EXPECTED="$(sed -n 's/.*law-search-prd.css?v=\([0-9a-z]\+\).*/\1/p' platform-faq.html | head -n 1)"
+          if [ -z "$EXPECTED" ]; then
+            echo "::error::Cannot parse expected CSS version from platform-faq.html"
+            exit 1
+          fi
+          echo "value=$EXPECTED" >> "$GITHUB_OUTPUT"
+          echo "Expected CSS version: $EXPECTED"
+
+      - name: Deploy and verify live sync (auto-retry)
+        env:
+          DEPLOY_HOOK: ${{ secrets.VERCEL_DEPLOY_HOOK_URL }}
+          EXPECTED: ${{ steps.expected.outputs.value }}
+        run: |
+          set -e
+          LIVE_URL="https://www.daehanminkuk.co.kr/platform-faq.html"
+          ATTEMPTS=4
+
+          for i in $(seq 1 $ATTEMPTS); do
+            echo "== Attempt $i/$ATTEMPTS =="
+            curl -fsSL -X POST "$DEPLOY_HOOK" >/dev/null
+            echo "Deploy hook triggered."
+            sleep 45
+
+            BODY="$(curl -fsSL "$LIVE_URL?t=$(date +%s)")"
+            LIVE="$(echo "$BODY" | sed -n 's/.*law-search-prd.css?v=\([0-9a-z]\+\).*/\1/p' | head -n 1)"
+            echo "Expected=$EXPECTED / Live=$LIVE"
+
+            if [ "$LIVE" = "$EXPECTED" ]; then
+              echo "Production is synced."
+              exit 0
+            fi
+
+            if [ "$i" -lt "$ATTEMPTS" ]; then
+              echo "Not synced yet. Retrying..."
+              sleep 30
+            fi
+          done
+
+          echo "::error::Production did not sync to expected CSS version ($EXPECTED) after $ATTEMPTS attempts."
+          exit 1

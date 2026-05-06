@@ -1239,43 +1239,6 @@ body[data-platform-slug="platform-faq"] mark.immigration-gvrn-key {
   font-weight: 800;
 }
 
-body[data-platform-slug="platform-faq"] .immigration-gvrn-office-row {
-  display: flex;
-  gap: 0.45rem;
-  align-items: stretch;
-}
-
-body[data-platform-slug="platform-faq"] .immigration-gvrn-field-office .immigration-gvrn-office-row select {
-  flex: 1;
-  min-width: 0;
-  width: auto;
-}
-
-body[data-platform-slug="platform-faq"] .immigration-gvrn-foreign-office-search-btn {
-  flex-shrink: 0;
-  padding: 0.55rem 0.72rem;
-  font-size: 0.82rem;
-  font-weight: 800;
-  letter-spacing: -0.02em;
-  color: #14365c;
-  background: #fff;
-  border: 1px solid rgba(28, 74, 124, 0.45);
-  border-radius: 8px;
-  cursor: pointer;
-  box-shadow: 0 1px 2px rgba(28, 74, 124, 0.06);
-  white-space: nowrap;
-}
-
-body[data-platform-slug="platform-faq"] .immigration-gvrn-foreign-office-search-btn:hover {
-  border-color: rgba(28, 74, 124, 0.6);
-  background: rgba(28, 74, 124, 0.05);
-}
-
-body[data-platform-slug="platform-faq"] .immigration-gvrn-foreign-office-search-btn:focus-visible {
-  outline: 2px solid rgba(37, 99, 168, 0.35);
-  outline-offset: 2px;
-}
-
 body[data-platform-slug="platform-faq"] .immigration-gvrn-reset-btn {
   flex-shrink: 0;
   padding: 0.38rem 0.72rem;

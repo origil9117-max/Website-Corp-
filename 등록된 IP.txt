@@ -1,0 +1,11 @@
+등록된 네임서버 및 IP 정보
+네임서버IP 주소
+ns.gabia.co.kr 43.201.170.100
+ns1.gabia.co.kr 20.200.205.248
+ns.gabia.net(IP 미표시)
+도메인 정보 요약
+
+도메인: daehanminkuk.co.kr
+현재 네임서버: ns.gabia.co.kr
+DNS 정보: CNAME 설정
+만기일: 2028-01-05

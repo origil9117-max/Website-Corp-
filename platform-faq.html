@@ -1219,8 +1219,10 @@ window.EMBASSY_GROUPS=JSON.parse(new TextDecoder("utf-8").decode(_u8));
           var ddAddr = document.createElement("dd");
           ddAddr.textContent = row.address || "—";
 
+          var isChinaCountry =
+            normalizeEmbassySearch(label) === normalizeEmbassySearch("중국");
           var chinaJur = "";
-          if (normalizeEmbassySearch(label) === normalizeEmbassySearch("중국")) {
+          if (isChinaCountry) {
             chinaJur = chinaMissionJurisdictionByName(row.name);
           }
 
@@ -1246,8 +1248,10 @@ window.EMBASSY_GROUPS=JSON.parse(new TextDecoder("utf-8").decode(_u8));
           dl.appendChild(ddPhone);
           dl.appendChild(dtAddr);
           dl.appendChild(ddAddr);
-          dl.appendChild(dtJur);
-          dl.appendChild(ddJur);
+          if (isChinaCountry) {
+            dl.appendChild(dtJur);
+            dl.appendChild(ddJur);
+          }
           dl.appendChild(dtHome);
           dl.appendChild(ddHome);
 

@@ -62,16 +62,30 @@ jobs:
             echo "== Attempt $i/$ATTEMPTS =="
             code="$(curl -sS -o /tmp/hook.body -w "%{http_code}" -X POST "$HOOK_URL")"
             echo "Deploy hook HTTP status: $code"
+            echo "Deploy hook response (first 600 bytes):"
+            head -c 600 /tmp/hook.body || true
+            echo
+            if command -v jq >/dev/null 2>&1; then
+              if jq -e . /tmp/hook.body >/dev/null 2>&1; then
+                echo "Deploy hook JSON (selected fields):"
+                jq -c '{id, url, job: {id: .job.id, state: .job.state}}' /tmp/hook.body 2>/dev/null || true
+              fi
+            fi
             if [ "$code" -lt 200 ] || [ "$code" -ge 300 ]; then
-              echo "::warning::Deploy hook returned non-success status. Body (first 400 bytes):"
-              head -c 400 /tmp/hook.body || true
-              echo
+              echo "::warning::Deploy hook returned non-success HTTP status."
             fi
             echo "Waiting for propagation..."
             sleep 60
 
+            echo "Live HEAD (selected headers, cache-busting query):"
+            curl -sS -D /tmp/live.head -o /dev/null \
+              -H 'Cache-Control: no-cache' \
+              -H 'Pragma: no-cache' \
+              "$LIVE_URL?cb=head-${GITHUB_RUN_ID}-${i}-$(date +%s)" || true
+            tr -d '\r' < /tmp/live.head | awk 'BEGIN{IGNORECASE=1} /^last-modified:|^age:|^etag:|^server:|^x-vercel-|^cache-control:/ {print}'
+
             BODY="$(
-              curl -sS \
+              curl -sS -L \
                 -H 'Cache-Control: no-cache' \
                 -H 'Pragma: no-cache' \
                 "$LIVE_URL?cb=${GITHUB_RUN_ID}-${i}-$(date +%s)"
@@ -91,4 +105,5 @@ jobs:
           done
 
           echo "::error::Production did not sync to expected CSS version ($EXPECTED_NORM) after $ATTEMPTS attempts."
+          echo "::error::Next checks: Vercel Deploy Hook must belong to the SAME project that serves $LIVE_URL (Production), and Production Git branch must be main."
           exit 1

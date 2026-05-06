@@ -1,5 +1,8 @@
 name: Vercel Production Deploy Guard
 
+# Production 동기화 확인: VERCEL_DEPLOY_HOOK_URL은 www.daehanminkuk.co.kr을 서빙하는
+# 동일 Vercel 프로젝트의 Production 훅이어야 합니다(다른 프로젝트면 main과 live가 불일치).
+
 on:
   push:
     branches: [main]
@@ -58,6 +61,25 @@ jobs:
           LIVE_URL="https://www.daehanminkuk.co.kr/platform-faq.html"
           ATTEMPTS=8
 
+          fetch_live_css() {
+            local cb="$1"
+            local BODY
+            BODY="$(
+              curl -sS -L \
+                -H 'Cache-Control: no-cache' \
+                -H 'Pragma: no-cache' \
+                "$LIVE_URL?cb=${cb}-$(date +%s)"
+            )"
+            printf '%s' "$BODY" | tr -d '\r' | sed -n 's/.*law-search-prd.css?v=\([0-9a-z]\+\).*/\1/p' | head -n 1 | tr -d '\r\n '
+          }
+
+          LIVE_PRE="$(fetch_live_css "pre-${GITHUB_RUN_ID}")"
+          echo "Precheck Expected=$EXPECTED_NORM / Live=$LIVE_PRE"
+          if [ "$LIVE_PRE" = "$EXPECTED_NORM" ]; then
+            echo "Production already matches expected CSS version (Git 배포 등으로 선반영된 경우)."
+            exit 0
+          fi
+
           for i in $(seq 1 $ATTEMPTS); do
             echo "== Attempt $i/$ATTEMPTS =="
             code="$(curl -sS -o /tmp/hook.body -w "%{http_code}" -X POST "$HOOK_URL")"
@@ -84,13 +106,7 @@ jobs:
               "$LIVE_URL?cb=head-${GITHUB_RUN_ID}-${i}-$(date +%s)" || true
             tr -d '\r' < /tmp/live.head | awk 'BEGIN{IGNORECASE=1} /^last-modified:|^age:|^etag:|^server:|^x-vercel-|^cache-control:/ {print}'
 
-            BODY="$(
-              curl -sS -L \
-                -H 'Cache-Control: no-cache' \
-                -H 'Pragma: no-cache' \
-                "$LIVE_URL?cb=${GITHUB_RUN_ID}-${i}-$(date +%s)"
-            )"
-            LIVE="$(printf '%s' "$BODY" | tr -d '\r' | sed -n 's/.*law-search-prd.css?v=\([0-9a-z]\+\).*/\1/p' | head -n 1 | tr -d '\r\n ')"
+            LIVE="$(fetch_live_css "${GITHUB_RUN_ID}-${i}")"
             echo "Expected=$EXPECTED_NORM / Live=$LIVE"
 
             if [ "$LIVE" = "$EXPECTED_NORM" ]; then

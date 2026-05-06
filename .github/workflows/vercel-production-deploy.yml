@@ -33,7 +33,7 @@ jobs:
       - name: Read expected CSS version from repository
         id: expected
         run: |
-          EXPECTED="$(sed -n 's/.*law-search-prd.css?v=\([0-9a-z]\+\).*/\1/p' platform-faq.html | head -n 1)"
+          EXPECTED="$(tr -d '\r' < platform-faq.html | sed -n 's/.*law-search-prd.css?v=\([0-9a-z]\+\).*/\1/p' | head -n 1 | tr -d '\r\n ')"
           if [ -z "$EXPECTED" ]; then
             echo "::error::Cannot parse expected CSS version from platform-faq.html"
             exit 1
@@ -46,30 +46,49 @@ jobs:
           DEPLOY_HOOK: ${{ secrets.VERCEL_DEPLOY_HOOK_URL }}
           EXPECTED: ${{ steps.expected.outputs.value }}
         run: |
-          set -e
+          set -u
+          HOOK_URL="$(printf '%s' "$DEPLOY_HOOK" | tr -d '\r\n ')"
+          EXPECTED_NORM="$(printf '%s' "$EXPECTED" | tr -d '\r\n ')"
+
+          if [ -z "$HOOK_URL" ]; then
+            echo "::error::VERCEL_DEPLOY_HOOK_URL is empty after trimming."
+            exit 1
+          fi
+
           LIVE_URL="https://www.daehanminkuk.co.kr/platform-faq.html"
-          ATTEMPTS=4
+          ATTEMPTS=8
 
           for i in $(seq 1 $ATTEMPTS); do
             echo "== Attempt $i/$ATTEMPTS =="
-            curl -fsSL -X POST "$DEPLOY_HOOK" >/dev/null
-            echo "Deploy hook triggered."
-            sleep 45
+            code="$(curl -sS -o /tmp/hook.body -w "%{http_code}" -X POST "$HOOK_URL")"
+            echo "Deploy hook HTTP status: $code"
+            if [ "$code" -lt 200 ] || [ "$code" -ge 300 ]; then
+              echo "::warning::Deploy hook returned non-success status. Body (first 400 bytes):"
+              head -c 400 /tmp/hook.body || true
+              echo
+            fi
+            echo "Waiting for propagation..."
+            sleep 60
 
-            BODY="$(curl -fsSL "$LIVE_URL?t=$(date +%s)")"
-            LIVE="$(echo "$BODY" | sed -n 's/.*law-search-prd.css?v=\([0-9a-z]\+\).*/\1/p' | head -n 1)"
-            echo "Expected=$EXPECTED / Live=$LIVE"
+            BODY="$(
+              curl -sS \
+                -H 'Cache-Control: no-cache' \
+                -H 'Pragma: no-cache' \
+                "$LIVE_URL?cb=${GITHUB_RUN_ID}-${i}-$(date +%s)"
+            )"
+            LIVE="$(printf '%s' "$BODY" | tr -d '\r' | sed -n 's/.*law-search-prd.css?v=\([0-9a-z]\+\).*/\1/p' | head -n 1 | tr -d '\r\n ')"
+            echo "Expected=$EXPECTED_NORM / Live=$LIVE"
 
-            if [ "$LIVE" = "$EXPECTED" ]; then
+            if [ "$LIVE" = "$EXPECTED_NORM" ]; then
               echo "Production is synced."
               exit 0
             fi
 
             if [ "$i" -lt "$ATTEMPTS" ]; then
               echo "Not synced yet. Retrying..."
-              sleep 30
+              sleep 45
             fi
           done
 
-          echo "::error::Production did not sync to expected CSS version ($EXPECTED) after $ATTEMPTS attempts."
+          echo "::error::Production did not sync to expected CSS version ($EXPECTED_NORM) after $ATTEMPTS attempts."
           exit 1

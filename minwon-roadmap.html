@@ -98,6 +98,60 @@
       min-height: 1.2em;
     }
 
+    .roadmap-ksic-results {
+      margin: 0.55rem 0 0;
+      padding: 0.62rem 0.72rem;
+      border: 1px solid #bfd3e2;
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    .roadmap-ksic-results[hidden] {
+      display: none;
+    }
+
+    .roadmap-ksic-results-list {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      display: grid;
+      gap: 0.3rem;
+      max-height: 330px;
+      overflow: auto;
+    }
+
+    .roadmap-ksic-results-item {
+      display: grid;
+      grid-template-columns: 72px 1fr 22px;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.28rem 0.34rem;
+      border-radius: 6px;
+    }
+
+    .roadmap-ksic-results-item:nth-child(odd) {
+      background: #f7fbff;
+    }
+
+    .roadmap-ksic-code-badge {
+      font-weight: 700;
+      color: #1f5f87;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .roadmap-ksic-name {
+      color: #163d56;
+      font-size: 0.92rem;
+      line-height: 1.35;
+    }
+
+    .roadmap-ksic-cat {
+      color: #527388;
+      font-size: 0.84rem;
+      font-weight: 700;
+      text-align: right;
+    }
+
     @media (max-width: 920px) {
       .roadmap-ksic-controls {
         grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -268,6 +322,9 @@
             </div>
           </form>
           <p id="roadmap-ksic-search-status" class="roadmap-ksic-search-status" role="status" aria-live="polite"></p>
+          <div id="roadmap-ksic-results" class="roadmap-ksic-results" hidden>
+            <ul id="roadmap-ksic-results-list" class="roadmap-ksic-results-list" aria-label="한국표준산업분류 검색 결과"></ul>
+          </div>
         </section>
       </article>
 
@@ -305,32 +362,146 @@
       var name = document.getElementById("roadmap-ksic-name");
       var enName = document.getElementById("roadmap-ksic-en-name");
       var topic = document.getElementById("roadmap-ksic-topic-keyword");
+      var resultsWrap = document.getElementById("roadmap-ksic-results");
+      var resultsList = document.getElementById("roadmap-ksic-results-list");
+      var searchBtn = document.getElementById("roadmap-ksic-search-btn");
+      var ksicCache = null;
+
+      var categoryNames = {
+        A: "농업·임업·어업",
+        B: "광업",
+        C: "제조업",
+        D: "전기·가스·증기·공기조절",
+        E: "수도·하수·폐기물",
+        F: "건설업",
+        G: "도매·소매업",
+        H: "운수·창고업",
+        I: "숙박·음식점업",
+        J: "정보통신업",
+        K: "금융·보험업",
+        L: "부동산업",
+        M: "전문·과학·기술 서비스업",
+        N: "사업시설 관리·지원·임대",
+        O: "공공행정·국방·사회보장",
+        P: "교육 서비스업",
+        Q: "보건·사회복지 서비스업",
+        R: "예술·스포츠·여가 서비스업",
+        S: "협회·수리·기타 개인 서비스업",
+        T: "가구 내 고용·자가소비 생산활동",
+        U: "국제·외국기관",
+      };
 
       function compact(v) {
         return String(v || "").trim();
       }
 
-      form.addEventListener("submit", function (ev) {
+      function norm(v) {
+        return compact(v).toLowerCase().replace(/\s+/g, "");
+      }
+
+      function escapeHtml(v) {
+        return String(v || "")
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/\"/g, "&quot;");
+      }
+
+      function renderResults(rows) {
+        if (!resultsWrap || !resultsList) return;
+        if (!rows.length) {
+          resultsList.innerHTML = "";
+          resultsWrap.hidden = true;
+          return;
+        }
+        resultsWrap.hidden = false;
+        resultsList.innerHTML = rows
+          .map(function (row) {
+            return (
+              '<li class="roadmap-ksic-results-item">' +
+              '<span class="roadmap-ksic-code-badge">' +
+              escapeHtml(row.code) +
+              "</span>" +
+              '<span class="roadmap-ksic-name">' +
+              escapeHtml(row.name) +
+              "</span>" +
+              '<span class="roadmap-ksic-cat">' +
+              escapeHtml(row.category || "") +
+              "</span>" +
+              "</li>"
+            );
+          })
+          .join("");
+      }
+
+      async function ensureKsicItems() {
+        if (ksicCache) return ksicCache;
+        var res = await fetch("data/ksic11-codes.json", { cache: "no-cache" });
+        if (!res.ok) throw new Error("KSIC 데이터 파일을 불러오지 못했습니다.");
+        var data = await res.json();
+        ksicCache = Array.isArray(data && data.items) ? data.items : [];
+        return ksicCache;
+      }
+
+      form.addEventListener("submit", async function (ev) {
         ev.preventDefault();
 
-        var parts = [
-          compact(category && category.value),
-          compact(code && code.value),
-          compact(name && name.value),
-          compact(enName && enName.value),
-          compact(topic && topic.value),
-        ].filter(Boolean);
+        var catVal = compact(category && category.value);
+        var codeVal = norm(code && code.value);
+        var nameVal = norm(name && name.value);
+        var enVal = norm(enName && enName.value);
+        var topicVal = norm(topic && topic.value);
+        var anyInput = catVal || codeVal || nameVal || enVal || topicVal;
 
-        if (!parts.length) {
+        if (!anyInput) {
           status.textContent = "최소 1개 항목 이상 입력해 주세요.";
+          renderResults([]);
           if (topic) topic.focus();
           return;
         }
 
-        var query = "한국표준산업분류 " + parts.join(" ");
-        var url = "https://www.google.com/search?q=" + encodeURIComponent(query);
-        status.textContent = "검색 결과를 새 창에서 엽니다.";
-        window.open(url, "_blank", "noopener,noreferrer");
+        try {
+          if (searchBtn) searchBtn.disabled = true;
+          status.textContent = "한국표준산업분류 제11차 개정 해설서 기준 데이터에서 검색 중입니다...";
+          var items = await ensureKsicItems();
+          var rows = items.filter(function (row) {
+            var rowCode = norm(row.code);
+            var rowName = norm(row.name);
+            if (catVal && String(row.category || "") !== catVal) return false;
+            if (codeVal && rowCode.indexOf(codeVal) === -1) return false;
+            if (nameVal && rowName.indexOf(nameVal) === -1) return false;
+            if (enVal && rowName.indexOf(enVal) === -1) return false;
+            if (topicVal && rowName.indexOf(topicVal) === -1) return false;
+            return true;
+          });
+          rows.sort(function (a, b) {
+            return String(a.code || "").localeCompare(String(b.code || ""));
+          });
+
+          var capped = rows.slice(0, 80);
+          renderResults(
+            capped.map(function (r) {
+              return {
+                code: r.code,
+                name: r.name,
+                category: r.category ? r.category : "",
+              };
+            })
+          );
+          var catLabel = catVal ? " (" + catVal + " " + (categoryNames[catVal] || "") + ")" : "";
+          status.textContent =
+            "총 " +
+            rows.length +
+            "건 검색됨" +
+            catLabel +
+            (rows.length > capped.length ? " · 상위 " + capped.length + "건 표시" : "") +
+            " · 기준: 한국표준산업분류 제11차 개정 해설서(PDF)";
+        } catch (err) {
+          renderResults([]);
+          status.textContent = "검색 데이터 로드 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.";
+        } finally {
+          if (searchBtn) searchBtn.disabled = false;
+        }
       });
     })();
   </script>

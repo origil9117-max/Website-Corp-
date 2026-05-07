@@ -17,7 +17,12 @@ REQUEST_TIMEOUT = 20
 def clean_html_to_text(raw: str) -> str:
     if not raw:
         return ""
-    text = re.sub(r"(?i)<br\\s*/?>", "\n", raw)
+    # Preserve pseudo labels before generic tag stripping.
+    text = raw
+    text = re.sub(r"<\s*예\s*시\s*>", "\n[[EXAMPLE_LABEL]]\n", text, flags=re.IGNORECASE)
+    text = re.sub(r"<\s*제\s*외\s*>", "\n[[EXCLUDE_LABEL]]\n", text, flags=re.IGNORECASE)
+    text = re.sub(r"<\s*참\s*고\s*>", "\n[[NOTE_LABEL]]\n", text, flags=re.IGNORECASE)
+    text = re.sub(r"(?i)<br\\s*/?>", "\n", text)
     text = re.sub(r"(?is)<!--.*?-->", "", text)
     text = re.sub(r"(?is)<script.*?>.*?</script>", "", text)
     text = re.sub(r"(?is)<style.*?>.*?</style>", "", text)
@@ -41,6 +46,10 @@ def clean_html_to_text(raw: str) -> str:
         seen.add(p)
         dedup_parts.append(p)
     text = "\n\n".join(dedup_parts)
+    text = text.replace("[[EXAMPLE_LABEL]]", "<예시>")
+    text = text.replace("[[EXCLUDE_LABEL]]", "<제외>")
+    text = text.replace("[[NOTE_LABEL]]", "<참고>")
+    text = re.sub(r"\n{3,}", "\n\n", text)
     return text.strip()
 
 
@@ -60,14 +69,24 @@ def fetch_one(code: str, session: requests.Session):
         "pageIndex": "1",
         "categoryMenu": "",
     }
-    r = session.post(
-        DETAIL_URL,
-        data=payload,
-        timeout=REQUEST_TIMEOUT,
-        verify=False,
-    )
-    r.raise_for_status()
-    html_text = r.content.decode("utf-8", errors="ignore")
+    last_exc = None
+    html_text = ""
+    for _ in range(3):
+        try:
+            r = session.post(
+                DETAIL_URL,
+                data=payload,
+                timeout=REQUEST_TIMEOUT,
+                verify=False,
+            )
+            r.raise_for_status()
+            html_text = r.content.decode("utf-8", errors="ignore")
+            break
+        except Exception as exc:  # noqa: BLE001
+            last_exc = exc
+            time.sleep(0.35)
+    if not html_text:
+        raise RuntimeError(f"fetch failed for {code}: {last_exc}")
     description = extract_detail_field(html_text, "설명")
     index_terms = extract_detail_field(html_text, "색인어")
     return code, description, index_terms

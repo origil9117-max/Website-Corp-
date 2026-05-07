@@ -591,7 +591,14 @@
             var rowName = norm(row.name);
             var rowEn = norm(row.description);
             if (catVal && String(row.category || "") !== catVal) return false;
-            if (codeVal && rowCode.indexOf(codeVal) === -1) return false;
+            if (codeVal) {
+              var isAllDigits = /^\d+$/.test(codeVal);
+              if (isAllDigits && (codeVal.length === 4 || codeVal.length === 5)) {
+                if (rowCode !== codeVal) return false;
+              } else if (rowCode.indexOf(codeVal) === -1) {
+                return false;
+              }
+            }
             if (nameVal && rowName.indexOf(nameVal) === -1) return false;
             if (enVal && rowEn.indexOf(enVal) === -1) return false;
             if (topicVal && rowName.indexOf(topicVal) === -1) return false;

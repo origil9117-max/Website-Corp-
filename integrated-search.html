@@ -595,7 +595,22 @@
           permit: "인허가 민원",
           appeal: "행정심판"
         };
+        var topicLabelMap = {
+          "consular-services": "중국영사관·베트남영사관 업무",
+          "consular-apostille": "영사인증·아포스티유"
+        };
+        var topicRenameMap = {
+          "consular-apostille": "consular-services"
+        };
+        function normalizeTopic(topic) {
+          var key = String(topic || "").trim();
+          return topicRenameMap[key] || key;
+        }
+        function isPracticeService(service) {
+          return Object.prototype.hasOwnProperty.call(serviceLabelMap, String(service || "").trim());
+        }
         var list = [];
+        var seen = new Set();
         function toHref(service, topic) {
           var href = "service-post.html?service=" + encodeURIComponent(String(service || ""));
           if (topic) href += "&topic=" + encodeURIComponent(String(topic || ""));
@@ -603,17 +618,26 @@
         }
         function pushPost(post) {
           var service = String(post && post.service ? post.service : "").trim();
-          var topic = String(post && post.topic ? post.topic : "").trim();
+          if (!isPracticeService(service)) return;
+          var topic = normalizeTopic(post && post.topic ? post.topic : "");
           var title = String(post && post.title ? post.title : "").trim();
           if (!service || !title) return;
+          var dedupeKey = [service, topic, title].join("||");
+          if (seen.has(dedupeKey)) return;
+          seen.add(dedupeKey);
           var body = stripHtmlToText(post && post.body ? post.body : "");
           var serviceLabel = serviceLabelMap[service] || service;
+          var topicLabel = topicLabelMap[topic] || topic;
           list.push({
             source: "주요업무분야",
             title: title,
-            desc: "[게시글] " + serviceLabel + (body ? " · " + body.slice(0, 180) : ""),
+            desc:
+              "[게시글] " +
+              serviceLabel +
+              (topicLabel ? " · " + topicLabel : "") +
+              (body ? " · " + body.slice(0, 180) : ""),
             href: toHref(service, topic),
-            tags: [serviceLabel, service, topic, title, body, "게시글", "업무게시"].join(" ")
+            tags: [serviceLabel, service, topic, topicLabel, title, body, "게시글", "업무게시", "주요업무분야"].join(" ")
           });
         }
 

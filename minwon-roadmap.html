@@ -489,10 +489,11 @@
           var rows = items.filter(function (row) {
             var rowCode = norm(row.code);
             var rowName = norm(row.name);
+            var rowEn = norm(row.enName);
             if (catVal && String(row.category || "") !== catVal) return false;
             if (codeVal && rowCode.indexOf(codeVal) === -1) return false;
             if (nameVal && rowName.indexOf(nameVal) === -1) return false;
-            if (enVal && rowName.indexOf(enVal) === -1) return false;
+            if (enVal && rowEn.indexOf(enVal) === -1) return false;
             if (topicVal && rowName.indexOf(topicVal) === -1) return false;
             return true;
           });

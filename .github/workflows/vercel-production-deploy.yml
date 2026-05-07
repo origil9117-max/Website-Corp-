@@ -99,10 +99,7 @@ jobs:
           echo "Precheck Expected CSS=$EXPECTED_CSS_NORM / Live CSS=$LIVE_PRE_CSS"
           echo "Precheck Expected emb-marker=$EXPECTED_EMB_MARKER_NORM / Live emb-marker=$LIVE_PRE_EMB_MARKER"
           debug_expected_live "$LIVE_PRE_CSS" "$LIVE_PRE_EMB_MARKER"
-          if [ "$LIVE_PRE_CSS" = "$EXPECTED_CSS_NORM" ] && [ "$LIVE_PRE_EMB_MARKER" = "present" ]; then
-            echo "Production already matches expected HTML content."
-            exit 0
-          fi
+          echo "Precheck matched 여부와 무관하게 최신 커밋 반영을 위해 deploy hook을 계속 진행합니다."
 
           for i in $(seq 1 $ATTEMPTS); do
             echo "== Attempt $i/$ATTEMPTS =="

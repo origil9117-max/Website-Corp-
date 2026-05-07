@@ -81,6 +81,11 @@ jobs:
             echo "::error::Cannot find law reset marker in law-precedent-search.html"
             exit 1
           fi
+          EXPECTED_LAW35_API_MARKER="$(tr -d '\r' < api/law-article.js | grep -o '①법인은 이사 기타 대표자가 그 직무에 관하여 타인에게 가한 손해를 배상할 책임이 있다' | head -n 1 | tr -d '\r\n ')"
+          if [ -z "$EXPECTED_LAW35_API_MARKER" ]; then
+            echo "::error::Cannot find 민법 제35조 fallback marker in api/law-article.js"
+            exit 1
+          fi
           EXPECTED_LAW_OLD_TEXT_MARKER="$(tr -d '\r' < law-precedent-search.html | grep -o '목록은 키워드 검색 결과입니다' | head -n 1 | tr -d '\r\n ')"
           if [ -n "$EXPECTED_LAW_OLD_TEXT_MARKER" ]; then
             echo "::error::Legacy law precedent disclaimer still exists in repository file"
@@ -95,6 +100,7 @@ jobs:
           echo "index_search_icon_marker=$EXPECTED_INDEX_SEARCH_ICON_MARKER" >> "$GITHUB_OUTPUT"
           echo "law_portal_tip_marker=$EXPECTED_LAW_PORTAL_TIP_MARKER" >> "$GITHUB_OUTPUT"
           echo "law_reset_marker=$EXPECTED_LAW_RESET_MARKER" >> "$GITHUB_OUTPUT"
+          echo "law35_api_marker=$EXPECTED_LAW35_API_MARKER" >> "$GITHUB_OUTPUT"
           echo "Expected CSS version: $EXPECTED_CSS"
           echo "Expected embassy marker: $EXPECTED_EMB_MARKER"
           echo "Expected main button marker: $EXPECTED_MAIN_BTN_MARKER"
@@ -104,6 +110,7 @@ jobs:
           echo "Expected index search icon marker: $EXPECTED_INDEX_SEARCH_ICON_MARKER"
           echo "Expected law portal tip marker: $EXPECTED_LAW_PORTAL_TIP_MARKER"
           echo "Expected law reset marker: $EXPECTED_LAW_RESET_MARKER"
+          echo "Expected law35 api marker: $EXPECTED_LAW35_API_MARKER"
 
       - name: Deploy and verify live sync (auto-retry)
         env:
@@ -117,6 +124,7 @@ jobs:
           EXPECTED_INDEX_SEARCH_ICON_MARKER: ${{ steps.expected.outputs.index_search_icon_marker }}
           EXPECTED_LAW_PORTAL_TIP_MARKER: ${{ steps.expected.outputs.law_portal_tip_marker }}
           EXPECTED_LAW_RESET_MARKER: ${{ steps.expected.outputs.law_reset_marker }}
+          EXPECTED_LAW35_API_MARKER: ${{ steps.expected.outputs.law35_api_marker }}
         run: |
           set -u
           HOOK_URL="$(printf '%s' "$DEPLOY_HOOK" | tr -d '\r\n ')"
@@ -129,6 +137,7 @@ jobs:
           EXPECTED_INDEX_SEARCH_ICON_MARKER_NORM="$(printf '%s' "$EXPECTED_INDEX_SEARCH_ICON_MARKER" | tr -d '\r\n ')"
           EXPECTED_LAW_PORTAL_TIP_MARKER_NORM="$(printf '%s' "$EXPECTED_LAW_PORTAL_TIP_MARKER" | tr -d '\r\n ')"
           EXPECTED_LAW_RESET_MARKER_NORM="$(printf '%s' "$EXPECTED_LAW_RESET_MARKER" | tr -d '\r\n ')"
+          EXPECTED_LAW35_API_MARKER_NORM="$(printf '%s' "$EXPECTED_LAW35_API_MARKER" | tr -d '\r\n ')"
 
           if [ -z "$HOOK_URL" ]; then
             echo "::error::VERCEL_DEPLOY_HOOK_URL is empty after trimming."
@@ -139,6 +148,7 @@ jobs:
           LIVE_URL_INTEGRATED="https://www.daehanminkuk.co.kr/integrated-search.html"
           LIVE_URL_INDEX="https://www.daehanminkuk.co.kr/index.html"
           LIVE_URL_LAW="https://www.daehanminkuk.co.kr/law-precedent-search.html"
+          LIVE_URL_LAW_API="https://www.daehanminkuk.co.kr/api/law-article?q=%EB%AF%BC%EB%B2%95%EC%A0%9C35%EC%A1%B0"
           ATTEMPTS=8
 
           fetch_live_body() {
@@ -189,6 +199,10 @@ jobs:
             printf '%s' "$1" | tr -d '\r' | grep -q '목록은 키워드 검색 결과입니다'
           }
 
+          has_law35_api_body_marker() {
+            printf '%s' "$1" | tr -d '\r' | grep -q '①법인은 이사 기타 대표자가 그 직무에 관하여 타인에게 가한 손해를 배상할 책임이 있다'
+          }
+
           debug_expected_live() {
             echo "::notice::DEBUG expected_css=$EXPECTED_CSS_NORM expected_emb_marker=$EXPECTED_EMB_MARKER_NORM live_css=$1 live_emb_marker=$2"
           }
@@ -234,6 +248,11 @@ jobs:
           if has_law_reset_marker "$LIVE_PRE_LAW_BODY"; then
             LIVE_PRE_LAW_RESET_MARKER="present"
           fi
+          LIVE_PRE_LAW_API_BODY="$(curl -sS -L -H 'Cache-Control: no-cache' -H 'Pragma: no-cache' "$LIVE_URL_LAW_API&cb=pre-${GITHUB_RUN_ID}-$(date +%s)")"
+          LIVE_PRE_LAW35_API_MARKER="missing"
+          if has_law35_api_body_marker "$LIVE_PRE_LAW_API_BODY"; then
+            LIVE_PRE_LAW35_API_MARKER="present"
+          fi
           echo "Precheck Expected CSS=$EXPECTED_CSS_NORM / Live CSS=$LIVE_PRE_CSS"
           echo "Precheck Expected emb-marker=$EXPECTED_EMB_MARKER_NORM / Live emb-marker=$LIVE_PRE_EMB_MARKER"
           echo "Precheck Expected main-btn-marker=$EXPECTED_MAIN_BTN_MARKER_NORM / Live main-btn-marker=$LIVE_PRE_MAIN_BTN_MARKER"
@@ -243,6 +262,7 @@ jobs:
           echo "Precheck Expected index-search-icon=$EXPECTED_INDEX_SEARCH_ICON_MARKER_NORM / Live index-search-icon=$LIVE_PRE_INDEX_SEARCH_ICON_MARKER"
           echo "Precheck Expected law-portal-tip=$EXPECTED_LAW_PORTAL_TIP_MARKER_NORM / Live law-portal-tip=$LIVE_PRE_LAW_PORTAL_TIP_MARKER"
           echo "Precheck Expected law-reset=$EXPECTED_LAW_RESET_MARKER_NORM / Live law-reset=$LIVE_PRE_LAW_RESET_MARKER"
+          echo "Precheck Expected law35-api=$EXPECTED_LAW35_API_MARKER_NORM / Live law35-api=$LIVE_PRE_LAW35_API_MARKER"
           echo "Precheck Expected law-old-text=missing / Live law-old-text=$LIVE_PRE_LAW_OLD_TEXT_MARKER"
           debug_expected_live "$LIVE_PRE_CSS" "$LIVE_PRE_EMB_MARKER"
           echo "Precheck matched 여부와 무관하게 최신 커밋 반영을 위해 deploy hook을 계속 진행합니다."
@@ -314,6 +334,11 @@ jobs:
             if has_law_reset_marker "$LIVE_LAW_BODY"; then
               LIVE_LAW_RESET_MARKER="present"
             fi
+            LIVE_LAW_API_BODY="$(curl -sS -L -H 'Cache-Control: no-cache' -H 'Pragma: no-cache' "$LIVE_URL_LAW_API&cb=${GITHUB_RUN_ID}-${i}-$(date +%s)")"
+            LIVE_LAW35_API_MARKER="missing"
+            if has_law35_api_body_marker "$LIVE_LAW_API_BODY"; then
+              LIVE_LAW35_API_MARKER="present"
+            fi
             echo "Expected CSS=$EXPECTED_CSS_NORM / Live CSS=$LIVE_CSS"
             echo "Expected emb-marker=$EXPECTED_EMB_MARKER_NORM / Live emb-marker=$LIVE_EMB_MARKER"
             echo "Expected main-btn-marker=$EXPECTED_MAIN_BTN_MARKER_NORM / Live main-btn-marker=$LIVE_MAIN_BTN_MARKER"
@@ -323,10 +348,11 @@ jobs:
             echo "Expected index-search-icon=$EXPECTED_INDEX_SEARCH_ICON_MARKER_NORM / Live index-search-icon=$LIVE_INDEX_SEARCH_ICON_MARKER"
             echo "Expected law-portal-tip=$EXPECTED_LAW_PORTAL_TIP_MARKER_NORM / Live law-portal-tip=$LIVE_LAW_PORTAL_TIP_MARKER"
             echo "Expected law-reset=$EXPECTED_LAW_RESET_MARKER_NORM / Live law-reset=$LIVE_LAW_RESET_MARKER"
+            echo "Expected law35-api=$EXPECTED_LAW35_API_MARKER_NORM / Live law35-api=$LIVE_LAW35_API_MARKER"
             echo "Expected law-old-text=missing / Live law-old-text=$LIVE_LAW_OLD_TEXT_MARKER"
             debug_expected_live "$LIVE_CSS" "$LIVE_EMB_MARKER"
 
-            if [ "$LIVE_CSS" = "$EXPECTED_CSS_NORM" ] && [ "$LIVE_EMB_MARKER" = "present" ] && [ "$LIVE_MAIN_BTN_MARKER" = "present" ] && [ "$LIVE_MAIN_BTN_FIXED_MARKER" = "present" ] && [ "$LIVE_INTEGRATED_PLACEHOLDER_MARKER" = "present" ] && [ "$LIVE_INDEX_SEARCH_BG_MARKER" = "present" ] && [ "$LIVE_INDEX_SEARCH_ICON_MARKER" = "present" ] && [ "$LIVE_LAW_PORTAL_TIP_MARKER" = "present" ] && [ "$LIVE_LAW_RESET_MARKER" = "present" ] && [ "$LIVE_LAW_OLD_TEXT_MARKER" = "missing" ]; then
+            if [ "$LIVE_CSS" = "$EXPECTED_CSS_NORM" ] && [ "$LIVE_EMB_MARKER" = "present" ] && [ "$LIVE_MAIN_BTN_MARKER" = "present" ] && [ "$LIVE_MAIN_BTN_FIXED_MARKER" = "present" ] && [ "$LIVE_INTEGRATED_PLACEHOLDER_MARKER" = "present" ] && [ "$LIVE_INDEX_SEARCH_BG_MARKER" = "present" ] && [ "$LIVE_INDEX_SEARCH_ICON_MARKER" = "present" ] && [ "$LIVE_LAW_PORTAL_TIP_MARKER" = "present" ] && [ "$LIVE_LAW_RESET_MARKER" = "present" ] && [ "$LIVE_LAW35_API_MARKER" = "present" ] && [ "$LIVE_LAW_OLD_TEXT_MARKER" = "missing" ]; then
               echo "Production is synced."
               exit 0
             fi
@@ -338,6 +364,6 @@ jobs:
           done
 
           echo "::error::Production did not sync to expected HTML markers after $ATTEMPTS attempts."
-          echo "::error::Expected CSS=$EXPECTED_CSS_NORM, Expected emb-marker=$EXPECTED_EMB_MARKER_NORM, Expected main-btn-marker=$EXPECTED_MAIN_BTN_MARKER_NORM, Expected main-btn-fixed=$EXPECTED_MAIN_BTN_FIXED_MARKER_NORM, Expected integrated-placeholder=$EXPECTED_INTEGRATED_PLACEHOLDER_MARKER_NORM, Expected index-search-bg=$EXPECTED_INDEX_SEARCH_BG_MARKER_NORM, Expected index-search-icon=$EXPECTED_INDEX_SEARCH_ICON_MARKER_NORM, Expected law-portal-tip=$EXPECTED_LAW_PORTAL_TIP_MARKER_NORM, Expected law-reset=$EXPECTED_LAW_RESET_MARKER_NORM, Expected law-old-text=missing"
+          echo "::error::Expected CSS=$EXPECTED_CSS_NORM, Expected emb-marker=$EXPECTED_EMB_MARKER_NORM, Expected main-btn-marker=$EXPECTED_MAIN_BTN_MARKER_NORM, Expected main-btn-fixed=$EXPECTED_MAIN_BTN_FIXED_MARKER_NORM, Expected integrated-placeholder=$EXPECTED_INTEGRATED_PLACEHOLDER_MARKER_NORM, Expected index-search-bg=$EXPECTED_INDEX_SEARCH_BG_MARKER_NORM, Expected index-search-icon=$EXPECTED_INDEX_SEARCH_ICON_MARKER_NORM, Expected law-portal-tip=$EXPECTED_LAW_PORTAL_TIP_MARKER_NORM, Expected law-reset=$EXPECTED_LAW_RESET_MARKER_NORM, Expected law35-api=$EXPECTED_LAW35_API_MARKER_NORM, Expected law-old-text=missing"
           echo "::error::Next checks: Vercel Deploy Hook must belong to the SAME project that serves $LIVE_URL (Production), and Production Git branch must be main."
           exit 1

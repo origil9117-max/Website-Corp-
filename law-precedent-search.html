@@ -219,11 +219,17 @@
 
       function resetLawSearchToPreResults() {
         document.body.classList.remove("law-expc-hit-isolate");
+        if (input) input.value = "";
+        if (inputPrdKw) inputPrdKw.value = "";
         renderResultPanels("");
         applySpecFilter("");
         status.textContent = "";
         nextLawTopicHeadingKind = "statute";
         applyLawTopicSearchHeading("statute");
+        try {
+          var cleanUrl = window.location.pathname + (window.location.hash || "");
+          window.history.replaceState({}, "", cleanUrl);
+        } catch (e) {}
         syncMainSearchToPrdKw();
         updateLawSearchBackUi();
         var hero = document.querySelector(".law-prd-hero");

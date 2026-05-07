@@ -46,9 +46,9 @@ jobs:
             echo "::error::Cannot find embassy deep-link marker in platform-faq.html"
             exit 1
           fi
-          EXPECTED_MAIN_BTN_MARKER="$(tr -d '\r' < integrated-search.html | grep -o 'top: clamp(5.8rem, 46vh, 11rem);' | head -n 1 | tr -d '\r\n ')"
+          EXPECTED_MAIN_BTN_MARKER="$(tr -d '\r' < integrated-search.html | grep -o 'class="main-home-btn"' | head -n 1 | tr -d '\r\n ')"
           if [ -z "$EXPECTED_MAIN_BTN_MARKER" ]; then
-            echo "::error::Cannot find main button clamp marker in integrated-search.html"
+            echo "::error::Cannot find main-home-btn marker in integrated-search.html"
             exit 1
           fi
           echo "css=$EXPECTED_CSS" >> "$GITHUB_OUTPUT"
@@ -97,7 +97,7 @@ jobs:
           }
 
           has_main_btn_marker() {
-            printf '%s' "$1" | tr -d '\r' | grep -q 'top: clamp(5.8rem, 46vh, 11rem);'
+            printf '%s' "$1" | tr -d '\r' | grep -q 'class="main-home-btn"'
           }
 
           debug_expected_live() {

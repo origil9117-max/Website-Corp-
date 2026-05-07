@@ -1,6 +1,6 @@
 {
   "source": "통계청 고시 제2024-2호 한국표준산업분류 제11차 개정 해설서",
-  "count": 1342,
+  "count": 1362,
   "items": [
     {
       "code": "0111",
@@ -32,7 +32,7 @@
       "enName": "Growingofvegetablecrops",
       "category": "A",
       "level": "소분류",
-      "description": ""
+      "description": "노지에서각종채소작물을재배하는산업활동을말한다.노지에서깻잎등과같이채소로사용하기위하여각종작물을재배하는경우에도여기에분류된다"
     },
     {
       "code": "01122",
@@ -40,7 +40,7 @@
       "enName": "Growingofhorticulturalproducts",
       "category": "A",
       "level": "소분류",
-      "description": ""
+      "description": "노지에서화초,잔디,관상수등과같은장식,관상,조원및조경용의수목․꽃․풀등을재배하는산업활동을말한다"
     },
     {
       "code": "01123",
@@ -48,7 +48,7 @@
       "enName": "Growingofseedcropsandnurseryproducts",
       "category": "A",
       "level": "소분류",
-      "description": ""
+      "description": "노지또는시설에서각종농작물의종자,버섯종균,묘목등을생산하는산업활동을말한다"
     },
     {
       "code": "0113",
@@ -64,7 +64,7 @@
       "enName": "Growingoffruit",
       "category": "A",
       "level": "소분류",
-      "description": ""
+      "description": "노지에서견과(땅콩제외)를포함한각종과실작물을재배하는산업활동을말한다"
     },
     {
       "code": "01132",
@@ -88,7 +88,7 @@
       "enName": "Growingofothercrops",
       "category": "A",
       "level": "소분류",
-      "description": ""
+      "description": "노지에서약용작물,사료작물,기름추출용작물및공업용원료작물등달리분류되지않은기타작물을재배하는산업활동을말한다"
     },
     {
       "code": "0115",
@@ -112,7 +112,7 @@
       "enName": "Raisingofdairycattle",
       "category": "A",
       "level": "소분류",
-      "description": ""
+      "description": "우유를생산하기위하여젖소를사육하는산업활동을말한다"
     },
     {
       "code": "01212",
@@ -120,7 +120,7 @@
       "enName": "Raisingofbeefcattle",
       "category": "A",
       "level": "소분류",
-      "description": ""
+      "description": "쇠고기를생산하기위하여육우를사육하는산업활동을말한다.젖소이외기타용도의소사육업도포함한다"
     },
     {
       "code": "0122",
@@ -136,7 +136,7 @@
       "enName": "Raisingofpigs",
       "category": "A",
       "level": "소분류",
-      "description": ""
+      "description": "각종용도의돼지,멧돼지를번식및사육하는산업활동을말한다"
     },
     {
       "code": "0123",
@@ -152,7 +152,7 @@
       "enName": "Raisingofchickens",
       "category": "A",
       "level": "소분류",
-      "description": ""
+      "description": "각종용도의닭을사육하거나병아리를부화하는산업활동을말한다. 농업, 임업 및 어업A 농업， 임업 및 어업 151"
     },
     {
       "code": "01239",
@@ -176,7 +176,7 @@
       "enName": "Raisingofhorses,sheepandgoats",
       "category": "A",
       "level": "소분류",
-      "description": ""
+      "description": "대분류 각종용도의말,양및염소를사육하는산업활동을말한다"
     },
     {
       "code": "0141",
@@ -232,7 +232,7 @@
       "enName": "Operationofforesttreenurseries",
       "category": "A",
       "level": "소분류",
-      "description": ""
+      "description": "조림및육림등임업용수목의종자및묘목을생산또는채취하는산업활동을말한다"
     },
     {
       "code": "02012",
@@ -240,7 +240,7 @@
       "enName": "Afforestation",
       "category": "A",
       "level": "소분류",
-      "description": ""
+      "description": "대분류 임목을생산하기위하여산림에서나무를심고,가꾸고,보호하는산업활동을말한다"
     },
     {
       "code": "0202",
@@ -256,7 +256,7 @@
       "enName": "Logging",
       "category": "A",
       "level": "소분류",
-      "description": ""
+      "description": "원목과연료용목재를벌목하는산업활동을말한다"
     },
     {
       "code": "0203",
@@ -272,7 +272,7 @@
       "enName": "Gatheringofnon-woodforestproducts",
       "category": "A",
       "level": "소분류",
-      "description": ""
+      "description": "자연적으로번식․생장하는각종용도의야생식물및식물성물질을채취하는산업활동을말한다.야생딸기,버섯,송로및견과등식용가능한야생식물을채취하는활동도포함한다"
     },
     {
       "code": "0204",
@@ -296,7 +296,7 @@
       "enName": "Deepseefishing",
       "category": "A",
       "level": "소분류",
-      "description": ""
+      "description": "원양에서어류,갑각류,연체동물,해조류및기타수산동․식물을채취또는포획하는산업활동을말한다"
     },
     {
       "code": "03112",
@@ -304,7 +304,7 @@
       "enName": "Littoralfishing",
       "category": "A",
       "level": "소분류",
-      "description": ""
+      "description": "연안및근해에서어류,갑각류,연체동물,해조류및기타수산동․식물을채취또는포획하는산업활동을말한다"
     },
     {
       "code": "0312",
@@ -320,7 +320,7 @@
       "enName": "Marineaquaculture",
       "category": "A",
       "level": "소분류",
-      "description": ""
+      "description": "해수면또는육상에서해수를이용하여각종수산동․식물을증식또는양식하는산업활동을말한다"
     },
     {
       "code": "03212",
@@ -328,7 +328,7 @@
       "enName": "Inlandaquaculture",
       "category": "A",
       "level": "소분류",
-      "description": ""
+      "description": "내수면에서각종수산동․식물을증식또는양식하는산업활동을말한다"
     },
     {
       "code": "03213",
@@ -384,7 +384,7 @@
       "enName": "Quarryingoflimestone,gypsumandclays",
       "category": "B",
       "level": "소분류",
-      "description": ""
+      "description": "천연석고채굴과석회,플라스터,시멘트제조용및농업용등의석회석을채굴하는산업활동과각종용도의고령토,고령토질의점토및기타점토와기타내화용의토사석을채굴하는산업활동을말한다.백악및백운석을채굴하는산업활동도포함한다"
     },
     {
       "code": "0712",
@@ -472,7 +472,7 @@
       "enName": "Slaughteringofpoultry",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "닭,오리등가금및조류등을자영또는임가공방식으로도축하는산업활동을말한다"
     },
     {
       "code": "1012",
@@ -552,7 +552,7 @@
       "enName": "Manufactureofkimchi,koreanpickedvegetables",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "배추등채소류를주원료로비식용부분을제거하고절임및발효시키거나이를가공한배추김치,기타김치류를제조하는산업활동을말한다"
     },
     {
       "code": "10302",
@@ -576,7 +576,7 @@
       "enName": "Manufactureofanimaloilsandfats",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "동물성 유지 제조업코드변경"
     },
     {
       "code": "10412",
@@ -584,7 +584,7 @@
       "enName": "Manufactureofvegetableoilsandfats",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "식물성 유지 제조업코드변경"
     },
     {
       "code": "10413",
@@ -624,7 +624,7 @@
       "enName": "Polishingofcereals",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "각종곡물을도정하여도정곡물을생산하는산업활동을말한다"
     },
     {
       "code": "10512",
@@ -632,7 +632,7 @@
       "enName": "Millingofcereals",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "각종곡물,건조한채소,뿌리또는덩이줄기(괴경),과실및견과등을분쇄또는마쇄하여이들의분및조분을생산하는산업활동을말한다.동물사료용재료와줄기,뿌리등을절단․분쇄하는활동은제외된다"
     },
     {
       "code": "10513",
@@ -672,7 +672,7 @@
       "enName": "Manufactureofricecakes",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "각종떡류및유사제품을제조하는산업활동을말한다"
     },
     {
       "code": "10602",
@@ -680,7 +680,7 @@
       "enName": "Manufactureofbakeryproducts",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "제 조 업 C 제 조 업 193 신선․냉동된빵및생과자를제조하는산업활동을말한다"
     },
     {
       "code": "1070",
@@ -696,7 +696,7 @@
       "enName": "Manufactureofboxlunches",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "도시락류 제조업코드변경"
     },
     {
       "code": "1081",
@@ -712,7 +712,7 @@
       "enName": "Manufactureofsugar",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "사탕수수및사탕무등으로원당및당즙(시럽)을제조하거나원당을정제하여정제당을생산하는산업활동을말한다"
     },
     {
       "code": "10820",
@@ -752,7 +752,7 @@
       "enName": "Manufactureofsoysauceandsoybeanpaste",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "콩,보리,밀,탈지대두등을발효시켜메주및각종장류를제조하는산업활동을말한다"
     },
     {
       "code": "10839",
@@ -776,7 +776,7 @@
       "enName": "Processingofcoffee",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "커피가공품,커피를함유하는커피대용품및농축물생산과이들을재료로하는조제식품을제조하는산업활동을말한다"
     },
     {
       "code": "10892",
@@ -784,7 +784,7 @@
       "enName": "Processingoftea",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "율무,유자,꽃잎,곡물등으로각종차류를제조하는산업활동을말하며,음료로가공된차제품은제외한다"
     },
     {
       "code": "10893",
@@ -808,7 +808,7 @@
       "enName": "Manufactureofginsengproducts",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "인삼식품 제조업코드변경"
     },
     {
       "code": "10896",
@@ -824,7 +824,7 @@
       "enName": "Manufactureofhealthfunctionalfoods",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "건강기능식품 제조업코드변경"
     },
     {
       "code": "10901",
@@ -840,7 +840,7 @@
       "enName": "Manufactureofformulafeeds",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "가금류를포함한가축용,어류양식용,실험동물용각종배합사료를생산하는산업활동을말한다"
     },
     {
       "code": "1111",
@@ -856,7 +856,7 @@
       "enName": "Manufactureofrawricewinesandrefinedricewines",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "쌀,보리,밀등곡식을발효하여탁주,약주를제조하는산업활동을말한다"
     },
     {
       "code": "11112",
@@ -864,7 +864,7 @@
       "enName": "Manufactureofmaltandmaltliquors",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "보리,밀,맥아밀등을발아및건조시켜맥아및맥아분을생산하거나맥아를원료로맥주를제조하는산업활동을말한다"
     },
     {
       "code": "11119",
@@ -872,7 +872,7 @@
       "enName": "Manufactureofotherfermentedalcoholicbeverages",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "과실및기타식물성물질을발효시켜기타의발효주를제조하는산업활동을말한다"
     },
     {
       "code": "1112",
@@ -888,7 +888,7 @@
       "enName": "Manufactureofethylalcoholandneutralspirits",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "고구마,감자등전분또는당분을함유하는원료를발효및증류시켜비변성에틸알코올및중성주정을생산하는산업활동을말한다"
     },
     {
       "code": "11122",
@@ -896,7 +896,7 @@
       "enName": "Manufactureofblendedanddistilledsoju",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "증류소주,희석소주또는혼합소주를제조하는산업활동을말한다"
     },
     {
       "code": "11201",
@@ -904,7 +904,7 @@
       "enName": "Manufactureofice,exceptdryice",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "식용또는냉장용얼음및인조눈(雪)을생산하는산업활동을말한다.천연얼음을채취하여저장하는경우도포함한다"
     },
     {
       "code": "1200",
@@ -928,7 +928,7 @@
       "enName": "Spinningofcotton",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "면을방적하여면사를제조하는산업활동을말한다"
     },
     {
       "code": "13102",
@@ -936,7 +936,7 @@
       "enName": "Spinningofwool",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "면양털(양모)또는기타동물털(수모)을방적하여소모사및방모사를제조하는산업활동을말한다"
     },
     {
       "code": "13103",
@@ -944,7 +944,7 @@
       "enName": "Spinningofman-madefibers",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "주로구입한화학섬유(합성섬유또는재생섬유등)를방적하여화학섬유사를제조하는산업활동을말한다"
     },
     {
       "code": "13104",
@@ -968,7 +968,7 @@
       "enName": "Weavingofcottonfabrics",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "면사로일반용광폭면직물을직조하는산업활동을말한다"
     },
     {
       "code": "13212",
@@ -976,7 +976,7 @@
       "enName": "Weavingofwoolenfabrics",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "소모사또는방모사로일반용광폭모직물을직조하는산업활동을말한다"
     },
     {
       "code": "13213",
@@ -984,7 +984,7 @@
       "enName": "Weavingofman-madefiberfabrics",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "화학섬유사로일반용광폭섬유직물을직조하는산업활동을말한다"
     },
     {
       "code": "13219",
@@ -1032,7 +1032,7 @@
       "enName": "Manufactureoftextilebags",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "직물을재단및재봉하여곡식,석탄,우편물등을담는직물포대를제조하는산업활동을말한다.합성섬유또는플라스틱재료를봉제하여제조한포대도포함한다"
     },
     {
       "code": "1330",
@@ -1056,7 +1056,7 @@
       "enName": "Dyeingandfinishingofcottonwoolsandyarns",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "각종솜,실,끈,끈가공품을염색가공하는산업활동을말한다.염색가공공정전후에연결하여수행하는표백및기타정리작업(날염처리이외의정련,유연화처리,광택내기,보풀제거,건조및다림질 대분류 등)도포함한다"
     },
     {
       "code": "13402",
@@ -1072,7 +1072,7 @@
       "enName": "Printingoftextiles",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "각종직조원단,편조원단및직물제품(의복포함)을기계또는수작업으로날염가공및정리하는산업활동을말한다"
     },
     {
       "code": "1391",
@@ -1096,7 +1096,7 @@
       "enName": "Manufactureofcordageandrope",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "각종섬유물질로끈,로프및케이블을제조하는산업활동을말한다"
     },
     {
       "code": "13922",
@@ -1120,7 +1120,7 @@
       "enName": "Manufactureofnarrowwovenfabrics",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "각종방직용섬유로폭이30cm미만의각종세폭직물,라벨,배지및유사직물을직조하거나경사만을접착제로접합시켜만든세폭직물을제조하는산업활동을말한다"
     },
     {
       "code": "13992",
@@ -1160,7 +1160,7 @@
       "enName": "Manufactureofouterwearformen",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "직물을재단․재봉하여일상,사무또는공식행사에서입는남자용정장,코트,예복,재킷( 파카,슈트,바지등의겉옷(외의)을제조하는산업활동을말한다"
     },
     {
       "code": "14112",
@@ -1168,7 +1168,7 @@
       "enName": "Manufactureofouterwearforwomen",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "직물을재단․재봉하여일상,사무또는공식행사에서입는여자용정장,코트,예복,재킷( 파카,슈트,바지등의겉옷(외의)을제조하는산업활동을말한다"
     },
     {
       "code": "1412",
@@ -1184,7 +1184,7 @@
       "enName": "Manufactureofunderwearandnightwear",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "직물또는편조원단을재단․재봉하거나직물과편조물을결합하여남녀용속옷,잠옷및관련의복을제조하는산업활동을말한다"
     },
     {
       "code": "1413",
@@ -1224,7 +1224,7 @@
       "enName": "Manufactureofleathergarments",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "또는14491)․신발제조(1521)․목재및조물재료의가방,핸드백및케이스제조(16)"
     },
     {
       "code": "1420",
@@ -1248,7 +1248,7 @@
       "enName": "Manufactureofknittedandcrochetedapparelaccessories",
       "category": "C",
       "level": "대분류",
-      "description": ""
+      "description": "편조방법으로양말,장갑및모자등의의복액세서리를제조하는산업활동을말한다.편조원단을재단및재봉하여의복액세서리를제조하는산업활동은"
     },
     {
       "code": "14411",
@@ -1280,7 +1280,7 @@
       "enName": "Manufactureofhatsandcaps",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "가죽,모피,직물등을재단하고재봉,접합및기타의방법으로가공하여모자를제조하는산업활동을말한다.일반용의가죽보호모자제조도포함한다"
     },
     {
       "code": "1511",
@@ -1296,7 +1296,7 @@
       "enName": "Manufactureoffursandleathers",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "각종짐승,파충류,아가미동물등의원피및원모피를다듬질,표백,무두질,끝손질,돋음새김질및윤내기,염색처리등을하여각종천연가죽,천연모피및펠트를생산하거나천연가죽의조각및부스러기를처리하여재생가죽을생산하는산업활동을말한다.인조합성가죽을생산하는산업활동도포함한다.천연및재생가죽을특수표면가공하여특수가공가죽을제조하는산업활동과머리부분이달린원피처리활동과가죽등각종재료에인조모또는천연모를접합시켜인조모피를제조하는산업활동도포함한다"
     },
     {
       "code": "1512",
@@ -1344,7 +1344,7 @@
       "enName": "Manufactureofshoes",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "가죽,합성가죽,고무또는플라스틱등으로만든신발밑창에천연가죽,재생가죽,합성가죽,인조가죽으로만든봉제가죽갑피를재봉또는기타방법으로결합시켜가죽구두를제조하는산업활동을말한다.가죽제캐주얼화,부츠등의제조도포함한다"
     },
     {
       "code": "15219",
@@ -1352,7 +1352,7 @@
       "enName": "Manufactureofotherfootwear",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "구두류를제외한운동용신발,특수용신발,경기용신발및방수용신발,각종재료제의가정용슬리퍼,각반및발이나다리의일부또는전체를싸도록만들어진기타제품(양말제외)을제조하는산업활동을포함한다"
     },
     {
       "code": "1522",
@@ -1376,7 +1376,7 @@
       "enName": "Sawmillingofwood",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "원목을제재하거나또는제재목을다시제재하여판재,각재,소할(小割, 재등거친상태의각종일반용목재제재품을생산하는산업활동을말한다"
     },
     {
       "code": "1621",
@@ -1472,7 +1472,7 @@
       "enName": "Manufactureofwoodenstatuettesandornaments",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "장식용목제조각품,장식용상자,그림틀등의목재장식용품을제조하는산업활동을말한다"
     },
     {
       "code": "1710",
@@ -1488,7 +1488,7 @@
       "enName": "Manufactureofpulp",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "펄프 제조업코드변경 구・신 연계표 886 2. 구ㆍ신 연 계 표 비 고코드항 목 명코드항 목 명"
     },
     {
       "code": "17102",
@@ -1496,7 +1496,7 @@
       "enName": "Manufactureofnewsprint",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "신문용지 제조업코드변경"
     },
     {
       "code": "17103",
@@ -1512,7 +1512,7 @@
       "enName": "Manufactureofpaperforcorrugatedpaperboard",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "골판지 원지 제조업세분"
     },
     {
       "code": "17105",
@@ -1528,7 +1528,7 @@
       "enName": "Manufactureofpaperforsanitarypurpose",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "위생용 원지 제조업코드변경"
     },
     {
       "code": "1721",
@@ -1544,7 +1544,7 @@
       "enName": "Manufactureofcorrugatedpaper",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "골판지제조용원지를가공하여골판지원단및골판지를제조하거나연속공정으로골판지상자및칸막이등관련제품을제조하는산업활동을말한다"
     },
     {
       "code": "17212",
@@ -1632,7 +1632,7 @@
       "enName": "Masterprintingbystencilplateandsimilarplates",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "수수료또는계약에의하여각종인쇄물을프린트,공판또는마스터제판술에의해인쇄하는산업활동을말한다. 대분류"
     },
     {
       "code": "18112",
@@ -1648,7 +1648,7 @@
       "enName": "Offsetprinting",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "수수료또는계약에의하여각종인쇄물을금속판과고무롤러등으로오프셋간접제판술에의하여인쇄하는산업활동을말한다.대부분평판인쇄방식으로인쇄하지만볼록판및오목판인쇄방식으로도가능하다"
     },
     {
       "code": "18119",
@@ -1656,7 +1656,7 @@
       "enName": "Otherprinting",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "경인쇄,스크린인쇄및오프셋인쇄이외의각종제판술에의한출 제 조 업 C 제 조 업 259 판물및인쇄물을인쇄하는산업활동을말한다"
     },
     {
       "code": "18121",
@@ -1664,7 +1664,7 @@
       "enName": "Plate-makingandtypesettingservices",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "수수료또는계약에의하여사진식자,전산식자와각종인쇄용사진원판제작,연판,고무판,플라스틱판,동판,목판,석판등의각종제판및조판작업을수행하는산업활동을말한다"
     },
     {
       "code": "18122",
@@ -1672,7 +1672,7 @@
       "enName": "Bookbindingservices",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "수수료또는계약에의하여각종서적및인쇄물을제책하는산업활 대분류 동을말한다"
     },
     {
       "code": "1820",
@@ -1704,7 +1704,7 @@
       "enName": "Petroleumrefineries",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "원유및역청물질을정제및기타처리하여석유정제품및관련제품을제조하는산업활동을말한다"
     },
     {
       "code": "1922",
@@ -1760,7 +1760,7 @@
       "enName": "Manufactureofhydrogen",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "산업용 가스 제조업세분"
     },
     {
       "code": "20122",
@@ -1808,7 +1808,7 @@
       "enName": "Manufactureofsyntheticrubber",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "합성고무(라텍스포함)와식물성기름에서유도되는팩티스,천연고무및유사천연검의혼합물을제조하는산업활동을말한다"
     },
     {
       "code": "20202",
@@ -1849,6 +1849,22 @@
       "category": "C",
       "level": "소분류",
       "description": "유기질 비료 및 상토 제조업"
+    },
+    {
+      "code": "2032",
+      "name": "살균·살충제 및 농약 제조업",
+      "enName": "Manufactureofgermicides,insecticidesandpesticides",
+      "category": "C",
+      "level": "대분류",
+      "description": "살균ㆍ살충제및농약제조업가정용,공중위생용또는농업용의살충제,살서제(쥐약),살균제,제초제,발아억제제,식물생장조절제,소독제및기타유사화학제품을제조하는산업활동을말한다"
+    },
+    {
+      "code": "20321",
+      "name": "화학살균·살충제 및 농업용약제 제조업",
+      "enName": "Manufactureofchemicalgermicides,insecticidesandagrochemicalproducts",
+      "category": "C",
+      "level": "소분류",
+      "description": "화학 살균․살충제 및 농업용 약제 제조업"
     },
     {
       "code": "2041",
@@ -1896,7 +1912,7 @@
       "enName": "Manufactureofsurface-activeagents",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "섬유,종이,펄프,화장품및세척제,농약등의제조가공에사용되는유기또는조제계면활성제를제조하는산업활동을말한다"
     },
     {
       "code": "20422",
@@ -1976,7 +1992,7 @@
       "enName": "Manufactureofsyntheticfibers",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "석탄혹은석유증류물등을원료로유기단량체(모노머)를중합하고필라멘트사,스트립,토우및스테이플상태의합성섬유를제조하는산업활동을말한다"
     },
     {
       "code": "2110",
@@ -1992,7 +2008,7 @@
       "enName": "Manufactureofbiopharmaceuticalproducts",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "생물 의약품 제조업세분"
     },
     {
       "code": "21212",
@@ -2016,7 +2032,7 @@
       "enName": "Manufactureofherbmedicaments",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "한의학적처방에의한특정질환예방및치료용으로사용할수있도록의약용동․식물성물질을배합및기타조제하여규격화한한의약조제품을제조하는산업활동을말한다.그러나각종한의약재료를절단,소형포장등의처리는판매활동의부수적활동으로본다"
     },
     {
       "code": "2123",
@@ -2072,7 +2088,7 @@
       "enName": "Manufactureofrubberpacking",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "관이음매또는틈새따위에물이나공기가새지않도록끼워넣는고무제개스킷,마개,와셔,실( 봉함재)등밀봉용고무제품을제조하는산업활동을말한다.이러한제품은가황하거나방직용섬유물질,철심등으로보강한것을포함한다"
     },
     {
       "code": "22192",
@@ -2096,7 +2112,7 @@
       "enName": "Manufactureofplasticfilms",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "원료상태의플라스틱물질을비발포성형하여두께0.25mm미만의연질성,경질성플라스틱필름,스트립,포일,랩등을제조하는산업활동을말한다"
     },
     {
       "code": "22213",
@@ -2136,7 +2152,7 @@
       "enName": "Manufactureofplasticwindowsanddoors",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "1차형태의플라스틱제품을절단,접합,조립및기타방법으로가공하여플라스틱물질이주된재료가되는플라스틱문,창문,문틀등을제조하는산업활동을말한다"
     },
     {
       "code": "22229",
@@ -2177,6 +2193,14 @@
       "category": "C",
       "level": "대분류",
       "description": "제 조 업 C 제 조 업 301"
+    },
+    {
+      "code": "22249",
+      "name": "기타 기계·장비조립용플라스틱제품 제조업",
+      "enName": "Manufactureofotherplasticproductsforfabricatingofmachine",
+      "category": "C",
+      "level": "소분류",
+      "description": "기타 기계․장비 조립용 플라스틱 제품 제조업"
     },
     {
       "code": "2225",
@@ -2240,7 +2264,7 @@
       "enName": "Manufactureofflatglass",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "판유리를제조하는산업활동을말한다. 제 조 업 C 제 조 업 307"
     },
     {
       "code": "23112",
@@ -2248,7 +2272,7 @@
       "enName": "Manufactureofsafetyglass",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "구입한판유리를가공하여차량등운송장비용,건축용등에사용하는각종강화유리와접합유리를제조하는산업활동을말한다"
     },
     {
       "code": "23119",
@@ -2392,7 +2416,7 @@
       "enName": "Manufactureofcement",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "석회석을소성하여각종시멘트를생산하는산업활동을말한다.실리카,알루미나또는철등을함유한물질을첨가할수도있다"
     },
     {
       "code": "23312",
@@ -2424,7 +2448,7 @@
       "enName": "Manufactureofready-mixedconcrete",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "시멘트와모래,자갈등의광물성물질혼합물에물을첨가하여굳지않은상태로구매자에게공급하는콘크리트용비내화혼합물을제조하는산업활동을말한다"
     },
     {
       "code": "23323",
@@ -2472,7 +2496,7 @@
       "enName": "Manufactureofstoneproductsforconstruction",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "천연석재및응집한천연슬레이트(점판암)를절단․성형가공하여기념비용,건축용등건설용석제품을제조하는산업활동을말한다"
     },
     {
       "code": "2399",
@@ -2496,7 +2520,7 @@
       "enName": "Manufactureofabrasivearticles",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "천연석,응집된천연연마재및인공연마재로각종용의연마석,연마휠및유사연마재를제조하는산업활동과종이,직물,실및기타재료에천연또는인조연마재용분말을접착제로접착시켜연마포,연마지,연마사및유사제품을제조하는산업활동을말한다"
     },
     {
       "code": "23993",
@@ -2520,7 +2544,7 @@
       "enName": "Manufactureofcarbonfibers",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "아크릴로나이트릴,레이온,콜타르피치등을재료로열처리,탄화,결정화등을거쳐탄소섬유사및관련탄소섬유반제품을제조하는산업활동을말한다"
     },
     {
       "code": "2411",
@@ -2536,7 +2560,7 @@
       "enName": "Manufactureofbasiciron",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "철광석,코크스원료탄등으로선철,주철,경철등의철을생산하는산업활동을말한다.제철활동과결합되어운영되는합금철,제강,압연활동을별도로파악할수없을경우에는여기에포함한다"
     },
     {
       "code": "24112",
@@ -2544,7 +2568,7 @@
       "enName": "Manufactureofbasicsteel",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "선철,고철을처리하여강괴,퍼들바( 파일링( 슬래브,블룸,빌릿등과같은1차형재또는반제품상태의철강재료를제조하는산업활동을말한다"
     },
     {
       "code": "24113",
@@ -2552,7 +2576,7 @@
       "enName": "Manufactureofferro-alloys",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "합금철을제조하는산업활동을말한다"
     },
     {
       "code": "24119",
@@ -2560,7 +2584,7 @@
       "enName": "Manufactureofotherbasicironandsteel",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "순철,분말야금용철강분말등을제조하는산업활동을말한다"
     },
     {
       "code": "2412",
@@ -2592,7 +2616,7 @@
       "enName": "Manufactureofsteelwire",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "선재,봉,바등의1차강재를연신하여철강선을제조하는산업활동을말한다"
     },
     {
       "code": "24131",
@@ -2600,7 +2624,7 @@
       "enName": "Manufactureoftubesandpipes,ofcastiron",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "주형,주조또는원심분리등의방법에의하여주철관,중공파일및관련연결구류를제조하는산업활동을말한다. 대분류"
     },
     {
       "code": "24132",
@@ -2608,7 +2632,7 @@
       "enName": "Manufactureofpipesandtubes,ofsteel",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "강재를단조,인발,압출,용접및기타가공하여무계목강관,단접강관,용접강관,튜브등을제조하는산업활동을말한다"
     },
     {
       "code": "24133",
@@ -2704,7 +2728,7 @@
       "enName": "Castingofpigiron",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "선철또는합금철로각종선철(회)주물및가단철주물을제조하는산업활동을말한다"
     },
     {
       "code": "24312",
@@ -2712,7 +2736,7 @@
       "enName": "Castingofsteel",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "강재또는합금강재로강주물및합금강주물을제조하는산업활동을말한다"
     },
     {
       "code": "2432",
@@ -2728,7 +2752,7 @@
       "enName": "Castingofaluminum",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "알루미늄및그합금으로알루미늄주물을제조하는산업활동을말한다"
     },
     {
       "code": "2511",
@@ -2824,7 +2848,7 @@
       "enName": "Manufactureofpowdermetallurgicproducts",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "금속분말을형틀에주입하고이를가열및압착하여기계부품을포 대분류 함한각종특정형의금속분말야금제품을직접제조하는산업활동을말한다"
     },
     {
       "code": "25912",
@@ -2848,7 +2872,7 @@
       "enName": "Heattreatmentofmetals",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "기계부분품및일반철물등금속가공제품을열처리가공하는산업활동을말한다"
     },
     {
       "code": "25922",
@@ -2856,7 +2880,7 @@
       "enName": "Platingofmetals",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "철강및비철금속을각종방법으로도금하는산업활동을말한다.도금활동에결합수행되는도금전․후처리활동(산세․수세․탈사,마무리등공정)이부수될수있다"
     },
     {
       "code": "25923",
@@ -2896,7 +2920,7 @@
       "enName": "Manufactureofcutlery",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "식탁용금속제품(식탁용그릇등용기류는제외)을포함하여각종용도의날붙이와이들의금속제손잡이등을제조하는산업활동을말한다"
     },
     {
       "code": "25932",
@@ -2904,7 +2928,7 @@
       "enName": "Manufactureofgeneralhardware",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "자물쇠및열쇠제조를포함하여문및창문용,건물용,가구용,선박및차량등의운송장비용및기타일반용의철물을제조하는산업활동을말한다.가구성격이아닌금속제옷걸이,타월걸이,커튼및차양부착물등을제조하는경우도포함한다"
     },
     {
       "code": "25933",
@@ -2952,7 +2976,7 @@
       "enName": "Manufactureofmetalsprings",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "선형,코일형,나선형,판형등의각종금속스프링을제조하는산업활동을말한다"
     },
     {
       "code": "25944",
@@ -2984,7 +3008,7 @@
       "enName": "Manufactureofmetalsanitaryware",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "고정설치용여부를불문하고세면기,개수통,변기,목욕통등의금속위생용품을제조하는산업활동을말한다. 제 조 업 C 제 조 업 355"
     },
     {
       "code": "25994",
@@ -2992,7 +3016,7 @@
       "enName": "Manufactureofmetalsignboardsincludingroadsigns",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "금속표시판,교통금속표시판및관련장치물을제조하는산업활동을말한다"
     },
     {
       "code": "25995",
@@ -3040,7 +3064,7 @@
       "enName": "Manufactureoflightemittingdiodes",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "갈륨비소,형광성유기화합물등에전류를흘려빛을발산하는반도체소자인발광다이오드( 를제조하는산업활동을말한다"
     },
     {
       "code": "2621",
@@ -3064,7 +3088,7 @@
       "enName": "Manufactureofotherdisplaycomponent",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "플라즈마디스플레이( 등기타표시장치모듈및부분품을제조하는산업활동으로서전기접속자의부착여부를불문한다"
     },
     {
       "code": "2622",
@@ -3120,7 +3144,7 @@
       "enName": "Manufactureofelectroniccapacitors",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "대분류 전자기기용축전기(고정식,가변식또는조정식)를제조하는산업활동을말한다"
     },
     {
       "code": "26292",
@@ -3144,7 +3168,7 @@
       "enName": "Manufactureofelectronicperceptionsensors",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "전자코일, 변성기 및 기타 전자 유도자 제조업"
     },
     {
       "code": "26310",
@@ -3152,7 +3176,7 @@
       "enName": "Manufactureofcomputer",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "아날로그형,하이브리드형또는디지털형의자동자료처리장비(컴퓨터)를제조하는산업활동으로서중앙처리장치를생산하거나중앙처리장치와입출력장치가결합,장착된컴퓨터장치를제조하는경우도여기에분류된다"
     },
     {
       "code": "2632",
@@ -3168,7 +3192,7 @@
       "enName": "Manufactureofstoragedevices",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "기억장치 제조업 부 록 835 1. 신ㆍ구 연 계 표 비 고코드항 목 명코드항 목 명"
     },
     {
       "code": "26322",
@@ -3176,7 +3200,7 @@
       "enName": "Manufactureofcomputermonitor",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "각종컴퓨터용모니터를제조하는산업활동을말한다.입력장치를겸 대분류 한모니터제조도포함한다"
     },
     {
       "code": "26323",
@@ -3184,7 +3208,7 @@
       "enName": "Manufactureofcomputerprinter",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "각종컴퓨터용프린터를제조하는산업활동을말한다"
     },
     {
       "code": "2641",
@@ -3200,7 +3224,7 @@
       "enName": "Manufactureofwiretelecommunicationapparatuses",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "송신소와수신소를연결하는유선통신회로에의하여두지점간의음성또는기타메시지를전달해주는각종통신장치를제조하는산업활동을말한다"
     },
     {
       "code": "2642",
@@ -3216,7 +3240,7 @@
       "enName": "Manufactureofbroadcastingapparatuses",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "유․무선텔레비전방송용송신기및중계용기기,폐쇄회로텔레비전기기,텔레비전카메라등의방송및관련응용장치를제조하는산업활동을말한다"
     },
     {
       "code": "26422",
@@ -3224,7 +3248,7 @@
       "enName": "Manufactureofmobilephone",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "이동전화기를제조하는산업활동을말한다.무선전화이외의다양한 제 조 업 C 제 조 업 371 기능을겸비한이동전화단말기제조활동도포함한다"
     },
     {
       "code": "2651",
@@ -3240,7 +3264,7 @@
       "enName": "Manufactureoftelevision",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "각종텔레비전을제조하는산업활동을말한다"
     },
     {
       "code": "26519",
@@ -3280,7 +3304,7 @@
       "enName": "Manufactureofirradiationapparatuses",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "의료용또는기타용도의방사선장치를제조하는산업활동으로서촬영용,진단용,치료용의것도포함한다"
     },
     {
       "code": "27112",
@@ -3304,7 +3328,7 @@
       "enName": "Manufactureofdentalinstrumentsandappliances",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "치과용드릴엔진,호환용연삭도구등치과전용기계및기구를제조하는산업활동을말한다"
     },
     {
       "code": "27192",
@@ -3312,7 +3336,7 @@
       "enName": "Manufactureofdentalprosthesis",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "정형 외과용 및 신체 보정용 기기 제조업"
     },
     {
       "code": "27193",
@@ -3328,7 +3352,7 @@
       "enName": "Manufactureoforthopedic,orthodontic,prostheticappliancesandsuppliesfordisability",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "정형 외과용 및 신체 보정용 기기 제조업"
     },
     {
       "code": "27195",
@@ -3432,7 +3456,7 @@
       "enName": "Manufactureoftransformers",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "교류전류를전압및기타전기적특성이다른교류로변환시키는장치를제조하는산업활동으로서전력용변압기,특수변압기,계기용변압기등을제조하는산업활동을말한다. 제 조 업 C 제 조 업 389"
     },
     {
       "code": "28113",
@@ -3480,7 +3504,7 @@
       "enName": "Manufactureofprimarybattery",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "규모및용도를불문하고건식또는습식등의일차전지및그부분 대분류 품을제조하는산업활동을말한다.일차전지의일반적특성은재충전성을가지지않는다"
     },
     {
       "code": "28202",
@@ -3504,7 +3528,7 @@
       "enName": "Manufactureofopticalfibercables",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "광섬유에절연물질을피복하여광섬유절연피복선또는광섬유절연케이블을제조하는산업활동을말한다"
     },
     {
       "code": "28302",
@@ -3528,7 +3552,7 @@
       "enName": "Manufactureofelectriclampsandbulbs",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "각종전구및램프를제조하는산업활동을말한다"
     },
     {
       "code": "2842",
@@ -3624,7 +3648,7 @@
       "enName": "Manufactureoftrafficsignalingequipment",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "전기식신호장치및안전장치등교통통제용전기장치를제조하는산업활동을말한다"
     },
     {
       "code": "29119",
@@ -3648,7 +3672,7 @@
       "enName": "Manufactureoffluidpowerequipment",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "유압식또는기압식의펌프,모터,실린더등유압구동장치를구성하는기기를제조하는산업활동을말한다"
     },
     {
       "code": "29131",
@@ -3656,7 +3680,7 @@
       "enName": "Manufactureofpumpsforliquids",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "일반산업용․공업용또는계량용액체펌프,양수기및유사장치를제조하는산업활동을말한다"
     },
     {
       "code": "29132",
@@ -3688,7 +3712,7 @@
       "enName": "Manufactureofballandrollerbearings",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "볼베어링,롤러베어링등각종구름베어링및이들의전용부분품을제조하는산업활동을말한다"
     },
     {
       "code": "29142",
@@ -3736,7 +3760,7 @@
       "enName": "Manufactureofliftingequipment",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "공기식또는기타방식으로연속작동되는엘리베이터,에스컬레이터,이동식계단등사람이나물품을이송시키는승강기와기타유사한장치를제조하는산업활동을말한다"
     },
     {
       "code": "29163",
@@ -3744,7 +3768,7 @@
       "enName": "Manufactureofconveyors",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "대분류 공기식또는기타방식으로연속작동되는컨베이어장치및유사장치를제조하는산업활동을말한다"
     },
     {
       "code": "2917",
@@ -3784,7 +3808,7 @@
       "enName": "Manufactureofnon-domesticfansandventilators",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "산업용 송풍기 및 배기장치 제조업"
     },
     {
       "code": "29175",
@@ -3792,7 +3816,7 @@
       "enName": "Manufactureoffilteringorpurifyingmachineryforairorgases",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "기체 여과기 제조업코드변경"
     },
     {
       "code": "29176",
@@ -3904,7 +3928,7 @@
       "enName": "Manufactureofmetalcuttingmachinery",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "금속가공용머시닝센터및고정․이동가공물복합공작기계(트랜스퍼머신)를포함하여금속을수직․수평및원주형으로분할․절단․절삭․천공․연마하여필요한형태의제품을만드는금속절삭가공기계를제조하는산업활동을말한다.이러한기계에장착하는호환성공구등의제조는원칙적으로여기에포함되지않는다"
     },
     {
       "code": "29224",
@@ -3912,7 +3936,7 @@
       "enName": "Manufactureofmetalshapingmachinery",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "금형및기타장치를장착하여금속물질을단조,압형,압축,굽힘, 제 조 업 C 제 조 업 421 접음,회전등의방식을통하여금속물질을특정형태로성형하는기계를제조하는산업활동을말한다.이러한기계에장착하는금형등의제조는원칙적으로여기에포함되지않는다"
     },
     {
       "code": "29229",
@@ -3928,7 +3952,7 @@
       "enName": "Manufactureofmachineryformetalcastingandothermetallurgy",
       "category": "C",
       "level": "대분류",
-      "description": ""
+      "description": "또는2922)․크림분리기,식품여과또는정화기제조(2925)․산업용원심식의류탈수건조기제조(29261)․가정용냉장또는냉동장비와가정또는사무실에서주로사용되는선풍기제조(2851)․정밀측정용감량저울제조(2721)"
     },
     {
       "code": "29230",
@@ -4032,7 +4056,7 @@
       "enName": "Manufactureofindustrialrobots",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "자동제어및프로그램수정이가능하며다목적기능(용접,도장,하역ㆍ적하및양하,절단,조립ㆍ금속기타가공등)을수행하고3개축이상을가진자동조정장치인산업용로봇을제조하는산업활동을말한다"
     },
     {
       "code": "2929",
@@ -4064,7 +4088,7 @@
       "enName": "Manufactureofmouldandmetallicpatterns",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "인쇄 및 제책용 기계 제조업"
     },
     {
       "code": "3011",
@@ -4080,7 +4104,7 @@
       "enName": "Manufactureofenginesformotorvehicles",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "도로주행용차량,트랙터,작업트럭및장갑차량용의내연기관을제조하는산업활동을말한다"
     },
     {
       "code": "3012",
@@ -4232,7 +4256,7 @@
       "enName": "Buildingofsteelships",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "선박제조․수리시설을갖추고,철강을사용하여화물및여객운송용,어업및어획물가공용,군사용선박및보트를건조․수리하는산업활동을말한다"
     },
     {
       "code": "31112",
@@ -4240,7 +4264,7 @@
       "enName": "Buildingofsyntheticresinships",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "선박제조․수리시설을갖추고,주로합성수지를사용하여화물및여객운송용,어업및어획물가공용,군사용선박및보트를건조ㆍ수리하는산업활동을말한다"
     },
     {
       "code": "31113",
@@ -4248,7 +4272,7 @@
       "enName": "Buildingofnon-ferrousmetalshipsandotherships",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "선박제조․수리시설을갖추고,철강및합성수지이외의비철금속등을사용하여화물및여객운송용,어업및어획물가공용,군사용선박및보트를건조ㆍ수리하는산업활동을말한다.각종재료로준설선,병원선,학술연구선,시험선등특수목적용선박과시추대및기타수상부유작업대,수상구조물및기타비항해용선박을건조․수리하는산업활동도포함한다"
     },
     {
       "code": "31114",
@@ -4320,7 +4344,7 @@
       "enName": "Manufactureofenginesforaircraft",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "비행기또는우주비행체용의모터및엔진을제조․개조하는산업활동을말한다.각종용도의반동기관,터보프로펠러기관을제조하는산업활동도포함한다"
     },
     {
       "code": "3191",
@@ -4336,7 +4360,7 @@
       "enName": "Manufactureofmilitaryfightingvehicles",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "탱크및장갑차량등전투용차량을제조하는산업활동을말한다"
     },
     {
       "code": "3192",
@@ -4352,7 +4376,7 @@
       "enName": "Manufactureofmotorcycles",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "발동기가달린자전거(모페드),모터사이클(이륜자동차),모터사이클용엔진,사이드카등의모터사이클을제조하는산업활동을말한다"
     },
     {
       "code": "31922",
@@ -4416,7 +4440,7 @@
       "enName": "Manufactureofotherwoodfurniture",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "기타용도의목재가구,캐비닛및관련장치물을제조하는산업활동을말한다.장식용패각또는옥돌등장식용재료를세공하여장식하거나옻칠등을하여각종나전칠기가구를제조하는산업활동도포함한다"
     },
     {
       "code": "3209",
@@ -4432,7 +4456,7 @@
       "enName": "Manufactureofmetalfurniture",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "주방용및목욕탕용,실내용또는실외용등금속가구,금속캐비닛및유사장치물을제조하는산업활동을말한다"
     },
     {
       "code": "3311",
@@ -4472,7 +4496,7 @@
       "enName": "Manufactureofkeyboardinstruments",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "피아노등건반현악기를제조하는산업활동을말한다.리드오르간,파이프오르간을제조하는산업활동도포함한다"
     },
     {
       "code": "3330",
@@ -4496,7 +4520,7 @@
       "enName": "Manufactureofplaygroundequipment",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "놀이터에설치되는놀이용장비를제조하는산업활동으로서특정산 대분류 업에분류되지않은제품을제조하는산업활동을말한다"
     },
     {
       "code": "3340",
@@ -4520,7 +4544,7 @@
       "enName": "Manufactureofvideogamemachines",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "영상수상기를갖춘게임장비또는게임장에서즐기는게임기를제조하는산업활동을말한다"
     },
     {
       "code": "3391",
@@ -4560,7 +4584,7 @@
       "enName": "Manufactureofexhibitingmodels",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "교육용,전시용또는기타실물설명용에적합한각종모형을제조하는산업활동을말한다.각종재료로만든조화및인조물,장식용동․식물성(견과,껍질,열매,상아,뼈,귀갑등)및광물성물질(호박,해포석등)을가공한조각용재료및이들의장식용제품,밀랍,스테아린,천연검,수지및비경화젤라틴등으로가공한장식용성형품및조각품을제조하는산업활동도포함한다"
     },
     {
       "code": "33933",
@@ -4568,7 +4592,7 @@
       "enName": "Mountingpicturesandotherarts",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "수수료에의하여표구하는산업활동을말한다.예술품이외의표구제품을제조하는경우도포함한다"
     },
     {
       "code": "3399",
@@ -4592,7 +4616,7 @@
       "enName": "Manufactureofbrushesandbrooms",
       "category": "C",
       "level": "소분류",
-      "description": ""
+      "description": "동물털,식물섬유물질및인조섬유,금속선등을재료로비,솔및걸레(자루용)를제조하는산업활동을말한다.여기에는산업용및가정용의솔제조도포함한다. 대분류"
     },
     {
       "code": "3401",
@@ -4603,6 +4627,14 @@
       "description": "전기․전자․정밀기기류를제외한기타산업용조립금속제품및기계․장비를전문적으로수리․유지하는산업활동을말한다"
     },
     {
+      "code": "34011",
+      "name": "건설·광업용기계 및 장비수리업",
+      "enName": "Maintenanceandrepairservicesofmachineryandequipmentforminingandconstruction",
+      "category": "C",
+      "level": "소분류",
+      "description": "건설․광업용 기계 및 장비 구・신 연계표 906 2. 구ㆍ신 연 계 표 비 고코드항 목 명코드항 목 명수리업수리업"
+    },
+    {
       "code": "34019",
       "name": "기타 일반기계 및 장비수리업",
       "enName": "Maintenanceandrepairservicesofothergeneralmachinery",
@@ -4611,12 +4643,20 @@
       "description": "기타 일반 기계 및 장비 수리업"
     },
     {
+      "code": "3402",
+      "name": "전기·전자 및 정밀기기수리업",
+      "enName": "Maintenanceandrepairservicesofelectrical,electronicandprecisionequipment",
+      "category": "C",
+      "level": "대분류",
+      "description": "전기․전자및정밀기기수리업산업용전기․전자및정밀기기를전문적으로수리․유지하는산업활동을말한다"
+    },
+    {
       "code": "35111",
       "name": "원자력발전업",
       "enName": "Nuclearpowergeneration",
       "category": "D",
       "level": "소분류",
-      "description": ""
+      "description": "원자력을에너지원으로하여전기를직접생산하는산업활동을말한다"
     },
     {
       "code": "35112",
@@ -4624,7 +4664,7 @@
       "enName": "Hydroelectricpowergeneration",
       "category": "D",
       "level": "소분류",
-      "description": ""
+      "description": "수력을에너지원으로하여전기를직접생산하는산업활동을말한다"
     },
     {
       "code": "35113",
@@ -4632,7 +4672,7 @@
       "enName": "Thermalpowergeneration",
       "category": "D",
       "level": "소분류",
-      "description": ""
+      "description": "화력을에너지원으로하여전기를직접생산하는산업활동을말한다"
     },
     {
       "code": "35114",
@@ -4640,7 +4680,7 @@
       "enName": "Solarandsunlightpowergeneration",
       "category": "D",
       "level": "소분류",
-      "description": ""
+      "description": "태양빛또는광을에너지원으로하여전기를직접생산하는산업활동을말한다. 대분류"
     },
     {
       "code": "35115",
@@ -4648,7 +4688,7 @@
       "enName": "Windpowergeneration",
       "category": "D",
       "level": "소분류",
-      "description": ""
+      "description": "풍력을에너지원으로전기를직접생산하는산업활동을말한다"
     },
     {
       "code": "35119",
@@ -4656,7 +4696,7 @@
       "enName": "Otherpowergeneration",
       "category": "D",
       "level": "소분류",
-      "description": ""
+      "description": "조력및기타에너지원으로전기를직접생산하는산업활동을말한다"
     },
     {
       "code": "3512",
@@ -4672,7 +4712,7 @@
       "enName": "Electricpowertransmissionanddistribution",
       "category": "D",
       "level": "소분류",
-      "description": ""
+      "description": "생산된전기를특정지역까지송전하거나송전된전기를최종소비자에게공급하는산업활동을말한다"
     },
     {
       "code": "3513",
@@ -4681,6 +4721,14 @@
       "category": "D",
       "level": "대분류",
       "description": ""
+    },
+    {
+      "code": "3530",
+      "name": "증기,냉·온수 및 공기조절 공급업",
+      "enName": "Steam,chilledorhotwaterandairconditioningsupply",
+      "category": "D",
+      "level": "대분류",
+      "description": "증기,냉․온수및공기조절공급업"
     },
     {
       "code": "3601",
@@ -4696,7 +4744,7 @@
       "enName": "Watercollection,treatmentanddistributionactivitiesfordomesticneeds",
       "category": "E",
       "level": "소분류",
-      "description": ""
+      "description": "수요자에게생활용수를공급하기위하여취수,집수,정수및급수를하는산업활동을말한다.생활용수는도수관,송수관,배수관,급수관등배관시설에의하여공급된다"
     },
     {
       "code": "3602",
@@ -4720,7 +4768,7 @@
       "enName": "Sewagetreatmentservices",
       "category": "E",
       "level": "소분류",
-      "description": ""
+      "description": "하수를하수도관에의해서수집하고,수집된하수를희석,선별,여과,침전등물리․화학․생물공정등으로처리하는하수도관시설및하수처리시설을운영하는산업활동을말하며관련시설을청소하는활동을포함한다"
     },
     {
       "code": "37012",
@@ -4728,7 +4776,7 @@
       "enName": "Wastewatertreatmentservices",
       "category": "E",
       "level": "소분류",
-      "description": ""
+      "description": "산업폐수를폐수수집관에의해서수집하고,수집된폐수를희석,선별,여과,침전등물리․화학․생물공정등으로처리하는폐수도관시설및폐수처리시설을운영하는산업활동을말하며,관련시설을청소하는활동을포함한다. 대분류"
     },
     {
       "code": "3702",
@@ -4744,7 +4792,7 @@
       "enName": "Humanwastetreatmentservices",
       "category": "E",
       "level": "소분류",
-      "description": ""
+      "description": "사람분뇨의수집,운반,보관및처분을수행하는산업활동을말하며관련시설을청소하는활동을포함한다"
     },
     {
       "code": "3811",
@@ -4808,7 +4856,7 @@
       "enName": "Treatmentanddisposalofhazardouswaste",
       "category": "E",
       "level": "소분류",
-      "description": ""
+      "description": "사업장및의료기관에서배출하는각종지정폐기물처리시설을운영하는산업활동을말한다"
     },
     {
       "code": "3823",
@@ -4824,7 +4872,7 @@
       "enName": "Treatmentanddisposalofconstructionanddemolitionwaste",
       "category": "E",
       "level": "소분류",
-      "description": ""
+      "description": "건물해체물등건설관련폐기물처리시설을운영하는산업활동을말한다.처리과정에서재활용이가능한골재를부수적으로얻을수있다.무해성광재를처리하는산업활동도포함한다"
     },
     {
       "code": "3824",
@@ -4856,7 +4904,7 @@
       "enName": "Recoveryofmetalwaste",
       "category": "E",
       "level": "소분류",
-      "description": ""
+      "description": "폐기물,스크랩,기타폐품등에서금속류를분류,분리하여파쇄,분쇄하거나화학적으로처리하여재생용의금속원료물질로전환하는산업활동을말한다. 대분류"
     },
     {
       "code": "38321",
@@ -4896,7 +4944,7 @@
       "enName": "Detacheddwellinghouseandmulti-dwellinghouseconstruction",
       "category": "F",
       "level": "소분류",
-      "description": ""
+      "description": "주거용단독주택및다가구주택등을건설하는산업활동을말한다"
     },
     {
       "code": "41112",
@@ -4904,7 +4952,7 @@
       "enName": "Apartmentbuildingconstruction",
       "category": "F",
       "level": "소분류",
-      "description": ""
+      "description": "주거용아파트를건설하는산업활동을말한다"
     },
     {
       "code": "41119",
@@ -4923,6 +4971,14 @@
       "description": "사무및상업용건물,제조업및기타산업용건물등의비주거용건물을건설하는산업활동을말한다"
     },
     {
+      "code": "41121",
+      "name": "사무·상업용 및 공공기관용건물 건설업",
+      "enName": "Office,commercialandinstitutionalbuildingconstruction",
+      "category": "F",
+      "level": "소분류",
+      "description": "사무․상업용 및 공공기관용 건물 건설업"
+    },
+    {
       "code": "4121",
       "name": "지반조성 건설업",
       "enName": "Landsubdivisionwithlandimprovement",
@@ -4936,7 +4992,7 @@
       "enName": "Landsubdivisionwithlandimprovement",
       "category": "F",
       "level": "소분류",
-      "description": ""
+      "description": "택지조성공사,공장부지조성공사,광산용지개발등의건설부지및기타용지를개발․조성하는산업활동을말한다.각종부지조성공사와결합된도로및관련특수구조물,상․하수도,가로등,전기통신,조경,정보화시설공사등과간척공사를포함한다"
     },
     {
       "code": "4122",
@@ -4952,7 +5008,7 @@
       "enName": "Constructionofhighways,streetsandroads",
       "category": "F",
       "level": "소분류",
-      "description": ""
+      "description": "각종도로,공항활주로,인도등의도로건설을수행하는산업활동으로서도로건설활동과결합된포장공사및도로관련구조물을설치하는산업활동도포함한다"
     },
     {
       "code": "41222",
@@ -4976,7 +5032,7 @@
       "enName": "Constructionofenvironmentalfacilities",
       "category": "F",
       "level": "소분류",
-      "description": ""
+      "description": "환경오염을예방ㆍ제거ㆍ감축하거나환경오염물질을처리ㆍ재활용하기위한시설인폐기물처리및환경오염방지시설을건설하는산업활동을말한다. 건 설 업 F 건 설 업 497"
     },
     {
       "code": "41225",
@@ -4992,7 +5048,7 @@
       "enName": "Constructionoflandscapingworks",
       "category": "F",
       "level": "소분류",
-      "description": ""
+      "description": "종합적인계획에따라관리되고조성되는수목원,공원,녹지,숲조성등경관및환경을조성ㆍ개량하는토목공사를수행하는산업활동으로서조경수,잔디,화초등각종조경용식물을식재또는파종하거나조경시설물을설치하는공사가결합수행될수있다"
     },
     {
       "code": "4211",
@@ -5016,7 +5072,7 @@
       "enName": "Earthworks",
       "category": "F",
       "level": "소분류",
-      "description": ""
+      "description": "계약에의하여도급건설업자가각종공사를위한발파,암석제거,굴착,토사운반,땅고르기,절토,성토,비탈보호,물막이,흙막이및관련배수로설치공사등의토공사및정지공사를수행하는산업활동을말한다"
     },
     {
       "code": "42122",
@@ -5080,7 +5136,7 @@
       "enName": "Bricklayingandstonesettingworks",
       "category": "F",
       "level": "소분류",
-      "description": ""
+      "description": "조적 및 석 공사업코드변경"
     },
     {
       "code": "42192",
@@ -5088,7 +5144,7 @@
       "enName": "Pavementworks",
       "category": "F",
       "level": "소분류",
-      "description": ""
+      "description": "포장장비를사용하여역청물질(아스팔트등),시멘트,콘크리트등으로도로및공항등의토목건설에관련된지면의포장공사를전문적으로수행하는산업활동을말한다"
     },
     {
       "code": "42193",
@@ -5096,7 +5152,7 @@
       "enName": "Specialrailwaylayingworks",
       "category": "F",
       "level": "소분류",
-      "description": ""
+      "description": "철도궤도 전문공사업코드변경"
     },
     {
       "code": "42194",
@@ -5104,7 +5160,7 @@
       "enName": "Underwaterworks",
       "category": "F",
       "level": "소분류",
-      "description": ""
+      "description": "전문직별건설업자가수중또는해저작업이요구되는시설물을설치하거나지장물을해체하는공사를전문적으로수행하는산업활동을말한다"
     },
     {
       "code": "42195",
@@ -5112,7 +5168,15 @@
       "enName": "Scaffoldingandformworks",
       "category": "F",
       "level": "소분류",
-      "description": ""
+      "description": "비계 및 형틀 공사업코드변경"
+    },
+    {
+      "code": "42196",
+      "name": "지붕,내·외벽 축조 관련 전문 공사업",
+      "enName": "Roofingandsidingworks",
+      "category": "F",
+      "level": "소분류",
+      "description": "지붕, 내․외벽 축조 관련 전문 공사업"
     },
     {
       "code": "4220",
@@ -5144,7 +5208,7 @@
       "enName": "Soundproofing,isolatingvibrationandfireproofingworks",
       "category": "F",
       "level": "소분류",
-      "description": ""
+      "description": "방음, 방진 및 내화 공사업"
     },
     {
       "code": "42205",
@@ -5152,7 +5216,7 @@
       "enName": "Firefightinginstallation",
       "category": "F",
       "level": "소분류",
-      "description": ""
+      "description": "소방시설 공사업코드변경"
     },
     {
       "code": "4231",
@@ -5168,7 +5232,7 @@
       "enName": "Electricalworksforheavyandcivilengineeringstructures",
       "category": "F",
       "level": "소분류",
-      "description": ""
+      "description": "송․배전설비공사,송․배전선설치공사등과같은전기관련토목공사성격의공사를수행하는산업활동을말한다.전기설비공사와관련한구조물건설활동도포함한다"
     },
     {
       "code": "42312",
@@ -5176,7 +5240,7 @@
       "enName": "Electricalworksforbuildings",
       "category": "F",
       "level": "소분류",
-      "description": ""
+      "description": "건축물내부의전기배선공사를전문적으로수행하는산업활동을말한다"
     },
     {
       "code": "4232",
@@ -5192,7 +5256,7 @@
       "enName": "Communicationworksforheavyandcivilengineeringstructures",
       "category": "F",
       "level": "소분류",
-      "description": ""
+      "description": "통신케이블공사및통신선관련구조물설치등토목공사의성격을 대분류 가지는통신공사를수행하는산업활동을말한다"
     },
     {
       "code": "4241",
@@ -5208,7 +5272,7 @@
       "enName": "Paintingworks",
       "category": "F",
       "level": "소분류",
-      "description": ""
+      "description": "전문직별건설업자가건물,구축물및구조물등의도장공사를수행하는산업활동을말한다"
     },
     {
       "code": "42412",
@@ -5232,7 +5296,7 @@
       "enName": "Glazingworksandjoineryinstallation",
       "category": "F",
       "level": "소분류",
-      "description": ""
+      "description": "전문직별건설업자가각종유리공사및창호공사를전문적으로수행하는산업활동을말한다"
     },
     {
       "code": "4249",
@@ -5280,7 +5344,7 @@
       "enName": "Saleofnewmotorvehicles",
       "category": "G",
       "level": "소분류",
-      "description": ""
+      "description": "신품의각종자동차를도․소매및중개하는산업활동을말한다"
     },
     {
       "code": "4512",
@@ -5313,6 +5377,14 @@
       "category": "G",
       "level": "소분류",
       "description": "자동차용 전용 신품 부품 판매업"
+    },
+    {
+      "code": "45213",
+      "name": "자동차내장용신품전기·전자·정밀기기판매업",
+      "enName": "Saleofnewelectrical,electronicandprecisionequipmentformotorvehicles",
+      "category": "G",
+      "level": "소분류",
+      "description": "자동차 내장용 신품 전기․전자․ 정밀 기기 판매업"
     },
     {
       "code": "45219",
@@ -5355,6 +5427,14 @@
       "description": "수수료또는계약에의하여타인의명의로타인의상품을거래하거나시장상황,거래당사자신용상태파악,전문지식제공등으로상품거래를지원하고중개수수료를받는대리판매점,상품중개인,무역대리또는중개인및경매인,기타대리도매인의활동도포함한다.이들은통상구매자와판매자를연결시켜주어그들의사업을영위하 대분류 거나상업적거래를대리한다.소매중개및대리활동은해당상품소매업으로분류한다"
     },
     {
+      "code": "46101",
+      "name": "산업용농·축산물,섬유원료 및 동물중개업",
+      "enName": "Agentsinvolvedinthesaleofindustrialagriculturalrawmaterials,textilerawmaterials,liveanimals",
+      "category": "G",
+      "level": "소분류",
+      "description": "산업용 농․축산물, 섬유 원료 및 동물 중개업"
+    },
+    {
       "code": "46103",
       "name": "섬유,의복,신발 및 가죽제품중개업",
       "enName": "Agentsinvolvedinthesaleoftextiles,clothing,footwearandleathergoods",
@@ -5376,7 +5456,7 @@
       "enName": "Agentsinvolvedinthesaleofmachineryandequipment",
       "category": "G",
       "level": "소분류",
-      "description": ""
+      "description": "산업용기계․장비,선박,항공기등기타기계․장비및관련용품거래에관련된상품의경매,중개또는대리하는산업활동을말한다.사무용기계및컴퓨터거래관련중개업도포함한다"
     },
     {
       "code": "46107",
@@ -5385,6 +5465,14 @@
       "category": "G",
       "level": "소분류",
       "description": "그 외 기타 특정 상품 중개업"
+    },
+    {
+      "code": "4620",
+      "name": "산업용농·축산물 및 동·식물 도매업",
+      "enName": "Wholesaleofagriculturalrawmaterialsandliveanimalsandplants",
+      "category": "G",
+      "level": "대분류",
+      "description": "산업용농․축산물및동․식물도매업가공하지않았거나도정한농․축산물및수렵물을도매하는산업활동을말한다.이러한것들은산업용으로많이사용되며동․식물을도매하는산업활동도포함한다"
     },
     {
       "code": "46201",
@@ -5400,7 +5488,7 @@
       "enName": "Wholesaleofseedsandseedlings",
       "category": "G",
       "level": "소분류",
-      "description": ""
+      "description": "곡물,채소,과실등의종자나묘목을도매하는산업활동을말한다"
     },
     {
       "code": "46203",
@@ -5408,7 +5496,7 @@
       "enName": "Wholesaleofanimalfeeds",
       "category": "G",
       "level": "소분류",
-      "description": ""
+      "description": "축산및양식사료용농산물및각종사료를도매하는산업활동을말한다"
     },
     {
       "code": "46204",
@@ -5448,7 +5536,7 @@
       "enName": "Wholesaleofmeat",
       "category": "G",
       "level": "소분류",
-      "description": ""
+      "description": "가축및기타육지동물의신선․냉장․냉동한도축고기를도매하는산업활동을말한다"
     },
     {
       "code": "46314",
@@ -5488,7 +5576,7 @@
       "enName": "Wholesaleofmeatprocessedfood",
       "category": "G",
       "level": "소분류",
-      "description": ""
+      "description": "가축및기타육지동물의도축고기를가공하여만든식품을도매하는산업활동을말한다"
     },
     {
       "code": "46322",
@@ -5507,12 +5595,20 @@
       "description": "빵류, 과자류, 당류, 초콜릿 도매업"
     },
     {
+      "code": "46324",
+      "name": "낙농품 및 동·식물성유지 도매업",
+      "enName": "Wholesaleofdairyproductsandedibleoilsandfats",
+      "category": "G",
+      "level": "소분류",
+      "description": "낙농품 및 동․식물성 유지 도매업"
+    },
+    {
       "code": "46325",
       "name": "커피 및 차류 도매업",
       "enName": "Wholesaleofcoffeeandtea",
       "category": "G",
       "level": "소분류",
-      "description": ""
+      "description": "커피및차류등의가공식료품을도매하는산업활동을말한다"
     },
     {
       "code": "46326",
@@ -5520,7 +5616,7 @@
       "enName": "Wholesaleofcondimentsandfoodadditiveproducts",
       "category": "G",
       "level": "소분류",
-      "description": ""
+      "description": "조미료및식품첨가물을도매하는산업활동을말한다"
     },
     {
       "code": "46329",
@@ -5528,7 +5624,7 @@
       "enName": "Wholesaleofotherprocessedfood",
       "category": "G",
       "level": "소분류",
-      "description": ""
+      "description": "과실및채소가공식품,곡물가루,국수및인스턴트면류등의기타가공식품을도매하는산업활동을말한다"
     },
     {
       "code": "4633",
@@ -5544,7 +5640,7 @@
       "enName": "Wholesaleofalcoholicbeverages",
       "category": "G",
       "level": "소분류",
-      "description": ""
+      "description": "곡식,과실및채소등을발효,증류또는정제하거나합성하여제조한알코올성음료를도매하는산업활동을말한다"
     },
     {
       "code": "46332",
@@ -5552,7 +5648,7 @@
       "enName": "Wholesaleofnon-alcoholicbeverages",
       "category": "G",
       "level": "소분류",
-      "description": ""
+      "description": "생수,천연또는인조탄산수,과실등을가미한비알코올음료를도매하는산업활동을말한다.얼음,음료용캔커피및음료용차류의도매활동도포함한다"
     },
     {
       "code": "46411",
@@ -5584,7 +5680,7 @@
       "enName": "Wholesaleofunderwearandnightwear",
       "category": "G",
       "level": "소분류",
-      "description": ""
+      "description": "남녀용속옷및잠옷등을도매하는산업활동을말한다"
     },
     {
       "code": "46416",
@@ -5624,7 +5720,7 @@
       "enName": "Wholesaleoffootwear",
       "category": "G",
       "level": "소분류",
-      "description": ""
+      "description": "가죽,직물,플라스틱,고무,나무등으로제조된각종신발을도매하는산업활동을말한다"
     },
     {
       "code": "4643",
@@ -5640,7 +5736,7 @@
       "enName": "Wholesaleofhouseholdfurniture",
       "category": "G",
       "level": "소분류",
-      "description": ""
+      "description": "각종재료로제조된생활용가구를도매하는산업활동을말한다"
     },
     {
       "code": "46432",
@@ -5680,7 +5776,7 @@
       "enName": "Wholesaleofpharmaceuticals",
       "category": "G",
       "level": "소분류",
-      "description": ""
+      "description": "최종소비용의약품및의약제제등을도매하는산업활동을말한다"
     },
     {
       "code": "46443",
@@ -5744,7 +5840,7 @@
       "enName": "Wholesaleofmusicalinstruments",
       "category": "G",
       "level": "소분류",
-      "description": ""
+      "description": "현악기,타악기,관악기,건반악기등각종악기를도매하는산업활동을말한다"
     },
     {
       "code": "46463",
@@ -5827,6 +5923,14 @@
       "description": "가전제품 및 부품 도매업"
     },
     {
+      "code": "46522",
+      "name": "통신·방송장비 및 부품 도매업",
+      "enName": "Wholesaleofcommunicationandbroadcastingapparatusesandparts",
+      "category": "G",
+      "level": "소분류",
+      "description": "통신․방송장비 및 부품 도매업"
+    },
+    {
       "code": "4653",
       "name": "산업용기계 및 장비 도매업",
       "enName": "Wholesaleofindustrialmachineryandequipment",
@@ -5888,7 +5992,7 @@
       "enName": "Wholesaleofmedicalappliances",
       "category": "G",
       "level": "소분류",
-      "description": ""
+      "description": "내과,외과및수의기기등각종의료기기를도매하는산업활동을말한다"
     },
     {
       "code": "46593",
@@ -5897,6 +6001,14 @@
       "category": "G",
       "level": "소분류",
       "description": "정밀기기 및 과학기기 도매업"
+    },
+    {
+      "code": "46595",
+      "name": "전기용기계·장비 및 관련 기자재 도매업",
+      "enName": "Wholesaleofelectricalmachineryandrelatedmaterials",
+      "category": "G",
+      "level": "소분류",
+      "description": "전기용 기계․장비 및 관련 기자재 도매업"
     },
     {
       "code": "46596",
@@ -5936,7 +6048,15 @@
       "enName": "Wholesaleofglass,windowsanddoors",
       "category": "G",
       "level": "소분류",
-      "description": ""
+      "description": "건축용유리제품및창호를도매하는산업활동을말한다.광학용유리및목재창호는제외한다"
+    },
+    {
+      "code": "4662",
+      "name": "냉·난방장치 및 철물,수공구 도매업",
+      "enName": "Wholesaleofhardware,handtoolsandheatingandairconditioningequipment",
+      "category": "G",
+      "level": "대분류",
+      "description": "냉․난방장치및철물,수공구도매업철물및수공구,배관및냉․난방장치등을도매하는산업활동을말한다"
     },
     {
       "code": "46621",
@@ -5968,7 +6088,7 @@
       "enName": "Wholesaleofpaint",
       "category": "G",
       "level": "소분류",
-      "description": ""
+      "description": "유성도료,수성도료,방수액등도료및관련제품을도매하는산업활동을말한다"
     },
     {
       "code": "46692",
@@ -6016,7 +6136,7 @@
       "enName": "Wholesaleofmetalores",
       "category": "G",
       "level": "소분류",
-      "description": ""
+      "description": "각종금속광물을도매하는산업활동을말한다"
     },
     {
       "code": "4673",
@@ -6040,7 +6160,7 @@
       "enName": "Wholesaleoffertilizersandagriculturalchemicals",
       "category": "G",
       "level": "소분류",
-      "description": ""
+      "description": "혼합․화학용비료와농업용약품을도매하는산업활동을말한다"
     },
     {
       "code": "46733",
@@ -6080,7 +6200,7 @@
       "enName": "Wholesaleoftextiles",
       "category": "G",
       "level": "소분류",
-      "description": ""
+      "description": "천연,합성및재생섬유의직물을도매하는산업활동을말한다"
     },
     {
       "code": "4675",
@@ -6128,7 +6248,7 @@
       "enName": "Departmentstores",
       "category": "G",
       "level": "소분류",
-      "description": ""
+      "description": "단일경영주체가일정한장소에서총괄적으로관리되는다수의매장으로구획된판매시설을갖추고각종상품을종합적으로소매하는산업활동을말한다.일반적으로이러한백화점은각매장마다전용판매원이고정배치되어있어각매장단위로직접매매및계산활동이이루어진다.백화점의형태를가지고있으나내부의각영업부분이별도의경영권을가지고운영되면그별도의경영권을가지는개별적인사업체는종합소매업으로분류하지않고전문소매업의각해당항목에분류한다. 도매 및 소매업 G 도매 및 소매업 567"
     },
     {
       "code": "47112",
@@ -6136,7 +6256,7 @@
       "enName": "Discountdepartmentstores",
       "category": "G",
       "level": "소분류",
-      "description": ""
+      "description": "단일경영주체가일정한장소에서총괄적으로관리하는대형매장을갖추고식품,가전,농․수산물,공산품및각종생활용품에이르기까지다양한상품을구비하여셀프서비스방식으로소매하는산업활동을말한다.대형마트는회원제로운영하는경우와비회원제로운영하는경우를모두포함하며대량구매및대량판매방식을통한가격경쟁력을확보하는것을특징으로한다"
     },
     {
       "code": "47119",
@@ -6160,7 +6280,7 @@
       "enName": "Supermarkets",
       "category": "G",
       "level": "소분류",
-      "description": ""
+      "description": "대분류 단일경영주체가일정규모의시설(165㎡～3,000㎡)을갖추고음․식료품을위주로하여각종생활잡화등을함께소매하는산업활동을말한다.체인화편의점의형태로운영하는산업활동은제외한다"
     },
     {
       "code": "47122",
@@ -6168,7 +6288,7 @@
       "enName": "Conveniencestores",
       "category": "G",
       "level": "소분류",
-      "description": ""
+      "description": "단일경영주체가일정한시설을갖춘매장에서종합상품체인공급업자와체인계약을체결하고편의점운영에필요한식료품및담배위주의각종상품을계속적으로공급받아판매(소매)하는산업활동을말한다"
     },
     {
       "code": "47129",
@@ -6192,7 +6312,7 @@
       "enName": "Duty-freeshops",
       "category": "G",
       "level": "소분류",
-      "description": ""
+      "description": "각종상품을종합적으로취급하고여행자에게부과되는세금(소비세,주세,수입품관세등)을면제하여판매하는산업활동을말한다.매장면적과관계없이공항․항만면세점,시내면세점,내국인면세점등을모두포함한다"
     },
     {
       "code": "4719",
@@ -6224,7 +6344,7 @@
       "enName": "Retailsaleofmeat",
       "category": "G",
       "level": "소분류",
-      "description": ""
+      "description": "가금,가축및수렵물의도축고기등을소매하는산업활동을말한다"
     },
     {
       "code": "47213",
@@ -6272,7 +6392,7 @@
       "enName": "Retailsaleofbakery,flourconfectioneryandsugarproducts",
       "category": "G",
       "level": "소분류",
-      "description": ""
+      "description": "빵류, 과자류 및 당류 소매업"
     },
     {
       "code": "47222",
@@ -6280,7 +6400,7 @@
       "enName": "Retailsaleofhealthadditivefoods",
       "category": "G",
       "level": "소분류",
-      "description": ""
+      "description": "건강보조식품 소매업코드변경"
     },
     {
       "code": "47223",
@@ -6288,7 +6408,7 @@
       "enName": "Retailsaleofsidedishes",
       "category": "G",
       "level": "소분류",
-      "description": ""
+      "description": "조리 반찬류 소매업코드변경 구・신 연계표 916 2. 구ㆍ신 연 계 표 비 고코드항 목 명코드항 목 명"
     },
     {
       "code": "47229",
@@ -6296,7 +6416,7 @@
       "enName": "Retailsaleofotherprocessedfood",
       "category": "G",
       "level": "소분류",
-      "description": ""
+      "description": "기타 가공식품 소매업세분"
     },
     {
       "code": "4723",
@@ -6312,7 +6432,7 @@
       "enName": "Retailsaleofbeverages",
       "category": "G",
       "level": "소분류",
-      "description": ""
+      "description": "주류및비알코올음료를소매하는산업활동을말한다"
     },
     {
       "code": "4731",
@@ -6328,7 +6448,7 @@
       "enName": "Retailsaleofcommunicationequipment",
       "category": "G",
       "level": "소분류",
-      "description": ""
+      "description": "통신용기기를소매하는산업활동을말한다"
     },
     {
       "code": "4732",
@@ -6352,7 +6472,7 @@
       "enName": "Retailsaleofouterwearformen",
       "category": "G",
       "level": "소분류",
-      "description": ""
+      "description": "주로남자용정장류,코트류,예복류,재킷,파카,슈트,바지등의겉옷(외의)을소매하는산업활동을말한다"
     },
     {
       "code": "47412",
@@ -6360,7 +6480,7 @@
       "enName": "Retailsaleofouterwearforwomen",
       "category": "G",
       "level": "소분류",
-      "description": ""
+      "description": "주로여자용정장류,코트류,예복류,재킷,파카,슈트,스커트,바지등의겉옷(외의)을소매하는산업활동을말한다"
     },
     {
       "code": "47413",
@@ -6368,7 +6488,7 @@
       "enName": "Retailsaleofunderwearandnightwear",
       "category": "G",
       "level": "소분류",
-      "description": ""
+      "description": "남녀용속옷및잠옷을소매하는산업활동을말한다"
     },
     {
       "code": "47414",
@@ -6384,7 +6504,7 @@
       "enName": "Retailsaleofhanbok,koreantraditionalclothes",
       "category": "G",
       "level": "소분류",
-      "description": ""
+      "description": "자기가한복을직접제조하지않고기성복형태로제조된한복을구입하여소매하는산업활동을말한다. 도매 및 소매업 G 도매 및 소매업 577"
     },
     {
       "code": "47416",
@@ -6400,7 +6520,7 @@
       "enName": "Retailsaleofotherclothing",
       "category": "G",
       "level": "소분류",
-      "description": ""
+      "description": "남녀용운동복,교복,제복,단체복,작업복,근무복,수영복등을소매하는산업활동을말한다"
     },
     {
       "code": "4742",
@@ -6504,7 +6624,7 @@
       "enName": "Retailsaleoffurniture",
       "category": "G",
       "level": "소분류",
-      "description": ""
+      "description": "목재가구,주방용가구등각종가구를전문적으로소매하는산업활동을말한다"
     },
     {
       "code": "4759",
@@ -6536,7 +6656,7 @@
       "enName": "Retailsaleofmusicalinstruments",
       "category": "G",
       "level": "소분류",
-      "description": ""
+      "description": "현악기,건반악기,타악기,관악기및전통악기등각종악기를소매하는산업활동을말한다"
     },
     {
       "code": "4761",
@@ -6672,7 +6792,7 @@
       "enName": "Retailsaleofmedicalandorthopedicequipment",
       "category": "G",
       "level": "소분류",
-      "description": ""
+      "description": "외과및정형외과용기구등각종의료용기구를소매하는산업활동을말한다"
     },
     {
       "code": "47813",
@@ -6696,7 +6816,7 @@
       "enName": "Retailsaleofofficeappliances",
       "category": "G",
       "level": "소분류",
-      "description": ""
+      "description": "사무용기기를소매하는산업활동을말한다"
     },
     {
       "code": "47822",
@@ -6704,7 +6824,7 @@
       "enName": "Retailsaleofeyeglassesandlens",
       "category": "G",
       "level": "소분류",
-      "description": ""
+      "description": "콘택트렌즈,선글라스를포함하여각종안경및렌즈를소매하는산업활동을말한다"
     },
     {
       "code": "47823",
@@ -6776,7 +6896,7 @@
       "enName": "Retailsaleofflowersandplants",
       "category": "G",
       "level": "소분류",
-      "description": ""
+      "description": "화초및살아있는식물,종묘등을소매하는산업활동을말한다"
     },
     {
       "code": "47859",
@@ -6800,7 +6920,7 @@
       "enName": "Retailsaleofsecond-handfurniture",
       "category": "G",
       "level": "소분류",
-      "description": ""
+      "description": "중고가구를소매하는산업활동을말한다"
     },
     {
       "code": "47862",
@@ -6840,7 +6960,7 @@
       "enName": "Retailsaleviamailorderhouses",
       "category": "G",
       "level": "소분류",
-      "description": ""
+      "description": "온라인통신망이외의기타통신수단에의하여각종상품을소매하는산업활동을말한다"
     },
     {
       "code": "4792",
@@ -6872,7 +6992,7 @@
       "enName": "Retailsalethroughvendingmachine",
       "category": "G",
       "level": "소분류",
-      "description": ""
+      "description": "일정한장소에자동판매기를설치․운영하면서상품을소매하는산업활동을말한다"
     },
     {
       "code": "47992",
@@ -6880,7 +7000,7 @@
       "enName": "Directsellingofgoodsdelivereddirectlytothecustomerspremises",
       "category": "G",
       "level": "소분류",
-      "description": ""
+      "description": "일반대중을대상으로매장을개설하지않고약정기간동안계속적으로신문,우유,요구르트등특정상품을소비자에게직접배달․소매하는산업활동을말한다"
     },
     {
       "code": "47993",
@@ -6888,7 +7008,7 @@
       "enName": "Retailsalethroughdoor-to-doorsales",
       "category": "G",
       "level": "소분류",
-      "description": ""
+      "description": "외판원이가정이나사업체를방문하여특정상품을소매하는산업활 도매 및 소매업 G 도매 및 소매업 599 동을말한다"
     },
     {
       "code": "4910",
@@ -6904,7 +7024,7 @@
       "enName": "Passengerrailtransport,interurban",
       "category": "H",
       "level": "소분류",
-      "description": ""
+      "description": "철도차량을이용하여여객을운송하는산업활동(도시철도제외)을말한다"
     },
     {
       "code": "4921",
@@ -6920,7 +7040,7 @@
       "enName": "Urbanrailwaytransport",
       "category": "H",
       "level": "소분류",
-      "description": ""
+      "description": "도시및근교내에서노선을정하고정기적으로승객을도시철도로운송하는산업활동을말한다.도시철도는출․퇴근등지역내의승객이동에이용되므로승․하차구간이짧고요금이저렴하며일반대중교통수단이라는특징이있다"
     },
     {
       "code": "49212",
@@ -6928,7 +7048,7 @@
       "enName": "Intra-citybustransport",
       "category": "H",
       "level": "소분류",
-      "description": ""
+      "description": "주로도시및군의일정행정구역안에서노선을정하고정기적으로승객을버스로운송하는산업활동을말한다.일부구간을도시및군근교지역으로연장하여운영하는경우도포함한다. 대분류"
     },
     {
       "code": "49219",
@@ -6952,7 +7072,7 @@
       "enName": "Intercitybustransport",
       "category": "H",
       "level": "소분류",
-      "description": ""
+      "description": "도시간에노선을정하고정기적으로승객을버스로운송하는산업활동을말한다"
     },
     {
       "code": "4923",
@@ -6968,7 +7088,7 @@
       "enName": "Taxitransport",
       "category": "H",
       "level": "소분류",
-      "description": ""
+      "description": "택시를이용하여승객을운송하는산업활동을말한다.운전자딸린승용차임대도포함한다"
     },
     {
       "code": "49232",
@@ -6976,7 +7096,7 @@
       "enName": "Charteredbustransport",
       "category": "H",
       "level": "소분류",
-      "description": ""
+      "description": "노선과일정을정하지않고고객의요구에따라승객을버스로운송하는산업활동을말한다"
     },
     {
       "code": "49233",
@@ -6984,7 +7104,7 @@
       "enName": "Hearsetransport",
       "category": "H",
       "level": "소분류",
-      "description": ""
+      "description": "시체를운구할수있는특수한설비를갖춘장의차량을운영하는산업활동을말한다"
     },
     {
       "code": "4930",
@@ -7016,7 +7136,7 @@
       "enName": "Courieractivities",
       "category": "H",
       "level": "소분류",
-      "description": ""
+      "description": "대도시지역이나도시간소화물택배서비스를제공하는산업활동을말한다.이러한사업체는택배물품수집및배달을포함하는네트워크시스템을형성하며육상,수상,항공수송수단이결합되어수행될수있다.국영또는공영이외의우편업활동도포함한다"
     },
     {
       "code": "4950",
@@ -7040,7 +7160,7 @@
       "enName": "Seapassengerwatertransport",
       "category": "H",
       "level": "소분류",
-      "description": ""
+      "description": "외국항로에선박을취항하여여객을운송하는산업활동을말한다"
     },
     {
       "code": "50112",
@@ -7048,7 +7168,7 @@
       "enName": "Seafreightwatertransport",
       "category": "H",
       "level": "소분류",
-      "description": ""
+      "description": "외국항로에선박을취항하여화물을운송하는산업활동을말한다"
     },
     {
       "code": "5012",
@@ -7064,7 +7184,7 @@
       "enName": "Coastalpassengerwatertransport",
       "category": "H",
       "level": "소분류",
-      "description": ""
+      "description": "국내항구간에각종선박을취항하여여객을운송하는산업활동을말한다"
     },
     {
       "code": "50122",
@@ -7072,7 +7192,7 @@
       "enName": "Coastalfreightwatertransport",
       "category": "H",
       "level": "소분류",
-      "description": ""
+      "description": "국내항구간에각종선박을취항하여화물을운송하는산업활동을말한다"
     },
     {
       "code": "5013",
@@ -7096,7 +7216,7 @@
       "enName": "Harborpassengertransport",
       "category": "H",
       "level": "소분류",
-      "description": ""
+      "description": "내륙 수상 여객 및 화물 운송업"
     },
     {
       "code": "5110",
@@ -7128,7 +7248,7 @@
       "enName": "Generalwarehousing",
       "category": "H",
       "level": "소분류",
-      "description": ""
+      "description": "온도조절장치등물품보존에필요한특수한시설없이보통상온에서보존이가능한물품을보관하는산업활동을말한다"
     },
     {
       "code": "52102",
@@ -7136,7 +7256,7 @@
       "enName": "Refrigeratedandfrozenwarehousing",
       "category": "H",
       "level": "소분류",
-      "description": ""
+      "description": "상온에서부패될수있는물품을보관하기위하여인공적으로저온을유지하여물품을보관하는산업활동을말한다.이사업체는창고내에급속냉동시설을보유할수있다"
     },
     {
       "code": "52103",
@@ -7144,7 +7264,7 @@
       "enName": "Farmproductswarehousing",
       "category": "H",
       "level": "소분류",
-      "description": ""
+      "description": "미포장벌크상태또는포장된농산물을냉장․냉동이외의방법으로보관하는산업활동을말한다"
     },
     {
       "code": "52104",
@@ -7152,7 +7272,7 @@
       "enName": "Dangerousgoodswarehousing",
       "category": "H",
       "level": "소분류",
-      "description": ""
+      "description": "특별한안전유지가요구되는발화성또는인화성물질등을보관하는산업활동을말한다. 대분류"
     },
     {
       "code": "5291",
@@ -7184,7 +7304,7 @@
       "enName": "Operationoflogisticsterminalfacilities",
       "category": "H",
       "level": "소분류",
-      "description": ""
+      "description": "육상화물의집하,하역,분류,포장,보관등에필요한물류터미널을운영하는산업활동을말한다"
     },
     {
       "code": "52914",
@@ -7224,7 +7344,7 @@
       "enName": "Shipmanagement",
       "category": "H",
       "level": "소분류",
-      "description": ""
+      "description": "선박소유자로부터선박관련총괄적인업무에관한중개․알선․관리감독등을수탁받아선박관리를수행하는산업활동을말한다"
     },
     {
       "code": "52929",
@@ -7248,7 +7368,7 @@
       "enName": "Operationofairport",
       "category": "H",
       "level": "소분류",
-      "description": ""
+      "description": "비행기가이․착륙하기위한시설을운영하는산업활동을말한다"
     },
     {
       "code": "52939",
@@ -7280,7 +7400,7 @@
       "enName": "Marinecargohandling",
       "category": "H",
       "level": "소분류",
-      "description": ""
+      "description": "항구내에서선박과부두,선박과선박간에직접화물을운반하여이를선적또는하역하는산업활동을말한다"
     },
     {
       "code": "5299",
@@ -7336,7 +7456,7 @@
       "enName": "Hotels",
       "category": "I",
       "level": "소분류",
-      "description": ""
+      "description": "일반적으로안내서비스(데스크서비스),식사(룸서비스)․세탁․통역등개별봉사서비스를제공하고,공연․회의,오락․스포츠,주류및상품판매등의관련부대시설을2종이상제공하는숙박시설을운영하는산업활동을말한다"
     },
     {
       "code": "55102",
@@ -7344,7 +7464,7 @@
       "enName": "Inns",
       "category": "I",
       "level": "소분류",
-      "description": ""
+      "description": "호텔에서제공되는서비스가없거나제한된서비스를제공하는숙박시설을운영하는산업활동을말한다"
     },
     {
       "code": "55103",
@@ -7352,7 +7472,7 @@
       "enName": "Resortcondominium",
       "category": "I",
       "level": "소분류",
-      "description": ""
+      "description": "약정에의하여이용권을획득한특정회원을대상으로제공되는숙박시설로서여유객실은일반인을대상으로제공하기도한다.스키장이나골프장등의레저시설을함께운영하는경우도포함한다. 숙박 및 음식점업 I 숙박 및 음식점업 629"
     },
     {
       "code": "55104",
@@ -7360,7 +7480,7 @@
       "enName": "Touristhome",
       "category": "I",
       "level": "소분류",
-      "description": ""
+      "description": "단독주택,다가구주택,다세대주택,아파트등일반주거용주택을이용하여숙박서비스를제공하는산업활동을말한다.숙박과함께취사시설을제공하거나식사를제공하는경우도포함한다"
     },
     {
       "code": "55105",
@@ -7368,7 +7488,7 @@
       "enName": "Campinggrounds",
       "category": "I",
       "level": "소분류",
-      "description": ""
+      "description": "야영에적합한시설및설비등을갖추고야영편의시설을사용자(이용자,관광객등)에게제공하는산업활동을말한다"
     },
     {
       "code": "5590",
@@ -7400,7 +7520,7 @@
       "enName": "Koreanfoodrestaurantsspecializinginnoodledishes",
       "category": "I",
       "level": "소분류",
-      "description": ""
+      "description": "냉면,칼국수,국수등한식면요리음식을전문적으로제공하는산업활동을말한다"
     },
     {
       "code": "56113",
@@ -7408,7 +7528,7 @@
       "enName": "Koreanfoodrestaurantsspecializinginmeatdishes",
       "category": "I",
       "level": "소분류",
-      "description": ""
+      "description": "쇠고기,돼지고기,닭고기,오리고기등육류구이및횟요리를전문적으로제공하는산업활동을말한다"
     },
     {
       "code": "56114",
@@ -7432,7 +7552,7 @@
       "enName": "Chinesefoodrestaurants",
       "category": "I",
       "level": "소분류",
-      "description": ""
+      "description": "중국식음식을제공하는산업활동을말한다"
     },
     {
       "code": "56122",
@@ -7440,7 +7560,7 @@
       "enName": "Japanesefoodrestaurants",
       "category": "I",
       "level": "소분류",
-      "description": ""
+      "description": "정통일본식음식을전문적으로제공하는산업활동을말한다"
     },
     {
       "code": "56123",
@@ -7448,7 +7568,7 @@
       "enName": "Westernfoodrestaurants",
       "category": "I",
       "level": "소분류",
-      "description": ""
+      "description": "유럽및미국등에서발달한서양식음식을제공하는산업활동을말한다"
     },
     {
       "code": "56129",
@@ -7456,7 +7576,7 @@
       "enName": "Otherforeignfoodrestaurants",
       "category": "I",
       "level": "소분류",
-      "description": ""
+      "description": "동남아,인도등기타외국식음식점업을운영하는산업활동을말한다"
     },
     {
       "code": "5613",
@@ -7472,7 +7592,7 @@
       "enName": "Industrialrestaurants",
       "category": "I",
       "level": "소분류",
-      "description": ""
+      "description": "회사,학교,공공기관등의기관과계약에의하여구내식당을설치하고음식을조리하여제공하는산업활동을말한다"
     },
     {
       "code": "5614",
@@ -7488,7 +7608,7 @@
       "enName": "Eventcatering",
       "category": "I",
       "level": "소분류",
-      "description": ""
+      "description": "파티,오찬,연회등의행사시에고객이지정한장소에출장하여주문한음식물을조리하여제공하는산업활동을말한다"
     },
     {
       "code": "56142",
@@ -7496,7 +7616,7 @@
       "enName": "Mobilefoodservicesactivities",
       "category": "I",
       "level": "소분류",
-      "description": ""
+      "description": "제공하는음식종류에관계없이특정장소에고정된식당을개설하지않은이동식음식점을운영하는산업활동을말한다"
     },
     {
       "code": "5615",
@@ -7512,7 +7632,7 @@
       "enName": "Bakeries",
       "category": "I",
       "level": "소분류",
-      "description": ""
+      "description": "즉석식의빵,케이크,생과자등을직접구워서일반소비자에게판매하거나접객시설을갖추고구입한빵,케이크등을직접소비할수있도록제공하는산업활동을말한다.접객시설을갖추고떡류를제공하는경우도포함한다"
     },
     {
       "code": "5616",
@@ -7536,7 +7656,7 @@
       "enName": "Chickenrestaurants",
       "category": "I",
       "level": "소분류",
-      "description": ""
+      "description": "양념치킨,프라이드치킨등치킨전문점을운영하는산업활동을말한다"
     },
     {
       "code": "5619",
@@ -7568,7 +7688,7 @@
       "enName": "Generalamusementanddrinkingplaces",
       "category": "I",
       "level": "소분류",
-      "description": ""
+      "description": "접객시설과함께접객요원을두고술을판매하는각종형태의유흥주점을말한다"
     },
     {
       "code": "56212",
@@ -7576,7 +7696,7 @@
       "enName": "Dancinganddrinkinghalls",
       "category": "I",
       "level": "소분류",
-      "description": ""
+      "description": "무도시설을갖추고술을판매하는무도유흥주점을말한다"
     },
     {
       "code": "56213",
@@ -7584,7 +7704,7 @@
       "enName": "Taphouses",
       "category": "I",
       "level": "소분류",
-      "description": ""
+      "description": "접객시설을갖추고대중에게주로생맥주를전문적으로판매하는주점을말한다"
     },
     {
       "code": "56219",
@@ -7592,7 +7712,7 @@
       "enName": "Otherdrinkingplaces",
       "category": "I",
       "level": "소분류",
-      "description": ""
+      "description": "생맥주전문점을제외한대폿집,선술집등과같이접객시설을갖추고대중에게술을판매하는기타의주점을말한다"
     },
     {
       "code": "5622",
@@ -7608,7 +7728,7 @@
       "enName": "Coffeeshops",
       "category": "I",
       "level": "소분류",
-      "description": ""
+      "description": "접객시설을갖추고볶은원두,가공커피류등을이용하여생산한커피음료를전문적으로제공하는산업활동을말한다.접객시설없이 대분류 커피포장판매를전문적으로하는음료점도포함한다"
     },
     {
       "code": "5811",
@@ -7632,7 +7752,7 @@
       "enName": "Comicbookpublishing",
       "category": "J",
       "level": "소분류",
-      "description": ""
+      "description": "만화를출판하는산업활동을말한다. 대분류"
     },
     {
       "code": "58113",
@@ -7640,7 +7760,7 @@
       "enName": "Otherbookpublishing",
       "category": "J",
       "level": "소분류",
-      "description": ""
+      "description": "학습서적,만화,잡지및정기간행물을제외한각종서적이나서적성격의팸플릿을출판하는산업활동을말한다"
     },
     {
       "code": "5812",
@@ -7656,7 +7776,7 @@
       "enName": "Publishingofnewspapers",
       "category": "J",
       "level": "소분류",
-      "description": ""
+      "description": "일반대중이관심을갖는뉴스를제공하기위하여일간및주3일이상발간하는신문을발행하는산업활동을말한다"
     },
     {
       "code": "58123",
@@ -7848,7 +7968,7 @@
       "enName": "Broadcastingprogrammeprovider",
       "category": "J",
       "level": "소분류",
-      "description": ""
+      "description": "직접제작하거나구입한텔레비전방송프로그램을유선,위성및기타방송사업체에공급하는산업활동을말한다"
     },
     {
       "code": "60222",
@@ -7856,7 +7976,7 @@
       "enName": "Cablebroadcasting",
       "category": "J",
       "level": "소분류",
-      "description": ""
+      "description": "직접제작하거나프로그램공급업자로부터공급받은텔레비전방송프로그램을유선으로송출하는산업활동을말한다"
     },
     {
       "code": "6031",
@@ -7872,7 +7992,7 @@
       "enName": "Videodistributionactivities",
       "category": "J",
       "level": "소분류",
-      "description": ""
+      "description": "영상물 제공 서비스업세분"
     },
     {
       "code": "6032",
@@ -7904,7 +8024,7 @@
       "enName": "Wiredtelecommunications",
       "category": "J",
       "level": "소분류",
-      "description": ""
+      "description": "유선통신시설을이용하여음성,데이터,문자,음향,영상및기타정보를송․수신하는산업활동을말한다.여기에는유선통신회선설비를임대하는산업활동을포함한다"
     },
     {
       "code": "6122",
@@ -7920,7 +8040,7 @@
       "enName": "Wirelessandsatellitetelecommunications",
       "category": "J",
       "level": "소분류",
-      "description": ""
+      "description": "무선통신시설을이용하여음성,데이터,문자,음향,영상및기타정보를송․수신하는산업활동을말한다.위성통신시설을이용하는통신업도포함한다"
     },
     {
       "code": "6129",
@@ -7936,7 +8056,7 @@
       "enName": "Telecommunicationsresellers",
       "category": "J",
       "level": "소분류",
-      "description": ""
+      "description": "기간통신사업자로부터전기통신회선설비를임차하여기업및가정 정보통신업 J 정 보 통 신 업 661 을대상으로전화사업(회선재판매포함)을하는산업활동을말한다.이사업체는통신망을운영․관리하지않는다"
     },
     {
       "code": "6201",
@@ -7976,7 +8096,7 @@
       "enName": "Computerfacilitiesmanagementservices",
       "category": "J",
       "level": "소분류",
-      "description": ""
+      "description": "고객사업장의컴퓨터시스템및자료처리시설을관리하는산업활동을말한다.이러한관리활동은고객의사업장또는관리사업체에서온라인으로수행할수있으며,부수적으로관련소프트웨어의설계및보완이관리과정에서이루어질수있다"
     },
     {
       "code": "6209",
@@ -8000,7 +8120,7 @@
       "enName": "Dataprocessing",
       "category": "J",
       "level": "소분류",
-      "description": ""
+      "description": "전산자료처리서비스를제공하는산업활동을말한다"
     },
     {
       "code": "63112",
@@ -8032,7 +8152,7 @@
       "enName": "Newsagencyactivities",
       "category": "J",
       "level": "소분류",
-      "description": ""
+      "description": "신문또는정기간행물의발행사,방송사,정보제공업자등에뉴스리포터,뉴스사진등을공급하는산업활동을말한다"
     },
     {
       "code": "63991",
@@ -8064,7 +8184,7 @@
       "enName": "Centralbank",
       "category": "K",
       "level": "소분류",
-      "description": ""
+      "description": "통화의원천적공급과조절,자금의효율적배분관리를위하여통화발행과금융기관의여․수신,지불준비금조달,외국환관리및업무,정부여․수신및관련정부위임업무취급등의기능을수행하는산업활동을말한다"
     },
     {
       "code": "6412",
@@ -8080,7 +8200,7 @@
       "enName": "Domesticcommercialbanks",
       "category": "K",
       "level": "소분류",
-      "description": ""
+      "description": "일반대중및기업을대상으로여․수신활동을수행하는시중은행및지방은행을말하며,금융업무를수행하는농협․축협․수협의중앙회를포함한다. 금융 및 보험업 K 금융 및 보험업 671"
     },
     {
       "code": "64122",
@@ -8088,7 +8208,7 @@
       "enName": "Foreignbanks",
       "category": "K",
       "level": "소분류",
-      "description": ""
+      "description": "외국은행의국내지점또는대리점과국제기구은행의산업활동을말한다"
     },
     {
       "code": "6413",
@@ -8104,7 +8224,7 @@
       "enName": "Creditunions",
       "category": "K",
       "level": "소분류",
-      "description": ""
+      "description": "고객으로부터상호부금형태로조성된자금을고객에게대출하는은행이외의여․수신기관을말한다"
     },
     {
       "code": "6420",
@@ -8128,7 +8248,7 @@
       "enName": "Financialleasing",
       "category": "K",
       "level": "소분류",
-      "description": ""
+      "description": "대체적으로자산의내용연수만기에가까운기간을그자산의대여기간으로정하여설비에대한금융을제공하는활동으로서,임차인은그자산의이용과소유권에관련된손익과위험에관련된모든것을책임지며,만기시에그자산의양도여부는별도로정할수있다"
     },
     {
       "code": "64912",
@@ -8136,7 +8256,7 @@
       "enName": "Developmentfinancialinstitutions",
       "category": "K",
       "level": "소분류",
-      "description": ""
+      "description": "대부분의운영자금을중앙은행,정부또는해외로부터차입이나채권발행등을통하여조달하고,장기거액자금이소요되는특정부문을대상으로금융리스이외의방법으로장기사업자금의대출업 대분류 무를수행하는신용기관을말한다"
     },
     {
       "code": "64913",
@@ -8168,7 +8288,7 @@
       "enName": "Publicfundmanagementbusiness",
       "category": "K",
       "level": "소분류",
-      "description": ""
+      "description": "정부가산업의발전및안정등각종목적으로조성한공공기금(연금및보험기금제외)을관리,운용하는산업활동을말한다"
     },
     {
       "code": "64992",
@@ -8176,7 +8296,7 @@
       "enName": "Activitiesofholdingcompanies",
       "category": "K",
       "level": "소분류",
-      "description": ""
+      "description": "다른기업체의지배적지분을소유하거나회사의경영전략에영향력을행사할목적으로주식을확보․유지하는산업활동을말한다.그러나지주회사는소속회사의운영및관리등에관한직접적인경영활동에는관여하지않는다"
     },
     {
       "code": "6511",
@@ -8208,7 +8328,7 @@
       "enName": "Non-lifeinsurance",
       "category": "K",
       "level": "소분류",
-      "description": ""
+      "description": "화재보험,해상보험,자동차보험등각종보험사고로발생하는여객,화물및재산손해에대한보험업무를주로수행하는산업활동을말한다"
     },
     {
       "code": "6520",
@@ -8224,7 +8344,7 @@
       "enName": "Individualmutualaidorganizations",
       "category": "K",
       "level": "소분류",
-      "description": ""
+      "description": "사업체구성원의복지와대여에사용하기위한공제기금을운영하는산업활동을말한다"
     },
     {
       "code": "6611",
@@ -8240,7 +8360,7 @@
       "enName": "Administrationoffinancialmarkets",
       "category": "K",
       "level": "소분류",
-      "description": ""
+      "description": "금융시장관리․감독이나증권거래활동및기타금융기관의활동을규제또는감독하는산업활동을말한다.또한유가증권의매매를원활하게하는공간을제공하는산업활동을포함한다.보험관련관리․규제․감독하는산업활동도포함한다"
     },
     {
       "code": "6612",
@@ -8256,7 +8376,7 @@
       "enName": "Securitiesbrokerage",
       "category": "K",
       "level": "소분류",
-      "description": ""
+      "description": "금융시장에서증권판매자또는매수자의한편에서서증권을중개하는서비스를제공하는산업활동을말하며,부수적으로투자분석자료등을수집․제공할수있다"
     },
     {
       "code": "66122",
@@ -8264,7 +8384,7 @@
       "enName": "Futuresmediation",
       "category": "K",
       "level": "소분류",
-      "description": ""
+      "description": "선물거래방식에의하여회원들과예약된미래상품의판매또는구매를중개하는산업활동을말한다"
     },
     {
       "code": "6619",
@@ -8304,7 +8424,7 @@
       "enName": "Riskanddamageevaluation",
       "category": "K",
       "level": "소분류",
-      "description": ""
+      "description": "보험및피보험자를위해각종손실,파손의감정및기타보험감정업무를수행하는산업활동을말한다"
     },
     {
       "code": "66202",
@@ -8312,7 +8432,7 @@
       "enName": "Insuranceagentsandbrokers",
       "category": "K",
       "level": "소분류",
-      "description": ""
+      "description": "보험사업자를위해서보험계약체결을대리또는중개,알선하는산업활동을말한다.이러한보험대리는하나이상의보험사업자를대리할수있으며보험사업자대리에관련된피보험자에대한대리서비스를포함한다"
     },
     {
       "code": "66209",
@@ -8336,7 +8456,7 @@
       "enName": "Rentingofresidentialbuildings",
       "category": "L",
       "level": "소분류",
-      "description": ""
+      "description": "주거용건물및건물일부를임대하는산업활동을말한다.주로1개월을초과하는기간으로임대기간을약정하며,가구등집기류를포함하여임대할수있다"
     },
     {
       "code": "68112",
@@ -8344,7 +8464,7 @@
       "enName": "Rentingofnon-residentialbuildings",
       "category": "L",
       "level": "소분류",
-      "description": ""
+      "description": "사무,상업및기타비거주용건물(점포,사무실포함)을임대하는산업활동을말한다. 대분류"
     },
     {
       "code": "68119",
@@ -8352,7 +8472,7 @@
       "enName": "Rentingofotherrealestate",
       "category": "L",
       "level": "소분류",
-      "description": ""
+      "description": "농업용토지,광물채굴을위한토지및기타부동산을임대하는산업활동을말한다.부동산과관련한권리를임대하는산업활동을포함한다"
     },
     {
       "code": "6812",
@@ -8392,7 +8512,7 @@
       "enName": "Managementofresidentialrealestate",
       "category": "L",
       "level": "소분류",
-      "description": ""
+      "description": "타인을위하여주거용부동산을관리하는산업활동을말한다"
     },
     {
       "code": "6822",
@@ -8416,7 +8536,7 @@
       "enName": "Realestateinvestmentconsultancy",
       "category": "L",
       "level": "소분류",
-      "description": ""
+      "description": "수수료또는계약에의해건물,토지및관련구조물등을포함한모든종류의부동산을구매또는판매하는데관련된부동산투자자문서비스를제공하는산업활동을말한다.부동산중개및대리와관련된자문서비스는제외한다"
     },
     {
       "code": "68223",
@@ -8424,7 +8544,7 @@
       "enName": "Realestateappraisal",
       "category": "L",
       "level": "소분류",
-      "description": ""
+      "description": "수수료또는계약에의해부동산임대,부동산판매등에따른부동산감정평가업무를수행하는산업활동을말한다"
     },
     {
       "code": "7011",
@@ -8480,7 +8600,7 @@
       "enName": "Researchandexperimentaldevelopmentonotherengineering",
       "category": "M",
       "level": "소분류",
-      "description": ""
+      "description": "기타공학및기술분야에관하여연구개발을수행하는산업활동을말한다.그외전문화된다학제간공학연구개발업을포함한다"
     },
     {
       "code": "7013",
@@ -8520,7 +8640,7 @@
       "enName": "Officesoflawyers",
       "category": "M",
       "level": "소분류",
-      "description": ""
+      "description": "의뢰인을대리하여민․형사및기타사건의소송,변호,소원심사청구,이의신청등을수행하는산업활동을말한다"
     },
     {
       "code": "71102",
@@ -8528,7 +8648,7 @@
       "enName": "Officesofpatentattorney",
       "category": "M",
       "level": "소분류",
-      "description": ""
+      "description": "의뢰인을대리하여특허,실용신안,디자인(의장),상표및저작권에대한등기신청,이의신청등을수행하는산업활동을말한다"
     },
     {
       "code": "71103",
@@ -8536,7 +8656,7 @@
       "enName": "Officesofjudicialscrivener",
       "category": "M",
       "level": "소분류",
-      "description": ""
+      "description": "변호사업을제외하고,사법기관에제출하는서류의작성,등기및공탁등에관한수속절차를수행하는산업활동을말한다"
     },
     {
       "code": "71201",
@@ -8544,7 +8664,7 @@
       "enName": "Officesofaccountants",
       "category": "M",
       "level": "소분류",
-      "description": ""
+      "description": "재무회계서류의작성,감사,조사및조정등을수행하는공인회계사의산업활동을말한다"
     },
     {
       "code": "71202",
@@ -8552,7 +8672,7 @@
       "enName": "Officesoftaxaccountants",
       "category": "M",
       "level": "소분류",
-      "description": ""
+      "description": "조세에관한신고․청구등의대리,세무관련서류의작성,세무상담및자문등을수행하는세무사의산업활동을말한다"
     },
     {
       "code": "7131",
@@ -8568,7 +8688,7 @@
       "enName": "Advertisingagencies",
       "category": "M",
       "level": "소분류",
-      "description": ""
+      "description": "광고주를대리하여광고에관련된시장조사및광고기획,광고물제작,매체선택,매체와의광고계약,광고물을라디오,텔레비전,인터넷,정기간행물,신문등의광고매체에광고하는업무를총괄적으로대행하는산업활동을말한다.이사업체는광고주와의포괄적인계약으로광고대행업무를수행하며이에관련된특정업무를자체인력또는다른업체에의뢰하여수행할수있다"
     },
     {
       "code": "7139",
@@ -8584,7 +8704,7 @@
       "enName": "Outdooradvertising",
       "category": "M",
       "level": "소분류",
-      "description": ""
+      "description": "옥외 및 전시 광고업명칭변경 신・구 연계표 866 1. 신ㆍ구 연 계 표 비 고코드항 목 명코드항 목 명"
     },
     {
       "code": "71392",
@@ -8616,7 +8736,7 @@
       "enName": "Activitiesofheadofficesformanufacturing",
       "category": "M",
       "level": "소분류",
-      "description": ""
+      "description": "제조업을영위하는사업단위로서회사또는기업의전략이나조직기획,의사결정을수행하고소속사업체의운영을통제하고관리하는본사및지사를말한다.이러한사업단위는특정한산업활동을수행하는회사의소속사업단위와는구분되어있으며,관리활동을중심으로수행한다. 대분류"
     },
     {
       "code": "71519",
@@ -8624,7 +8744,7 @@
       "enName": "Activitiesofheadofficesforotherindustries",
       "category": "M",
       "level": "소분류",
-      "description": ""
+      "description": "제조업이외의산업활동을영위하는사업단위로서회사또는기업의전략이나조직기획,의사결정을수행하고소속사업체의운영을통제하고관리하는본사및지사를말한다.이러한사업단위는특정한산업활동을수행하는회사의소속단위와는구분되어있으며,관리활동을중심으로수행한다"
     },
     {
       "code": "71531",
@@ -8632,7 +8752,7 @@
       "enName": "Activitiesofmanagementconsultancy",
       "category": "M",
       "level": "소분류",
-      "description": ""
+      "description": "다른사업체에게사업경영문제에관하여자문및지원하는산업활동을말한다. 전문, 과학 및 기술 서비스업 M 전문， 과학 및 기술 서비스업 705"
     },
     {
       "code": "7160",
@@ -8728,7 +8848,7 @@
       "enName": "Draftingservices",
       "category": "M",
       "level": "소분류",
-      "description": ""
+      "description": "대분류 엔지니어링및건축관련설계명세서를기초로건물,구축물및시스템의세밀한설계도면을작성하는산업활동을말한다.작성된도면을청사진또는전자기록매체등으로저장하는활동을병행하여수행할수있다"
     },
     {
       "code": "7310",
@@ -8752,7 +8872,7 @@
       "enName": "Interiordesignservices",
       "category": "M",
       "level": "소분류",
-      "description": ""
+      "description": "건축관련법규,안전성,기계및전기적특성,내부부착물및가구등을고려하여사용상의안전성,편의성및미적요소등을충족시키 대분류 는실내공간구성을기획,설계및관리하는산업활동을말한다.이사업체는식당및호텔,의료기관,공공건물,상업및기업건물,주택등의설계분야에서인테리어디자인및자문을제공한다.실내공간설계와관련하여미적인디자인만제공하는실내장식전문가도포함한다"
     },
     {
       "code": "73202",
@@ -8760,7 +8880,7 @@
       "enName": "Productsdesignservices",
       "category": "M",
       "level": "소분류",
-      "description": ""
+      "description": "제품의기능,사용,가치및외관등을최적화하도록사양을기획및디자인하는산업디자인서비스활동을말한다.이서비스에는안전성,시장성및생산의효율성,유통,사용및수리측면등을고려하여제품의재료,공정,작동방식,외관,색,표면처리등을결정할수있다"
     },
     {
       "code": "73203",
@@ -8768,7 +8888,7 @@
       "enName": "Graphicdesignservices",
       "category": "M",
       "level": "소분류",
-      "description": ""
+      "description": "특정메시지,이미지또는개념을시각적으로전달하거나가상현상등을시각적으로명확하게전달또는표현하기위한시각전달매체를기획,디자인및관리하는산업활동을말한다.비디오물및영상화면구성,기업로고등의디자인,기술적인정확성또는해석기술이요구되는설명도및삽화를제작하는사업체도포함한다"
     },
     {
       "code": "7330",
@@ -8792,7 +8912,7 @@
       "enName": "Commercialphotographyservices",
       "category": "M",
       "level": "소분류",
-      "description": ""
+      "description": "광고회사,출판업자및기타산업사용자를대상으로사진촬영서비스를제공하는산업활동을말한다"
     },
     {
       "code": "7390",
@@ -8808,7 +8928,7 @@
       "enName": "Managers",
       "category": "M",
       "level": "소분류",
-      "description": ""
+      "description": "예술가,연예인,스포츠인등일반적으로공인을대리하고관리하는산업활동을말한다.이사업체는고객을위하여계약협상,금전문제관리,경력홍보등을수행한다"
     },
     {
       "code": "73902",
@@ -8843,6 +8963,14 @@
       "description": "그 외 기타 분류 안된 전문, 과학 및 기술 서비스업"
     },
     {
+      "code": "7410",
+      "name": "사업시설유지·관리 서비스업",
+      "enName": "Combinedfacilitiessupportactivities",
+      "category": "N",
+      "level": "대분류",
+      "description": "사업시설유지․관리서비스업"
+    },
+    {
       "code": "7421",
       "name": "건물 및 산업설비청소업",
       "enName": "Cleaningofbuildingandindustrialfacilities",
@@ -8856,7 +8984,7 @@
       "enName": "Generalcleaningofbuildings",
       "category": "N",
       "level": "소분류",
-      "description": ""
+      "description": "주거용,상업용또는산업용건물의내부및창문을청소하는산업활동을말한다"
     },
     {
       "code": "74212",
@@ -8896,7 +9024,7 @@
       "enName": "Activitiesofemploymentplacementagencies",
       "category": "N",
       "level": "소분류",
-      "description": ""
+      "description": "고용주또는고용알선업체의직원이아닌구직자를대리하여일자리및구직자정보를기초로인력을선발,알선및배치하는산업활동을말한다"
     },
     {
       "code": "7512",
@@ -8928,7 +9056,7 @@
       "enName": "Travelagencyactivities",
       "category": "N",
       "level": "소분류",
-      "description": ""
+      "description": "국내․외를여행하는관광객을대상으로여행관련시설이용의알선,여행에관한안내,계약체결의대리및기타여행의편의를제공하는산업활동을말하며,부수적으로항공권,숙박시설이용권,레포츠시설이용권등의판매대리활동을수행할수있다. 사업시설 관리, 사업 지원 및 임대 서비스업 N 사업시설 관리， 사업 지원 및 임대 서비스업 727"
     },
     {
       "code": "7529",
@@ -8960,7 +9088,7 @@
       "enName": "Securitysystemscreviceactivities",
       "category": "N",
       "level": "소분류",
-      "description": ""
+      "description": "화재및도난경보장치등과같은전자보안․경보시스템의원격감시및유지․관리서비스를제공하는산업활동을말한다"
     },
     {
       "code": "7533",
@@ -8984,7 +9112,7 @@
       "enName": "Documentpreparationandduplicatingservices",
       "category": "N",
       "level": "소분류",
-      "description": ""
+      "description": "문서 작성 및 복사업통합"
     },
     {
       "code": "75919",
@@ -9032,7 +9160,7 @@
       "enName": "Packagingandfillingactivities",
       "category": "N",
       "level": "소분류",
-      "description": ""
+      "description": "수수료또는계약에의하여자동또는수동포장을불문하고수축포장,투명포장등의각종포장방법을이용하여음식물,의약품,화장품,철물등의제품을포장하는산업활동을말한다.이산업에는에어로졸의혼합및주입이포함되며,포장물에상표부착및날인하는활동이결합될수있다"
     },
     {
       "code": "75995",
@@ -9056,7 +9184,7 @@
       "enName": "Rentingofmotorvehicles",
       "category": "N",
       "level": "소분류",
-      "description": ""
+      "description": "운전자없이승용및화물자동차를리스또는임대하는산업활동을말한다"
     },
     {
       "code": "7621",
@@ -9104,7 +9232,7 @@
       "enName": "Rentingofbooks",
       "category": "N",
       "level": "소분류",
-      "description": ""
+      "description": "각종서적,정기간행물,잡지등인쇄기록물을임대하는산업활동을말한다"
     },
     {
       "code": "76292",
@@ -9112,7 +9240,39 @@
       "enName": "Rentingofwearingapparel",
       "category": "N",
       "level": "소분류",
-      "description": ""
+      "description": "정장및기타의류를임대하는산업활동을말한다"
+    },
+    {
+      "code": "7631",
+      "name": "건설 및 토목공사용기계·장비임대업",
+      "enName": "Rentingofconstruction(includingcivilengineeringandconstruction)machineryandequipment",
+      "category": "N",
+      "level": "대분류",
+      "description": "건설및토목공사용기계․장비임대업"
+    },
+    {
+      "code": "76310",
+      "name": "건설 및 토목공사용기계·장비임대업",
+      "enName": "Rentingofconstruction(includingcivilengineeringandconstruction)machineryandequipment",
+      "category": "N",
+      "level": "소분류",
+      "description": "건설 및 토목공사용 기계․장비 임대업"
+    },
+    {
+      "code": "7632",
+      "name": "컴퓨터 및 사무용기계·장비임대업",
+      "enName": "Rentingofcomputersandofficeequipment",
+      "category": "N",
+      "level": "대분류",
+      "description": "컴퓨터및사무용기계․장비임대업"
+    },
+    {
+      "code": "76320",
+      "name": "컴퓨터 및 사무용기계·장비임대업",
+      "enName": "Rentingofcomputersandofficeequipment",
+      "category": "N",
+      "level": "소분류",
+      "description": "컴퓨터 및 사무용 기계․장비 임대업"
     },
     {
       "code": "7639",
@@ -9144,7 +9304,7 @@
       "enName": "Legislativeadministration",
       "category": "O",
       "level": "소분류",
-      "description": ""
+      "description": "국회,지방의회및이들의자문및전문위원회를말한다"
     },
     {
       "code": "84112",
@@ -9152,7 +9312,7 @@
       "enName": "Executiveadministrationofcentralbodies",
       "category": "O",
       "level": "소분류",
-      "description": ""
+      "description": "중앙정부업무를총괄적으로집행하는기관및관련자문기구를말한다"
     },
     {
       "code": "84113",
@@ -9160,7 +9320,7 @@
       "enName": "Executiveadministrationofregionalandlocalbodies",
       "category": "O",
       "level": "소분류",
-      "description": ""
+      "description": "공공 행정, 국방 및 사회보장 행정 O 공공 행정， 국방 및 사회보장 행정 741 광역및기초자치단체의일반행정집행기관을말한다"
     },
     {
       "code": "84114",
@@ -9176,7 +9336,7 @@
       "enName": "Othergeneralpublicadministrationactivities",
       "category": "O",
       "level": "소분류",
-      "description": ""
+      "description": "기타일반공공행정을수행하는기관을말한다"
     },
     {
       "code": "8412",
@@ -9192,7 +9352,7 @@
       "enName": "Regulationoftheactivitiesofeducationaffairs",
       "category": "O",
       "level": "소분류",
-      "description": ""
+      "description": "교육기금및정책감사,각급학교에관련된서비스등을수행하는기관을말한다"
     },
     {
       "code": "84212",
@@ -9200,7 +9360,7 @@
       "enName": "Regulationoftheactivitiesofculturalandtourismaffairs",
       "category": "O",
       "level": "소분류",
-      "description": ""
+      "description": "문화,체육및관광,종교관리행정등을수행하는기관을말한다"
     },
     {
       "code": "84213",
@@ -9216,7 +9376,7 @@
       "enName": "Regulationoftheactivitiesofhealthcareandwelfareaffairs",
       "category": "O",
       "level": "소분류",
-      "description": ""
+      "description": "의료기관및위생시설을관리및감독하고,사회빈곤계층및국민의복지행정을수행하는기관을말한다"
     },
     {
       "code": "84219",
@@ -9240,7 +9400,7 @@
       "enName": "Administrationofgenerallaboraffairs",
       "category": "O",
       "level": "소분류",
-      "description": ""
+      "description": "실업․고용정책및노동관련일반행정을수행하는기관을말한다"
     },
     {
       "code": "84222",
@@ -9248,7 +9408,7 @@
       "enName": "Administrationofagricultural,forestry,fishingaffairs",
       "category": "O",
       "level": "소분류",
-      "description": ""
+      "description": "농림수산관련지원관리행정을수행하는기관을말한다"
     },
     {
       "code": "84223",
@@ -9256,7 +9416,7 @@
       "enName": "Administrationofconstructionandtransportationprograms",
       "category": "O",
       "level": "소분류",
-      "description": ""
+      "description": "건설 및 운송 행정 신・구 연계표 870 1. 신ㆍ구 연 계 표 비 고코드항 목 명코드항 목 명"
     },
     {
       "code": "84224",
@@ -9264,7 +9424,7 @@
       "enName": "Administrationofcommunications",
       "category": "O",
       "level": "소분류",
-      "description": ""
+      "description": "우편및전기통신시설등을관리,규제및허가하는기관을말한다"
     },
     {
       "code": "8431",
@@ -9280,7 +9440,7 @@
       "enName": "Foreignaffairs",
       "category": "O",
       "level": "소분류",
-      "description": ""
+      "description": "외교정책과대외통상정책을수립및집행하는기관을말한다"
     },
     {
       "code": "8440",
@@ -9296,7 +9456,7 @@
       "enName": "Courts",
       "category": "O",
       "level": "소분류",
-      "description": ""
+      "description": "사법권을갖는각급기관을말한다"
     },
     {
       "code": "84403",
@@ -9304,7 +9464,7 @@
       "enName": "Correctionalinstitutions",
       "category": "O",
       "level": "소분류",
-      "description": ""
+      "description": "교정시설을운영하는각급기관을말한다"
     },
     {
       "code": "84404",
@@ -9312,7 +9472,7 @@
       "enName": "Policeprotection",
       "category": "O",
       "level": "소분류",
-      "description": ""
+      "description": "시민의안전과교통안전을담당하는각급기관을말한다"
     },
     {
       "code": "84405",
@@ -9320,7 +9480,7 @@
       "enName": "Fireprotection",
       "category": "O",
       "level": "소분류",
-      "description": ""
+      "description": "화재진압및응급구조를담당하는기관을말한다"
     },
     {
       "code": "8450",
@@ -9344,7 +9504,7 @@
       "enName": "Healthinsurance",
       "category": "O",
       "level": "소분류",
-      "description": ""
+      "description": "건강보험을운영하는산업활동을말한다"
     },
     {
       "code": "84619",
@@ -9376,7 +9536,7 @@
       "enName": "Pre-primaryeducation",
       "category": "P",
       "level": "소분류",
-      "description": ""
+      "description": "유아를교육하고유아에게알맞은교육환경을제공하여심신의조화로운발달을조장하는교육기관을말한다"
     },
     {
       "code": "8512",
@@ -9400,7 +9560,7 @@
       "enName": "Middleschools",
       "category": "P",
       "level": "소분류",
-      "description": ""
+      "description": "초등학교에서받은교육의기초위에중등교육을실시하는교육기관을말한다"
     },
     {
       "code": "85212",
@@ -9408,7 +9568,7 @@
       "enName": "Academichighschools",
       "category": "P",
       "level": "소분류",
-      "description": ""
+      "description": "중학교에서받은교육의기초위에일반중등교육을실시하는교육기관을말한다.일반고등학교와교육과정편성이유사한특수목적고등학교및자율형고등학교를포함한다"
     },
     {
       "code": "8522",
@@ -9432,7 +9592,7 @@
       "enName": "Technicalhighschools",
       "category": "P",
       "level": "소분류",
-      "description": ""
+      "description": "중학교과정을수료한사람을대상으로제조공정및각종산업기계와관련된기술을전문적으로교육하는기관을말한다"
     },
     {
       "code": "8530",
@@ -9448,7 +9608,7 @@
       "enName": "Juniortechnicalandvocationalcolleges",
       "category": "P",
       "level": "소분류",
-      "description": ""
+      "description": "중등교육과정을수료한사람에게기술및직업적인학과내용에중점을두어교육을실시하기위하여설립된교육기관을말한다"
     },
     {
       "code": "85302",
@@ -9472,7 +9632,7 @@
       "enName": "Schoolsforthehandicapped",
       "category": "P",
       "level": "소분류",
-      "description": ""
+      "description": "부 록 871 1. 신ㆍ구 연 계 표 비 고코드항 목 명코드항 목 명"
     },
     {
       "code": "8542",
@@ -9488,7 +9648,7 @@
       "enName": "Schoolsfortheforeigners",
       "category": "P",
       "level": "소분류",
-      "description": ""
+      "description": "외국에서일정기간거주하고귀국한내국인,국적취득자및외국인자녀를교육하기위하여설립된교육기관을말한다.외국인학교는유치원,초등학교,중학교,고등학교과정을통합하여운영할수있다"
     },
     {
       "code": "8550",
@@ -9504,7 +9664,7 @@
       "enName": "Generalsubjecteducationalinstitutes",
       "category": "P",
       "level": "소분류",
-      "description": ""
+      "description": "상급학교진학및보습을위한일반교과과정을교육하는산업활동을말한다"
     },
     {
       "code": "85502",
@@ -9512,7 +9672,7 @@
       "enName": "Homevisitingeducationalinstitutes",
       "category": "P",
       "level": "소분류",
-      "description": ""
+      "description": "방문방법으로일반교과교정을교육하는산업활동을말한다"
     },
     {
       "code": "8561",
@@ -9536,7 +9696,7 @@
       "enName": "Othersportseducation",
       "category": "P",
       "level": "소분류",
-      "description": ""
+      "description": "축구,야구등구기종목과체조,수영등개인종목스포츠에관한교육을하는산업활동을말한다"
     },
     {
       "code": "85613",
@@ -9544,7 +9704,7 @@
       "enName": "Recreationeducation",
       "category": "P",
       "level": "소분류",
-      "description": ""
+      "description": "바둑교육등레크리에이션에관한교육을하는산업활동을말한다"
     },
     {
       "code": "85614",
@@ -9568,7 +9728,7 @@
       "enName": "Musiceducation",
       "category": "P",
       "level": "소분류",
-      "description": ""
+      "description": "피아노,바이올린,실용음악등음악에관한이론과실기등을교습하는산업활동을말한다"
     },
     {
       "code": "85622",
@@ -9576,7 +9736,7 @@
       "enName": "Fineartseducation",
       "category": "P",
       "level": "소분류",
-      "description": ""
+      "description": "소묘(스케치,데생등),수채화,정물화등미술에관한이론과실기등을교습하는산업활동을말한다"
     },
     {
       "code": "85629",
@@ -9584,7 +9744,7 @@
       "enName": "Otherculturaleducation",
       "category": "P",
       "level": "소분류",
-      "description": ""
+      "description": "음악및미술교습이외에연극,무용등각종예술에관한이론과실기를교습하는산업활동을말한다. 대분류"
     },
     {
       "code": "8563",
@@ -9600,7 +9760,7 @@
       "enName": "Foreignlanguageinstitutes",
       "category": "P",
       "level": "소분류",
-      "description": ""
+      "description": "회화또는시험을위하여외국어강습을수행하는산업활동을말한다.외국인을대상으로하는한국어학원도포함한다"
     },
     {
       "code": "85632",
@@ -9608,7 +9768,7 @@
       "enName": "Othereducationalinstitutes",
       "category": "P",
       "level": "소분류",
-      "description": ""
+      "description": "취업및각종전문시험을위한교과를교육하는산업활동을말한다"
     },
     {
       "code": "8564",
@@ -9624,7 +9784,7 @@
       "enName": "Facilitiesforsocialeducation",
       "category": "P",
       "level": "소분류",
-      "description": ""
+      "description": "국민의평생교육을위한교육시설로서,다른곳에분류되지않은산업활동을말한다. 교육 서비스업 P 교육 서비스업 761"
     },
     {
       "code": "8565",
@@ -9648,7 +9808,7 @@
       "enName": "Drivingschools",
       "category": "P",
       "level": "소분류",
-      "description": ""
+      "description": "자동차,중장비,비행기,선박등의운송장비에대한운전교습을수행하는산업활동을말한다"
     },
     {
       "code": "85669",
@@ -9672,7 +9832,7 @@
       "enName": "Computertraininginstitutes",
       "category": "P",
       "level": "소분류",
-      "description": ""
+      "description": "컴퓨터프로그램작성,컴퓨터작동,근거리통신망운영과같은컴퓨터교육을수행하는산업활동을말한다.교육은학원뿐만아니라,교육생이있는시설에서도이루어질수있다"
     },
     {
       "code": "8570",
@@ -9704,7 +9864,7 @@
       "enName": "Generalhospitals",
       "category": "Q",
       "level": "소분류",
-      "description": ""
+      "description": "종합 병원 신・구 연계표 872 1. 신ㆍ구 연 계 표 비 고코드항 목 명코드항 목 명"
     },
     {
       "code": "86102",
@@ -9712,7 +9872,7 @@
       "enName": "Specializedhospitals",
       "category": "Q",
       "level": "소분류",
-      "description": ""
+      "description": "30인이상의입원시설을갖추고의사가입원환자위주로진료행위를하는의료기관을말한다"
     },
     {
       "code": "86103",
@@ -9720,7 +9880,7 @@
       "enName": "Dentalhospitals",
       "category": "Q",
       "level": "소분류",
-      "description": ""
+      "description": "입원시설을갖추고치과의사가입원환자위주로진료행위를하는의료기관을말한다"
     },
     {
       "code": "86104",
@@ -9728,7 +9888,7 @@
       "enName": "Orientalmedicalhospitals",
       "category": "Q",
       "level": "소분류",
-      "description": ""
+      "description": "30인이상의입원시설을갖추고한의사가입원환자위주로진료행위를하는의료기관을말한다"
     },
     {
       "code": "86201",
@@ -9736,7 +9896,7 @@
       "enName": "Generalclinics",
       "category": "Q",
       "level": "소분류",
-      "description": ""
+      "description": "치과의원및한의원,방사선진단및병리검사의원을제외하고,전문의또는일반의사가외래환자위주로진료행위를하는의료기관을말한다.이진료기관은일정규모이하의입원시설을갖춘경우도있다. 보건업 및 사회복지 서비스업 Q 보건업 및 사회복지 서비스업 767"
     },
     {
       "code": "86202",
@@ -9744,7 +9904,7 @@
       "enName": "Dentalclinics",
       "category": "Q",
       "level": "소분류",
-      "description": ""
+      "description": "치과의사가외래환자위주로진료행위를하는의료기관을말한다"
     },
     {
       "code": "86203",
@@ -9752,7 +9912,7 @@
       "enName": "Orientalmedicalclinics",
       "category": "Q",
       "level": "소분류",
-      "description": ""
+      "description": "한의사가외래환자위주로진료행위를하는의료기관을말한다"
     },
     {
       "code": "8630",
@@ -9776,7 +9936,7 @@
       "enName": "Ambulanceservices",
       "category": "Q",
       "level": "소분류",
-      "description": ""
+      "description": "자동차,선박및항공기등으로환자이송과응급치료를하는산업활동을말한다.차량에는훈련된직원이조작하는응급구조장비가장착되어있다"
     },
     {
       "code": "86902",
@@ -9784,7 +9944,7 @@
       "enName": "Quasi-medicalservices",
       "category": "Q",
       "level": "소분류",
-      "description": ""
+      "description": "침구,지압치료등의유사의료행위를수행하는산업활동을말한다"
     },
     {
       "code": "8711",
@@ -9872,7 +10032,7 @@
       "enName": "Vocationalrehabilitationfacilities",
       "category": "Q",
       "level": "소분류",
-      "description": ""
+      "description": "신체장애자와실업자등에게직업재활및취업서비스를제공하는산업활동을말한다.직업재활상담서비스도포함한다. 보건업 및 사회복지 서비스업 Q 보건업 및 사회복지 서비스업 773"
     },
     {
       "code": "87292",
@@ -9880,7 +10040,7 @@
       "enName": "Welfareservicecenter",
       "category": "Q",
       "level": "소분류",
-      "description": ""
+      "description": "사회적으로도움이필요한사람에게돌봄ㆍ상담ㆍ재활및역량강화를위한종합복지서비스를제공하는산업활동을말한다"
     },
     {
       "code": "87293",
@@ -9912,7 +10072,7 @@
       "enName": "Operationofpublicperformancefacilities",
       "category": "R",
       "level": "소분류",
-      "description": ""
+      "description": "극장,음악당및기타실연극을공연하는시설을운영하면서자체제작한오페라,연극,음악회등을공연하는산업활동을말한다.공연시설을운영하면서부수적으로단기간공연시설을대관하고수수료를받는경우도포함한다"
     },
     {
       "code": "9012",
@@ -9928,7 +10088,7 @@
       "enName": "Operationofdramaticcompanies",
       "category": "R",
       "level": "소분류",
-      "description": ""
+      "description": "실황극을공연하는공연단체를운영하는산업활동을말한다.이사업체는극장시설을소유할수있다"
     },
     {
       "code": "90123",
@@ -9936,7 +10096,7 @@
       "enName": "Otherperformingartscompanies",
       "category": "R",
       "level": "소분류",
-      "description": ""
+      "description": "기타공연예술단체를운영하는산업활동을말한다"
     },
     {
       "code": "9013",
@@ -9952,7 +10112,7 @@
       "enName": "Independentperformingartists",
       "category": "R",
       "level": "소분류",
-      "description": ""
+      "description": "배우,가수,성악가,무용수,스턴트맨등공연에직접참가하여자신의신체를이용한예술행위를하는독립된공연예술가를말한다. 대분류"
     },
     {
       "code": "90132",
@@ -9960,7 +10120,7 @@
       "enName": "Independentnon-performingartists",
       "category": "R",
       "level": "소분류",
-      "description": ""
+      "description": "독립적으로비공연예술활동에종사하는예술가를말한다"
     },
     {
       "code": "9019",
@@ -9976,7 +10136,7 @@
       "enName": "Performingartseventpromotionandorganization",
       "category": "R",
       "level": "소분류",
-      "description": ""
+      "description": "공연예술행사를기획,조직및관리하는산업활동을말한다.이사업체는공연시설을소유할수있다"
     },
     {
       "code": "9021",
@@ -10000,7 +10160,7 @@
       "enName": "Readingroomoperation",
       "category": "R",
       "level": "소분류",
-      "description": ""
+      "description": "대분류 숙박시설없이일반대중을대상으로각종도서를읽을수있는장소를제공하는산업활동을말한다"
     },
     {
       "code": "9022",
@@ -10016,7 +10176,7 @@
       "enName": "Museumactivities",
       "category": "R",
       "level": "소분류",
-      "description": ""
+      "description": "일반대중에게미술공예품,조각품,순수과학물,응용과학물,문화재등을진열하여관람시키는일반또는전문박물관시설을운영하는산업활동을말한다"
     },
     {
       "code": "90222",
@@ -10024,7 +10184,7 @@
       "enName": "Operationofhistoricalsitesandbuildings",
       "category": "R",
       "level": "소분류",
-      "description": ""
+      "description": "역사적인유적지,전적지,사적지,고궁등사적명소를보존․전시하는산업활동을말한다. 예술, 스포츠 및 여가관련 서비스업 R 예술， 스포츠 및 여가관련 서비스업 781"
     },
     {
       "code": "9023",
@@ -10032,7 +10192,7 @@
       "enName": "Botanicalandzoologicalgardensandnaturereservesactivities",
       "category": "R",
       "level": "대분류",
-      "description": ""
+      "description": "”에분류한다.바.수상오락목적의낚시장및관련시설운영활동은“"
     },
     {
       "code": "90231",
@@ -10048,7 +10208,7 @@
       "enName": "Operationofnaturereserves",
       "category": "R",
       "level": "소분류",
-      "description": ""
+      "description": "자연지역의보존및전시에종사하는산업활동을말한다"
     },
     {
       "code": "9029",
@@ -10080,7 +10240,7 @@
       "enName": "Outdoorarenaandstadiumoperation",
       "category": "R",
       "level": "소분류",
-      "description": ""
+      "description": "육상경기,축구,야구,럭비,하키등각종필드경기를위한관람석이있는실외경기장을운영하는산업활동을말한다"
     },
     {
       "code": "91113",
@@ -10104,7 +10264,7 @@
       "enName": "Golfcourseoperation",
       "category": "R",
       "level": "소분류",
-      "description": ""
+      "description": "골프장 운영업 신・구 연계표 874 1. 신ㆍ구 연 계 표 비 고코드항 목 명코드항 목 명"
     },
     {
       "code": "91122",
@@ -10112,7 +10272,7 @@
       "enName": "Skiingfacilityoperation",
       "category": "R",
       "level": "소분류",
-      "description": ""
+      "description": "숙박시설과독립된스키장및스키리프트를운영하는산업활동을말한다.본질적인산업활동을수행하면서부수적으로스키강습및장비임대등을할수있다"
     },
     {
       "code": "9113",
@@ -10136,7 +10296,7 @@
       "enName": "Physicalfitnessfacilityoperation",
       "category": "R",
       "level": "소분류",
-      "description": ""
+      "description": "심신을단련하는시설을운영하는산업활동을말한다"
     },
     {
       "code": "91133",
@@ -10144,7 +10304,7 @@
       "enName": "Swimmingpooloperation",
       "category": "R",
       "level": "소분류",
-      "description": ""
+      "description": "관람석이없는수영장을운영하는사업체의산업활동을말한다"
     },
     {
       "code": "91134",
@@ -10152,7 +10312,7 @@
       "enName": "Bowlingalleyoperation",
       "category": "R",
       "level": "소분류",
-      "description": ""
+      "description": "볼링장시설을운영하는산업활동을말한다"
     },
     {
       "code": "91135",
@@ -10160,7 +10320,7 @@
       "enName": "Billiardroomoperation",
       "category": "R",
       "level": "소분류",
-      "description": ""
+      "description": "당구장시설을운영하는산업활동을말한다"
     },
     {
       "code": "91136",
@@ -10168,7 +10328,7 @@
       "enName": "Golfpracticerangeoperation",
       "category": "R",
       "level": "소분류",
-      "description": ""
+      "description": "골프연습장시설을운영하는산업활동을말한다"
     },
     {
       "code": "91139",
@@ -10192,7 +10352,7 @@
       "enName": "Sportscluboperation",
       "category": "R",
       "level": "소분류",
-      "description": ""
+      "description": "프로및실업경기단체등과같이스포츠활동에참가할기회를제공 대분류 해주는스포츠클럽을운영하는산업활동을말한다.여기에는게임단을운영하는산업활동을포함한다"
     },
     {
       "code": "91210",
@@ -10216,7 +10376,7 @@
       "enName": "Amusementarcadeoperation",
       "category": "R",
       "level": "소분류",
-      "description": ""
+      "description": "컴퓨터가아닌각종전자게임기를갖춘시설을운영하는산업활동을말한다"
     },
     {
       "code": "91222",
@@ -10224,7 +10384,7 @@
       "enName": "Computergameroomoperation",
       "category": "R",
       "level": "소분류",
-      "description": ""
+      "description": "인터넷또는시디롬( 등에의한컴퓨터게임을주로제공하는시설을운영하는산업활동을말한다"
     },
     {
       "code": "91223",
@@ -10232,7 +10392,7 @@
       "enName": "Singingroomoperation",
       "category": "R",
       "level": "소분류",
-      "description": ""
+      "description": "노래연습장을운영하는산업활동을말한다"
     },
     {
       "code": "91229",
@@ -10240,7 +10400,7 @@
       "enName": "Otherentertainmentfacilityoperation",
       "category": "R",
       "level": "소분류",
-      "description": ""
+      "description": "이산업에는오락적성격의관람및놀이시설을운영하는산업활동을포함한다"
     },
     {
       "code": "9123",
@@ -10256,7 +10416,7 @@
       "enName": "Operationofindoorandoutdoorfishingplace",
       "category": "R",
       "level": "소분류",
-      "description": ""
+      "description": "낚시장을운영하는산업활동을말한다"
     },
     {
       "code": "91239",
@@ -10280,7 +10440,7 @@
       "enName": "Publicationandsaleoflottery",
       "category": "R",
       "level": "소분류",
-      "description": ""
+      "description": "각종복권을발행하거나판매하는산업활동을말한다"
     },
     {
       "code": "91242",
@@ -10288,7 +10448,7 @@
       "enName": "Operationofcasino",
       "category": "R",
       "level": "소분류",
-      "description": ""
+      "description": "카지노(머신게임,카드게임,롤렛,주사위게임등)를운영하는산업활동을말한다"
     },
     {
       "code": "91249",
@@ -10312,7 +10472,7 @@
       "enName": "Ballroomoperation",
       "category": "R",
       "level": "소분류",
-      "description": ""
+      "description": "주류및식사가제공되지않는무도장,댄스홀등을운영하는산업활 대분류 동을말한다"
     },
     {
       "code": "91292",
@@ -10328,7 +10488,7 @@
       "enName": "Badukroomoperation",
       "category": "R",
       "level": "소분류",
-      "description": ""
+      "description": "바둑,장기,체스,카드놀이및유사경기시설을운영하는산업활동을말한다"
     },
     {
       "code": "9411",
@@ -10344,7 +10504,7 @@
       "enName": "Businessandemployersmembershiporganizations",
       "category": "S",
       "level": "소분류",
-      "description": ""
+      "description": "동일분야의산업에종사하는기업상호간의이익증진을위하여조직한단체를말한다.이단체는회원용출판물의발간,홍보활동을수행할수있다"
     },
     {
       "code": "9412",
@@ -10376,7 +10536,7 @@
       "enName": "Buddhismorganizations",
       "category": "S",
       "level": "소분류",
-      "description": ""
+      "description": "협회 및 단체, 수리 및 기타 개인 서비스업 S 협회 및 단체， 수리 및 기타 개인 서비스업 795 불교계통의사찰,포교소등을말한다"
     },
     {
       "code": "94912",
@@ -10384,7 +10544,7 @@
       "enName": "Christianityorganizations",
       "category": "S",
       "level": "소분류",
-      "description": ""
+      "description": "기독교계통의교회및포교소등을말한다"
     },
     {
       "code": "94913",
@@ -10392,7 +10552,7 @@
       "enName": "Catholicismorganizations",
       "category": "S",
       "level": "소분류",
-      "description": ""
+      "description": "천주교계통의성당및포교소등을말한다"
     },
     {
       "code": "94914",
@@ -10400,7 +10560,7 @@
       "enName": "Koreanreligiousorganizations",
       "category": "S",
       "level": "소분류",
-      "description": ""
+      "description": "천도교,원불교,증산도등한국에서자생한종교단체를말한다"
     },
     {
       "code": "94919",
@@ -10408,7 +10568,7 @@
       "enName": "Otherreligiousorganizations",
       "category": "S",
       "level": "소분류",
-      "description": ""
+      "description": "기타종교단체로서유교,회교등을포함한다"
     },
     {
       "code": "9492",
@@ -10424,7 +10584,7 @@
       "enName": "Politicalorganizations",
       "category": "S",
       "level": "소분류",
-      "description": ""
+      "description": "정당및기타정치단체를말한다"
     },
     {
       "code": "9493",
@@ -10440,7 +10600,7 @@
       "enName": "Environmentaladvocacyorganizations",
       "category": "S",
       "level": "소분류",
-      "description": ""
+      "description": "환경및야생물의보호및보존에종사하는단체를말한다"
     },
     {
       "code": "9499",
@@ -10488,7 +10648,7 @@
       "enName": "Generalrepairservicesofmotorvehicles",
       "category": "S",
       "level": "소분류",
-      "description": ""
+      "description": "승용차,트럭및트레일러등의자동차를전기및기계적인방법으로 협회 및 단체, 수리 및 기타 개인 서비스업 S 협회 및 단체， 수리 및 기타 개인 서비스업 799 차량전체부분을종합적으로수리하는산업활동을말한다"
     },
     {
       "code": "95212",
@@ -10496,7 +10656,7 @@
       "enName": "Repairservicesofmotorvehiclesspecializinginparts",
       "category": "S",
       "level": "소분류",
-      "description": ""
+      "description": "자동차의기관,차체,제동조직,용접및도장,연계조직,차축,운전기어및튜브,내장품등자동차의특정부분만을전문적으로수리하는산업활동을말한다.자동차각부위의일상적인단순수리활동을포함한다"
     },
     {
       "code": "95213",
@@ -10504,7 +10664,7 @@
       "enName": "Motorvehiclewashingservices",
       "category": "S",
       "level": "소분류",
-      "description": ""
+      "description": "자동차세차및광택처리등과유사활동을수행하는산업활동을말한다"
     },
     {
       "code": "9522",
@@ -10520,7 +10680,7 @@
       "enName": "Repairservicesofelectricalhouseholdmachineryandappliances",
       "category": "S",
       "level": "소분류",
-      "description": ""
+      "description": "각종가정용전기제품및용품을전문적으로수리하는산업활동을말한다"
     },
     {
       "code": "9539",
@@ -10568,7 +10728,7 @@
       "enName": "Barbershops",
       "category": "S",
       "level": "소분류",
-      "description": ""
+      "description": "주로남성고객의머리카락및수염을깎거나다듬고염색하는등의방법으로고객의용모를단정하게하는산업활동을말한다"
     },
     {
       "code": "96112",
@@ -10576,7 +10736,7 @@
       "enName": "Hairbeautyshops",
       "category": "S",
       "level": "소분류",
-      "description": ""
+      "description": "파마,염색,머리카락자르기,머리카락모양내기,머리피부손질등으로고객의머리를아름답게꾸미는산업활동을말한다"
     },
     {
       "code": "96113",
@@ -10584,7 +10744,7 @@
       "enName": "Skinbeautyshops",
       "category": "S",
       "level": "소분류",
-      "description": ""
+      "description": "손이나기구를이용한피부관리,습포(팩, 제모,눈썹손질등으로고객의피부를아름답게꾸미는산업활동을말한다"
     },
     {
       "code": "96119",
@@ -10592,7 +10752,7 @@
       "enName": "Otherbeautyshops",
       "category": "S",
       "level": "소분류",
-      "description": ""
+      "description": "손톱과발톱의손질등고객의외모를아름답게꾸미는산업활동을말한다"
     },
     {
       "code": "9612",
@@ -10608,7 +10768,7 @@
       "enName": "Turkishbaths,saunaandsteambaths,solariums",
       "category": "S",
       "level": "소분류",
-      "description": ""
+      "description": "실내․외를불문하고,대중탕,가족탕,한증막,사우나탕,증기탕및온탕등을운영하는산업활동을말한다"
     },
     {
       "code": "96122",
@@ -10616,7 +10776,7 @@
       "enName": "Massagesalons",
       "category": "S",
       "level": "소분류",
-      "description": ""
+      "description": "일반대중에게발,스포츠마사지등으로신체에물리적자극을가하는시설을운영하는산업활동을말한다"
     },
     {
       "code": "9691",
@@ -10632,7 +10792,7 @@
       "enName": "Householdlaundryservices",
       "category": "S",
       "level": "소분류",
-      "description": ""
+      "description": "일반대중을대상으로각종세탁물을수집및세탁하는산업활동을말한다.동전조작식또는셀프서비스형세탁시설(아파트및기숙사등에서설치가능)을운영하는산업활동도포함한다"
     },
     {
       "code": "96913",
@@ -10640,7 +10800,7 @@
       "enName": "Laundrysupplies",
       "category": "S",
       "level": "소분류",
-      "description": ""
+      "description": "개인,상업및산업사용자와의임대계약에의하여타월,냅킨,식탁보,가운,기저귀및기타린넨제품,작업복,보호복,안전장갑,청정실용의복등을반복적으로세탁․공급하는산업활동을말한다"
     },
     {
       "code": "9692",
@@ -10680,7 +10840,7 @@
       "enName": "Weddingchapelservices",
       "category": "S",
       "level": "소분류",
-      "description": ""
+      "description": "일반대중에게결혼식을위한시설을제공하는산업활동을말한다"
     },
     {
       "code": "96992",

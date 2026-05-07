@@ -1671,6 +1671,13 @@
       }
 
       async function renderLawPanelWithApi(raw, q, safeLabel, parsed, highlightPhrasesOpt) {
+        if (window.location && window.location.protocol === "file:") {
+          panelLaw.innerHTML =
+            '<p class="law-result-panel-lead">로컬 미리보기(file://) 환경에서는 원문 API 호출이 제한되어, 공식 포털 링크로 안내합니다.</p>' +
+            lawPanelOfficialLinksHtml(safeLabel, q);
+          panelAdmrul.innerHTML = PLACEHOLDER_ADMRUL;
+          return { status: "file_preview", precedents: [] };
+        }
         var loadingMsg =
           '<p class="law-result-loading" role="status">' +
           "국가법령정보 API에서 「" +
@@ -1783,8 +1790,7 @@
           return { status: hasArticleHtml ? "ok" : "partial", precedents: precOut };
         } catch (err) {
           panelLaw.innerHTML =
-            '<div class="law-warn-box"><p><strong>원문 API를 호출할 수 없습니다.</strong> 정적 파일만 열었거나 호스트에 <code>api/law-article</code> 경로가 없을 수 있습니다. Vercel로 배포했는지 확인해 주세요.</p></div>' +
-            '<p class="law-result-panel-lead">공식 포털 링크로 대체합니다.</p>' +
+            '<p class="law-result-panel-lead">원문 API 연결이 원활하지 않아 공식 포털 링크로 대체합니다.</p>' +
             lawPanelOfficialLinksHtml(safeLabel, q);
           panelAdmrul.innerHTML = PLACEHOLDER_ADMRUL;
           return { status: "fetch_err", precedents: [] };

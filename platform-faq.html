@@ -974,6 +974,62 @@ window.EMBASSY_GROUPS=JSON.parse(new TextDecoder("utf-8").decode(_u8));
 
       resetBtn.addEventListener("click", resetImmigrationGvrnPanel);
 
+      function applyImmigrationDeepLinkFromUrl() {
+        var params;
+        try {
+          params = new URLSearchParams(window.location.search || "");
+        } catch (e) {
+          return;
+        }
+        var deepRegion = String(params.get("gvrn_region") || "").trim();
+        var deepOffice = String(params.get("gvrn_office") || "").trim();
+        var deepQuery = String(params.get("gvrn_q") || "").trim();
+        if (!deepRegion && !deepOffice && !deepQuery) return;
+
+        function compact(s) {
+          return String(s || "").toLowerCase().replace(/\s+/g, "");
+        }
+
+        if (deepRegion && SAMPLE_BY_REGION[deepRegion]) {
+          regionSel.value = deepRegion;
+          rebuildOfficeOptions(deepRegion);
+        }
+
+        var officeNeedle = compact(deepOffice);
+        var picked = null;
+        if (officeNeedle) {
+          var targetRegions = deepRegion && SAMPLE_BY_REGION[deepRegion] ? [deepRegion] : Object.keys(SAMPLE_BY_REGION);
+          targetRegions.forEach(function (region) {
+            if (picked) return;
+            var rows = SAMPLE_BY_REGION[region] || [];
+            rows.forEach(function (row, idx) {
+              if (picked) return;
+              var nameNeedle = compact(row && row.name ? row.name : "");
+              if (!nameNeedle) return;
+              if (nameNeedle === officeNeedle || nameNeedle.indexOf(officeNeedle) !== -1 || officeNeedle.indexOf(nameNeedle) !== -1) {
+                picked = { region: region, idx: idx };
+              }
+            });
+          });
+        }
+
+        if (picked) {
+          applyOfficeSelection(picked.region, picked.idx);
+          if (deepQuery) searchInput.value = deepQuery;
+          return;
+        }
+
+        if (deepQuery) {
+          searchInput.value = deepQuery;
+          runJurisdictionSearch();
+          return;
+        }
+
+        if (deepRegion && SAMPLE_BY_REGION[deepRegion] && (SAMPLE_BY_REGION[deepRegion] || []).length) {
+          applyOfficeSelection(deepRegion, 0);
+        }
+      }
+
       function clearDetail() {
         detail.hidden = true;
       }
@@ -1047,6 +1103,7 @@ window.EMBASSY_GROUPS=JSON.parse(new TextDecoder("utf-8").decode(_u8));
       });
 
       rebuildOfficeOptions("");
+      applyImmigrationDeepLinkFromUrl();
     })();
 
     (function () {

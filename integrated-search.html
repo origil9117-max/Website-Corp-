@@ -501,6 +501,22 @@
 
       async function loadImmigrationOfficeItems() {
         var items = [];
+        function buildImmigrationHref(region, officeName, queryText) {
+          var base = "platform-faq.html";
+          var r = encodeURIComponent(String(region || ""));
+          var o = encodeURIComponent(String(officeName || ""));
+          var q = encodeURIComponent(String(queryText || ""));
+          return (
+            base +
+            "?gvrn_region=" +
+            r +
+            "&gvrn_office=" +
+            o +
+            "&gvrn_q=" +
+            q +
+            "#immigration-search-main"
+          );
+        }
         try {
           var res = await fetch("data/immigration-gvrn-by-region.json", { cache: "no-store" });
           if (!res.ok) return items;
@@ -521,7 +537,7 @@
                   "[관할출입국·외국인관서] " +
                   (address || "주소 정보 없음") +
                   (jurisdiction ? " · 관할: " + jurisdiction : ""),
-                href: "platform-faq.html#immigration-search-main",
+                href: buildImmigrationHref(region, name, jurisdiction || address || name),
                 tags: [
                   region,
                   name,

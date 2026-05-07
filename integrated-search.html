@@ -442,6 +442,14 @@
           .replaceAll("'", "&#39;");
       }
 
+      function stripHtmlToText(html) {
+        return String(html || "")
+          .replace(/<br\s*\/?>/gi, "\n")
+          .replace(/<[^>]+>/g, " ")
+          .replace(/\s+/g, " ")
+          .trim();
+      }
+
       var STATIC_ITEMS = [
         { source: "검색 카테고리", title: "주요업무분야", desc: "비영리·출입국·기업투자·보훈·인허가·행정심판 등 주요업무분야 모음입니다.", href: "service-post.html", tags: "주요업무분야 주요 업무 분야 주요업무 카테고리" },
         { source: "주요업무분야", title: "비영리법인설립업무", desc: "비영리법인(사단·재단), 협동조합 설립 및 정관 변경, 해산 절차 안내.", href: "service-post.html?service=nonprofit", tags: "비영리 법인 사단 재단 협동조합 정관 변경 해산" },
@@ -578,9 +586,83 @@
         return list;
       }
 
+      async function loadServicePostItems() {
+        var serviceLabelMap = {
+          nonprofit: "비영리법인설립업무",
+          immigration: "출입국민원업무",
+          investment: "기업투자·글로벌업무",
+          patriot: "국가유공자보훈업무",
+          permit: "인허가 민원",
+          appeal: "행정심판"
+        };
+        var list = [];
+        function toHref(service, topic) {
+          var href = "service-post.html?service=" + encodeURIComponent(String(service || ""));
+          if (topic) href += "&topic=" + encodeURIComponent(String(topic || ""));
+          return href;
+        }
+        function pushPost(post) {
+          var service = String(post && post.service ? post.service : "").trim();
+          var topic = String(post && post.topic ? post.topic : "").trim();
+          var title = String(post && post.title ? post.title : "").trim();
+          if (!service || !title) return;
+          var body = stripHtmlToText(post && post.body ? post.body : "");
+          var serviceLabel = serviceLabelMap[service] || service;
+          list.push({
+            source: "주요업무분야",
+            title: title,
+            desc: "[게시글] " + serviceLabel + (body ? " · " + body.slice(0, 180) : ""),
+            href: toHref(service, topic),
+            tags: [serviceLabel, service, topic, title, body, "게시글", "업무게시"].join(" ")
+          });
+        }
+
+        if (window.supabase && window.SUPABASE_URL && window.SUPABASE_ANON_KEY) {
+          try {
+            var client = window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY, {
+              auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false }
+            });
+            var res = await client
+              .from("service_posts")
+              .select("service,topic,title,body,created_at")
+              .order("created_at", { ascending: false })
+              .limit(500);
+            if (!res.error && Array.isArray(res.data)) {
+              res.data.forEach(pushPost);
+            }
+          } catch (e) {}
+        }
+
+        if (!list.length) {
+          try {
+            for (var i = 0; i < localStorage.length; i++) {
+              var key = String(localStorage.key(i) || "");
+              if (!key.startsWith("service-posts:")) continue;
+              var parts = key.split(":");
+              var service = parts[1] || "";
+              var topic = parts[2] || "";
+              var raw = localStorage.getItem(key);
+              var rows = raw ? JSON.parse(raw) : [];
+              if (!Array.isArray(rows)) continue;
+              rows.forEach(function (row) {
+                pushPost({
+                  service: service,
+                  topic: topic,
+                  title: row && row.title ? row.title : "",
+                  body: row && row.body ? row.body : ""
+                });
+              });
+            }
+          } catch (e) {}
+        }
+
+        return list;
+      }
+
       var ALL_ITEMS = STATIC_ITEMS
         .concat(loadEmbassyItems())
         .concat(await loadImmigrationOfficeItems())
+        .concat(await loadServicePostItems())
         .concat(await loadResourceItems());
 
       function withReturnParam(rawHref) {

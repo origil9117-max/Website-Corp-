@@ -1435,6 +1435,45 @@ window.EMBASSY_GROUPS=JSON.parse(new TextDecoder("utf-8").decode(_u8));
         var embCountry = String(params.get("emb_country") || "").trim();
         if (!embQ && !embCountry) return;
 
+        function compactEmbassy(s) {
+          return String(s || "").toLowerCase().replace(/\s+/g, "");
+        }
+
+        function tryDirectMissionMatch(qRaw, cRaw) {
+          var qCompact = compactEmbassy(qRaw);
+          var cNorm = normalizeEmbassySearch(cRaw);
+          var best = null;
+
+          GROUPS.forEach(function (g, gi) {
+            var countryNorm = normalizeEmbassySearch(g.label);
+            if (cNorm && countryNorm !== cNorm) return;
+            (g.missions || []).forEach(function (m, mi) {
+              var name = String(m && m.name ? m.name : "");
+              var nameCompact = compactEmbassy(name);
+              if (!nameCompact) return;
+              var score = 0;
+              if (qCompact && nameCompact === qCompact) score = 200;
+              else if (qCompact && nameCompact.indexOf(qCompact) !== -1) score = 160;
+              else if (!qCompact && cNorm && countryNorm === cNorm) score = 80;
+              if (!score) return;
+              if (!best || score > best.score) {
+                best = { gi: gi, mi: mi, score: score, name: name };
+              }
+            });
+          });
+
+          if (!best) return false;
+          clearEmbassyCountryList();
+          selectMissionAt(best.gi, best.mi);
+          searchStatus.textContent = "「" + best.name + "」 상세를 자동으로 표시했습니다.";
+          return true;
+        }
+
+        if (tryDirectMissionMatch(embQ, embCountry)) {
+          searchInput.value = embQ || embCountry;
+          return;
+        }
+
         if (embQ) {
           searchInput.value = embQ;
           runEmbassySearch();

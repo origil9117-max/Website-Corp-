@@ -472,7 +472,10 @@
             items.push({
               source: "지능형 행정 플랫폼 카테고리",
               title: name,
-              desc: (country ? "[" + country + "] " : "") + (address || "재외공관 정보"),
+              desc:
+                (country ? "[" + country + "] " : "") +
+                (address || "재외공관 정보") +
+                (phone ? " · 전화: " + phone : ""),
               href: buildEmbassyHref(country, name),
               tags: [name, country, phone, address, homepage, "재외공관", "대사관", "총영사관", "영사관"].join(" ")
             });

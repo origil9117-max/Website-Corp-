@@ -1906,8 +1906,21 @@
         });
       }
 
+      function applyLawDeepLinkFromUrl() {
+        try {
+          var params = new URLSearchParams(window.location.search || "");
+          var rawQ = String(params.get("q") || "").trim();
+          if (!rawQ) return;
+          if (input) input.value = rawQ;
+          if (inputPrdKw) inputPrdKw.value = rawQ;
+          nextLawTopicHeadingKind = "statute";
+          runSearch();
+        } catch (e) {}
+      }
+
       if (backBtn) backBtn.addEventListener("click", resetLawSearchToPreResults);
       updateLawSearchBackUi();
+      applyLawDeepLinkFromUrl();
 
       function syncLawExpcHitIsolateBodyClass() {
         if (!document.body || !document.body.classList) return;

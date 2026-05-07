@@ -443,6 +443,7 @@
       }
 
       var STATIC_ITEMS = [
+        { source: "검색 카테고리", title: "주요업무분야", desc: "비영리·출입국·기업투자·보훈·인허가·행정심판 등 주요업무분야 모음입니다.", href: "service-post.html", tags: "주요업무분야 주요 업무 분야 주요업무 카테고리" },
         { source: "주요업무분야", title: "비영리법인설립업무", desc: "비영리법인(사단·재단), 협동조합 설립 및 정관 변경, 해산 절차 안내.", href: "service-post.html?service=nonprofit", tags: "비영리 법인 사단 재단 협동조합 정관 변경 해산" },
         { source: "주요업무분야", title: "출입국민원업무", desc: "재외동포(F4), 영주권(F5), 비자·체류, 국적 관련 행정 업무.", href: "service-post.html?service=immigration", tags: "출입국 비자 체류 재외동포 영주권 국적" },
         { source: "주요업무분야", title: "기업투자·법인설립", desc: "외국인투자기업 설립, 국내 법인·지점 설립, 인허가 절차 안내.", href: "service-post.html?service=investment", tags: "기업투자 법인설립 외국인투자 fdi 지점 인허가" },
@@ -598,6 +599,10 @@
       function runSearch() {
         var query = (inputEl.value || "").trim();
         var terms = tokenize(query);
+        var compactQuery = String(query || "")
+          .toLowerCase()
+          .replace(/[^\w\u3131-\u318e\uac00-\ud7a3]/g, "");
+        if (compactQuery) terms.push(compactQuery);
         resultsEl.innerHTML = "";
         if (!terms.length) {
           statusEl.textContent = "키워드를 입력하면 통합검색 결과를 보여드립니다.";
@@ -605,7 +610,12 @@
         }
 
         var matched = ALL_ITEMS.filter(function (item) {
-          var bag = tokenize(item.title + " " + item.desc + " " + item.tags + " " + item.source);
+          var raw = item.title + " " + item.desc + " " + item.tags + " " + item.source;
+          var bag = tokenize(raw);
+          var compactBag = String(raw || "")
+            .toLowerCase()
+            .replace(/[^\w\u3131-\u318e\uac00-\ud7a3]/g, "");
+          if (compactBag) bag.push(compactBag);
           return terms.every(function (term) {
             return bag.some(function (token) { return token.indexOf(term) !== -1; });
           });

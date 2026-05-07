@@ -120,36 +120,45 @@
       overflow: auto;
     }
 
+    .roadmap-ksic-results-head,
     .roadmap-ksic-results-item {
       display: grid;
-      grid-template-columns: 72px 1fr 22px;
+      grid-template-columns: 84px 84px 1fr 1fr;
       align-items: center;
       gap: 0.45rem;
       padding: 0.28rem 0.34rem;
       border-radius: 6px;
     }
 
+    .roadmap-ksic-results-head {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #2d4e64;
+      background: #edf5fb;
+      border: 1px solid #d3e1ec;
+      margin-bottom: 0.25rem;
+    }
+
     .roadmap-ksic-results-item:nth-child(odd) {
       background: #f7fbff;
     }
 
-    .roadmap-ksic-code-badge {
+    .roadmap-ksic-col-code {
       font-weight: 700;
       color: #1f5f87;
       font-variant-numeric: tabular-nums;
     }
 
-    .roadmap-ksic-name {
+    .roadmap-ksic-col-name,
+    .roadmap-ksic-col-en,
+    .roadmap-ksic-col-category {
       color: #163d56;
       font-size: 0.92rem;
       line-height: 1.35;
     }
 
-    .roadmap-ksic-cat {
-      color: #527388;
-      font-size: 0.84rem;
-      font-weight: 700;
-      text-align: right;
+    .roadmap-ksic-col-empty {
+      color: #98acbb;
     }
 
     @media (max-width: 920px) {
@@ -323,6 +332,12 @@
           </form>
           <p id="roadmap-ksic-search-status" class="roadmap-ksic-search-status" role="status" aria-live="polite"></p>
           <div id="roadmap-ksic-results" class="roadmap-ksic-results" hidden>
+            <div class="roadmap-ksic-results-head" aria-hidden="true">
+              <span>분류항목</span>
+              <span>분류번호</span>
+              <span>세부명칭</span>
+              <span>영문명</span>
+            </div>
             <ul id="roadmap-ksic-results-list" class="roadmap-ksic-results-list" aria-label="한국표준산업분류 검색 결과"></ul>
           </div>
         </section>
@@ -417,16 +432,23 @@
         resultsWrap.hidden = false;
         resultsList.innerHTML = rows
           .map(function (row) {
+            var categoryLabel = row.category ? row.category : "";
+            var codeLabel = row.code ? row.code : "";
+            var nameLabel = row.name ? row.name : "";
+            var enLabel = row.enName ? row.enName : "";
             return (
               '<li class="roadmap-ksic-results-item">' +
-              '<span class="roadmap-ksic-code-badge">' +
-              escapeHtml(row.code) +
+              '<span class="roadmap-ksic-col-category' + (categoryLabel ? "" : " roadmap-ksic-col-empty") + '">' +
+              escapeHtml(categoryLabel) +
               "</span>" +
-              '<span class="roadmap-ksic-name">' +
-              escapeHtml(row.name) +
+              '<span class="roadmap-ksic-col-code' + (codeLabel ? "" : " roadmap-ksic-col-empty") + '">' +
+              escapeHtml(codeLabel) +
               "</span>" +
-              '<span class="roadmap-ksic-cat">' +
-              escapeHtml(row.category || "") +
+              '<span class="roadmap-ksic-col-name' + (nameLabel ? "" : " roadmap-ksic-col-empty") + '">' +
+              escapeHtml(nameLabel) +
+              "</span>" +
+              '<span class="roadmap-ksic-col-en' + (enLabel ? "" : " roadmap-ksic-col-empty") + '">' +
+              escapeHtml(enLabel) +
               "</span>" +
               "</li>"
             );
@@ -482,9 +504,10 @@
           renderResults(
             capped.map(function (r) {
               return {
+                category: r.category ? r.category : "",
                 code: r.code,
                 name: r.name,
-                category: r.category ? r.category : "",
+                enName: r.enName ? r.enName : "",
               };
             })
           );

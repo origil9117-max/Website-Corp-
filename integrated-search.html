@@ -80,7 +80,10 @@
       background: #fff;
     }
 
-    .nav-links a[href="index.html"] {
+    .nav-links a.main-home-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
       position: fixed;
       right: 1rem;
       top: 46%;
@@ -93,11 +96,14 @@
       background: linear-gradient(180deg, #ffecf6 0%, #ffe1f0 100%);
       color: #7b2a57;
       box-shadow: 0 8px 20px rgba(227, 64, 146, 0.25);
+      font-size: 0.82rem;
       gap: 0.42rem;
+      white-space: nowrap;
     }
 
-    .nav-links a[href="index.html"]::before {
+    .nav-links a.main-home-btn::before {
       content: "";
+      display: inline-block;
       width: 1.15rem;
       height: 1.15rem;
       border-radius: 50%;
@@ -331,7 +337,7 @@
     }
 
     @media (max-width: 860px) {
-      .nav-links a[href="index.html"] {
+      .nav-links a.main-home-btn {
         top: auto;
         bottom: 1rem;
         right: 0.8rem;
@@ -378,7 +384,7 @@
         <span>Republic of Korea Administrative Scrivener Office</span>
       </a>
       <nav class="nav-links" aria-label="빠른 이동">
-        <a href="index.html">메인</a>
+        <a href="index.html" class="main-home-btn">메인</a>
         <a href="resources.html">자료실</a>
         <a href="platform.html">플랫폼</a>
       </nav>

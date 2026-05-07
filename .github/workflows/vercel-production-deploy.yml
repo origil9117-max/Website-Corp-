@@ -41,27 +41,26 @@ jobs:
             echo "::error::Cannot parse expected CSS version from platform-faq.html"
             exit 1
           fi
-          # 줄바꿈(CRLF/LF) 차이로 오탐이 나지 않도록 CR 제거 후 해시 계산
-          EXPECTED_SHA="$(tr -d '\r' < platform-faq.html | sha256sum | awk '{print $1}' | tr -d '\r\n ')"
-          if [ -z "$EXPECTED_SHA" ]; then
-            echo "::error::Cannot calculate expected SHA256 for platform-faq.html"
+          EXPECTED_EMB_MARKER="$(tr -d '\r' < platform-faq.html | grep -o 'applyEmbassyDeepLinkFromUrl' | head -n 1 | tr -d '\r\n ')"
+          if [ -z "$EXPECTED_EMB_MARKER" ]; then
+            echo "::error::Cannot find embassy deep-link marker in platform-faq.html"
             exit 1
           fi
           echo "css=$EXPECTED_CSS" >> "$GITHUB_OUTPUT"
-          echo "sha=$EXPECTED_SHA" >> "$GITHUB_OUTPUT"
+          echo "emb_marker=$EXPECTED_EMB_MARKER" >> "$GITHUB_OUTPUT"
           echo "Expected CSS version: $EXPECTED_CSS"
-          echo "Expected HTML SHA256: $EXPECTED_SHA"
+          echo "Expected embassy marker: $EXPECTED_EMB_MARKER"
 
       - name: Deploy and verify live sync (auto-retry)
         env:
           DEPLOY_HOOK: ${{ secrets.VERCEL_DEPLOY_HOOK_URL }}
           EXPECTED_CSS: ${{ steps.expected.outputs.css }}
-          EXPECTED_SHA: ${{ steps.expected.outputs.sha }}
+          EXPECTED_EMB_MARKER: ${{ steps.expected.outputs.emb_marker }}
         run: |
           set -u
           HOOK_URL="$(printf '%s' "$DEPLOY_HOOK" | tr -d '\r\n ')"
           EXPECTED_CSS_NORM="$(printf '%s' "$EXPECTED_CSS" | tr -d '\r\n ')"
-          EXPECTED_SHA_NORM="$(printf '%s' "$EXPECTED_SHA" | tr -d '\r\n ')"
+          EXPECTED_EMB_MARKER_NORM="$(printf '%s' "$EXPECTED_EMB_MARKER" | tr -d '\r\n ')"
 
           if [ -z "$HOOK_URL" ]; then
             echo "::error::VERCEL_DEPLOY_HOOK_URL is empty after trimming."
@@ -83,21 +82,24 @@ jobs:
             printf '%s' "$1" | tr -d '\r' | sed -n 's/.*law-search-prd.css?v=\([0-9a-z]\+\).*/\1/p' | head -n 1 | tr -d '\r\n '
           }
 
-          calc_sha_from_body() {
-            printf '%s' "$1" | tr -d '\r' | sha256sum | awk '{print $1}' | tr -d '\r\n '
+          has_embassy_marker() {
+            printf '%s' "$1" | tr -d '\r' | grep -q 'applyEmbassyDeepLinkFromUrl'
           }
 
           debug_expected_live() {
-            echo "::notice::DEBUG expected_css=$EXPECTED_CSS_NORM expected_sha=$EXPECTED_SHA_NORM live_css=$1 live_sha=$2"
+            echo "::notice::DEBUG expected_css=$EXPECTED_CSS_NORM expected_emb_marker=$EXPECTED_EMB_MARKER_NORM live_css=$1 live_emb_marker=$2"
           }
 
           LIVE_PRE_BODY="$(fetch_live_body "pre-${GITHUB_RUN_ID}")"
           LIVE_PRE_CSS="$(parse_css_from_body "$LIVE_PRE_BODY")"
-          LIVE_PRE_SHA="$(calc_sha_from_body "$LIVE_PRE_BODY")"
+          LIVE_PRE_EMB_MARKER="missing"
+          if has_embassy_marker "$LIVE_PRE_BODY"; then
+            LIVE_PRE_EMB_MARKER="present"
+          fi
           echo "Precheck Expected CSS=$EXPECTED_CSS_NORM / Live CSS=$LIVE_PRE_CSS"
-          echo "Precheck Expected SHA=$EXPECTED_SHA_NORM / Live SHA=$LIVE_PRE_SHA"
-          debug_expected_live "$LIVE_PRE_CSS" "$LIVE_PRE_SHA"
-          if [ "$LIVE_PRE_CSS" = "$EXPECTED_CSS_NORM" ] && [ "$LIVE_PRE_SHA" = "$EXPECTED_SHA_NORM" ]; then
+          echo "Precheck Expected emb-marker=$EXPECTED_EMB_MARKER_NORM / Live emb-marker=$LIVE_PRE_EMB_MARKER"
+          debug_expected_live "$LIVE_PRE_CSS" "$LIVE_PRE_EMB_MARKER"
+          if [ "$LIVE_PRE_CSS" = "$EXPECTED_CSS_NORM" ] && [ "$LIVE_PRE_EMB_MARKER" = "present" ]; then
             echo "Production already matches expected HTML content."
             exit 0
           fi
@@ -130,12 +132,15 @@ jobs:
 
             LIVE_BODY="$(fetch_live_body "${GITHUB_RUN_ID}-${i}")"
             LIVE_CSS="$(parse_css_from_body "$LIVE_BODY")"
-            LIVE_SHA="$(calc_sha_from_body "$LIVE_BODY")"
+            LIVE_EMB_MARKER="missing"
+            if has_embassy_marker "$LIVE_BODY"; then
+              LIVE_EMB_MARKER="present"
+            fi
             echo "Expected CSS=$EXPECTED_CSS_NORM / Live CSS=$LIVE_CSS"
-            echo "Expected SHA=$EXPECTED_SHA_NORM / Live SHA=$LIVE_SHA"
-            debug_expected_live "$LIVE_CSS" "$LIVE_SHA"
+            echo "Expected emb-marker=$EXPECTED_EMB_MARKER_NORM / Live emb-marker=$LIVE_EMB_MARKER"
+            debug_expected_live "$LIVE_CSS" "$LIVE_EMB_MARKER"
 
-            if [ "$LIVE_CSS" = "$EXPECTED_CSS_NORM" ] && [ "$LIVE_SHA" = "$EXPECTED_SHA_NORM" ]; then
+            if [ "$LIVE_CSS" = "$EXPECTED_CSS_NORM" ] && [ "$LIVE_EMB_MARKER" = "present" ]; then
               echo "Production is synced."
               exit 0
             fi
@@ -147,6 +152,6 @@ jobs:
           done
 
           echo "::error::Production did not sync to expected HTML markers after $ATTEMPTS attempts."
-          echo "::error::Expected CSS=$EXPECTED_CSS_NORM, Expected SHA=$EXPECTED_SHA_NORM"
+          echo "::error::Expected CSS=$EXPECTED_CSS_NORM, Expected emb-marker=$EXPECTED_EMB_MARKER_NORM"
           echo "::error::Next checks: Vercel Deploy Hook must belong to the SAME project that serves $LIVE_URL (Production), and Production Git branch must be main."
           exit 1

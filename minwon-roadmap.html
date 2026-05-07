@@ -42,7 +42,7 @@
 
     .roadmap-ksic-controls {
       display: grid;
-      grid-template-columns: 1.1fr 1fr 1.45fr 1.2fr 1.2fr auto;
+      grid-template-columns: 1.1fr 1fr 1.45fr 1.2fr 1.2fr auto auto;
       gap: 0.52rem;
       align-items: end;
     }
@@ -89,6 +89,23 @@
 
     .roadmap-ksic-search-btn:hover {
       filter: brightness(1.03);
+    }
+
+    .roadmap-ksic-reset-btn {
+      height: 2.35rem;
+      padding: 0 0.95rem;
+      border: 1px solid #aebdca;
+      border-radius: 7px;
+      background: #f5f8fb;
+      color: #2f4f64;
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .roadmap-ksic-reset-btn:hover {
+      background: #eef4f9;
     }
 
     .roadmap-ksic-search-status {
@@ -329,6 +346,9 @@
             <div class="roadmap-ksic-search-wrap">
               <button type="submit" class="roadmap-ksic-search-btn" id="roadmap-ksic-search-btn">검색</button>
             </div>
+            <div class="roadmap-ksic-search-wrap">
+              <button type="button" class="roadmap-ksic-reset-btn" id="roadmap-ksic-reset-btn">초기화</button>
+            </div>
           </form>
           <p id="roadmap-ksic-search-status" class="roadmap-ksic-search-status" role="status" aria-live="polite"></p>
           <div id="roadmap-ksic-results" class="roadmap-ksic-results" hidden>
@@ -380,6 +400,7 @@
       var resultsWrap = document.getElementById("roadmap-ksic-results");
       var resultsList = document.getElementById("roadmap-ksic-results-list");
       var searchBtn = document.getElementById("roadmap-ksic-search-btn");
+      var resetBtn = document.getElementById("roadmap-ksic-reset-btn");
       var ksicCache = null;
 
       var categoryNames = {
@@ -465,6 +486,16 @@
         return ksicCache;
       }
 
+      function resetKsicSearchUi() {
+        if (category) category.value = "";
+        if (code) code.value = "";
+        if (name) name.value = "";
+        if (enName) enName.value = "";
+        if (topic) topic.value = "";
+        renderResults([]);
+        status.textContent = "";
+      }
+
       form.addEventListener("submit", async function (ev) {
         ev.preventDefault();
 
@@ -527,6 +558,13 @@
           if (searchBtn) searchBtn.disabled = false;
         }
       });
+
+      if (resetBtn) {
+        resetBtn.addEventListener("click", function () {
+          resetKsicSearchUi();
+          if (category) category.focus();
+        });
+      }
     })();
   </script>
   <script src="platform-admin.js?v=20260420r" defer></script>

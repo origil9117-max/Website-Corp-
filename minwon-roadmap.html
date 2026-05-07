@@ -374,12 +374,12 @@
               <input id="roadmap-ksic-name" type="search" placeholder="예: 시스템 소프트웨어 개발 및 공급업" autocomplete="off" />
             </div>
             <div class="roadmap-ksic-field">
-              <label for="roadmap-ksic-en-name">세부설명</label>
-              <input id="roadmap-ksic-en-name" type="search" placeholder="예: 해당 분류의 업무 내용 설명" autocomplete="off" />
+              <label for="roadmap-ksic-description">세부설명</label>
+              <input id="roadmap-ksic-description" type="search" placeholder="예: 해당 분류의 업무 내용(해설) 설명" autocomplete="off" />
             </div>
             <div class="roadmap-ksic-field">
-              <label for="roadmap-ksic-topic-keyword">(특정주제 키워드)</label>
-              <input id="roadmap-ksic-topic-keyword" type="search" placeholder="예: AI, 반도체, 이차전지" autocomplete="off" />
+              <label for="roadmap-ksic-keyword">검색어</label>
+              <input id="roadmap-ksic-keyword" type="search" placeholder="예: AI, 반도체, 이차전지" autocomplete="off" />
             </div>
             <div class="roadmap-ksic-search-wrap">
               <button type="submit" class="roadmap-ksic-search-btn" id="roadmap-ksic-search-btn">검색</button>
@@ -441,8 +441,8 @@
       var category = document.getElementById("roadmap-ksic-category");
       var code = document.getElementById("roadmap-ksic-code");
       var name = document.getElementById("roadmap-ksic-name");
-      var enName = document.getElementById("roadmap-ksic-en-name");
-      var topic = document.getElementById("roadmap-ksic-topic-keyword");
+      var description = document.getElementById("roadmap-ksic-description");
+      var keyword = document.getElementById("roadmap-ksic-keyword");
       var resultsWrap = document.getElementById("roadmap-ksic-results");
       var resultsList = document.getElementById("roadmap-ksic-results-list");
       var searchBtn = document.getElementById("roadmap-ksic-search-btn");
@@ -558,8 +558,8 @@
         if (category) category.value = "";
         if (code) code.value = "";
         if (name) name.value = "";
-        if (enName) enName.value = "";
-        if (topic) topic.value = "";
+        if (description) description.value = "";
+        if (keyword) keyword.value = "";
         renderResults([]);
         showDetail(null);
         status.textContent = "";
@@ -571,25 +571,25 @@
         var catVal = compact(category && category.value);
         var codeVal = norm(code && code.value);
         var nameVal = norm(name && name.value);
-        var enVal = norm(enName && enName.value);
-        var topicVal = norm(topic && topic.value);
-        var anyInput = catVal || codeVal || nameVal || enVal || topicVal;
+        var descVal = norm(description && description.value);
+        var keywordVal = norm(keyword && keyword.value);
+        var anyInput = catVal || codeVal || nameVal || descVal || keywordVal;
 
         if (!anyInput) {
           status.textContent = "최소 1개 항목 이상 입력해 주세요.";
           renderResults([]);
-          if (topic) topic.focus();
+          if (description) description.focus();
           return;
         }
 
         try {
           if (searchBtn) searchBtn.disabled = true;
-          status.textContent = "한국표준산업분류 제11차 개정 해설서 기준 데이터에서 검색 중입니다...";
+          status.textContent = "한국표준산업분류 제11차(통계청 고시 2024-2호) 기준으로 검색 중입니다...";
           var items = await ensureKsicItems();
           var rows = items.filter(function (row) {
             var rowCode = norm(row.code);
             var rowName = norm(row.name);
-            var rowEn = norm(row.description);
+            var rowDesc = norm(row.description);
             if (catVal && String(row.category || "") !== catVal) return false;
             if (codeVal) {
               var isAllDigits = /^\d+$/.test(codeVal);
@@ -600,8 +600,12 @@
               }
             }
             if (nameVal && rowName.indexOf(nameVal) === -1) return false;
-            if (enVal && rowEn.indexOf(enVal) === -1) return false;
-            if (topicVal && rowName.indexOf(topicVal) === -1) return false;
+            if (descVal && rowDesc.indexOf(descVal) === -1) return false;
+            if (keywordVal) {
+              if (rowCode.indexOf(keywordVal) === -1 && rowName.indexOf(keywordVal) === -1 && rowDesc.indexOf(keywordVal) === -1) {
+                return false;
+              }
+            }
             return true;
           });
           rows.sort(function (a, b) {
@@ -622,14 +626,7 @@
             })
           );
           showDetail(null);
-          var catLabel = catVal ? " (" + catVal + " " + (categoryNames[catVal] || "") + ")" : "";
-          status.textContent =
-            "총 " +
-            rows.length +
-            "건 검색됨" +
-            catLabel +
-            (rows.length > capped.length ? " · 상위 " + capped.length + "건 표시" : "") +
-            " · 기준: 한국표준산업분류 제11차 개정 해설서(PDF)";
+          status.textContent = "총 " + rows.length + "건 검색됨";
         } catch (err) {
           renderResults([]);
           status.textContent = "검색 데이터 로드 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.";

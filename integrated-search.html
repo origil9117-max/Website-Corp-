@@ -700,6 +700,21 @@
       }
 
       async function loadMinwonRoadmapItems() {
+        function buildMinwonKsicHref(opts) {
+          var base = "minwon-roadmap.html";
+          try {
+            var u = new URL(base, window.location.href);
+            if (opts && opts.category) u.searchParams.set("ksic_cat", String(opts.category));
+            if (opts && opts.code) u.searchParams.set("ksic_code", String(opts.code));
+            if (opts && opts.name) u.searchParams.set("ksic_name", String(opts.name));
+            if (opts && opts.description) u.searchParams.set("ksic_desc", String(opts.description));
+            if (opts && opts.query) u.searchParams.set("ksic_q", String(opts.query));
+            u.hash = "roadmap-ksic-heading";
+            return u.pathname + u.search + u.hash;
+          } catch (e) {
+            return base + "#roadmap-ksic-heading";
+          }
+        }
         var list = [
           {
             source: "지능형 행정 플랫폼 카테고리",
@@ -719,7 +734,7 @@
             source: "지능형 행정 플랫폼 카테고리",
             title: "한국표준산업분류 코드 검색",
             desc: "분류항목·분류번호·세부명칭·세부설명 기준으로 KSIC 코드를 검색합니다.",
-            href: "minwon-roadmap.html",
+            href: buildMinwonKsicHref({ query: "한국표준산업분류" }),
             tags: "한국표준산업분류 ksic 코드검색 분류번호 세부명칭 세부설명 검색어"
           }
         ];
@@ -742,7 +757,13 @@
                 "[한국표준산업분류] " +
                 (name || "분류명 없음") +
                 (description ? " · " + description.slice(0, 200) : ""),
-              href: "minwon-roadmap.html",
+              href: buildMinwonKsicHref({
+                category: category,
+                code: code,
+                name: name,
+                description: description,
+                query: name || code
+              }),
               tags: [
                 "한국표준산업분류",
                 "ksic",

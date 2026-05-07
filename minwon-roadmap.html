@@ -565,9 +565,7 @@
         status.textContent = "";
       }
 
-      form.addEventListener("submit", async function (ev) {
-        ev.preventDefault();
-
+      async function executeKsicSearch() {
         var catVal = compact(category && category.value);
         var codeVal = norm(code && code.value);
         var nameVal = norm(name && name.value);
@@ -579,7 +577,7 @@
           status.textContent = "최소 1개 항목 이상 입력해 주세요.";
           renderResults([]);
           if (description) description.focus();
-          return;
+          return false;
         }
 
         try {
@@ -627,12 +625,19 @@
           );
           showDetail(null);
           status.textContent = "총 " + rows.length + "건 검색됨";
+          return true;
         } catch (err) {
           renderResults([]);
           status.textContent = "검색 데이터 로드 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.";
+          return false;
         } finally {
           if (searchBtn) searchBtn.disabled = false;
         }
+      }
+
+      form.addEventListener("submit", async function (ev) {
+        ev.preventDefault();
+        await executeKsicSearch();
       });
 
       if (resetBtn) {
@@ -708,6 +713,31 @@
           }
         });
       }
+
+      function applyKsicDeepLinkFromUrl() {
+        var params;
+        try {
+          params = new URLSearchParams(window.location.search || "");
+        } catch (e) {
+          return;
+        }
+        var deepCat = compact(params.get("ksic_cat"));
+        var deepCode = compact(params.get("ksic_code"));
+        var deepName = compact(params.get("ksic_name"));
+        var deepDesc = compact(params.get("ksic_desc"));
+        var deepQuery = compact(params.get("ksic_q"));
+        if (!deepCat && !deepCode && !deepName && !deepDesc && !deepQuery) return;
+
+        if (category && deepCat) category.value = deepCat;
+        if (code && deepCode) code.value = deepCode;
+        if (name && deepName) name.value = deepName;
+        if (description && deepDesc) description.value = deepDesc;
+        if (keyword && deepQuery) keyword.value = deepQuery;
+
+        executeKsicSearch();
+      }
+
+      applyKsicDeepLinkFromUrl();
     })();
   </script>
   <script src="platform-admin.js?v=20260420r" defer></script>

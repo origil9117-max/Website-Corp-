@@ -1680,6 +1680,15 @@ body[data-platform-slug="platform-faq"] .law-doc-list-dots li {
   font-size: 0.82rem;
 }
 
+.law-result-disclaimer--portal-tip {
+  color: #7a1f4e;
+  font-weight: 700;
+}
+
+.law-result-disclaimer--portal-tip strong {
+  color: #a3155a;
+}
+
 .law-muted {
   color: var(--muted);
   font-weight: 500;

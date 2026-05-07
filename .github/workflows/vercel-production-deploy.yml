@@ -51,19 +51,19 @@ jobs:
             echo "::error::Cannot find main-home-btn marker in integrated-search.html"
             exit 1
           fi
-          EXPECTED_MAIN_NAV_ORDER="$(tr -d '\r\n\t ' < integrated-search.html | grep -o '<ahref="resources.html">자료실</a><ahref="platform.html">플랫폼</a><ahref="index.html"class="main-home-btn">메인</a>' | head -n 1 | tr -d '\r\n ')"
-          if [ -z "$EXPECTED_MAIN_NAV_ORDER" ]; then
-            echo "::error::Cannot find expected top-nav order marker in integrated-search.html"
+          EXPECTED_MAIN_BTN_FIXED_MARKER="$(tr -d '\r' < integrated-search.html | grep -o 'position: fixed;' | head -n 1 | tr -d '\r\n ')"
+          if [ -z "$EXPECTED_MAIN_BTN_FIXED_MARKER" ]; then
+            echo "::error::Cannot find main button fixed marker in integrated-search.html"
             exit 1
           fi
           echo "css=$EXPECTED_CSS" >> "$GITHUB_OUTPUT"
           echo "emb_marker=$EXPECTED_EMB_MARKER" >> "$GITHUB_OUTPUT"
           echo "main_btn_marker=$EXPECTED_MAIN_BTN_MARKER" >> "$GITHUB_OUTPUT"
-          echo "main_nav_order=$EXPECTED_MAIN_NAV_ORDER" >> "$GITHUB_OUTPUT"
+          echo "main_btn_fixed_marker=$EXPECTED_MAIN_BTN_FIXED_MARKER" >> "$GITHUB_OUTPUT"
           echo "Expected CSS version: $EXPECTED_CSS"
           echo "Expected embassy marker: $EXPECTED_EMB_MARKER"
           echo "Expected main button marker: $EXPECTED_MAIN_BTN_MARKER"
-          echo "Expected top-nav order marker: $EXPECTED_MAIN_NAV_ORDER"
+          echo "Expected main button fixed marker: $EXPECTED_MAIN_BTN_FIXED_MARKER"
 
       - name: Deploy and verify live sync (auto-retry)
         env:
@@ -71,14 +71,14 @@ jobs:
           EXPECTED_CSS: ${{ steps.expected.outputs.css }}
           EXPECTED_EMB_MARKER: ${{ steps.expected.outputs.emb_marker }}
           EXPECTED_MAIN_BTN_MARKER: ${{ steps.expected.outputs.main_btn_marker }}
-          EXPECTED_MAIN_NAV_ORDER: ${{ steps.expected.outputs.main_nav_order }}
+          EXPECTED_MAIN_BTN_FIXED_MARKER: ${{ steps.expected.outputs.main_btn_fixed_marker }}
         run: |
           set -u
           HOOK_URL="$(printf '%s' "$DEPLOY_HOOK" | tr -d '\r\n ')"
           EXPECTED_CSS_NORM="$(printf '%s' "$EXPECTED_CSS" | tr -d '\r\n ')"
           EXPECTED_EMB_MARKER_NORM="$(printf '%s' "$EXPECTED_EMB_MARKER" | tr -d '\r\n ')"
           EXPECTED_MAIN_BTN_MARKER_NORM="$(printf '%s' "$EXPECTED_MAIN_BTN_MARKER" | tr -d '\r\n ')"
-          EXPECTED_MAIN_NAV_ORDER_NORM="$(printf '%s' "$EXPECTED_MAIN_NAV_ORDER" | tr -d '\r\n ')"
+          EXPECTED_MAIN_BTN_FIXED_MARKER_NORM="$(printf '%s' "$EXPECTED_MAIN_BTN_FIXED_MARKER" | tr -d '\r\n ')"
 
           if [ -z "$HOOK_URL" ]; then
             echo "::error::VERCEL_DEPLOY_HOOK_URL is empty after trimming."
@@ -109,11 +109,7 @@ jobs:
             printf '%s' "$1" | tr -d '\r' | grep -q 'class="main-home-btn"'
           }
 
-          has_main_nav_order_marker() {
-            printf '%s' "$1" | tr -d '\r\n\t ' | grep -q '<ahref="resources.html">자료실</a><ahref="platform.html">플랫폼</a><ahref="index.html"class="main-home-btn">메인</a>'
-          }
-
-          has_legacy_fixed_main_btn() {
+          has_main_btn_fixed_marker() {
             printf '%s' "$1" | tr -d '\r' | grep -q 'position: fixed;'
           }
 
@@ -132,19 +128,14 @@ jobs:
           if has_main_btn_marker "$LIVE_PRE_INTEGRATED_BODY"; then
             LIVE_PRE_MAIN_BTN_MARKER="present"
           fi
-          LIVE_PRE_MAIN_NAV_ORDER_MARKER="missing"
-          if has_main_nav_order_marker "$LIVE_PRE_INTEGRATED_BODY"; then
-            LIVE_PRE_MAIN_NAV_ORDER_MARKER="present"
-          fi
-          LIVE_PRE_LEGACY_FIXED_MARKER="absent"
-          if has_legacy_fixed_main_btn "$LIVE_PRE_INTEGRATED_BODY"; then
-            LIVE_PRE_LEGACY_FIXED_MARKER="present"
+          LIVE_PRE_MAIN_BTN_FIXED_MARKER="missing"
+          if has_main_btn_fixed_marker "$LIVE_PRE_INTEGRATED_BODY"; then
+            LIVE_PRE_MAIN_BTN_FIXED_MARKER="present"
           fi
           echo "Precheck Expected CSS=$EXPECTED_CSS_NORM / Live CSS=$LIVE_PRE_CSS"
           echo "Precheck Expected emb-marker=$EXPECTED_EMB_MARKER_NORM / Live emb-marker=$LIVE_PRE_EMB_MARKER"
           echo "Precheck Expected main-btn-marker=$EXPECTED_MAIN_BTN_MARKER_NORM / Live main-btn-marker=$LIVE_PRE_MAIN_BTN_MARKER"
-          echo "Precheck Expected main-nav-order=$EXPECTED_MAIN_NAV_ORDER_NORM / Live main-nav-order=$LIVE_PRE_MAIN_NAV_ORDER_MARKER"
-          echo "Precheck Legacy fixed marker should be absent / Live legacy-fixed=$LIVE_PRE_LEGACY_FIXED_MARKER"
+          echo "Precheck Expected main-btn-fixed=$EXPECTED_MAIN_BTN_FIXED_MARKER_NORM / Live main-btn-fixed=$LIVE_PRE_MAIN_BTN_FIXED_MARKER"
           debug_expected_live "$LIVE_PRE_CSS" "$LIVE_PRE_EMB_MARKER"
           echo "Precheck matched 여부와 무관하게 최신 커밋 반영을 위해 deploy hook을 계속 진행합니다."
 
@@ -185,22 +176,17 @@ jobs:
             if has_main_btn_marker "$LIVE_INTEGRATED_BODY"; then
               LIVE_MAIN_BTN_MARKER="present"
             fi
-            LIVE_MAIN_NAV_ORDER_MARKER="missing"
-            if has_main_nav_order_marker "$LIVE_INTEGRATED_BODY"; then
-              LIVE_MAIN_NAV_ORDER_MARKER="present"
-            fi
-            LIVE_LEGACY_FIXED_MARKER="absent"
-            if has_legacy_fixed_main_btn "$LIVE_INTEGRATED_BODY"; then
-              LIVE_LEGACY_FIXED_MARKER="present"
+            LIVE_MAIN_BTN_FIXED_MARKER="missing"
+            if has_main_btn_fixed_marker "$LIVE_INTEGRATED_BODY"; then
+              LIVE_MAIN_BTN_FIXED_MARKER="present"
             fi
             echo "Expected CSS=$EXPECTED_CSS_NORM / Live CSS=$LIVE_CSS"
             echo "Expected emb-marker=$EXPECTED_EMB_MARKER_NORM / Live emb-marker=$LIVE_EMB_MARKER"
             echo "Expected main-btn-marker=$EXPECTED_MAIN_BTN_MARKER_NORM / Live main-btn-marker=$LIVE_MAIN_BTN_MARKER"
-            echo "Expected main-nav-order=$EXPECTED_MAIN_NAV_ORDER_NORM / Live main-nav-order=$LIVE_MAIN_NAV_ORDER_MARKER"
-            echo "Expected legacy-fixed=absent / Live legacy-fixed=$LIVE_LEGACY_FIXED_MARKER"
+            echo "Expected main-btn-fixed=$EXPECTED_MAIN_BTN_FIXED_MARKER_NORM / Live main-btn-fixed=$LIVE_MAIN_BTN_FIXED_MARKER"
             debug_expected_live "$LIVE_CSS" "$LIVE_EMB_MARKER"
 
-            if [ "$LIVE_CSS" = "$EXPECTED_CSS_NORM" ] && [ "$LIVE_EMB_MARKER" = "present" ] && [ "$LIVE_MAIN_BTN_MARKER" = "present" ] && [ "$LIVE_MAIN_NAV_ORDER_MARKER" = "present" ] && [ "$LIVE_LEGACY_FIXED_MARKER" = "absent" ]; then
+            if [ "$LIVE_CSS" = "$EXPECTED_CSS_NORM" ] && [ "$LIVE_EMB_MARKER" = "present" ] && [ "$LIVE_MAIN_BTN_MARKER" = "present" ] && [ "$LIVE_MAIN_BTN_FIXED_MARKER" = "present" ]; then
               echo "Production is synced."
               exit 0
             fi
@@ -212,6 +198,6 @@ jobs:
           done
 
           echo "::error::Production did not sync to expected HTML markers after $ATTEMPTS attempts."
-          echo "::error::Expected CSS=$EXPECTED_CSS_NORM, Expected emb-marker=$EXPECTED_EMB_MARKER_NORM, Expected main-btn-marker=$EXPECTED_MAIN_BTN_MARKER_NORM, Expected main-nav-order=$EXPECTED_MAIN_NAV_ORDER_NORM, Expected legacy-fixed=absent"
+          echo "::error::Expected CSS=$EXPECTED_CSS_NORM, Expected emb-marker=$EXPECTED_EMB_MARKER_NORM, Expected main-btn-marker=$EXPECTED_MAIN_BTN_MARKER_NORM, Expected main-btn-fixed=$EXPECTED_MAIN_BTN_FIXED_MARKER_NORM"
           echo "::error::Next checks: Vercel Deploy Hook must belong to the SAME project that serves $LIVE_URL (Production), and Production Git branch must be main."
           exit 1

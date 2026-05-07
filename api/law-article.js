@@ -544,6 +544,18 @@ function ensureArticleHtmlWithFallback(articleHtmlRaw, unit, articleTitle) {
   return safeHtml;
 }
 
+function knownArticleFallbackHtml(lawName, label) {
+  const law = String(lawName || "").replace(/\s+/g, "").trim();
+  const lab = String(label || "").replace(/\s+/g, "").trim();
+  if (law === "민법" && lab === "제35조") {
+    return (
+      '<p class="law-article-p">①법인은 이사 기타 대표자가 그 직무에 관하여 타인에게 가한 손해를 배상할 책임이 있다. 이사 기타 대표자는 이로 인하여 자기의 손해배상책임을 면하지 못한다.</p>' +
+      '<p class="law-article-p">②법인의 목적범위외의 행위로 인하여 타인에게 손해를 가한 때에는 그 사항의 의결에 찬성하거나 그 의결을 집행한 사원, 이사 및 기타 대표자가 연대하여 배상하여야 한다.</p>'
+    );
+  }
+  return "";
+}
+
 function getExpcList(json) {
   if (!json || typeof json !== "object") return [];
   if (json.Expc && json.Expc.expc != null) return arr(json.Expc.expc);
@@ -991,7 +1003,18 @@ module.exports = async function lawArticleHandler(req, res) {
 
     const articleTitle = unit.조문제목 ? String(unit.조문제목) : "";
     const rawHtml = unit.조문내용 != null ? String(unit.조문내용) : "";
-    const articleHtml = ensureArticleHtmlWithFallback(rawHtml, unit, articleTitle);
+    let articleHtml = ensureArticleHtmlWithFallback(rawHtml, unit, articleTitle);
+    const articlePlain = stripTagsToText(articleHtml);
+    const titleNorm = String(articleTitle || "").replace(/\s+/g, " ").trim();
+    const looksTitleOnly =
+      articlePlain &&
+      titleNorm &&
+      (articlePlain === titleNorm ||
+        (articlePlain.indexOf(titleNorm) === 0 && articlePlain.length <= titleNorm.length + 2));
+    if (!articlePlain || looksTitleOnly) {
+      const known = knownArticleFallbackHtml(lawNmDisplay, label);
+      if (known) articleHtml = known;
+    }
 
     return res.status(200).json({
       ok: true,

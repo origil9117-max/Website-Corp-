@@ -454,6 +454,12 @@
       function loadEmbassyItems() {
         var groups = Array.isArray(window.EMBASSY_GROUPS) ? window.EMBASSY_GROUPS : [];
         var items = [];
+        function buildEmbassyHref(country, missionName) {
+          var base = "platform-faq.html";
+          var q = encodeURIComponent(String(missionName || ""));
+          var c = encodeURIComponent(String(country || ""));
+          return base + "?emb_q=" + q + "&emb_country=" + c + "#embassy-lookup-panel";
+        }
         groups.forEach(function (group) {
           var country = String(group && group.label ? group.label : "");
           var missions = Array.isArray(group && group.missions) ? group.missions : [];
@@ -467,7 +473,7 @@
               source: "지능형 행정 플랫폼 카테고리",
               title: name,
               desc: (country ? "[" + country + "] " : "") + (address || "재외공관 정보"),
-              href: "platform-faq.html#embassy-lookup-panel",
+              href: buildEmbassyHref(country, name),
               tags: [name, country, phone, address, homepage, "재외공관", "대사관", "총영사관", "영사관"].join(" ")
             });
           });

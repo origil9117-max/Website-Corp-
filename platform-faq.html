@@ -1424,6 +1424,39 @@ window.EMBASSY_GROUPS=JSON.parse(new TextDecoder("utf-8").decode(_u8));
         searchStatus.textContent = "일치하는 공관이 없습니다.";
       }
 
+      function applyEmbassyDeepLinkFromUrl() {
+        var params;
+        try {
+          params = new URLSearchParams(window.location.search || "");
+        } catch (e) {
+          return;
+        }
+        var embQ = String(params.get("emb_q") || "").trim();
+        var embCountry = String(params.get("emb_country") || "").trim();
+        if (!embQ && !embCountry) return;
+
+        if (embQ) {
+          searchInput.value = embQ;
+          runEmbassySearch();
+          return;
+        }
+
+        if (embCountry) {
+          var q = normalizeEmbassySearch(embCountry);
+          var hit = -1;
+          for (var i = 0; i < GROUPS.length; i++) {
+            if (normalizeEmbassySearch(GROUPS[i].label) === q) {
+              hit = i;
+              break;
+            }
+          }
+          if (hit >= 0) {
+            applyEmbassyCountryWide(hit, GROUPS[hit].label || embCountry);
+            searchInput.value = embCountry;
+          }
+        }
+      }
+
       countrySel.addEventListener("change", function () {
         clearEmbassyCountryList();
         rebuildMissionOptions(countrySel.value);
@@ -1450,6 +1483,7 @@ window.EMBASSY_GROUPS=JSON.parse(new TextDecoder("utf-8").decode(_u8));
 
       fillCountryOptions();
       rebuildMissionOptions("");
+      applyEmbassyDeepLinkFromUrl();
     })();
   </script>
 </body>

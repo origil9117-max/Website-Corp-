@@ -699,9 +699,72 @@
         return list;
       }
 
+      async function loadMinwonRoadmapItems() {
+        var list = [
+          {
+            source: "지능형 행정 플랫폼 카테고리",
+            title: "행정민원검색",
+            desc: "사업자등록증 주종목 및 코드 자동생성DB, 한국표준산업분류 코드 검색 등 행정민원 검색 페이지입니다.",
+            href: "minwon-roadmap.html",
+            tags: "행정민원검색 민원검색 주종목 코드 자동생성 DB 한국표준산업분류 KSIC"
+          },
+          {
+            source: "지능형 행정 플랫폼 카테고리",
+            title: "사업자등록증 주종목 및 코드 자동생성DB",
+            desc: "행정민원검색 페이지의 1단계 영역입니다.",
+            href: "minwon-roadmap.html",
+            tags: "사업자등록증 주종목 코드 자동생성 db 구축"
+          },
+          {
+            source: "지능형 행정 플랫폼 카테고리",
+            title: "한국표준산업분류 코드 검색",
+            desc: "분류항목·분류번호·세부명칭·세부설명 기준으로 KSIC 코드를 검색합니다.",
+            href: "minwon-roadmap.html",
+            tags: "한국표준산업분류 ksic 코드검색 분류번호 세부명칭 세부설명 검색어"
+          }
+        ];
+        try {
+          var res = await fetch("data/ksic11-codes.json", { cache: "no-store" });
+          if (!res.ok) return list;
+          var json = await res.json();
+          var items = Array.isArray(json && json.items) ? json.items : [];
+          items.forEach(function (row) {
+            var code = String(row && row.code ? row.code : "").trim();
+            var name = String(row && row.name ? row.name : "").trim();
+            if (!code && !name) return;
+            var description = String(row && row.description ? row.description : "").trim();
+            var category = String(row && row.category ? row.category : "").trim();
+            var level = String(row && row.level ? row.level : "").trim();
+            list.push({
+              source: "지능형 행정 플랫폼 카테고리",
+              title: (code ? code + " " : "") + (name || "한국표준산업분류"),
+              desc:
+                "[한국표준산업분류] " +
+                (name || "분류명 없음") +
+                (description ? " · " + description.slice(0, 200) : ""),
+              href: "minwon-roadmap.html",
+              tags: [
+                "한국표준산업분류",
+                "ksic",
+                code,
+                name,
+                description,
+                category,
+                level,
+                "분류번호",
+                "세부명칭",
+                "세부설명"
+              ].join(" ")
+            });
+          });
+        } catch (e) {}
+        return list;
+      }
+
       var ALL_ITEMS = STATIC_ITEMS
         .concat(loadEmbassyItems())
         .concat(await loadImmigrationOfficeItems())
+        .concat(await loadMinwonRoadmapItems())
         .concat(await loadServicePostItems())
         .concat(await loadResourceItems());
 

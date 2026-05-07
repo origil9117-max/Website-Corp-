@@ -593,8 +593,8 @@
             if (catVal && String(row.category || "") !== catVal) return false;
             if (codeVal) {
               var isAllDigits = /^\d+$/.test(codeVal);
-              if (isAllDigits && (codeVal.length === 4 || codeVal.length === 5)) {
-                if (rowCode !== codeVal) return false;
+              if (isAllDigits) {
+                if (rowCode.indexOf(codeVal) !== 0) return false;
               } else if (rowCode.indexOf(codeVal) === -1) {
                 return false;
               }

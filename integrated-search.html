@@ -490,6 +490,48 @@
         return items;
       }
 
+      async function loadImmigrationOfficeItems() {
+        var items = [];
+        try {
+          var res = await fetch("data/immigration-gvrn-by-region.json", { cache: "no-store" });
+          if (!res.ok) return items;
+          var data = await res.json();
+          var regions = data && typeof data === "object" ? Object.keys(data) : [];
+          regions.forEach(function (region) {
+            var offices = Array.isArray(data[region]) ? data[region] : [];
+            offices.forEach(function (office) {
+              var name = String(office && office.name ? office.name : "").trim();
+              if (!name) return;
+              var address = String(office && office.address ? office.address : "").trim();
+              var jurisdiction = String(office && office.jurisdiction ? office.jurisdiction : "").trim();
+              var boost = String(office && office.searchBoost ? office.searchBoost : "").trim();
+              items.push({
+                source: "지능형 행정 플랫폼 카테고리",
+                title: name,
+                desc:
+                  "[관할출입국·외국인관서] " +
+                  (address || "주소 정보 없음") +
+                  (jurisdiction ? " · 관할: " + jurisdiction : ""),
+                href: "platform-faq.html#immigration-search-main",
+                tags: [
+                  region,
+                  name,
+                  address,
+                  jurisdiction,
+                  boost,
+                  "관할출입국",
+                  "외국인관서",
+                  "출입국사무소",
+                  "출입국청",
+                  "관할검색"
+                ].join(" ")
+              });
+            });
+          });
+        } catch (e) {}
+        return items;
+      }
+
       async function loadResourceItems() {
         var list = [];
         if (window.supabase && window.SUPABASE_URL && window.SUPABASE_ANON_KEY) {
@@ -535,7 +577,10 @@
         return list;
       }
 
-      var ALL_ITEMS = STATIC_ITEMS.concat(loadEmbassyItems(), await loadResourceItems());
+      var ALL_ITEMS = STATIC_ITEMS
+        .concat(loadEmbassyItems())
+        .concat(await loadImmigrationOfficeItems())
+        .concat(await loadResourceItems());
 
       function withReturnParam(rawHref) {
         try {

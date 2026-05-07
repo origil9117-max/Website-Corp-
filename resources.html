@@ -97,24 +97,20 @@
     }
 
     .top-links a[href="index.html"] {
-      position: fixed;
-      right: 1rem;
-      top: 46%;
-      transform: translateY(-50%);
-      z-index: 1200;
-      min-width: 5.6rem;
-      padding: 0.62rem 0.92rem;
+      min-width: 4.8rem;
+      padding: 0.42rem 0.78rem;
       border-radius: 999px;
       border: 1px solid rgba(236, 69, 152, 0.42);
       background: linear-gradient(180deg, #ffecf6 0%, #ffe1f0 100%);
       color: #7b2a57;
-      box-shadow: 0 8px 20px rgba(227, 64, 146, 0.25);
-      gap: 0.42rem;
+      box-shadow: 0 4px 12px rgba(227, 64, 146, 0.2);
+      gap: 0.34rem;
+      white-space: nowrap;
     }
     .top-links a[href="index.html"]::before {
       content: "";
-      width: 1.15rem;
-      height: 1.15rem;
+      width: 0.98rem;
+      height: 0.98rem;
       border-radius: 50%;
       background: #ef3e9a;
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23fff' d='M12 4.2 3.8 11h1.9v8.1h4.9v-4.8h2.8v4.8h4.9V11h1.9z'/%3E%3C/svg%3E");
@@ -123,14 +119,7 @@
       background-size: 72%;
     }
     @media (max-width: 900px) {
-      .top-links a[href="index.html"] {
-        top: auto;
-        bottom: 1rem;
-        right: 0.8rem;
-        transform: none;
-        min-width: 0;
-        padding: 0.58rem 0.78rem;
-      }
+      .top-links a[href="index.html"] { min-width: 4.4rem; }
     }
 
     .wrap {

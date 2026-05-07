@@ -140,7 +140,7 @@
     .roadmap-ksic-results-head,
     .roadmap-ksic-results-item {
       display: grid;
-      grid-template-columns: 84px 84px 1fr 1fr;
+      grid-template-columns: 74px 84px 84px 1fr 1fr;
       align-items: center;
       gap: 0.45rem;
       padding: 0.28rem 0.34rem;
@@ -166,6 +166,12 @@
       font-variant-numeric: tabular-nums;
     }
 
+    .roadmap-ksic-col-level {
+      color: #30586f;
+      font-size: 0.82rem;
+      font-weight: 700;
+    }
+
     .roadmap-ksic-col-name,
     .roadmap-ksic-col-en,
     .roadmap-ksic-col-category {
@@ -176,6 +182,38 @@
 
     .roadmap-ksic-col-empty {
       color: #98acbb;
+    }
+
+    .roadmap-ksic-detail {
+      margin-top: 0.55rem;
+      border: 1px solid #c7d8e5;
+      border-radius: 8px;
+      background: #f8fcff;
+      padding: 0.62rem 0.72rem;
+    }
+
+    .roadmap-ksic-detail[hidden] {
+      display: none;
+    }
+
+    .roadmap-ksic-detail-grid {
+      display: grid;
+      grid-template-columns: 110px 1fr;
+      gap: 0.3rem 0.65rem;
+      margin: 0;
+      font-size: 0.9rem;
+    }
+
+    .roadmap-ksic-detail-grid dt {
+      margin: 0;
+      color: #31566c;
+      font-weight: 700;
+    }
+
+    .roadmap-ksic-detail-grid dd {
+      margin: 0;
+      color: #183b4f;
+      white-space: pre-wrap;
     }
 
     @media (max-width: 920px) {
@@ -353,6 +391,7 @@
           <p id="roadmap-ksic-search-status" class="roadmap-ksic-search-status" role="status" aria-live="polite"></p>
           <div id="roadmap-ksic-results" class="roadmap-ksic-results" hidden>
             <div class="roadmap-ksic-results-head" aria-hidden="true">
+              <span>구분</span>
               <span>분류항목</span>
               <span>분류번호</span>
               <span>세부명칭</span>
@@ -360,6 +399,13 @@
             </div>
             <ul id="roadmap-ksic-results-list" class="roadmap-ksic-results-list" aria-label="한국표준산업분류 검색 결과"></ul>
           </div>
+          <section id="roadmap-ksic-detail" class="roadmap-ksic-detail" hidden aria-label="선택한 분류 상세">
+            <dl class="roadmap-ksic-detail-grid">
+              <dt>분류번호</dt><dd id="roadmap-ksic-detail-code"></dd>
+              <dt>세부명칭</dt><dd id="roadmap-ksic-detail-name"></dd>
+              <dt>세부설명</dt><dd id="roadmap-ksic-detail-description"></dd>
+            </dl>
+          </section>
         </section>
       </article>
 
@@ -401,6 +447,10 @@
       var resultsList = document.getElementById("roadmap-ksic-results-list");
       var searchBtn = document.getElementById("roadmap-ksic-search-btn");
       var resetBtn = document.getElementById("roadmap-ksic-reset-btn");
+      var detailBox = document.getElementById("roadmap-ksic-detail");
+      var detailCode = document.getElementById("roadmap-ksic-detail-code");
+      var detailName = document.getElementById("roadmap-ksic-detail-name");
+      var detailDesc = document.getElementById("roadmap-ksic-detail-description");
       var ksicCache = null;
 
       var categoryNames = {
@@ -459,6 +509,9 @@
             var enLabel = row.enName ? row.enName : "";
             return (
               '<li class="roadmap-ksic-results-item">' +
+              '<span class="roadmap-ksic-col-level' + (row.level ? "" : " roadmap-ksic-col-empty") + '">' +
+              escapeHtml(row.level || "") +
+              "</span>" +
               '<span class="roadmap-ksic-col-category' + (categoryLabel ? "" : " roadmap-ksic-col-empty") + '">' +
               escapeHtml(categoryLabel) +
               "</span>" +
@@ -477,6 +530,21 @@
           .join("");
       }
 
+      function showDetail(row) {
+        if (!detailBox || !detailCode || !detailName || !detailDesc) return;
+        if (!row) {
+          detailCode.textContent = "";
+          detailName.textContent = "";
+          detailDesc.textContent = "";
+          detailBox.hidden = true;
+          return;
+        }
+        detailCode.textContent = row.code || "";
+        detailName.textContent = row.name || "";
+        detailDesc.textContent = row.description || "";
+        detailBox.hidden = false;
+      }
+
       async function ensureKsicItems() {
         if (ksicCache) return ksicCache;
         var res = await fetch("data/ksic11-codes.json", { cache: "no-cache" });
@@ -493,6 +561,7 @@
         if (enName) enName.value = "";
         if (topic) topic.value = "";
         renderResults([]);
+        showDetail(null);
         status.textContent = "";
       }
 
@@ -536,13 +605,16 @@
           renderResults(
             capped.map(function (r) {
               return {
+                level: r.level ? r.level : "",
                 category: r.category ? r.category : "",
                 code: r.code,
                 name: r.name,
                 enName: r.enName ? r.enName : "",
+                description: r.description ? r.description : "",
               };
             })
           );
+          showDetail(null);
           var catLabel = catVal ? " (" + catVal + " " + (categoryNames[catVal] || "") + ")" : "";
           status.textContent =
             "총 " +
@@ -563,6 +635,73 @@
         resetBtn.addEventListener("click", function () {
           resetKsicSearchUi();
           if (category) category.focus();
+        });
+      }
+
+      if (resultsList) {
+        resultsList.addEventListener("click", async function (ev) {
+          var li = ev.target && ev.target.closest ? ev.target.closest(".roadmap-ksic-results-item") : null;
+          if (!li) return;
+          var codeText = li.children && li.children[2] ? String(li.children[2].textContent || "").trim() : "";
+          if (!codeText) return;
+          try {
+            var items = await ensureKsicItems();
+            var found = items.find(function (x) {
+              return String(x.code || "") === codeText;
+            });
+            showDetail(found || null);
+          } catch (err) {
+            showDetail(null);
+          }
+        });
+      }
+
+      if (category) {
+        category.addEventListener("change", async function () {
+          var catVal = compact(category.value);
+          if (!catVal) {
+            renderResults([]);
+            showDetail(null);
+            status.textContent = "";
+            return;
+          }
+          try {
+            var items = await ensureKsicItems();
+            var catRows = items
+              .filter(function (r) {
+                return String(r.category || "") === catVal;
+              })
+              .sort(function (a, b) {
+                var la = String(a.code || "").length;
+                var lb = String(b.code || "").length;
+                if (la !== lb) return la - lb;
+                return String(a.code || "").localeCompare(String(b.code || ""));
+              })
+              .slice(0, 120);
+            renderResults(
+              catRows.map(function (r) {
+                return {
+                  level: r.level || (String(r.code || "").length === 4 ? "대분류" : "소분류"),
+                  category: r.category || "",
+                  code: r.code || "",
+                  name: r.name || "",
+                  enName: r.enName || "",
+                  description: r.description || "",
+                };
+              })
+            );
+            showDetail(null);
+            status.textContent =
+              "분류항목 " +
+              catVal +
+              " (" +
+              (categoryNames[catVal] || "") +
+              ") 목록입니다. 항목을 클릭하면 하단에 분류번호·세부명칭·세부설명이 표시됩니다.";
+          } catch (err) {
+            status.textContent = "분류 목록을 불러오지 못했습니다.";
+            renderResults([]);
+            showDetail(null);
+          }
         });
       }
     })();

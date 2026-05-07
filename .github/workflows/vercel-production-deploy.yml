@@ -56,6 +56,11 @@ jobs:
             echo "::error::Cannot find main button fixed marker in integrated-search.html"
             exit 1
           fi
+          EXPECTED_INTEGRATED_PLACEHOLDER_MARKER="$(tr -d '\r' < integrated-search.html | grep -o '표준코드, 관할출입국, 재외공관 등' | head -n 1 | tr -d '\r\n ')"
+          if [ -z "$EXPECTED_INTEGRATED_PLACEHOLDER_MARKER" ]; then
+            echo "::error::Cannot find integrated-search placeholder marker in integrated-search.html"
+            exit 1
+          fi
           EXPECTED_INDEX_SEARCH_BG_MARKER="$(tr -d '\r' < index.html | grep -o '#2a3253' | head -n 1 | tr -d '\r\n ')"
           if [ -z "$EXPECTED_INDEX_SEARCH_BG_MARKER" ]; then
             echo "::error::Cannot find integrated search background marker in index.html"
@@ -70,12 +75,14 @@ jobs:
           echo "emb_marker=$EXPECTED_EMB_MARKER" >> "$GITHUB_OUTPUT"
           echo "main_btn_marker=$EXPECTED_MAIN_BTN_MARKER" >> "$GITHUB_OUTPUT"
           echo "main_btn_fixed_marker=$EXPECTED_MAIN_BTN_FIXED_MARKER" >> "$GITHUB_OUTPUT"
+          echo "integrated_placeholder_marker=$EXPECTED_INTEGRATED_PLACEHOLDER_MARKER" >> "$GITHUB_OUTPUT"
           echo "index_search_bg_marker=$EXPECTED_INDEX_SEARCH_BG_MARKER" >> "$GITHUB_OUTPUT"
           echo "index_search_icon_marker=$EXPECTED_INDEX_SEARCH_ICON_MARKER" >> "$GITHUB_OUTPUT"
           echo "Expected CSS version: $EXPECTED_CSS"
           echo "Expected embassy marker: $EXPECTED_EMB_MARKER"
           echo "Expected main button marker: $EXPECTED_MAIN_BTN_MARKER"
           echo "Expected main button fixed marker: $EXPECTED_MAIN_BTN_FIXED_MARKER"
+          echo "Expected integrated placeholder marker: $EXPECTED_INTEGRATED_PLACEHOLDER_MARKER"
           echo "Expected index search bg marker: $EXPECTED_INDEX_SEARCH_BG_MARKER"
           echo "Expected index search icon marker: $EXPECTED_INDEX_SEARCH_ICON_MARKER"
 
@@ -86,6 +93,7 @@ jobs:
           EXPECTED_EMB_MARKER: ${{ steps.expected.outputs.emb_marker }}
           EXPECTED_MAIN_BTN_MARKER: ${{ steps.expected.outputs.main_btn_marker }}
           EXPECTED_MAIN_BTN_FIXED_MARKER: ${{ steps.expected.outputs.main_btn_fixed_marker }}
+          EXPECTED_INTEGRATED_PLACEHOLDER_MARKER: ${{ steps.expected.outputs.integrated_placeholder_marker }}
           EXPECTED_INDEX_SEARCH_BG_MARKER: ${{ steps.expected.outputs.index_search_bg_marker }}
           EXPECTED_INDEX_SEARCH_ICON_MARKER: ${{ steps.expected.outputs.index_search_icon_marker }}
         run: |
@@ -95,6 +103,7 @@ jobs:
           EXPECTED_EMB_MARKER_NORM="$(printf '%s' "$EXPECTED_EMB_MARKER" | tr -d '\r\n ')"
           EXPECTED_MAIN_BTN_MARKER_NORM="$(printf '%s' "$EXPECTED_MAIN_BTN_MARKER" | tr -d '\r\n ')"
           EXPECTED_MAIN_BTN_FIXED_MARKER_NORM="$(printf '%s' "$EXPECTED_MAIN_BTN_FIXED_MARKER" | tr -d '\r\n ')"
+          EXPECTED_INTEGRATED_PLACEHOLDER_MARKER_NORM="$(printf '%s' "$EXPECTED_INTEGRATED_PLACEHOLDER_MARKER" | tr -d '\r\n ')"
           EXPECTED_INDEX_SEARCH_BG_MARKER_NORM="$(printf '%s' "$EXPECTED_INDEX_SEARCH_BG_MARKER" | tr -d '\r\n ')"
           EXPECTED_INDEX_SEARCH_ICON_MARKER_NORM="$(printf '%s' "$EXPECTED_INDEX_SEARCH_ICON_MARKER" | tr -d '\r\n ')"
 
@@ -132,6 +141,10 @@ jobs:
             printf '%s' "$1" | tr -d '\r' | grep -q 'position: fixed;'
           }
 
+          has_integrated_placeholder_marker() {
+            printf '%s' "$1" | tr -d '\r' | grep -q '표준코드, 관할출입국, 재외공관 등'
+          }
+
           has_index_search_bg_marker() {
             printf '%s' "$1" | tr -d '\r' | grep -q '#2a3253'
           }
@@ -159,6 +172,10 @@ jobs:
           if has_main_btn_fixed_marker "$LIVE_PRE_INTEGRATED_BODY"; then
             LIVE_PRE_MAIN_BTN_FIXED_MARKER="present"
           fi
+          LIVE_PRE_INTEGRATED_PLACEHOLDER_MARKER="missing"
+          if has_integrated_placeholder_marker "$LIVE_PRE_INTEGRATED_BODY"; then
+            LIVE_PRE_INTEGRATED_PLACEHOLDER_MARKER="present"
+          fi
           LIVE_PRE_INDEX_BODY="$(curl -sS -L -H 'Cache-Control: no-cache' -H 'Pragma: no-cache' "$LIVE_URL_INDEX?cb=pre-${GITHUB_RUN_ID}-$(date +%s)")"
           LIVE_PRE_INDEX_SEARCH_BG_MARKER="missing"
           if has_index_search_bg_marker "$LIVE_PRE_INDEX_BODY"; then
@@ -172,6 +189,7 @@ jobs:
           echo "Precheck Expected emb-marker=$EXPECTED_EMB_MARKER_NORM / Live emb-marker=$LIVE_PRE_EMB_MARKER"
           echo "Precheck Expected main-btn-marker=$EXPECTED_MAIN_BTN_MARKER_NORM / Live main-btn-marker=$LIVE_PRE_MAIN_BTN_MARKER"
           echo "Precheck Expected main-btn-fixed=$EXPECTED_MAIN_BTN_FIXED_MARKER_NORM / Live main-btn-fixed=$LIVE_PRE_MAIN_BTN_FIXED_MARKER"
+          echo "Precheck Expected integrated-placeholder=$EXPECTED_INTEGRATED_PLACEHOLDER_MARKER_NORM / Live integrated-placeholder=$LIVE_PRE_INTEGRATED_PLACEHOLDER_MARKER"
           echo "Precheck Expected index-search-bg=$EXPECTED_INDEX_SEARCH_BG_MARKER_NORM / Live index-search-bg=$LIVE_PRE_INDEX_SEARCH_BG_MARKER"
           echo "Precheck Expected index-search-icon=$EXPECTED_INDEX_SEARCH_ICON_MARKER_NORM / Live index-search-icon=$LIVE_PRE_INDEX_SEARCH_ICON_MARKER"
           debug_expected_live "$LIVE_PRE_CSS" "$LIVE_PRE_EMB_MARKER"
@@ -218,6 +236,10 @@ jobs:
             if has_main_btn_fixed_marker "$LIVE_INTEGRATED_BODY"; then
               LIVE_MAIN_BTN_FIXED_MARKER="present"
             fi
+            LIVE_INTEGRATED_PLACEHOLDER_MARKER="missing"
+            if has_integrated_placeholder_marker "$LIVE_INTEGRATED_BODY"; then
+              LIVE_INTEGRATED_PLACEHOLDER_MARKER="present"
+            fi
             LIVE_INDEX_BODY="$(curl -sS -L -H 'Cache-Control: no-cache' -H 'Pragma: no-cache' "$LIVE_URL_INDEX?cb=${GITHUB_RUN_ID}-${i}-$(date +%s)")"
             LIVE_INDEX_SEARCH_BG_MARKER="missing"
             if has_index_search_bg_marker "$LIVE_INDEX_BODY"; then
@@ -231,11 +253,12 @@ jobs:
             echo "Expected emb-marker=$EXPECTED_EMB_MARKER_NORM / Live emb-marker=$LIVE_EMB_MARKER"
             echo "Expected main-btn-marker=$EXPECTED_MAIN_BTN_MARKER_NORM / Live main-btn-marker=$LIVE_MAIN_BTN_MARKER"
             echo "Expected main-btn-fixed=$EXPECTED_MAIN_BTN_FIXED_MARKER_NORM / Live main-btn-fixed=$LIVE_MAIN_BTN_FIXED_MARKER"
+            echo "Expected integrated-placeholder=$EXPECTED_INTEGRATED_PLACEHOLDER_MARKER_NORM / Live integrated-placeholder=$LIVE_INTEGRATED_PLACEHOLDER_MARKER"
             echo "Expected index-search-bg=$EXPECTED_INDEX_SEARCH_BG_MARKER_NORM / Live index-search-bg=$LIVE_INDEX_SEARCH_BG_MARKER"
             echo "Expected index-search-icon=$EXPECTED_INDEX_SEARCH_ICON_MARKER_NORM / Live index-search-icon=$LIVE_INDEX_SEARCH_ICON_MARKER"
             debug_expected_live "$LIVE_CSS" "$LIVE_EMB_MARKER"
 
-            if [ "$LIVE_CSS" = "$EXPECTED_CSS_NORM" ] && [ "$LIVE_EMB_MARKER" = "present" ] && [ "$LIVE_MAIN_BTN_MARKER" = "present" ] && [ "$LIVE_MAIN_BTN_FIXED_MARKER" = "present" ] && [ "$LIVE_INDEX_SEARCH_BG_MARKER" = "present" ] && [ "$LIVE_INDEX_SEARCH_ICON_MARKER" = "present" ]; then
+            if [ "$LIVE_CSS" = "$EXPECTED_CSS_NORM" ] && [ "$LIVE_EMB_MARKER" = "present" ] && [ "$LIVE_MAIN_BTN_MARKER" = "present" ] && [ "$LIVE_MAIN_BTN_FIXED_MARKER" = "present" ] && [ "$LIVE_INTEGRATED_PLACEHOLDER_MARKER" = "present" ] && [ "$LIVE_INDEX_SEARCH_BG_MARKER" = "present" ] && [ "$LIVE_INDEX_SEARCH_ICON_MARKER" = "present" ]; then
               echo "Production is synced."
               exit 0
             fi
@@ -247,6 +270,6 @@ jobs:
           done
 
           echo "::error::Production did not sync to expected HTML markers after $ATTEMPTS attempts."
-          echo "::error::Expected CSS=$EXPECTED_CSS_NORM, Expected emb-marker=$EXPECTED_EMB_MARKER_NORM, Expected main-btn-marker=$EXPECTED_MAIN_BTN_MARKER_NORM, Expected main-btn-fixed=$EXPECTED_MAIN_BTN_FIXED_MARKER_NORM, Expected index-search-bg=$EXPECTED_INDEX_SEARCH_BG_MARKER_NORM, Expected index-search-icon=$EXPECTED_INDEX_SEARCH_ICON_MARKER_NORM"
+          echo "::error::Expected CSS=$EXPECTED_CSS_NORM, Expected emb-marker=$EXPECTED_EMB_MARKER_NORM, Expected main-btn-marker=$EXPECTED_MAIN_BTN_MARKER_NORM, Expected main-btn-fixed=$EXPECTED_MAIN_BTN_FIXED_MARKER_NORM, Expected integrated-placeholder=$EXPECTED_INTEGRATED_PLACEHOLDER_MARKER_NORM, Expected index-search-bg=$EXPECTED_INDEX_SEARCH_BG_MARKER_NORM, Expected index-search-icon=$EXPECTED_INDEX_SEARCH_ICON_MARKER_NORM"
           echo "::error::Next checks: Vercel Deploy Hook must belong to the SAME project that serves $LIVE_URL (Production), and Production Git branch must be main."
           exit 1

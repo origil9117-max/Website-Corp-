@@ -291,6 +291,76 @@
         return String(value || "").trim().toLowerCase();
       }
 
+      function compactForMatch(value) {
+        return normalize(value).replace(/[^\w\u3131-\u318e\uac00-\ud7a3]/g, "");
+      }
+
+      function buildLawContextTokens(parsed, articleTitle, articlePlain) {
+        var seed = [];
+        if (parsed && parsed.lawName) seed.push(String(parsed.lawName));
+        if (parsed && parsed.label) seed.push(String(parsed.label));
+        if (parsed && parsed.main) {
+          seed.push("제" + String(parsed.main) + "조");
+          seed.push(String(parsed.main) + "조");
+        }
+        if (articleTitle) seed.push(String(articleTitle));
+        var plain = String(articlePlain || "").replace(/\s+/g, " ").trim();
+        if (plain) {
+          plain
+            .split(/[^0-9A-Za-z\u3131-\u318e\uac00-\ud7a3]+/g)
+            .filter(function (w) { return w && w.length >= 2; })
+            .slice(0, 18)
+            .forEach(function (w) { seed.push(w); });
+        }
+        var seen = {};
+        var out = [];
+        seed.forEach(function (x) {
+          var t = String(x || "").trim();
+          if (!t || t.length < 2) return;
+          var key = compactForMatch(t);
+          if (!key || seen[key]) return;
+          seen[key] = 1;
+          out.push(t);
+        });
+        return out;
+      }
+
+      function scoreRowByLawContext(row, contextTokens) {
+        var text = [
+          row && row.title,
+          row && row.caseNo,
+          row && row.court,
+          row && row.dept,
+          row && row.date,
+          row && row.summary,
+          row && row.keyword,
+        ].join(" ");
+        var bag = normalize(text);
+        var bagCompact = compactForMatch(text);
+        var score = 0;
+        (contextTokens || []).forEach(function (token) {
+          var tok = String(token || "").trim();
+          if (!tok) return;
+          var tokCompact = compactForMatch(tok);
+          if (!tokCompact) return;
+          if (bagCompact.indexOf(tokCompact) !== -1) score += 2;
+          else if (bag.indexOf(normalize(tok)) !== -1) score += 1;
+        });
+        return score;
+      }
+
+      function pickContextRows(rows, contextTokens, maxKeep) {
+        var list = Array.isArray(rows) ? rows.slice() : [];
+        if (!list.length) return [];
+        if (!contextTokens || !contextTokens.length) return list.slice(0, maxKeep);
+        var ranked = list
+          .map(function (row) { return { row: row, score: scoreRowByLawContext(row, contextTokens) }; })
+          .sort(function (a, b) { return b.score - a.score; });
+        var picked = ranked.filter(function (x) { return x.score > 0; }).map(function (x) { return x.row; });
+        if (!picked.length) picked = list;
+        return picked.slice(0, maxKeep);
+      }
+
       function escapeHtml(s) {
         return String(s)
           .replace(/&/g, "&amp;")
@@ -1773,6 +1843,9 @@
               '<p class="law-result-panel-lead law-result-panel-lead--warn">원문 본문 데이터가 비어 있어 공식 포털 원문 검색 링크로 대체 표시합니다.</p>';
           }
           var splitInterp = splitInterpretationRows(data.interpretations);
+          var contextTokens = buildLawContextTokens(parsed, artTitle, articlePlain);
+          var expcRowsPicked = pickContextRows(splitInterp.expc, contextTokens, 12);
+          var admrulRowsPicked = pickContextRows(splitInterp.admrul, contextTokens, 12);
           var expcBlockOpts = {
             expcSingleLinkRule: resolveExpcSingleLinkRule(parsed),
             highlightPhrases: highlightPhrases,
@@ -1784,10 +1857,11 @@
             "</p>" +
             titleBlock +
             articleBlock +
-            buildExpcBlock(splitInterp.expc, expcBlockOpts) +
+            buildExpcBlock(expcRowsPicked, expcBlockOpts) +
             lawPanelOfficialLinksHtml(safeLabel, q);
-          panelAdmrul.innerHTML = buildAdmrulBlock(splitInterp.admrul, { highlightPhrases: highlightPhrases });
-          var precOut = data.precedents && data.precedents.length ? data.precedents : [];
+          panelAdmrul.innerHTML = buildAdmrulBlock(admrulRowsPicked, { highlightPhrases: highlightPhrases });
+          var precRaw = data.precedents && data.precedents.length ? data.precedents : [];
+          var precOut = pickContextRows(precRaw, contextTokens, 15);
           return { status: hasArticleHtml ? "ok" : "partial", precedents: precOut };
         } catch (err) {
           panelLaw.innerHTML =

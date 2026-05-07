@@ -1747,12 +1747,22 @@
               "</h4>"
             : "";
           var articleBlock = "";
-          if (data.articleHtml) {
+          var articleHtmlRaw = String(data.articleHtml || "");
+          var articlePlain = articleHtmlRaw
+            .replace(/<[^>]+>/g, " ")
+            .replace(/&nbsp;|&#160;/gi, " ")
+            .replace(/\s+/g, " ")
+            .trim();
+          var hasArticleHtml = !!articlePlain;
+          if (hasArticleHtml) {
             articleBlock =
-              '<div class="law-article-html law-article-html--from-api" tabindex="0">' + data.articleHtml + "</div>";
+              '<div class="law-article-html law-article-html--from-api" tabindex="0">' + articleHtmlRaw + "</div>";
           } else if (data.message) {
             articleBlock =
               '<p class="law-result-panel-lead law-result-panel-lead--warn">' + escapeHtml(String(data.message)) + "</p>";
+          } else {
+            articleBlock =
+              '<p class="law-result-panel-lead law-result-panel-lead--warn">원문 본문 데이터가 비어 있어 공식 포털 원문 검색 링크로 대체 표시합니다.</p>';
           }
           var splitInterp = splitInterpretationRows(data.interpretations);
           var expcBlockOpts = {
@@ -1770,7 +1780,7 @@
             lawPanelOfficialLinksHtml(safeLabel, q);
           panelAdmrul.innerHTML = buildAdmrulBlock(splitInterp.admrul, { highlightPhrases: highlightPhrases });
           var precOut = data.precedents && data.precedents.length ? data.precedents : [];
-          return { status: data.articleHtml ? "ok" : "partial", precedents: precOut };
+          return { status: hasArticleHtml ? "ok" : "partial", precedents: precOut };
         } catch (err) {
           panelLaw.innerHTML =
             '<div class="law-warn-box"><p><strong>원문 API를 호출할 수 없습니다.</strong> 정적 파일만 열었거나 호스트에 <code>api/law-article</code> 경로가 없을 수 있습니다. Vercel로 배포했는지 확인해 주세요.</p></div>' +

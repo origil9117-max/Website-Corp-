@@ -111,7 +111,7 @@ a:hover {
 .topbar .links a[href="index.html"] {
   position: fixed;
   right: 1rem;
-  top: max(8.2rem, 46vh);
+  top: clamp(5.8rem, 46vh, 11rem);
   transform: translateY(-50%);
   z-index: 1200;
   min-width: 5.6rem;

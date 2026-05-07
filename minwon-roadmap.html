@@ -42,7 +42,7 @@
 
     .roadmap-ksic-controls {
       display: grid;
-      grid-template-columns: minmax(260px, 1fr) auto;
+      grid-template-columns: 1.1fr 1fr 1.45fr 1.2fr 1.2fr auto;
       gap: 0.52rem;
       align-items: end;
     }
@@ -55,6 +55,7 @@
       font-weight: 700;
     }
 
+    .roadmap-ksic-field select,
     .roadmap-ksic-field input {
       width: 100%;
       height: 2.35rem;
@@ -66,6 +67,7 @@
       font: inherit;
     }
 
+    .roadmap-ksic-field select:focus,
     .roadmap-ksic-field input:focus {
       outline: 2px solid rgba(31, 111, 166, 0.23);
       outline-offset: 1px;
@@ -89,9 +91,20 @@
       filter: brightness(1.03);
     }
 
+    .roadmap-ksic-search-status {
+      margin: 0.5rem 0 0;
+      font-size: 0.88rem;
+      color: #2d4e64;
+      min-height: 1.2em;
+    }
+
     @media (max-width: 920px) {
       .roadmap-ksic-controls {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .roadmap-ksic-controls .roadmap-ksic-search-wrap {
+        grid-column: 1 / -1;
       }
 
       .roadmap-ksic-search-btn {
@@ -204,17 +217,57 @@
             (2) 한국표준산업분류 코드 검색
           </h2>
           <p class="roadmap-ksic-help">
-            한국표준산업분류(제11차, 통계청 고시 2024-2호) 기준입니다. <span class="roadmap-ksic-key">특정키워드</span>를 입력해 코드를 검색하세요.
+            한국표준산업분류(제11차, 통계청 고시 2024-2호) 기준입니다. <span class="roadmap-ksic-key">분류항목</span>과 키워드를 함께 입력해 코드를 빠르게 찾을 수 있습니다.
           </p>
-          <div class="roadmap-ksic-controls">
+          <form id="roadmap-ksic-search-form" class="roadmap-ksic-controls" role="search" action="#" method="get">
             <div class="roadmap-ksic-field">
-              <label for="roadmap-ksic-keyword">특정키워드 입력</label>
-              <input id="roadmap-ksic-keyword" type="search" placeholder="예: 시스템 소프트웨어 개발, 62010, software development" autocomplete="off" />
+              <label for="roadmap-ksic-category">분류항목(선택)</label>
+              <select id="roadmap-ksic-category" autocomplete="off">
+                <option value="">분류항목을 선택하세요</option>
+                <option value="A">A 농업, 임업 및 어업</option>
+                <option value="B">B 광업</option>
+                <option value="C">C 제조업</option>
+                <option value="D">D 전기, 가스, 증기 및 공기조절 공급업</option>
+                <option value="E">E 수도, 하수 및 폐기물 처리, 원료 재생업</option>
+                <option value="F">F 건설업</option>
+                <option value="G">G 도매 및 소매업</option>
+                <option value="H">H 운수 및 창고업</option>
+                <option value="I">I 숙박 및 음식점업</option>
+                <option value="J">J 정보통신업</option>
+                <option value="K">K 금융 및 보험업</option>
+                <option value="L">L 부동산업</option>
+                <option value="M">M 전문, 과학 및 기술 서비스업</option>
+                <option value="N">N 사업시설 관리, 사업 지원 및 임대 서비스업</option>
+                <option value="O">O 공공 행정, 국방 및 사회보장 행정</option>
+                <option value="P">P 교육 서비스업</option>
+                <option value="Q">Q 보건업 및 사회복지 서비스업</option>
+                <option value="R">R 예술, 스포츠 및 여가관련 서비스업</option>
+                <option value="S">S 협회 및 단체, 수리 및 기타 개인 서비스업</option>
+                <option value="T">T 가구 내 고용활동 및 자가 소비 생산활동</option>
+                <option value="U">U 국제 및 외국기관</option>
+              </select>
+            </div>
+            <div class="roadmap-ksic-field">
+              <label for="roadmap-ksic-code">분류번호(코드)</label>
+              <input id="roadmap-ksic-code" type="search" placeholder="예: 62010" autocomplete="off" />
+            </div>
+            <div class="roadmap-ksic-field">
+              <label for="roadmap-ksic-name">세부명칭</label>
+              <input id="roadmap-ksic-name" type="search" placeholder="예: 시스템 소프트웨어 개발 및 공급업" autocomplete="off" />
+            </div>
+            <div class="roadmap-ksic-field">
+              <label for="roadmap-ksic-en-name">영문명</label>
+              <input id="roadmap-ksic-en-name" type="search" placeholder="예: System software development and supply" autocomplete="off" />
+            </div>
+            <div class="roadmap-ksic-field">
+              <label for="roadmap-ksic-topic-keyword">(특정주제 키워드)</label>
+              <input id="roadmap-ksic-topic-keyword" type="search" placeholder="예: AI, 반도체, 이차전지" autocomplete="off" />
             </div>
             <div class="roadmap-ksic-search-wrap">
-              <button type="button" class="roadmap-ksic-search-btn">검색</button>
+              <button type="submit" class="roadmap-ksic-search-btn" id="roadmap-ksic-search-btn">검색</button>
             </div>
-          </div>
+          </form>
+          <p id="roadmap-ksic-search-status" class="roadmap-ksic-search-status" role="status" aria-live="polite"></p>
         </section>
       </article>
 
@@ -240,6 +293,46 @@
   <script>
     if (typeof window.SUPABASE_URL === "undefined") window.SUPABASE_URL = "";
     if (typeof window.SUPABASE_ANON_KEY === "undefined") window.SUPABASE_ANON_KEY = "";
+  </script>
+  <script>
+    (function () {
+      var form = document.getElementById("roadmap-ksic-search-form");
+      var status = document.getElementById("roadmap-ksic-search-status");
+      if (!form || !status) return;
+
+      var category = document.getElementById("roadmap-ksic-category");
+      var code = document.getElementById("roadmap-ksic-code");
+      var name = document.getElementById("roadmap-ksic-name");
+      var enName = document.getElementById("roadmap-ksic-en-name");
+      var topic = document.getElementById("roadmap-ksic-topic-keyword");
+
+      function compact(v) {
+        return String(v || "").trim();
+      }
+
+      form.addEventListener("submit", function (ev) {
+        ev.preventDefault();
+
+        var parts = [
+          compact(category && category.value),
+          compact(code && code.value),
+          compact(name && name.value),
+          compact(enName && enName.value),
+          compact(topic && topic.value),
+        ].filter(Boolean);
+
+        if (!parts.length) {
+          status.textContent = "최소 1개 항목 이상 입력해 주세요.";
+          if (topic) topic.focus();
+          return;
+        }
+
+        var query = "한국표준산업분류 " + parts.join(" ");
+        var url = "https://www.google.com/search?q=" + encodeURIComponent(query);
+        status.textContent = "검색 결과를 새 창에서 엽니다.";
+        window.open(url, "_blank", "noopener,noreferrer");
+      });
+    })();
   </script>
   <script src="platform-admin.js?v=20260420r" defer></script>
 </body>

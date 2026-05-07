@@ -463,6 +463,87 @@ function lightSanitizeHtml(html) {
     .replace(/(<a\b[^>]*\shref=["'])\/(?=LSW\/|admRul\/|lsSc|lsAst|INF\/|joOn)/gi, "$1https://www.law.go.kr/");
 }
 
+function stripTagsToText(html) {
+  return String(html || "")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/&nbsp;|&#160;/gi, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function escapeHtml(s) {
+  return String(s || "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+function collectUnitStringFields(node, keyHint, out) {
+  if (node == null) return;
+  if (typeof node === "string" || typeof node === "number") {
+    out.push({ key: String(keyHint || ""), value: String(node) });
+    return;
+  }
+  if (Array.isArray(node)) {
+    for (const item of node) collectUnitStringFields(item, keyHint, out);
+    return;
+  }
+  if (typeof node === "object") {
+    for (const k of Object.keys(node)) {
+      collectUnitStringFields(node[k], k, out);
+    }
+  }
+}
+
+function extractArticleBodyLinesFromUnit(unit, articleTitle) {
+  const fields = [];
+  collectUnitStringFields(unit, "", fields);
+  const titleNorm = String(articleTitle || "").replace(/\s+/g, " ").trim();
+  const seen = {};
+  const lines = [];
+  for (const f of fields) {
+    const key = String(f.key || "");
+    let v = String(f.value || "").replace(/\s+/g, " ").trim();
+    if (!v) continue;
+    if (titleNorm && v === titleNorm) continue;
+    if (/^제\d+조(?:의\d+)?\s*\(.*\)\s*$/u.test(v)) continue;
+    const keyLooksBody = /항내용|호내용|목내용|조문내용|내용|본문/u.test(key);
+    const textLooksBody =
+      /[①②③④⑤⑥⑦⑧⑨⑩]/.test(v) ||
+      /^\(?\d+\)?\s*/.test(v) ||
+      /(한다|하여야|아니한다|있다|없다)\.$/.test(v) ||
+      v.length >= 28;
+    if (!keyLooksBody && !textLooksBody) continue;
+    if (titleNorm && v.indexOf(titleNorm) === 0 && v.length <= titleNorm.length + 2) continue;
+    const dedupeKey = v;
+    if (seen[dedupeKey]) continue;
+    seen[dedupeKey] = 1;
+    lines.push(v);
+  }
+  return lines.slice(0, 30);
+}
+
+function buildFallbackArticleHtmlFromUnit(unit, articleTitle) {
+  const lines = extractArticleBodyLinesFromUnit(unit, articleTitle);
+  if (!lines.length) return "";
+  return lines.map((line) => '<p class="law-article-p">' + escapeHtml(line) + "</p>").join("");
+}
+
+function ensureArticleHtmlWithFallback(articleHtmlRaw, unit, articleTitle) {
+  const safeHtml = lightSanitizeHtml(articleHtmlRaw);
+  const plain = stripTagsToText(safeHtml);
+  const titleNorm = String(articleTitle || "").replace(/\s+/g, " ").trim();
+  const hasBody =
+    plain &&
+    (!titleNorm || plain !== titleNorm) &&
+    !(titleNorm && plain.indexOf(titleNorm) === 0 && plain.length <= titleNorm.length + 2);
+  if (hasBody) return safeHtml;
+  const fallback = buildFallbackArticleHtmlFromUnit(unit, articleTitle);
+  if (fallback) return fallback;
+  return safeHtml;
+}
+
 function getExpcList(json) {
   if (!json || typeof json !== "object") return [];
   if (json.Expc && json.Expc.expc != null) return arr(json.Expc.expc);
@@ -910,7 +991,7 @@ module.exports = async function lawArticleHandler(req, res) {
 
     const articleTitle = unit.조문제목 ? String(unit.조문제목) : "";
     const rawHtml = unit.조문내용 != null ? String(unit.조문내용) : "";
-    const articleHtml = lightSanitizeHtml(rawHtml);
+    const articleHtml = ensureArticleHtmlWithFallback(rawHtml, unit, articleTitle);
 
     return res.status(200).json({
       ok: true,

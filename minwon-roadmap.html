@@ -374,8 +374,8 @@
               <input id="roadmap-ksic-name" type="search" placeholder="예: 시스템 소프트웨어 개발 및 공급업" autocomplete="off" />
             </div>
             <div class="roadmap-ksic-field">
-              <label for="roadmap-ksic-en-name">영문명</label>
-              <input id="roadmap-ksic-en-name" type="search" placeholder="예: System software development and supply" autocomplete="off" />
+              <label for="roadmap-ksic-en-name">세부설명</label>
+              <input id="roadmap-ksic-en-name" type="search" placeholder="예: 해당 분류의 업무 내용 설명" autocomplete="off" />
             </div>
             <div class="roadmap-ksic-field">
               <label for="roadmap-ksic-topic-keyword">(특정주제 키워드)</label>
@@ -395,7 +395,7 @@
               <span>분류항목</span>
               <span>분류번호</span>
               <span>세부명칭</span>
-              <span>영문명</span>
+              <span>세부설명</span>
             </div>
             <ul id="roadmap-ksic-results-list" class="roadmap-ksic-results-list" aria-label="한국표준산업분류 검색 결과"></ul>
           </div>
@@ -506,7 +506,7 @@
             var categoryLabel = row.category ? row.category : "";
             var codeLabel = row.code ? row.code : "";
             var nameLabel = row.name ? row.name : "";
-            var enLabel = row.enName ? row.enName : "";
+            var enLabel = row.description ? row.description : "";
             return (
               '<li class="roadmap-ksic-results-item">' +
               '<span class="roadmap-ksic-col-level' + (row.level ? "" : " roadmap-ksic-col-empty") + '">' +
@@ -589,7 +589,7 @@
           var rows = items.filter(function (row) {
             var rowCode = norm(row.code);
             var rowName = norm(row.name);
-            var rowEn = norm(row.enName);
+            var rowEn = norm(row.description);
             if (catVal && String(row.category || "") !== catVal) return false;
             if (codeVal && rowCode.indexOf(codeVal) === -1) return false;
             if (nameVal && rowName.indexOf(nameVal) === -1) return false;
@@ -609,7 +609,7 @@
                 category: r.category ? r.category : "",
                 code: r.code,
                 name: r.name,
-                enName: r.enName ? r.enName : "",
+                enName: "",
                 description: r.description ? r.description : "",
               };
             })
@@ -685,7 +685,7 @@
                   category: r.category || "",
                   code: r.code || "",
                   name: r.name || "",
-                  enName: r.enName || "",
+                  enName: "",
                   description: r.description || "",
                 };
               })

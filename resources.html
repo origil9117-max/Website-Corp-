@@ -1022,6 +1022,18 @@
         renderPagination(filtered.length, currentPage, PAGE_SIZE);
       }
 
+      function applyResourceSearchFromUrlOnce() {
+        try {
+          var params = new URLSearchParams(window.location.search || "");
+          var q = String(params.get("res_q") || params.get("q") || "").trim();
+          if (!q || !resourceSearchInput) return;
+          resourceSearchInput.value = q;
+          if (resourceSearchScope) resourceSearchScope.value = "title-content";
+          currentPage = 1;
+          applyResourceSearch();
+        } catch (e) {}
+      }
+
       function resetForm() {
         form.reset();
         document.getElementById("resource-id").value = "";
@@ -1314,6 +1326,7 @@
       } catch (e) {}
       updateAdminUi();
       await renderList();
+      applyResourceSearchFromUrlOnce();
       if (forcedOffByNavigation) {
         await deactivateAdminMode({ silent: true });
       }

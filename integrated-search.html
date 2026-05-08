@@ -559,6 +559,17 @@
 
       async function loadResourceItems() {
         var list = [];
+        function buildResourceHref(queryText) {
+          var base = "resources.html";
+          try {
+            var u = new URL(base, window.location.href);
+            var q = String(queryText || "").trim();
+            if (q) u.searchParams.set("res_q", q);
+            return u.pathname + u.search;
+          } catch (e) {
+            return base;
+          }
+        }
         if (window.supabase && window.SUPABASE_URL && window.SUPABASE_ANON_KEY) {
           try {
             var client = window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY, {
@@ -575,7 +586,7 @@
                   source: "자료실",
                   title: String(x.title || "자료"),
                   desc: String(x.content || "").slice(0, 240),
-                  href: "resources.html",
+                  href: buildResourceHref(String(x.title || "")),
                   tags: String(x.title || "") + " " + String(x.content || "")
                 };
               });
@@ -592,7 +603,7 @@
                   source: "자료실",
                   title: String(x.title || "자료"),
                   desc: String(x.content || "").slice(0, 240),
-                  href: "resources.html",
+                  href: buildResourceHref(String(x.title || "")),
                   tags: String(x.title || "") + " " + String(x.content || "")
                 };
               });

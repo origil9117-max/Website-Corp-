@@ -813,6 +813,20 @@
         }
       }
 
+      function withSearchHandoff(rawHref, queryText) {
+        try {
+          var url = new URL(String(rawHref || ""), window.location.href);
+          var q = String(queryText || "").trim();
+          var path = (url.pathname || "").toLowerCase();
+          if (q && path.indexOf("resources.html") !== -1 && !url.searchParams.get("res_q")) {
+            url.searchParams.set("res_q", q);
+          }
+          return url.href;
+        } catch (e) {
+          return String(rawHref || "");
+        }
+      }
+
       function buildLawPrecedentHref(queryText) {
         var base = "law-precedent-search.html";
         try {
@@ -891,7 +905,7 @@
         matched.forEach(function (item) {
           var card = document.createElement("article");
           card.className = "result-card";
-          var targetHref = withReturnParam(item.href);
+          var targetHref = withReturnParam(withSearchHandoff(item.href, query));
           card.innerHTML =
             '<div class="result-main">' +
             '<div class="result-top">' +

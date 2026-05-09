@@ -2296,6 +2296,20 @@
       vertical-align: middle;
       margin-left: 0.32rem;
     }
+    .service-weekago-chip {
+      display: inline-flex;
+      align-items: center;
+      height: 1.15rem;
+      padding: 0 0.42rem;
+      border-radius: 999px;
+      border: 1px solid rgba(92, 102, 120, 0.35);
+      background: rgba(92, 102, 120, 0.08);
+      color: #4a5261;
+      font-size: 0.66rem;
+      font-weight: 700;
+      white-space: nowrap;
+      margin-left: 0.3rem;
+    }
 
     .service-card li a.service-subtopic-link:hover,
     .service-card li a.service-subtopic-link:focus-visible {
@@ -3387,6 +3401,7 @@
     (async function () {
       var NEW_BADGE_SRC = "images/new-badge.svg";
       var NEW_POST_DAYS = 7;
+      var WEEK_AGO_POST_DAYS = 14;
       var serviceCards = Array.prototype.slice.call(document.querySelectorAll(".service-card"));
       if (!serviceCards.length) return;
       if (!window.supabase || !window.SUPABASE_URL || !window.SUPABASE_ANON_KEY) return;
@@ -3403,16 +3418,33 @@
         }
       }
 
-      function isRecentCreatedAt(createdAt) {
+      function getFreshnessState(createdAt) {
         var t = Date.parse(String(createdAt || ""));
-        if (!Number.isFinite(t)) return false;
+        if (!Number.isFinite(t)) return "";
         var ageMs = Date.now() - t;
-        return ageMs >= 0 && ageMs <= NEW_POST_DAYS * 24 * 60 * 60 * 1000;
+        if (ageMs < 0) return "";
+        var days = ageMs / (24 * 60 * 60 * 1000);
+        if (days <= NEW_POST_DAYS) return "new";
+        if (days <= WEEK_AGO_POST_DAYS) return "week_ago";
+        return "";
       }
 
-      function appendNewBadge(el) {
+      function applyFreshnessBadge(el, state) {
         if (!el) return;
-        if (el.querySelector && el.querySelector(".service-new-badge")) return;
+        if (el.querySelector) {
+          var oldNew = el.querySelector(".service-new-badge");
+          if (oldNew) oldNew.remove();
+          var oldWeek = el.querySelector(".service-weekago-chip");
+          if (oldWeek) oldWeek.remove();
+        }
+        if (state !== "new" && state !== "week_ago") return;
+        if (state === "week_ago") {
+          var chip = document.createElement("span");
+          chip.className = "service-weekago-chip";
+          chip.textContent = "1주일전 게시";
+          el.appendChild(chip);
+          return;
+        }
         var img = document.createElement("img");
         img.className = "service-new-badge";
         img.src = NEW_BADGE_SRC;
@@ -3433,12 +3465,20 @@
       var recentServiceMap = Object.create(null);
       var recentTopicMap = Object.create(null);
       res.data.forEach(function (row) {
-        if (!isRecentCreatedAt(row.created_at)) return;
+        var state = getFreshnessState(row.created_at);
+        if (!state) return;
         var service = String(row.service || "").trim();
         var topic = String(row.topic || "").trim();
         if (!service) return;
-        recentServiceMap[service] = true;
-        if (topic) recentTopicMap[service + "|" + topic] = true;
+        if (!recentServiceMap[service] || state === "new") {
+          recentServiceMap[service] = state;
+        }
+        if (topic) {
+          var key = service + "|" + topic;
+          if (!recentTopicMap[key] || state === "new") {
+            recentTopicMap[key] = state;
+          }
+        }
       });
 
       serviceCards.forEach(function (card) {
@@ -3456,16 +3496,17 @@
             }
             titleAnchor.appendChild(titleWrap);
           }
-          if (recentServiceMap[serviceId]) appendNewBadge(titleWrap);
+          applyFreshnessBadge(titleWrap, recentServiceMap[serviceId] || "");
         }
 
         var subtopicItems = card.querySelectorAll("li[data-subtopic-href]");
         Array.prototype.forEach.call(subtopicItems, function (li) {
           var parsed = parseServiceTopicFromHref(li.getAttribute("data-subtopic-href") || "");
           if (!parsed.service || !parsed.topic) return;
-          if (!recentTopicMap[parsed.service + "|" + parsed.topic]) return;
+          var freshness = recentTopicMap[parsed.service + "|" + parsed.topic] || "";
+          if (!freshness) return;
           var link = li.querySelector("a.service-subtopic-link");
-          if (link) appendNewBadge(link);
+          if (link) applyFreshnessBadge(link, freshness);
         });
       });
     })();

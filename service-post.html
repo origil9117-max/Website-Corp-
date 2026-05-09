@@ -352,6 +352,19 @@
       vertical-align: middle;
       flex-shrink: 0;
     }
+    .post-weekago-chip {
+      display: inline-flex;
+      align-items: center;
+      height: 1.2rem;
+      padding: 0 0.45rem;
+      border-radius: 999px;
+      border: 1px solid rgba(92, 102, 120, 0.35);
+      background: rgba(92, 102, 120, 0.08);
+      color: #4a5261;
+      font-size: 0.68rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
     .meta { margin-top: 0.35rem; font-size: 0.79rem; color: var(--muted); }
     .body {
       margin-top: 0.55rem;
@@ -807,6 +820,7 @@
       var SERVICE_POST_FILE_BUCKET = "resource-files";
       var NEW_BADGE_SRC = "images/new-badge.svg";
       var NEW_POST_DAYS = 7;
+      var WEEK_AGO_POST_DAYS = 14;
       var MAX_IMAGES = 5;
       var MAX_IMAGE_BYTES = 5 * 1024 * 1024;
       var client = null;
@@ -2506,12 +2520,16 @@
         postPagination.innerHTML = html;
       }
 
-      function isNewPost(item) {
+      function getPostFreshnessState(item) {
         if (!item) return false;
         var created = Date.parse(String(item.created_at || ""));
-        if (!Number.isFinite(created)) return false;
+        if (!Number.isFinite(created)) return "";
         var ageMs = Date.now() - created;
-        return ageMs >= 0 && ageMs <= NEW_POST_DAYS * 24 * 60 * 60 * 1000;
+        if (ageMs < 0) return "";
+        var days = ageMs / (24 * 60 * 60 * 1000);
+        if (days <= NEW_POST_DAYS) return "new";
+        if (days <= WEEK_AGO_POST_DAYS) return "week_ago";
+        return "";
       }
 
       function renderPosts() {
@@ -2545,8 +2563,10 @@
           var titleHtml =
             '<span class="post-title-row">' +
             '<span>' + escapeHtml(item.title) + "</span>" +
-            (isNewPost(item)
+            (getPostFreshnessState(item) === "new"
               ? '<img class="post-new-badge" src="' + escapeAttr(NEW_BADGE_SRC) + '" alt="NEW" loading="lazy" />'
+              : getPostFreshnessState(item) === "week_ago"
+                ? '<span class="post-weekago-chip">1주일전 게시</span>'
               : "") +
             "</span>";
           return '<article class="post-item">' +

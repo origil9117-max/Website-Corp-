@@ -3861,8 +3861,31 @@
         appeal: "service-appeal.html"
       };
 
-      function moveToPublishPage(serviceId) {
+      async function moveToPublishPage(serviceId) {
         if (!serviceId) return;
+        if (window.supabase && window.SUPABASE_URL && window.SUPABASE_ANON_KEY) {
+          try {
+            var client = window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY);
+            var latest = await client
+              .from("service_posts")
+              .select("topic, created_at")
+              .eq("service", serviceId)
+              .order("created_at", { ascending: false })
+              .limit(1)
+              .maybeSingle();
+            if (!latest.error && latest.data) {
+              var latestTopic = String(latest.data.topic || "").trim();
+              if (latestTopic) {
+                window.location.href =
+                  "service-post.html?service=" +
+                  encodeURIComponent(serviceId) +
+                  "&topic=" +
+                  encodeURIComponent(latestTopic);
+                return;
+              }
+            }
+          } catch (e) {}
+        }
         var entry = SERVICE_ENTRY_PAGE[serviceId];
         window.location.href =
           entry || "service-post.html?service=" + encodeURIComponent(serviceId) + "&ui=10";
@@ -3886,7 +3909,7 @@
           heroMiniLinks.forEach(function (link) {
             if (link.getAttribute("data-service") === selectedService) link.classList.add("selected");
           });
-          moveToPublishPage(card.getAttribute("data-service"));
+          void moveToPublishPage(card.getAttribute("data-service"));
         });
       });
 
@@ -3901,7 +3924,7 @@
           cards.forEach(function (card) {
             if (card.getAttribute("data-service") === selectedService) card.classList.add("selected");
           });
-          moveToPublishPage(selectedService);
+          void moveToPublishPage(selectedService);
         });
       });
 

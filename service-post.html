@@ -523,6 +523,20 @@
       border: 0;
       background: #f5f6f8;
     }
+    .pdf-inline-viewer__body {
+      overflow: auto;
+      background: #e9edf3;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 0.8rem;
+    }
+    .pdf-inline-viewer__canvas {
+      background: #fff;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+      max-width: 100%;
+      height: auto;
+    }
   </style>
 </head>
 <body>
@@ -1190,15 +1204,6 @@
         return false;
       }
 
-      function buildPdfViewerUrl(rawHref) {
-        var href = String(rawHref || "").trim();
-        if (!href) return "";
-        if (/^https?:\/\//i.test(href)) {
-          return "https://docs.google.com/gview?embedded=1&url=" + encodeURIComponent(href);
-        }
-        return href;
-      }
-
       function dataUrlToBlob(dataUrl) {
         var m = String(dataUrl || "").match(/^data:([^;,]+)?(;base64)?,([\s\S]*)$/i);
         if (!m) return null;
@@ -1218,13 +1223,74 @@
       }
 
       var pdfInlineViewer = null;
-      var pdfInlineFrame = null;
+      var pdfInlineBody = null;
+      var pdfInlineCanvas = null;
       var pdfInlineTitle = null;
       var pdfInlineCloseBtn = null;
       var pdfInlineBlobUrl = "";
+      var pdfjsLibRef = null;
+      var pdfDocRef = null;
+      var pdfPageNum = 1;
+      var pdfScale = 1.2;
+
+      function loadPdfJsLib() {
+        if (pdfjsLibRef) return Promise.resolve(pdfjsLibRef);
+        if (window.pdfjsLib) {
+          pdfjsLibRef = window.pdfjsLib;
+          if (pdfjsLibRef && pdfjsLibRef.GlobalWorkerOptions) {
+            pdfjsLibRef.GlobalWorkerOptions.workerSrc =
+              "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+          }
+          return Promise.resolve(pdfjsLibRef);
+        }
+        return new Promise(function (resolve, reject) {
+          var script = document.createElement("script");
+          script.src = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js";
+          script.async = true;
+          script.onload = function () {
+            if (!window.pdfjsLib) {
+              reject(new Error("pdfjs-load-failed"));
+              return;
+            }
+            pdfjsLibRef = window.pdfjsLib;
+            pdfjsLibRef.GlobalWorkerOptions.workerSrc =
+              "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+            resolve(pdfjsLibRef);
+          };
+          script.onerror = function () {
+            reject(new Error("pdfjs-load-failed"));
+          };
+          document.head.appendChild(script);
+        });
+      }
+
+      async function renderPdfPage() {
+        if (!pdfDocRef || !pdfInlineCanvas) return;
+        var page = await pdfDocRef.getPage(pdfPageNum);
+        var viewport = page.getViewport({ scale: pdfScale });
+        var canvas = pdfInlineCanvas;
+        var ctx = canvas.getContext("2d");
+        canvas.width = Math.floor(viewport.width);
+        canvas.height = Math.floor(viewport.height);
+        await page.render({ canvasContext: ctx, viewport: viewport }).promise;
+        if (pdfInlineTitle) {
+          pdfInlineTitle.textContent = "PDF 보기 (" + pdfPageNum + "/" + pdfDocRef.numPages + ")";
+        }
+      }
+
+      function createPdfViewerControlBar() {
+        return (
+          '<div class="row" style="margin:0;">' +
+          '<button type="button" class="btn btn-ghost" id="pdf-inline-prev">이전</button>' +
+          '<button type="button" class="btn btn-ghost" id="pdf-inline-next">다음</button>' +
+          '<button type="button" class="btn btn-ghost" id="pdf-inline-zoom-out">축소</button>' +
+          '<button type="button" class="btn btn-ghost" id="pdf-inline-zoom-in">확대</button>' +
+          "</div>"
+        );
+      }
 
       function ensurePdfInlineViewer() {
-        if (pdfInlineViewer && pdfInlineFrame) return;
+        if (pdfInlineViewer && pdfInlineCanvas) return;
         var overlay = document.createElement("div");
         overlay.className = "pdf-inline-viewer";
         overlay.setAttribute("role", "dialog");
@@ -1233,20 +1299,30 @@
           '<div class="pdf-inline-viewer__panel">' +
           '<div class="pdf-inline-viewer__bar">' +
           '<div class="pdf-inline-viewer__title" id="pdf-inline-viewer-title">PDF 보기</div>' +
+          createPdfViewerControlBar() +
           '<button type="button" class="btn btn-ghost" id="pdf-inline-viewer-close">닫기</button>' +
           "</div>" +
-          '<iframe class="pdf-inline-viewer__frame" id="pdf-inline-viewer-frame" title="PDF 보기"></iframe>' +
+          '<div class="pdf-inline-viewer__body" id="pdf-inline-viewer-body"><canvas class="pdf-inline-viewer__canvas" id="pdf-inline-viewer-canvas"></canvas></div>' +
           "</div>";
         document.body.appendChild(overlay);
         pdfInlineViewer = overlay;
-        pdfInlineFrame = document.getElementById("pdf-inline-viewer-frame");
+        pdfInlineBody = document.getElementById("pdf-inline-viewer-body");
+        pdfInlineCanvas = document.getElementById("pdf-inline-viewer-canvas");
         pdfInlineTitle = document.getElementById("pdf-inline-viewer-title");
         pdfInlineCloseBtn = document.getElementById("pdf-inline-viewer-close");
+        var prevBtn = document.getElementById("pdf-inline-prev");
+        var nextBtn = document.getElementById("pdf-inline-next");
+        var zoomOutBtn = document.getElementById("pdf-inline-zoom-out");
+        var zoomInBtn = document.getElementById("pdf-inline-zoom-in");
 
         function closeViewer() {
           if (!pdfInlineViewer) return;
           pdfInlineViewer.classList.remove("is-open");
-          if (pdfInlineFrame) pdfInlineFrame.removeAttribute("src");
+          pdfDocRef = null;
+          if (pdfInlineCanvas) {
+            var c = pdfInlineCanvas.getContext("2d");
+            if (c) c.clearRect(0, 0, pdfInlineCanvas.width || 0, pdfInlineCanvas.height || 0);
+          }
           if (pdfInlineBlobUrl) {
             try { URL.revokeObjectURL(pdfInlineBlobUrl); } catch (e) {}
             pdfInlineBlobUrl = "";
@@ -1261,43 +1337,59 @@
             closeViewer();
           }
         });
+        prevBtn.addEventListener("click", function () {
+          if (!pdfDocRef || pdfPageNum <= 1) return;
+          pdfPageNum -= 1;
+          void renderPdfPage();
+        });
+        nextBtn.addEventListener("click", function () {
+          if (!pdfDocRef || pdfPageNum >= pdfDocRef.numPages) return;
+          pdfPageNum += 1;
+          void renderPdfPage();
+        });
+        zoomOutBtn.addEventListener("click", function () {
+          if (pdfScale <= 0.6) return;
+          pdfScale = Math.max(0.6, Math.round((pdfScale - 0.15) * 100) / 100);
+          void renderPdfPage();
+        });
+        zoomInBtn.addEventListener("click", function () {
+          if (pdfScale >= 2.5) return;
+          pdfScale = Math.min(2.5, Math.round((pdfScale + 0.15) * 100) / 100);
+          void renderPdfPage();
+        });
       }
 
-      function openPdfInViewerWindow(href) {
+      async function openPdfInViewerWindow(href) {
         var safeHref = sanitizeLinkHref(href);
         if (!safeHref) return false;
         if (/^file:\/\/\//i.test(safeHref)) {
           alert("보안 정책으로 웹페이지에서 file:/// 경로를 직접 열 수 없습니다. PDF를 웹 URL(https://...)로 연결해 주세요.");
           return false;
         }
+        ensurePdfInlineViewer();
+        if (pdfInlineViewer) pdfInlineViewer.classList.add("is-open");
+        if (pdfInlineTitle) pdfInlineTitle.textContent = "PDF 불러오는 중...";
         var viewerSrc = safeHref;
         if (/^data:application\/pdf;base64,/i.test(safeHref)) {
           var blob = dataUrlToBlob(safeHref);
           if (blob) {
             viewerSrc = URL.createObjectURL(blob);
+            pdfInlineBlobUrl = viewerSrc;
           }
-        } else {
-          viewerSrc = buildPdfViewerUrl(safeHref) || safeHref;
         }
-        var opened = null;
         try {
-          opened = window.open(viewerSrc, "_blank");
-        } catch (e) {
-          opened = null;
-        }
-        if (!opened) {
+          var lib = await loadPdfJsLib();
+          var loadingTask = lib.getDocument(viewerSrc);
+          pdfDocRef = await loadingTask.promise;
+          pdfPageNum = 1;
+          pdfScale = 1.2;
+          if (pdfInlineBody) pdfInlineBody.scrollTop = 0;
+          await renderPdfPage();
+        } catch (err) {
+          if (pdfInlineTitle) pdfInlineTitle.textContent = "PDF를 열 수 없습니다. 새 탭으로 시도해 주세요.";
           try {
-            window.location.href = viewerSrc;
-          } catch (err) {
-            return false;
-          }
-        } else if (opened.focus) {
-          try { opened.focus(); } catch (f) {}
-        }
-        if (/^blob:/i.test(viewerSrc)) {
-          setTimeout(function () {
-            try { URL.revokeObjectURL(viewerSrc); } catch (e) {}
-          }, 180000);
+            window.open(viewerSrc, "_blank");
+          } catch (ex) {}
         }
         return true;
       }

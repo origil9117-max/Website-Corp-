@@ -583,6 +583,12 @@
         </p>
         <div style="height:0.55rem"></div>
         <input id="post-images-input" type="file" accept="image/*" multiple />
+        <input
+          id="post-image-click-link"
+          type="text"
+          placeholder="이미지 클릭 링크(PDF URL 또는 G:\\... 경로, 선택)"
+          style="margin-top:0.5rem;"
+        />
         <p class="file-help">파일 첨부·클립보드 이미지 붙여넣기 시 본문에 그림으로 삽입됩니다. 외부에서 복사한 글·표는 HTML로 붙여넣기 됩니다. 첨부는 최대 5장·각 5MB 이하</p>
         <div id="thumb-list" class="thumb-list"></div>
         <div class="row" style="margin-top:0.65rem;">
@@ -702,6 +708,7 @@
       var postSelectionFont = document.getElementById("post-selection-font");
       var postSelectionAlign = document.getElementById("post-selection-align");
       var postImageToolbar = document.getElementById("post-image-toolbar");
+      var postImageClickLinkInput = document.getElementById("post-image-click-link");
       var savedEditorRange = null;
       /** 툴바 select 클릭 시 selectionchange가 먼저 지워 savedEditorRange를 비우므로, 캡처 mousedown에서 범위 스냅샷 */
       var toolbarRangeSnapshot = null;
@@ -857,7 +864,7 @@
           .replace(/</g, "&lt;");
       }
 
-      /** 게시 본문 <a href> — http(s)·mailto·동일 사이트 상대경로만 허용 */
+      /** 게시 본문 <a href> — http(s)·mailto·file:///·동일 사이트 상대경로만 허용 */
       function sanitizeLinkHref(href) {
         var h = String(href || "").trim();
         if (!h || h.length > 2048) return "";
@@ -866,6 +873,7 @@
         if (low.indexOf("data:") === 0) return "";
         if (/^https?:\/\//i.test(h)) return h;
         if (/^mailto:/i.test(h)) return h;
+        if (/^file:\/\/\//i.test(h)) return h;
         if (/^tel:/i.test(h)) {
           var tRest = h.replace(/^tel:/i, "").replace(/\s/g, "");
           if (/^[\d+*#\-()]{5,40}$/.test(tRest)) return h;
@@ -1017,7 +1025,7 @@
               inner = escapeHtml(href);
             }
             var attrs = ' href="' + escapeAttr(href) + '"';
-            if (/^https?:\/\//i.test(href) || /^mailto:/i.test(href) || /^tel:/i.test(href)) {
+            if (/^https?:\/\//i.test(href) || /^mailto:/i.test(href) || /^tel:/i.test(href) || /^file:\/\/\//i.test(href)) {
               attrs += ' target="_blank" rel="noopener noreferrer"';
             }
             return "<a" + attrs + ">" + inner + "</a>";
@@ -1099,22 +1107,52 @@
 
       function normalizeEditorImages(root) {
         if (!root) return;
-        var anchors = root.querySelectorAll("a");
-        for (var ai = anchors.length - 1; ai >= 0; ai--) {
-          var a = anchors[ai];
-          if (!a.parentNode) continue;
-          var ch = a.childNodes;
-          if (ch.length === 1 && ch[0].nodeType === 1 && String(ch[0].tagName).toUpperCase() === "IMG") {
-            var im = ch[0];
-            a.parentNode.insertBefore(im, a);
-            a.remove();
-          }
-        }
         Array.prototype.forEach.call(root.querySelectorAll("img"), function (img) {
           img.contentEditable = "false";
           img.setAttribute("draggable", "false");
           img.classList.add("editor-inline-img");
         });
+      }
+
+      function normalizeImageClickLinkInput(raw) {
+        var text = String(raw || "").trim();
+        if (!text) return "";
+        if (/^[a-zA-Z]:[\\/]/.test(text)) {
+          var localPath = text.replace(/\\/g, "/");
+          return "file:///" + encodeURI(localPath);
+        }
+        return sanitizeLinkHref(text);
+      }
+
+      function wrapImagesWithClickLink(rawHtml, href) {
+        var link = sanitizeLinkHref(href);
+        if (!link) return String(rawHtml || "");
+        var doc = new DOMParser().parseFromString(String(rawHtml || ""), "text/html");
+        var imgs = doc.body.querySelectorAll("img");
+        for (var i = 0; i < imgs.length; i++) {
+          var img = imgs[i];
+          var parentA = img.closest ? img.closest("a[href]") : null;
+          if (parentA) continue;
+          var a = doc.createElement("a");
+          a.setAttribute("href", link);
+          a.setAttribute("target", "_blank");
+          a.setAttribute("rel", "noopener noreferrer");
+          if (img.parentNode) {
+            img.parentNode.insertBefore(a, img);
+            a.appendChild(img);
+          }
+        }
+        return doc.body.innerHTML;
+      }
+
+      function extractFirstImageLinkFromBody(rawHtml) {
+        var html = String(rawHtml || "");
+        if (!html) return "";
+        var doc = new DOMParser().parseFromString(html, "text/html");
+        var img = doc.body.querySelector("a[href] img");
+        if (!img) return "";
+        var a = img.closest ? img.closest("a[href]") : null;
+        return a ? String(a.getAttribute("href") || "") : "";
       }
 
       function positionImageToolbar() {
@@ -2152,6 +2190,7 @@
         postForm.reset();
         clearEditorImageSelection();
         if (postBodyEditor) postBodyEditor.innerHTML = "";
+        if (postImageClickLinkInput) postImageClickLinkInput.value = "";
         savedEditorRange = null;
         pendingImages = [];
         renderThumbs();
@@ -2826,7 +2865,17 @@
         try {
           formStatus.textContent = "저장 중…";
           await convertBlobImagesInEditorToDataUrls();
-          var body = sanitizePostBodyHtml((postBodyEditor && postBodyEditor.innerHTML) || "").trim();
+          var imageClickLinkRaw = postImageClickLinkInput ? postImageClickLinkInput.value : "";
+          var imageClickLink = normalizeImageClickLinkInput(imageClickLinkRaw);
+          if (String(imageClickLinkRaw || "").trim() && !imageClickLink) {
+            formStatus.textContent = "이미지 클릭 링크 형식이 올바르지 않습니다. https://... 또는 file:///... 형식을 사용해 주세요.";
+            return;
+          }
+          var bodySource = (postBodyEditor && postBodyEditor.innerHTML) || "";
+          if (imageClickLink) {
+            bodySource = wrapImagesWithClickLink(bodySource, imageClickLink);
+          }
+          var body = sanitizePostBodyHtml(bodySource).trim();
           if (!body) {
             formStatus.textContent =
               "저장할 본문이 비어 있습니다. 붙여넣은 그림이 보이면 blob 주소일 수 있어 변환에 실패했을 수 있습니다. 이미지를 다시 붙여 넣거나 파일로 첨부해 주세요.";
@@ -2915,6 +2964,9 @@
           postId.value = one.id;
           postTitle.value = one.title || "";
           var rawBody = one.body || "";
+          if (postImageClickLinkInput) {
+            postImageClickLinkInput.value = extractFirstImageLinkFromBody(rawBody);
+          }
           if (postBodyEditor) {
             if (/<[a-z][\s\S]*>/i.test(String(rawBody))) {
               postBodyEditor.innerHTML = sanitizePostBodyHtml(rawBody);

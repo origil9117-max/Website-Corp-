@@ -729,6 +729,8 @@
       var POSTS_PER_PAGE = 5;
       var adminOn = false;
       var authSectionOpen = false;
+      var DEFAULT_IMAGE_CLICK_LINK_RAW =
+        "G:\\내 드라이브\\04. 블로그·콘텐츠\\3. 블러그올릴자료\\3. (행정심판) 건설산업기본법 위반(자본금 미달)에 따른 영업정지 처분 취소청구\\건설업_영업정지_행정심판_실무사례1.pdf";
       var MAX_IMAGES = 5;
       var MAX_IMAGE_BYTES = 5 * 1024 * 1024;
       var client = null;
@@ -1123,6 +1125,8 @@
         }
         return sanitizeLinkHref(text);
       }
+
+      var DEFAULT_IMAGE_CLICK_LINK = normalizeImageClickLinkInput(DEFAULT_IMAGE_CLICK_LINK_RAW);
 
       function wrapImagesWithClickLink(rawHtml, href) {
         var link = sanitizeLinkHref(href);
@@ -2178,7 +2182,7 @@
           return '<article class="post-item">' +
             '<h3>' + escapeHtml(item.title) + '</h3>' +
             '<p class="meta">등록일: ' + escapeHtml(String(item.created_at || "").slice(0, 10)) + '</p>' +
-            '<div class="body">' + formatBodyForDisplay(item.body) + "</div>" +
+            '<div class="body">' + wrapImagesWithClickLink(formatBodyForDisplay(item.body), DEFAULT_IMAGE_CLICK_LINK) + "</div>" +
             imagesHtml + actions +
           '</article>';
         }).join("");

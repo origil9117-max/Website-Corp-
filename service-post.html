@@ -340,6 +340,18 @@
       padding: 0.8rem 0.9rem;
     }
     .post-item h3 { margin: 0; font-size: 0.98rem; line-height: 1.4; }
+    .post-title-row {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.38rem;
+      flex-wrap: wrap;
+    }
+    .post-new-badge {
+      width: 2.9rem;
+      height: auto;
+      vertical-align: middle;
+      flex-shrink: 0;
+    }
     .meta { margin-top: 0.35rem; font-size: 0.79rem; color: var(--muted); }
     .body {
       margin-top: 0.55rem;
@@ -793,6 +805,8 @@
       var DEFAULT_IMAGE_CLICK_LINK_RAW =
         "G:\\내 드라이브\\04. 블로그·콘텐츠\\3. 블러그올릴자료\\3. (행정심판) 건설산업기본법 위반(자본금 미달)에 따른 영업정지 처분 취소청구\\건설업_영업정지_행정심판_실무사례1.pdf";
       var SERVICE_POST_FILE_BUCKET = "resource-files";
+      var NEW_BADGE_SRC = "images/new-badge.svg";
+      var NEW_POST_DAYS = 7;
       var MAX_IMAGES = 5;
       var MAX_IMAGE_BYTES = 5 * 1024 * 1024;
       var client = null;
@@ -2492,6 +2506,14 @@
         postPagination.innerHTML = html;
       }
 
+      function isNewPost(item) {
+        if (!item) return false;
+        var created = Date.parse(String(item.created_at || ""));
+        if (!Number.isFinite(created)) return false;
+        var ageMs = Date.now() - created;
+        return ageMs >= 0 && ageMs <= NEW_POST_DAYS * 24 * 60 * 60 * 1000;
+      }
+
       function renderPosts() {
         var items = currentPosts;
         if (!items.length) {
@@ -2520,8 +2542,15 @@
               '<button class="btn btn-ghost" type="button" data-act="del" data-id="' + item.id + '">삭제</button>' +
               '</div>'
             : "";
+          var titleHtml =
+            '<span class="post-title-row">' +
+            '<span>' + escapeHtml(item.title) + "</span>" +
+            (isNewPost(item)
+              ? '<img class="post-new-badge" src="' + escapeAttr(NEW_BADGE_SRC) + '" alt="NEW" loading="lazy" />'
+              : "") +
+            "</span>";
           return '<article class="post-item">' +
-            '<h3>' + escapeHtml(item.title) + '</h3>' +
+            "<h3>" + titleHtml + "</h3>" +
             '<p class="meta">등록일: ' + escapeHtml(String(item.created_at || "").slice(0, 10)) + '</p>' +
             '<div class="body">' + wrapImagesWithClickLink(formatBodyForDisplay(item.body), DEFAULT_IMAGE_CLICK_LINK) + "</div>" +
             imagesHtml + actions +

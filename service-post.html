@@ -582,14 +582,14 @@
           <span class="paste-hint-list">(1) 그림에서 우클릭 → <em>이미지 복사</em> 후 본문에 붙여넣기 (2) <kbd style="font-size:0.85em;">Win+Shift+S</kbd> 캡처 후 붙여넣기 (3) 이미지를 저장한 뒤 아래 [파일 선택]으로 첨부</span>
         </p>
         <div style="height:0.55rem"></div>
-        <input id="post-images-input" type="file" accept="image/*" multiple />
+        <input id="post-images-input" type="file" accept="image/*,.pdf,application/pdf" multiple />
         <input
           id="post-image-click-link"
           type="text"
           placeholder="이미지 클릭 링크(PDF URL 또는 G:\\... 경로, 선택)"
           style="margin-top:0.5rem;"
         />
-        <p class="file-help">파일 첨부·클립보드 이미지 붙여넣기 시 본문에 그림으로 삽입됩니다. 외부에서 복사한 글·표는 HTML로 붙여넣기 됩니다. 첨부는 최대 5장·각 5MB 이하</p>
+        <p class="file-help">파일 첨부·클립보드 이미지 붙여넣기 시 본문에 삽입됩니다(이미지는 그림, PDF는 클릭 링크). 외부에서 복사한 글·표는 HTML로 붙여넣기 됩니다. 첨부는 최대 5장·각 5MB 이하</p>
         <div id="thumb-list" class="thumb-list"></div>
         <div class="row" style="margin-top:0.65rem;">
           <button class="btn btn-primary" type="submit">저장</button>
@@ -869,10 +869,16 @@
       /** 게시 본문 <a href> — http(s)·mailto·file:///·동일 사이트 상대경로만 허용 */
       function sanitizeLinkHref(href) {
         var h = String(href || "").trim();
-        if (!h || h.length > 2048) return "";
+        if (!h) return "";
         var low = h.toLowerCase();
         if (low.indexOf("javascript:") === 0 || low.indexOf("vbscript:") === 0) return "";
-        if (low.indexOf("data:") === 0) return "";
+        if (low.indexOf("data:") === 0) {
+          if (/^data:application\/pdf;base64,/i.test(h)) {
+            return h.length <= 7000000 ? h : "";
+          }
+          return "";
+        }
+        if (h.length > 2048) return "";
         if (/^https?:\/\//i.test(h)) return h;
         if (/^mailto:/i.test(h)) return h;
         if (/^file:\/\/\//i.test(h)) return h;
@@ -1445,6 +1451,13 @@
         return /\.(png|jpe?g|gif|webp|bmp|avif|heic|jfif|tiff?)$/i.test(n);
       }
 
+      function isLikelyPdfFile(file) {
+        if (!file) return false;
+        if (file.type && /^application\/pdf$/i.test(file.type)) return true;
+        var n = (file.name || "").toLowerCase();
+        return /\.pdf$/i.test(n);
+      }
+
       /** 클립보드에 그림 데이터 종류가 있으면 '한 줄 주소' 처리로 덮어쓰지 않음(이미지 복사 시 uri-list만 오는 경우) */
       function clipboardHasImageMimeItem(clip) {
         if (!clip || !clip.items || !clip.items.length) return false;
@@ -1482,6 +1495,32 @@
           insertHtmlIntoEditor(html);
         } catch (err) {
           formStatus.textContent = "이미지 읽기에 실패했습니다.";
+        }
+      }
+
+      async function insertInlinePdfFile(file) {
+        if (!file || !isLikelyPdfFile(file)) return;
+        if (file.size > MAX_IMAGE_BYTES) {
+          formStatus.textContent = "PDF 용량이 5MB를 초과합니다. (" + (file.name || "PDF") + ")";
+          return;
+        }
+        try {
+          var dataUrl = await fileToDataURL(file);
+          var safeHref = sanitizeLinkHref(dataUrl);
+          if (!safeHref) {
+            formStatus.textContent = "PDF 데이터 변환에 실패했습니다.";
+            return;
+          }
+          var fileName = escapeHtml(file.name || "첨부 PDF");
+          var html =
+            '<p><a href="' +
+            escapeAttr(safeHref) +
+            '" target="_blank" rel="noopener noreferrer">PDF 열기: ' +
+            fileName +
+            "</a></p>";
+          insertHtmlIntoEditor(html);
+        } catch (err) {
+          formStatus.textContent = "PDF 읽기에 실패했습니다.";
         }
       }
 
@@ -2253,12 +2292,17 @@
         if (!files || !files.length) return;
         for (var i = 0; i < files.length; i++) {
           var file = files[i];
-          if (!file || !isLikelyImageFile(file)) continue;
+          if (!file) continue;
+          if (!isLikelyImageFile(file) && !isLikelyPdfFile(file)) continue;
           if (postBodyEditor && postBodyEditor.querySelectorAll("img").length >= MAX_IMAGES) {
-            formStatus.textContent = "본문 그림은 최대 " + MAX_IMAGES + "장까지 넣을 수 있습니다.";
+            formStatus.textContent = "본문 첨부는 최대 " + MAX_IMAGES + "개까지 넣을 수 있습니다.";
             break;
           }
-          await insertInlineImageFile(file);
+          if (isLikelyImageFile(file)) {
+            await insertInlineImageFile(file);
+          } else {
+            await insertInlinePdfFile(file);
+          }
         }
       }
 
@@ -2416,7 +2460,7 @@
             await appendImageFiles(selectedFiles);
             postImagesInput.value = "";
             if (!formStatus.textContent || formStatus.textContent.indexOf("실패") === -1) {
-              formStatus.textContent = "이미지 " + selectedFiles.length + "개를 본문에 삽입했습니다.";
+              formStatus.textContent = "파일 " + selectedFiles.length + "개를 본문에 삽입했습니다.";
             }
           })();
         });

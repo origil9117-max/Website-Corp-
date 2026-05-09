@@ -3891,7 +3891,8 @@
       });
 
       heroMiniLinks.forEach(function (link) {
-        link.addEventListener("click", function () {
+        link.addEventListener("click", function (e) {
+          e.preventDefault();
           var selectedService = link.getAttribute("data-service");
           if (!selectedService) return;
           heroMiniLinks.forEach(function (item) { item.classList.remove("selected"); });
@@ -3900,6 +3901,7 @@
           cards.forEach(function (card) {
             if (card.getAttribute("data-service") === selectedService) card.classList.add("selected");
           });
+          moveToPublishPage(selectedService);
         });
       });
 

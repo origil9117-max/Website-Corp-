@@ -1260,18 +1260,33 @@
           alert("보안 정책으로 웹페이지에서 file:/// 경로를 직접 열 수 없습니다. PDF를 웹 URL(https://...)로 연결해 주세요.");
           return false;
         }
-        ensurePdfInlineViewer();
         var viewerSrc = safeHref;
         if (/^data:application\/pdf;base64,/i.test(safeHref)) {
           var blob = dataUrlToBlob(safeHref);
           if (blob) {
             viewerSrc = URL.createObjectURL(blob);
-            pdfInlineBlobUrl = viewerSrc;
           }
         }
-        if (pdfInlineTitle) pdfInlineTitle.textContent = "PDF 보기";
-        if (pdfInlineFrame) pdfInlineFrame.src = viewerSrc;
-        if (pdfInlineViewer) pdfInlineViewer.classList.add("is-open");
+        var opened = null;
+        try {
+          opened = window.open(viewerSrc, "_blank");
+        } catch (e) {
+          opened = null;
+        }
+        if (!opened) {
+          try {
+            window.location.href = viewerSrc;
+          } catch (err) {
+            return false;
+          }
+        } else if (opened.focus) {
+          try { opened.focus(); } catch (f) {}
+        }
+        if (/^blob:/i.test(viewerSrc)) {
+          setTimeout(function () {
+            try { URL.revokeObjectURL(viewerSrc); } catch (e) {}
+          }, 180000);
+        }
         return true;
       }
 

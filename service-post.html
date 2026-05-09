@@ -778,6 +778,7 @@
       var authSectionOpen = false;
       var DEFAULT_IMAGE_CLICK_LINK_RAW =
         "G:\\내 드라이브\\04. 블로그·콘텐츠\\3. 블러그올릴자료\\3. (행정심판) 건설산업기본법 위반(자본금 미달)에 따른 영업정지 처분 취소청구\\건설업_영업정지_행정심판_실무사례1.pdf";
+      var SERVICE_POST_FILE_BUCKET = "resource-files";
       var MAX_IMAGES = 5;
       var MAX_IMAGE_BYTES = 5 * 1024 * 1024;
       var client = null;
@@ -1614,6 +1615,25 @@
         return /\.pdf$/i.test(n);
       }
 
+      function makeSafePdfStoragePath(name) {
+        var filename = String(name || "attached.pdf");
+        var ext = ".pdf";
+        var idx = filename.lastIndexOf(".");
+        if (idx > -1) {
+          var cand = filename.slice(idx).toLowerCase();
+          if (/^\.[a-z0-9]{1,8}$/.test(cand)) ext = cand;
+        }
+        return (
+          "service-posts/" +
+          encodeURIComponent(service || "common") +
+          "/" +
+          Date.now() +
+          "-" +
+          Math.random().toString(36).slice(2, 8) +
+          ext
+        );
+      }
+
       /** 클립보드에 그림 데이터 종류가 있으면 '한 줄 주소' 처리로 덮어쓰지 않음(이미지 복사 시 uri-list만 오는 경우) */
       function clipboardHasImageMimeItem(clip) {
         if (!clip || !clip.items || !clip.items.length) return false;
@@ -1661,8 +1681,28 @@
           return;
         }
         try {
-          var dataUrl = await fileToDataURL(file);
-          var safeHref = sanitizeLinkHref(dataUrl);
+          var safeHref = "";
+          var uploadWarn = "";
+          if (cloudEnabled && client && client.storage) {
+            try {
+              var path = makeSafePdfStoragePath(file.name);
+              var up = await client.storage
+                .from(SERVICE_POST_FILE_BUCKET)
+                .upload(path, file, { upsert: true, contentType: "application/pdf" });
+              if (!up.error) {
+                var pub = client.storage.from(SERVICE_POST_FILE_BUCKET).getPublicUrl(path);
+                safeHref = sanitizeLinkHref(pub && pub.data ? pub.data.publicUrl : "");
+              } else {
+                uploadWarn = " (Storage 업로드 실패로 로컬 링크로 대체)";
+              }
+            } catch (upErr) {
+              uploadWarn = " (Storage 업로드 실패로 로컬 링크로 대체)";
+            }
+          }
+          if (!safeHref) {
+            var dataUrl = await fileToDataURL(file);
+            safeHref = sanitizeLinkHref(dataUrl);
+          }
           if (!safeHref) {
             formStatus.textContent = "PDF 데이터 변환에 실패했습니다.";
             return;
@@ -1675,6 +1715,9 @@
             fileName +
             "</a></p>";
           insertHtmlIntoEditor(html);
+          if (uploadWarn) {
+            formStatus.textContent = "PDF를 첨부했습니다." + uploadWarn;
+          }
         } catch (err) {
           formStatus.textContent = "PDF 읽기에 실패했습니다.";
         }

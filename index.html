@@ -2169,6 +2169,12 @@
       text-decoration: none;
       padding: 0.55rem 0.85rem;
     }
+    .service-card-title-wrap {
+      display: inline-flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.3rem;
+    }
 
     .service-card h3 a.service-card-title:hover,
     .service-card h3 a.service-card-title:focus-visible {
@@ -2283,6 +2289,12 @@
       text-decoration: none;
       display: block;
       width: 100%;
+    }
+    .service-new-badge {
+      width: 2.55rem;
+      height: auto;
+      vertical-align: middle;
+      margin-left: 0.32rem;
     }
 
     .service-card li a.service-subtopic-link:hover,
@@ -3372,6 +3384,92 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabase-config.js"></script>
   <script>
+    (async function () {
+      var NEW_BADGE_SRC = "images/new-badge.svg";
+      var NEW_POST_DAYS = 7;
+      var serviceCards = Array.prototype.slice.call(document.querySelectorAll(".service-card"));
+      if (!serviceCards.length) return;
+      if (!window.supabase || !window.SUPABASE_URL || !window.SUPABASE_ANON_KEY) return;
+
+      function parseServiceTopicFromHref(href) {
+        try {
+          var u = new URL(String(href || ""), window.location.origin);
+          return {
+            service: String(u.searchParams.get("service") || "").trim(),
+            topic: String(u.searchParams.get("topic") || "").trim()
+          };
+        } catch (e) {
+          return { service: "", topic: "" };
+        }
+      }
+
+      function isRecentCreatedAt(createdAt) {
+        var t = Date.parse(String(createdAt || ""));
+        if (!Number.isFinite(t)) return false;
+        var ageMs = Date.now() - t;
+        return ageMs >= 0 && ageMs <= NEW_POST_DAYS * 24 * 60 * 60 * 1000;
+      }
+
+      function appendNewBadge(el) {
+        if (!el) return;
+        if (el.querySelector && el.querySelector(".service-new-badge")) return;
+        var img = document.createElement("img");
+        img.className = "service-new-badge";
+        img.src = NEW_BADGE_SRC;
+        img.alt = "NEW";
+        img.loading = "lazy";
+        img.decoding = "async";
+        el.appendChild(img);
+      }
+
+      var client = window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY);
+      var res = await client
+        .from("service_posts")
+        .select("service, topic, created_at")
+        .order("created_at", { ascending: false })
+        .limit(500);
+      if (res.error || !Array.isArray(res.data) || !res.data.length) return;
+
+      var recentServiceMap = Object.create(null);
+      var recentTopicMap = Object.create(null);
+      res.data.forEach(function (row) {
+        if (!isRecentCreatedAt(row.created_at)) return;
+        var service = String(row.service || "").trim();
+        var topic = String(row.topic || "").trim();
+        if (!service) return;
+        recentServiceMap[service] = true;
+        if (topic) recentTopicMap[service + "|" + topic] = true;
+      });
+
+      serviceCards.forEach(function (card) {
+        var serviceId = String(card.getAttribute("data-service") || "").trim();
+        if (!serviceId) return;
+
+        var titleAnchor = card.querySelector("h3 a.service-card-title");
+        if (titleAnchor) {
+          var titleWrap = titleAnchor.querySelector(".service-card-title-wrap");
+          if (!titleWrap) {
+            titleWrap = document.createElement("span");
+            titleWrap.className = "service-card-title-wrap";
+            while (titleAnchor.firstChild) {
+              titleWrap.appendChild(titleAnchor.firstChild);
+            }
+            titleAnchor.appendChild(titleWrap);
+          }
+          if (recentServiceMap[serviceId]) appendNewBadge(titleWrap);
+        }
+
+        var subtopicItems = card.querySelectorAll("li[data-subtopic-href]");
+        Array.prototype.forEach.call(subtopicItems, function (li) {
+          var parsed = parseServiceTopicFromHref(li.getAttribute("data-subtopic-href") || "");
+          if (!parsed.service || !parsed.topic) return;
+          if (!recentTopicMap[parsed.service + "|" + parsed.topic]) return;
+          var link = li.querySelector("a.service-subtopic-link");
+          if (link) appendNewBadge(link);
+        });
+      });
+    })();
+
     document.getElementById("y").textContent = new Date().getFullYear();
 
     (async function () {

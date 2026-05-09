@@ -583,7 +583,7 @@
         </p>
         <div style="height:0.55rem"></div>
         <input id="post-images-input" type="file" accept="image/*" multiple />
-        <p class="file-help">파일 첨부·클립보드 이미지 붙여넣기 시 본문에 그림으로 삽입됩니다. 외부에서 복사한 글·표는 HTML로 붙여넣기 됩니다. 첨부는 최대 5장·각 1MB 이하</p>
+        <p class="file-help">파일 첨부·클립보드 이미지 붙여넣기 시 본문에 그림으로 삽입됩니다. 외부에서 복사한 글·표는 HTML로 붙여넣기 됩니다. 첨부는 최대 5장·각 5MB 이하</p>
         <div id="thumb-list" class="thumb-list"></div>
         <div class="row" style="margin-top:0.65rem;">
           <button class="btn btn-primary" type="submit">저장</button>
@@ -723,7 +723,7 @@
       var adminOn = false;
       var authSectionOpen = false;
       var MAX_IMAGES = 5;
-      var MAX_IMAGE_BYTES = 1024 * 1024;
+      var MAX_IMAGE_BYTES = 5 * 1024 * 1024;
       var client = null;
       var cloudEnabled = false;
       var cloudDiag = "";
@@ -1427,7 +1427,7 @@
         if (!file || !isLikelyImageFile(file)) return;
         if (file.size > MAX_IMAGE_BYTES) {
           formStatus.textContent =
-            "붙여넣은 이미지 용량이 1MB를 초과합니다. (" + (file.name || "이미지") + ")";
+            "붙여넣은 이미지 용량이 5MB를 초과합니다. (" + (file.name || "이미지") + ")";
           return;
         }
         try {
@@ -2195,13 +2195,13 @@
             var blob = await res.blob();
             var file = new File([blob], "paste.png", { type: blob.type && /^image\//i.test(blob.type) ? blob.type : "image/png" });
             if (file.size > MAX_IMAGE_BYTES) {
-              throw new Error("이미지가 1MB를 초과합니다. 용량을 줄인 뒤 다시 붙여 넣어 주세요.");
+              throw new Error("이미지가 5MB를 초과합니다. 용량을 줄인 뒤 다시 붙여 넣어 주세요.");
             }
             var dataUrl = await fileToDataURL(file);
             if (!isSafeImgSrc(dataUrl)) continue;
             img.setAttribute("src", dataUrl);
           } catch (err) {
-            if (err && err.message && /1MB|초과/.test(err.message)) throw err;
+            if (err && err.message && /5MB|초과/.test(err.message)) throw err;
           }
         }
       }
@@ -2366,8 +2366,16 @@
 
       if (postImagesInput) {
         postImagesInput.addEventListener("change", function () {
-          appendImageFiles(postImagesInput.files);
-          postImagesInput.value = "";
+          var selectedFiles = postImagesInput.files ? Array.prototype.slice.call(postImagesInput.files) : [];
+          if (!selectedFiles.length) return;
+          formStatus.textContent = "파일 처리 중... (" + selectedFiles.length + "개)";
+          void (async function () {
+            await appendImageFiles(selectedFiles);
+            postImagesInput.value = "";
+            if (!formStatus.textContent || formStatus.textContent.indexOf("실패") === -1) {
+              formStatus.textContent = "이미지 " + selectedFiles.length + "개를 본문에 삽입했습니다.";
+            }
+          })();
         });
       }
 

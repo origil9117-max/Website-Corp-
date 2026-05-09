@@ -1190,6 +1190,15 @@
         return false;
       }
 
+      function buildPdfViewerUrl(rawHref) {
+        var href = String(rawHref || "").trim();
+        if (!href) return "";
+        if (/^https?:\/\//i.test(href)) {
+          return "https://docs.google.com/gview?embedded=1&url=" + encodeURIComponent(href);
+        }
+        return href;
+      }
+
       function dataUrlToBlob(dataUrl) {
         var m = String(dataUrl || "").match(/^data:([^;,]+)?(;base64)?,([\s\S]*)$/i);
         if (!m) return null;
@@ -1267,6 +1276,8 @@
           if (blob) {
             viewerSrc = URL.createObjectURL(blob);
           }
+        } else {
+          viewerSrc = buildPdfViewerUrl(safeHref) || safeHref;
         }
         var opened = null;
         try {

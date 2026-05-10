@@ -2294,12 +2294,8 @@
       vertical-align: middle;
       margin-left: 0.32rem;
     }
-    img.service-new-badge {
-      width: 2.55rem;
-      height: auto;
-    }
-    /* 헤더 제목 옆 NEW: 카드 헤더 그라데이션 톤에 맞춘 색 (하위 목록은 빨간 img 배지 유지) */
-    .service-new-badge.service-new-badge--header {
+    /* 헤더·하위 목록 공통 NEW: 각 카드(data-service) 헤더 톤과 동일 그라데이션 */
+    .service-new-badge.service-new-badge--themed {
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -2316,22 +2312,25 @@
       box-shadow: 0 1px 2px rgba(0, 0, 0, 0.22);
       background: linear-gradient(180deg, #8a96a8 0%, #5a6270 100%);
     }
-    .service-card[data-service="nonprofit"] h3 .service-new-badge--header {
+    .service-card li .service-new-badge--themed {
+      font-size: clamp(0.5rem, 1.2vw, 0.58rem);
+    }
+    .service-card[data-service="nonprofit"] .service-new-badge--themed {
       background: linear-gradient(180deg, #a68fd8 0%, #7e63b8 100%);
     }
-    .service-card[data-service="immigration"] h3 .service-new-badge--header {
+    .service-card[data-service="immigration"] .service-new-badge--themed {
       background: linear-gradient(180deg, #4a9fe0 0%, #2d6cab 100%);
     }
-    .service-card[data-service="investment"] h3 .service-new-badge--header {
+    .service-card[data-service="investment"] .service-new-badge--themed {
       background: linear-gradient(180deg, #c4a574 0%, #8f7048 100%);
     }
-    .service-card[data-service="patriot"] h3 .service-new-badge--header {
+    .service-card[data-service="patriot"] .service-new-badge--themed {
       background: linear-gradient(180deg, #d47282 0%, #a64d5c 100%);
     }
-    .service-card[data-service="permit"] h3 .service-new-badge--header {
+    .service-card[data-service="permit"] .service-new-badge--themed {
       background: linear-gradient(180deg, #4bc4b0 0%, #2a8f7e 100%);
     }
-    .service-card[data-service="appeal"] h3 .service-new-badge--header {
+    .service-card[data-service="appeal"] .service-new-badge--themed {
       background: linear-gradient(180deg, #9d8ae8 0%, #6b54b8 100%);
     }
     .service-card h3 .service-weekago-chip {
@@ -3442,7 +3441,6 @@
   <script src="supabase-config.js"></script>
   <script>
     (async function () {
-      var NEW_BADGE_SUBTOPIC_SRC = "images/new-badge.svg";
       var NEW_POST_DAYS = 7;
       var WEEK_AGO_POST_DAYS = 14;
       var serviceCards = Array.prototype.slice.call(document.querySelectorAll(".service-card"));
@@ -3472,7 +3470,7 @@
         return "";
       }
 
-      function applyFreshnessBadge(el, state, place) {
+      function applyFreshnessBadge(el, state) {
         if (!el) return;
         if (el.querySelector) {
           var oldNew = el.querySelector(".service-new-badge");
@@ -3488,22 +3486,12 @@
           el.appendChild(chip);
           return;
         }
-        if (place === "header") {
-          var span = document.createElement("span");
-          span.className = "service-new-badge service-new-badge--header";
-          span.setAttribute("role", "img");
-          span.setAttribute("aria-label", "NEW");
-          span.textContent = "NEW";
-          el.appendChild(span);
-          return;
-        }
-        var img = document.createElement("img");
-        img.className = "service-new-badge";
-        img.src = NEW_BADGE_SUBTOPIC_SRC;
-        img.alt = "NEW";
-        img.loading = "lazy";
-        img.decoding = "async";
-        el.appendChild(img);
+        var span = document.createElement("span");
+        span.className = "service-new-badge service-new-badge--themed";
+        span.setAttribute("role", "img");
+        span.setAttribute("aria-label", "NEW");
+        span.textContent = "NEW";
+        el.appendChild(span);
       }
 
       var client = window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY);
@@ -3548,7 +3536,7 @@
             }
             titleAnchor.appendChild(titleWrap);
           }
-          applyFreshnessBadge(titleWrap, recentServiceMap[serviceId] || "", "header");
+          applyFreshnessBadge(titleWrap, recentServiceMap[serviceId] || "");
         }
 
         var subtopicItems = card.querySelectorAll("li[data-subtopic-href]");
@@ -3558,7 +3546,7 @@
           var freshness = recentTopicMap[parsed.service + "|" + parsed.topic] || "";
           if (!freshness) return;
           var link = li.querySelector("a.service-subtopic-link");
-          if (link) applyFreshnessBadge(link, freshness, "subtopic");
+          if (link) applyFreshnessBadge(link, freshness);
         });
       });
     })();

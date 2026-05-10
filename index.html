@@ -3462,7 +3462,6 @@
         .limit(500);
       if (res.error || !Array.isArray(res.data) || !res.data.length) return;
 
-      var recentServiceMap = Object.create(null);
       var recentTopicMap = Object.create(null);
       res.data.forEach(function (row) {
         var state = getFreshnessState(row.created_at);
@@ -3470,9 +3469,6 @@
         var service = String(row.service || "").trim();
         var topic = String(row.topic || "").trim();
         if (!service) return;
-        if (!recentServiceMap[service] || state === "new") {
-          recentServiceMap[service] = state;
-        }
         if (topic) {
           var key = service + "|" + topic;
           if (!recentTopicMap[key] || state === "new") {
@@ -3484,20 +3480,6 @@
       serviceCards.forEach(function (card) {
         var serviceId = String(card.getAttribute("data-service") || "").trim();
         if (!serviceId) return;
-
-        var titleAnchor = card.querySelector("h3 a.service-card-title");
-        if (titleAnchor) {
-          var titleWrap = titleAnchor.querySelector(".service-card-title-wrap");
-          if (!titleWrap) {
-            titleWrap = document.createElement("span");
-            titleWrap.className = "service-card-title-wrap";
-            while (titleAnchor.firstChild) {
-              titleWrap.appendChild(titleAnchor.firstChild);
-            }
-            titleAnchor.appendChild(titleWrap);
-          }
-          applyFreshnessBadge(titleWrap, recentServiceMap[serviceId] || "");
-        }
 
         var subtopicItems = card.querySelectorAll("li[data-subtopic-href]");
         Array.prototype.forEach.call(subtopicItems, function (li) {

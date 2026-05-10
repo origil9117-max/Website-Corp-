@@ -3399,7 +3399,8 @@
   <script src="supabase-config.js"></script>
   <script>
     (async function () {
-      var NEW_BADGE_SRC = "images/new-badge-blue.svg";
+      var NEW_BADGE_HEADER_SRC = "images/new-badge-blue.svg";
+      var NEW_BADGE_SUBTOPIC_SRC = "images/new-badge.svg";
       var NEW_POST_DAYS = 7;
       var WEEK_AGO_POST_DAYS = 14;
       var serviceCards = Array.prototype.slice.call(document.querySelectorAll(".service-card"));
@@ -3429,7 +3430,7 @@
         return "";
       }
 
-      function applyFreshnessBadge(el, state) {
+      function applyFreshnessBadge(el, state, newBadgeSrc) {
         if (!el) return;
         if (el.querySelector) {
           var oldNew = el.querySelector(".service-new-badge");
@@ -3447,7 +3448,7 @@
         }
         var img = document.createElement("img");
         img.className = "service-new-badge";
-        img.src = NEW_BADGE_SRC;
+        img.src = newBadgeSrc || NEW_BADGE_SUBTOPIC_SRC;
         img.alt = "NEW";
         img.loading = "lazy";
         img.decoding = "async";
@@ -3462,6 +3463,7 @@
         .limit(500);
       if (res.error || !Array.isArray(res.data) || !res.data.length) return;
 
+      var recentServiceMap = Object.create(null);
       var recentTopicMap = Object.create(null);
       res.data.forEach(function (row) {
         var state = getFreshnessState(row.created_at);
@@ -3469,6 +3471,9 @@
         var service = String(row.service || "").trim();
         var topic = String(row.topic || "").trim();
         if (!service) return;
+        if (!recentServiceMap[service] || state === "new") {
+          recentServiceMap[service] = state;
+        }
         if (topic) {
           var key = service + "|" + topic;
           if (!recentTopicMap[key] || state === "new") {
@@ -3481,6 +3486,20 @@
         var serviceId = String(card.getAttribute("data-service") || "").trim();
         if (!serviceId) return;
 
+        var titleAnchor = card.querySelector("h3 a.service-card-title");
+        if (titleAnchor) {
+          var titleWrap = titleAnchor.querySelector(".service-card-title-wrap");
+          if (!titleWrap) {
+            titleWrap = document.createElement("span");
+            titleWrap.className = "service-card-title-wrap";
+            while (titleAnchor.firstChild) {
+              titleWrap.appendChild(titleAnchor.firstChild);
+            }
+            titleAnchor.appendChild(titleWrap);
+          }
+          applyFreshnessBadge(titleWrap, recentServiceMap[serviceId] || "", NEW_BADGE_HEADER_SRC);
+        }
+
         var subtopicItems = card.querySelectorAll("li[data-subtopic-href]");
         Array.prototype.forEach.call(subtopicItems, function (li) {
           var parsed = parseServiceTopicFromHref(li.getAttribute("data-subtopic-href") || "");
@@ -3488,7 +3507,7 @@
           var freshness = recentTopicMap[parsed.service + "|" + parsed.topic] || "";
           if (!freshness) return;
           var link = li.querySelector("a.service-subtopic-link");
-          if (link) applyFreshnessBadge(link, freshness);
+          if (link) applyFreshnessBadge(link, freshness, NEW_BADGE_SUBTOPIC_SRC);
         });
       });
     })();

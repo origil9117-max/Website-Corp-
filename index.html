@@ -3442,7 +3442,10 @@
   <script>
     (async function () {
       var NEW_POST_DAYS = 7;
-      var WEEK_AGO_POST_DAYS = 14;
+      /** 하위 목록: 1·2·3주 전 칩을 표시하는 최대 일수(초과 시 미표시) */
+      var SUBTOPIC_WEEK_CHIP_MAX_DAYS = 28;
+      /** 헤더: 1주 경과 후에는 NEW 없이 "1주일전 게시"만(2·3주 라벨 없음). 둘째 주(8~14일)에만 표시 */
+      var HEADER_WEEK1_CHIP_MAX_DAYS = 14;
       var serviceCards = Array.prototype.slice.call(document.querySelectorAll(".service-card"));
       if (!serviceCards.length) return;
       if (!window.supabase || !window.SUPABASE_URL || !window.SUPABASE_ANON_KEY) return;
@@ -3459,16 +3462,37 @@
         }
       }
 
-      function getFreshnessState(createdAt) {
+      function ageDaysFromCreated(createdAt) {
         var t = Date.parse(String(createdAt || ""));
-        if (!Number.isFinite(t)) return "";
+        if (!Number.isFinite(t)) return NaN;
         var ageMs = Date.now() - t;
-        if (ageMs < 0) return "";
-        var days = ageMs / (24 * 60 * 60 * 1000);
+        if (ageMs < 0) return NaN;
+        return ageMs / (24 * 60 * 60 * 1000);
+      }
+
+      /** 제목(헤더): 7일 이내 NEW, 8~14일만 "1주일전 게시"(그 외·2·3주 문구 없음) */
+      function headerFreshnessFromDays(days) {
+        if (!Number.isFinite(days)) return "";
         if (days <= NEW_POST_DAYS) return "new";
-        if (days <= WEEK_AGO_POST_DAYS) return "week_ago";
+        if (days <= HEADER_WEEK1_CHIP_MAX_DAYS) return "week1";
         return "";
       }
+
+      /** 하위 목록: NEW 후 1·2·3주일 전 게시로 구분 */
+      function subtopicFreshnessFromDays(days) {
+        if (!Number.isFinite(days)) return "";
+        if (days <= NEW_POST_DAYS) return "new";
+        if (days <= 14) return "week1";
+        if (days <= 21) return "week2";
+        if (days <= SUBTOPIC_WEEK_CHIP_MAX_DAYS) return "week3";
+        return "";
+      }
+
+      var WEEK_CHIP_LABEL = {
+        week1: "1주일전 게시",
+        week2: "2주일전 게시",
+        week3: "3주일전 게시"
+      };
 
       function applyFreshnessBadge(el, state) {
         if (!el) return;
@@ -3478,14 +3502,15 @@
           var oldWeek = el.querySelector(".service-weekago-chip");
           if (oldWeek) oldWeek.remove();
         }
-        if (state !== "new" && state !== "week_ago") return;
-        if (state === "week_ago") {
+        if (!state) return;
+        if (state === "week1" || state === "week2" || state === "week3") {
           var chip = document.createElement("span");
           chip.className = "service-weekago-chip";
-          chip.textContent = "1주일전 게시";
+          chip.textContent = WEEK_CHIP_LABEL[state] || "";
           el.appendChild(chip);
           return;
         }
+        if (state !== "new") return;
         var span = document.createElement("span");
         span.className = "service-new-badge service-new-badge--themed";
         span.setAttribute("role", "img");
@@ -3502,22 +3527,18 @@
         .limit(500);
       if (res.error || !Array.isArray(res.data) || !res.data.length) return;
 
-      var recentServiceMap = Object.create(null);
-      var recentTopicMap = Object.create(null);
+      var latestServiceCreated = Object.create(null);
+      var latestTopicCreated = Object.create(null);
       res.data.forEach(function (row) {
-        var state = getFreshnessState(row.created_at);
-        if (!state) return;
         var service = String(row.service || "").trim();
         var topic = String(row.topic || "").trim();
-        if (!service) return;
-        if (!recentServiceMap[service] || state === "new") {
-          recentServiceMap[service] = state;
+        var ca = row.created_at;
+        if (!service || !ca) return;
+        if (latestServiceCreated[service] == null) {
+          latestServiceCreated[service] = ca;
         }
-        if (topic) {
-          var key = service + "|" + topic;
-          if (!recentTopicMap[key] || state === "new") {
-            recentTopicMap[key] = state;
-          }
+        if (topic && latestTopicCreated[service + "|" + topic] == null) {
+          latestTopicCreated[service + "|" + topic] = ca;
         }
       });
 
@@ -3536,17 +3557,21 @@
             }
             titleAnchor.appendChild(titleWrap);
           }
-          applyFreshnessBadge(titleWrap, recentServiceMap[serviceId] || "");
+          var headCa = latestServiceCreated[serviceId];
+          var headDays = ageDaysFromCreated(headCa);
+          applyFreshnessBadge(titleWrap, headerFreshnessFromDays(headDays));
         }
 
         var subtopicItems = card.querySelectorAll("li[data-subtopic-href]");
         Array.prototype.forEach.call(subtopicItems, function (li) {
           var parsed = parseServiceTopicFromHref(li.getAttribute("data-subtopic-href") || "");
           if (!parsed.service || !parsed.topic) return;
-          var freshness = recentTopicMap[parsed.service + "|" + parsed.topic] || "";
-          if (!freshness) return;
+          var topicCa = latestTopicCreated[parsed.service + "|" + parsed.topic];
+          if (topicCa == null) return;
+          var subState = subtopicFreshnessFromDays(ageDaysFromCreated(topicCa));
+          if (!subState) return;
           var link = li.querySelector("a.service-subtopic-link");
-          if (link) applyFreshnessBadge(link, freshness);
+          if (link) applyFreshnessBadge(link, subState);
         });
       });
     })();

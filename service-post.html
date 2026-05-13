@@ -1171,13 +1171,24 @@
         if (!postBodyEditor || !String(htmlStr || "").trim()) return;
         postBodyEditor.focus();
         var sel = window.getSelection();
-        if (!sel.rangeCount) {
-          var r = document.createRange();
-          r.selectNodeContents(postBodyEditor);
-          r.collapse(false);
-          sel.addRange(r);
+        var range = null;
+        if (sel && sel.rangeCount) {
+          var candidate = sel.getRangeAt(0);
+          var anchor = candidate && candidate.commonAncestorContainer;
+          var host = anchor && anchor.nodeType === 1 ? anchor : (anchor ? anchor.parentElement : null);
+          if (host && postBodyEditor.contains(host)) {
+            range = candidate;
+          }
         }
-        var range = sel.getRangeAt(0);
+        if (!range) {
+          range = document.createRange();
+          range.selectNodeContents(postBodyEditor);
+          range.collapse(false);
+          if (sel) {
+            sel.removeAllRanges();
+            sel.addRange(range);
+          }
+        }
         range.deleteContents();
         var wrapper = document.createElement("div");
         wrapper.innerHTML = htmlStr;
@@ -2803,13 +2814,15 @@
       });
 
       if (postImagesInput) {
+        postImagesInput.addEventListener("click", function () {
+          postImagesInput.value = "";
+        });
         postImagesInput.addEventListener("change", function () {
           var selectedFiles = postImagesInput.files ? Array.prototype.slice.call(postImagesInput.files) : [];
           if (!selectedFiles.length) return;
           formStatus.textContent = "파일 처리 중... (" + selectedFiles.length + "개)";
           void (async function () {
             await appendImageFiles(selectedFiles);
-            postImagesInput.value = "";
             if (!formStatus.textContent || formStatus.textContent.indexOf("실패") === -1) {
               formStatus.textContent = "파일 " + selectedFiles.length + "개를 본문에 삽입했습니다.";
             }

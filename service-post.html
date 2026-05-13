@@ -1776,6 +1776,25 @@
         );
       }
 
+      function makeSafeImageStoragePath(name) {
+        var filename = String(name || "attached.png");
+        var ext = ".png";
+        var idx = filename.lastIndexOf(".");
+        if (idx > -1) {
+          var cand = filename.slice(idx).toLowerCase();
+          if (/^\.[a-z0-9]{1,8}$/.test(cand)) ext = cand;
+        }
+        return (
+          "service-posts/" +
+          encodeURIComponent(service || "common") +
+          "/" +
+          Date.now() +
+          "-" +
+          Math.random().toString(36).slice(2, 8) +
+          ext
+        );
+      }
+
       /** 클립보드에 그림 데이터 종류가 있으면 '한 줄 주소' 처리로 덮어쓰지 않음(이미지 복사 시 uri-list만 오는 경우) */
       function clipboardHasImageMimeItem(clip) {
         if (!clip || !clip.items || !clip.items.length) return false;
@@ -1804,11 +1823,28 @@
           return;
         }
         try {
-          var dataUrl = await fileToDataURL(file);
-          if (!isSafeImgSrc(dataUrl)) return;
+          var src = "";
+          if (cloudEnabled && client && client.storage) {
+            try {
+              var imagePath = makeSafeImageStoragePath(file.name);
+              var upImage = await client.storage
+                .from(SERVICE_POST_FILE_BUCKET)
+                .upload(imagePath, file, { upsert: true, contentType: file.type || "image/png" });
+              if (!upImage.error) {
+                var pubImage = client.storage.from(SERVICE_POST_FILE_BUCKET).getPublicUrl(imagePath);
+                src = normalizeUrl(pubImage && pubImage.data ? pubImage.data.publicUrl : "");
+              }
+            } catch (upImageErr) {}
+          }
+          if (!src) {
+            var dataUrl = await fileToDataURL(file);
+            if (!isSafeImgSrc(dataUrl)) return;
+            src = dataUrl;
+          }
+          if (!isSafeImgSrc(src)) return;
           var html =
             '<img src="' +
-            escapeAttr(dataUrl) +
+            escapeAttr(src) +
             '" alt="" style="max-width:100%;height:auto;display:block;float:none;margin:0.35em auto;" />';
           insertHtmlIntoEditor(html);
         } catch (err) {

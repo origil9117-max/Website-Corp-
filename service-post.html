@@ -672,7 +672,8 @@
         <input
           id="post-image-click-link"
           type="text"
-          placeholder="이미지 클릭 링크(PDF URL 또는 G:\\... 경로, 선택)"
+          placeholder="이미지 클릭 링크 기능은 사용 중지되었습니다."
+          disabled
           style="margin-top:0.5rem;"
         />
         <p class="file-help">파일 첨부·클립보드 이미지 붙여넣기 시 본문에 삽입됩니다(이미지는 그림, PDF는 클릭 링크). 외부에서 복사한 글·표는 HTML로 붙여넣기 됩니다. 첨부는 최대 5장·각 5MB 이하</p>
@@ -815,8 +816,7 @@
       var POSTS_PER_PAGE = 5;
       var adminOn = false;
       var authSectionOpen = false;
-      var DEFAULT_IMAGE_CLICK_LINK_RAW =
-        "G:\\내 드라이브\\04. 블로그·콘텐츠\\3. 블러그올릴자료\\3. (행정심판) 건설산업기본법 위반(자본금 미달)에 따른 영업정지 처분 취소청구\\건설업_영업정지_행정심판_실무사례1.pdf";
+      var DEFAULT_IMAGE_CLICK_LINK_RAW = "";
       var SERVICE_POST_FILE_BUCKET = "resource-files";
       var NEW_BADGE_SRC = "images/new-badge.svg";
       var NEW_POST_DAYS = 7;
@@ -1119,6 +1119,9 @@
             var href = sanitizeLinkHref(node.getAttribute("href"));
             if (!href) return children;
             var inner = Array.prototype.slice.call(node.childNodes).map(clean).join("");
+            if (/<img[\s>]/i.test(inner) && !String(inner).replace(/<img[\s\S]*?>/gi, "").trim()) {
+              return inner;
+            }
             if (!String(inner).replace(/\s/g, "").trim()) {
               inner = escapeHtml(href);
             }
@@ -1233,7 +1236,7 @@
         return sanitizeLinkHref(text);
       }
 
-      var DEFAULT_IMAGE_CLICK_LINK = normalizeImageClickLinkInput(DEFAULT_IMAGE_CLICK_LINK_RAW);
+      var DEFAULT_IMAGE_CLICK_LINK = "";
 
       function isPdfHref(href) {
         var h = String(href || "").trim().toLowerCase();
@@ -2619,7 +2622,7 @@
           return '<article class="post-item">' +
             "<h3>" + titleHtml + "</h3>" +
             '<p class="meta">등록일: ' + escapeHtml(String(item.created_at || "").slice(0, 10)) + '</p>' +
-            '<div class="body">' + wrapImagesWithClickLink(formatBodyForDisplay(item.body), DEFAULT_IMAGE_CLICK_LINK) + "</div>" +
+            '<div class="body">' + formatBodyForDisplay(item.body) + "</div>" +
             imagesHtml + actions +
           '</article>';
         }).join("");
@@ -2867,15 +2870,7 @@
       }
 
       function bindPdfViewerOpen(container) {
-        if (!container || !container.addEventListener) return;
-        container.addEventListener("click", function (e) {
-          var a = e.target && e.target.closest ? e.target.closest("a[href]") : null;
-          if (!a) return;
-          var href = a.getAttribute("href") || "";
-          if (!isPdfHref(href)) return;
-          if (!openPdfInViewerWindow(href)) return;
-          e.preventDefault();
-        });
+        return;
       }
 
       bindPdfViewerOpen(postBodyEditor);
@@ -3328,16 +3323,7 @@
         try {
           formStatus.textContent = "저장 중…";
           await convertBlobImagesInEditorToDataUrls();
-          var imageClickLinkRaw = postImageClickLinkInput ? postImageClickLinkInput.value : "";
-          var imageClickLink = normalizeImageClickLinkInput(imageClickLinkRaw);
-          if (String(imageClickLinkRaw || "").trim() && !imageClickLink) {
-            formStatus.textContent = "이미지 클릭 링크 형식이 올바르지 않습니다. https://... 또는 file:///... 형식을 사용해 주세요.";
-            return;
-          }
           var bodySource = (postBodyEditor && postBodyEditor.innerHTML) || "";
-          if (imageClickLink) {
-            bodySource = wrapImagesWithClickLink(bodySource, imageClickLink);
-          }
           var body = sanitizePostBodyHtml(bodySource).trim();
           if (!body) {
             formStatus.textContent =

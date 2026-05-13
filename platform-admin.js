@@ -579,12 +579,24 @@
     if (!editor || !src) return;
     editor.focus();
     var sel = window.getSelection();
-    if (!sel || !sel.rangeCount) {
-      editor.innerHTML += '<p><img src="' + src + '" alt="' + (altText || "") + '" style="max-width:100%;height:auto;" /></p>';
-      editor.dispatchEvent(new Event("input", { bubbles: true }));
-      return;
+    var range = null;
+    if (sel && sel.rangeCount) {
+      var candidate = sel.getRangeAt(0);
+      var anchor = candidate && candidate.commonAncestorContainer;
+      var host = anchor && anchor.nodeType === 1 ? anchor : (anchor ? anchor.parentElement : null);
+      if (host && editor.contains(host)) {
+        range = candidate;
+      }
     }
-    var range = sel.getRangeAt(0);
+    if (!range) {
+      range = document.createRange();
+      range.selectNodeContents(editor);
+      range.collapse(false);
+      if (sel) {
+        sel.removeAllRanges();
+        sel.addRange(range);
+      }
+    }
     var img = document.createElement("img");
     img.src = src;
     img.alt = altText || "";

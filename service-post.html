@@ -1246,6 +1246,89 @@
         return false;
       }
 
+      function extractPdfFilename(href, linkEl) {
+        if (linkEl) {
+          var label = String(linkEl.textContent || "").trim();
+          var m = label.match(/PDF\s*열기\s*:\s*(.+)$/i);
+          if (m && m[1]) return String(m[1]).trim();
+        }
+        var h = String(href || "");
+        try {
+          if (/^file:\/\//i.test(h)) {
+            var path = decodeURIComponent(h.replace(/^file:\/\/\/?/i, ""));
+            return path.split(/[/\\]/).pop() || "";
+          }
+          var u = new URL(h, window.location.href);
+          return decodeURIComponent((u.pathname.split("/").pop() || "").trim());
+        } catch (e) {
+          return h.split(/[/\\]/).pop() || "";
+        }
+      }
+
+      async function resolvePdfHrefForOpen(href, linkEl) {
+        var safe = sanitizeLinkHref(href);
+        if (!safe) return "";
+        if (/^https?:\/\//i.test(safe) || /^data:application\/pdf/i.test(safe)) return safe;
+        if (!/^file:\/\//i.test(safe)) return safe;
+        if (!cloudEnabled || !client || !client.storage) return safe;
+
+        var name = extractPdfFilename(safe, linkEl);
+        if (!name) return safe;
+        var baseName = name.replace(/\.pdf$/i, "");
+        var searchKey = baseName.slice(0, Math.min(24, baseName.length));
+        if (!searchKey) return safe;
+
+        var folders = [
+          "service-posts/" + encodeURIComponent(service || "common"),
+          "service-posts"
+        ];
+        for (var fi = 0; fi < folders.length; fi++) {
+          try {
+            var listed = await client.storage.from(SERVICE_POST_FILE_BUCKET).list(folders[fi], {
+              limit: 200,
+              search: searchKey
+            });
+            if (listed.error || !Array.isArray(listed.data)) continue;
+            for (var i = 0; i < listed.data.length; i++) {
+              var item = listed.data[i];
+              if (!item || !item.name) continue;
+              if (item.name.toLowerCase() === name.toLowerCase()) {
+                var path = folders[fi] + "/" + item.name;
+                var pub = client.storage.from(SERVICE_POST_FILE_BUCKET).getPublicUrl(path);
+                var url = sanitizeLinkHref(pub && pub.data ? pub.data.publicUrl : "");
+                if (url) return url;
+              }
+            }
+          } catch (e) {}
+        }
+        return safe;
+      }
+
+      async function pdfSourceForViewer(safeHref) {
+        if (/^data:application\/pdf;base64,/i.test(safeHref)) {
+          var dataBlob = dataUrlToBlob(safeHref);
+          if (dataBlob) {
+            var dataUrl = URL.createObjectURL(dataBlob);
+            pdfInlineBlobUrl = dataUrl;
+            return dataUrl;
+          }
+        }
+        if (/^https?:\/\//i.test(safeHref)) {
+          try {
+            var res = await fetch(safeHref, { mode: "cors", credentials: "omit" });
+            if (!res.ok) throw new Error("pdf-fetch-failed");
+            var remoteBlob = await res.blob();
+            if (!remoteBlob || !remoteBlob.size) throw new Error("pdf-empty");
+            var blobUrl = URL.createObjectURL(remoteBlob);
+            pdfInlineBlobUrl = blobUrl;
+            return blobUrl;
+          } catch (fetchErr) {
+            return safeHref;
+          }
+        }
+        return safeHref;
+      }
+
       function dataUrlToBlob(dataUrl) {
         var m = String(dataUrl || "").match(/^data:([^;,]+)?(;base64)?,([\s\S]*)$/i);
         if (!m) return null;
@@ -1401,24 +1484,21 @@
         });
       }
 
-      async function openPdfInViewerWindow(href) {
-        var safeHref = sanitizeLinkHref(href);
+      async function openPdfInViewerWindow(href, linkEl) {
+        var safeHref = await resolvePdfHrefForOpen(href, linkEl);
+        safeHref = sanitizeLinkHref(safeHref);
         if (!safeHref) return false;
         if (/^file:\/\/\//i.test(safeHref)) {
-          alert("보안 정책으로 웹페이지에서 file:/// 경로를 직접 열 수 없습니다. PDF를 웹 URL(https://...)로 연결해 주세요.");
+          alert(
+            "이 PDF는 PC 로컬 경로(file://)로 연결되어 브라우저에서 열 수 없습니다.\n" +
+              "관리자 모드 → 게시글 수정 → PDF를 다시 첨부해 주세요."
+          );
           return false;
         }
         ensurePdfInlineViewer();
         if (pdfInlineViewer) pdfInlineViewer.classList.add("is-open");
         if (pdfInlineTitle) pdfInlineTitle.textContent = "PDF 불러오는 중...";
-        var viewerSrc = safeHref;
-        if (/^data:application\/pdf;base64,/i.test(safeHref)) {
-          var blob = dataUrlToBlob(safeHref);
-          if (blob) {
-            viewerSrc = URL.createObjectURL(blob);
-            pdfInlineBlobUrl = viewerSrc;
-          }
-        }
+        var viewerSrc = await pdfSourceForViewer(safeHref);
         try {
           var lib = await loadPdfJsLib();
           var loadingTask = lib.getDocument(viewerSrc);
@@ -1428,10 +1508,9 @@
           if (pdfInlineBody) pdfInlineBody.scrollTop = 0;
           await renderPdfPage();
         } catch (err) {
-          if (pdfInlineTitle) pdfInlineTitle.textContent = "PDF를 열 수 없습니다. 새 탭으로 시도해 주세요.";
-          try {
-            window.open(viewerSrc, "_blank");
-          } catch (ex) {}
+          if (pdfInlineTitle) {
+            pdfInlineTitle.textContent = "PDF를 열 수 없습니다. 관리자 모드에서 PDF를 다시 첨부해 주세요.";
+          }
         }
         return true;
       }
@@ -2870,7 +2949,16 @@
       }
 
       function bindPdfViewerOpen(container) {
-        return;
+        if (!container || !container.addEventListener) return;
+        container.addEventListener("click", function (e) {
+          var a = e.target && e.target.closest ? e.target.closest("a[href]") : null;
+          if (!a) return;
+          var href = a.getAttribute("href") || "";
+          if (!isPdfHref(href)) return;
+          e.preventDefault();
+          e.stopPropagation();
+          void openPdfInViewerWindow(href, a);
+        });
       }
 
       bindPdfViewerOpen(postBodyEditor);

@@ -3,3 +3,4 @@ Thumbs.db
 *.log
 supabase-config.js
 .vercel
+_archive/

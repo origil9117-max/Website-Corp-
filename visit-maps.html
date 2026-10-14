@@ -314,6 +314,65 @@
       background: #eef2f8;
     }
 
+    iframe.map-frame--kakao {
+      height: 520px;
+    }
+
+    .kakao-place-card {
+      display: block;
+      margin: 0;
+      padding: 0.72rem 0.9rem 0.78rem;
+      border-bottom: 1px solid rgba(36, 48, 64, 0.1);
+      background: #fff;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .kakao-place-card:hover {
+      text-decoration: none;
+      background: #f7f9fc;
+    }
+
+    .kakao-place-card__name {
+      display: flex;
+      align-items: baseline;
+      gap: 0.4rem;
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: #243044;
+      line-height: 1.35;
+    }
+
+    .kakao-place-card__badge {
+      flex: 0 0 auto;
+      width: 1.15rem;
+      height: 1.15rem;
+      border-radius: 50%;
+      background: #2d64d6;
+      color: #fff;
+      font-size: 0.72rem;
+      font-weight: 800;
+      line-height: 1.15rem;
+      text-align: center;
+    }
+
+    .kakao-place-card__cat {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: #6b778c;
+    }
+
+    .kakao-place-card__addr {
+      margin: 0.28rem 0 0 1.55rem;
+      font-size: 0.8rem;
+      line-height: 1.45;
+      color: #4d596e;
+    }
+
+    @media (max-width: 860px) {
+      iframe.map-frame--kakao { height: 460px; }
+    }
+
     .map-naver-open {
       display: flex;
       flex-direction: column;
@@ -467,11 +526,24 @@
       <article class="map-block" aria-label="카카오맵">
         <div class="map-head">
           <span>카카오맵</span>
-          <a href="https://map.kakao.com/?from=total&amp;nil_suggest=btn&amp;tab=place&amp;q=%EB%8C%80%ED%95%9C%EB%AF%BC%EA%B5%AD%ED%96%89%EC%A0%95%EC%82%AC%EC%82%AC%EB%AC%B4%EC%86%8C&amp;srcid=537404670&amp;itemId=537404670&amp;confirmid=537404670&amp;urlX=974900&amp;urlY=486850&amp;urlLevel=5" target="_blank" rel="noopener noreferrer">새 창으로 열기</a>
+          <a href="https://map.kakao.com/?q=%EB%8C%80%ED%95%9C%EB%AF%BC%EA%B5%AD%ED%96%89%EC%A0%95%EC%82%AC%EC%82%AC%EB%AC%B4%EC%86%8C&amp;itemId=537404670&amp;srcid=537404670&amp;urlX=974900&amp;urlY=486850&amp;urlLevel=5" target="_blank" rel="noopener noreferrer">새 창으로 열기</a>
         </div>
+        <a
+          class="kakao-place-card"
+          href="https://map.kakao.com/?q=%EB%8C%80%ED%95%9C%EB%AF%BC%EA%B5%AD%ED%96%89%EC%A0%95%EC%82%AC%EC%82%AC%EB%AC%B4%EC%86%8C&amp;itemId=537404670&amp;srcid=537404670&amp;urlX=974900&amp;urlY=486850&amp;urlLevel=5"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <span class="kakao-place-card__name">
+            <span class="kakao-place-card__badge" aria-hidden="true">A</span>
+            대한민국행정사사무소
+            <span class="kakao-place-card__cat">행정사</span>
+          </span>
+          <p class="kakao-place-card__addr">부산 금정구 중앙대로1629번길 16 삼한스퀘어 2층 223호</p>
+        </a>
         <iframe
-          class="map-frame"
-          src="https://map.kakao.com/?from=total&amp;nil_suggest=btn&amp;tab=place&amp;q=%EB%8C%80%ED%95%9C%EB%AF%BC%EA%B5%AD%ED%96%89%EC%A0%95%EC%82%AC%EC%82%AC%EB%AC%B4%EC%86%8C&amp;srcid=537404670&amp;itemId=537404670&amp;confirmid=537404670&amp;urlX=974900&amp;urlY=486850&amp;urlLevel=5"
+          class="map-frame map-frame--kakao"
+          src="https://map.kakao.com/?q=%EB%8C%80%ED%95%9C%EB%AF%BC%EA%B5%AD%ED%96%89%EC%A0%95%EC%82%AC%EC%82%AC%EB%AC%B4%EC%86%8C&amp;itemId=537404670&amp;srcid=537404670&amp;urlX=974900&amp;urlY=486850&amp;urlLevel=5"
           title="카카오맵 - 대한민국행정사사무소"
           loading="lazy"
           referrerpolicy="no-referrer-when-downgrade"
@@ -498,7 +570,7 @@
 
     <p class="fallback">
       브라우저 정책으로 지도가 비어 보일 경우:
-      <a href="https://map.kakao.com/?from=total&amp;nil_suggest=btn&amp;tab=place&amp;q=%EB%8C%80%ED%95%9C%EB%AF%BC%EA%B5%AD%ED%96%89%EC%A0%95%EC%82%AC%EC%82%AC%EB%AC%B4%EC%86%8C&amp;srcid=537404670&amp;itemId=537404670&amp;confirmid=537404670&amp;urlX=974900&amp;urlY=486850&amp;urlLevel=5" target="_blank" rel="noopener noreferrer">카카오맵</a>,
+      <a href="https://map.kakao.com/?q=%EB%8C%80%ED%95%9C%EB%AF%BC%EA%B5%AD%ED%96%89%EC%A0%95%EC%82%AC%EC%82%AC%EB%AC%B4%EC%86%8C&amp;itemId=537404670&amp;srcid=537404670&amp;urlX=974900&amp;urlY=486850&amp;urlLevel=5" target="_blank" rel="noopener noreferrer">카카오맵</a>,
       <a href="https://map.naver.com/p/search/%EB%8C%80%ED%95%9C%EB%AF%BC%EA%B5%AD%ED%96%89%EC%A0%95%EC%82%AC%EC%82%AC%EB%AC%B4%EC%86%8C/place/1975987205" target="_blank" rel="noopener noreferrer">네이버지도</a>
       를 새 창으로 열어 주세요.
     </p>

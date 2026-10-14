@@ -3070,9 +3070,9 @@
   <main id="top">
     <section class="top-notice" aria-label="최신 공지">
       <div class="top-notice-inner">
-        <a class="top-notice-link" href="notice.html" target="_blank" rel="noopener noreferrer" aria-label="최신 공지 새 창에서 열기">
+        <a class="top-notice-link" href="visit-maps.html" target="_blank" rel="noopener noreferrer" aria-label="오시는 길 안내 새 창에서 열기">
           <span class="top-notice-label" id="top-notice-label">공지</span>
-          <span class="top-notice-title" id="top-notice-title">등록된 공지가 없습니다. 공지·블로그에서 소식을 확인하실 수 있습니다.</span>
+          <span class="top-notice-title" id="top-notice-title">대한민국행정사사무소 오시는 길</span>
         </a>
       </div>
     </section>
@@ -3690,6 +3690,10 @@
         });
       }
 
+      renderTopTitleWithHighlight("대한민국행정사사무소 오시는 길");
+      topTitle.style.fontWeight = "";
+      topLabel.classList.add("is-live");
+
       var top = null;
       if (!window.supabase || !window.SUPABASE_URL || !window.SUPABASE_ANON_KEY) {
         var localOnly = sortItems(
@@ -3710,18 +3714,10 @@
         if (!res.error && res.data && res.data.length > 0) top = res.data[0];
       }
 
-      if (!top) {
-        topTitle.textContent =
-          "등록된 공지가 없습니다. 공지·블로그에서 소식을 확인하실 수 있습니다.";
-        topTitle.style.fontWeight = "500";
-        topLabel.classList.remove("is-live");
-        if (navNoticeLink) navNoticeLink.classList.remove("is-live");
-        return;
+      if (navNoticeLink) {
+        if (top) navNoticeLink.classList.add("is-live");
+        else navNoticeLink.classList.remove("is-live");
       }
-      renderTopTitleWithHighlight(top.title || "공지사항");
-      topTitle.style.fontWeight = "";
-      topLabel.classList.add("is-live");
-      if (navNoticeLink) navNoticeLink.classList.add("is-live");
     })();
 
     (function () {

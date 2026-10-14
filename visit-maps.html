@@ -314,6 +314,63 @@
       background: #eef2f8;
     }
 
+    .map-naver-open {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.7rem;
+      width: 100%;
+      height: 380px;
+      padding: 1.2rem 1.1rem;
+      text-decoration: none;
+      text-align: center;
+      color: #1d2a3d;
+      background:
+        radial-gradient(circle at 18% 18%, rgba(3, 199, 90, 0.16), transparent 42%),
+        linear-gradient(180deg, #f4fbf6 0%, #eef2f8 100%);
+    }
+
+    .map-naver-open:hover {
+      text-decoration: none;
+      background:
+        radial-gradient(circle at 18% 18%, rgba(3, 199, 90, 0.22), transparent 44%),
+        linear-gradient(180deg, #eefaf2 0%, #e8eef6 100%);
+    }
+
+    .map-naver-open strong {
+      display: block;
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: #03c75a;
+    }
+
+    .map-naver-open p {
+      margin: 0;
+      max-width: 28rem;
+      font-size: 0.88rem;
+      line-height: 1.55;
+      color: var(--muted);
+    }
+
+    .map-naver-cta {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 2.6rem;
+      padding: 0.45rem 1.05rem;
+      border-radius: 999px;
+      background: #03c75a;
+      color: #fff;
+      font-size: 0.88rem;
+      font-weight: 800;
+      box-shadow: 0 4px 14px rgba(3, 199, 90, 0.28);
+    }
+
+    @media (max-width: 860px) {
+      .map-naver-open { height: 320px; }
+    }
+
     .fallback {
       margin-top: 0.75rem;
       font-size: 0.83rem;
@@ -424,22 +481,25 @@
       <article class="map-block" aria-label="네이버지도">
         <div class="map-head">
           <span>네이버지도</span>
-          <a href="https://map.naver.com/p/search/%EB%8C%80%ED%95%9C%EB%AF%BC%EA%B5%AD%ED%96%89%EC%A0%95%EC%82%AC%EC%82%AC%EB%AC%B4%EC%86%8C?c=15.00,0,0,0,dh" target="_blank" rel="noopener noreferrer">새 창으로 열기</a>
+          <a href="https://map.naver.com/p/search/%EB%8C%80%ED%95%9C%EB%AF%BC%EA%B5%AD%ED%96%89%EC%A0%95%EC%82%AC%EC%82%AC%EB%AC%B4%EC%86%8C/place/197598720" target="_blank" rel="noopener noreferrer">새 창으로 열기</a>
         </div>
-        <iframe
-          class="map-frame"
-          src="https://map.naver.com/p/search/%EB%8C%80%ED%95%9C%EB%AF%BC%EA%B5%AD%ED%96%89%EC%A0%95%EC%82%AC%EC%82%AC%EB%AC%B4%EC%86%8C?c=15.00,0,0,0,dh"
-          title="네이버지도 - 대한민국행정사사무소"
-          loading="lazy"
-          referrerpolicy="no-referrer-when-downgrade"
-        ></iframe>
+        <a
+          class="map-naver-open"
+          href="https://map.naver.com/p/search/%EB%8C%80%ED%95%9C%EB%AF%BC%EA%B5%AD%ED%96%89%EC%A0%95%EC%82%AC%EC%82%AC%EB%AC%B4%EC%86%8C/place/197598720"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <strong>대한민국행정사사무소</strong>
+          <p>네이버 정책으로 이 페이지 안에 지도를 넣을 수 없습니다. 버튼을 누르면 네이버지도에서 위치가 열립니다.</p>
+          <span class="map-naver-cta">네이버지도에서 열기</span>
+        </a>
       </article>
     </section>
 
     <p class="fallback">
       브라우저 정책으로 지도가 비어 보일 경우:
       <a href="https://map.kakao.com/?q=%EB%8C%80%ED%95%9C%EB%AF%BC%EA%B5%AD%ED%96%89%EC%A0%95%EC%82%AC%EC%82%AC%EB%AC%B4%EC%86%8C" target="_blank" rel="noopener noreferrer">카카오맵</a>,
-      <a href="https://map.naver.com/p/search/%EB%8C%80%ED%95%9C%EB%AF%BC%EA%B5%AD%ED%96%89%EC%A0%95%EC%82%AC%EC%82%AC%EB%AC%B4%EC%86%8C?c=15.00,0,0,0,dh" target="_blank" rel="noopener noreferrer">네이버지도</a>
+      <a href="https://map.naver.com/p/search/%EB%8C%80%ED%95%9C%EB%AF%BC%EA%B5%AD%ED%96%89%EC%A0%95%EC%82%AC%EC%82%AC%EB%AC%B4%EC%86%8C/place/197598720" target="_blank" rel="noopener noreferrer">네이버지도</a>
       를 새 창으로 열어 주세요.
     </p>
   </main>

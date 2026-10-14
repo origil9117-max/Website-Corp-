@@ -314,8 +314,22 @@
       background: #eef2f8;
     }
 
-    iframe.map-frame--kakao {
+    .kakao-map-crop {
+      position: relative;
       height: 380px;
+      overflow: hidden;
+      background: #eef2f8;
+    }
+
+    .kakao-map-crop iframe {
+      position: absolute;
+      top: 0;
+      left: -392px;
+      width: calc(100% + 392px);
+      height: 380px;
+      border: 0;
+      display: block;
+      background: #eef2f8;
     }
 
     .kakao-place-card {
@@ -370,7 +384,22 @@
     }
 
     @media (max-width: 860px) {
-      iframe.map-frame--kakao { height: 320px; }
+      .kakao-map-crop,
+      .kakao-map-crop iframe {
+        height: 320px;
+      }
+
+      .kakao-map-crop iframe {
+        left: -300px;
+        width: calc(100% + 300px);
+      }
+    }
+
+    @media (max-width: 640px) {
+      .kakao-map-crop iframe {
+        left: 0;
+        width: 100%;
+      }
     }
 
     .map-naver-open {
@@ -541,13 +570,15 @@
           </span>
           <p class="kakao-place-card__addr">부산 금정구 중앙대로1629번길 16 삼한스퀘어 2층 223호</p>
         </a>
-        <iframe
-          class="map-frame map-frame--kakao"
-          src="https://map.kakao.com/link/map/%EB%8C%80%ED%95%9C%EB%AF%BC%EA%B5%AD%ED%96%89%EC%A0%95%EC%82%AC%EC%82%AC%EB%AC%B4%EC%86%8C,35.23085119,129.089711"
-          title="카카오맵 - 대한민국행정사사무소"
-          loading="lazy"
-          referrerpolicy="no-referrer-when-downgrade"
-        ></iframe>
+        <div class="kakao-map-crop">
+          <iframe
+            class="map-frame"
+            src="https://map.kakao.com/link/map/%EB%8C%80%ED%95%9C%EB%AF%BC%EA%B5%AD%ED%96%89%EC%A0%95%EC%82%AC%EC%82%AC%EB%AC%B4%EC%86%8C,35.23085119,129.089711"
+            title="카카오맵 - 대한민국행정사사무소"
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+          ></iframe>
+        </div>
       </article>
 
       <article class="map-block" aria-label="네이버지도">

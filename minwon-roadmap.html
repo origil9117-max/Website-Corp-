@@ -229,6 +229,62 @@
         width: 100%;
       }
     }
+
+    .roadmap-biz-panel {
+      margin-top: 1.1rem;
+      padding: 1rem 1rem 1.1rem;
+      border: 1px solid #d7d0e4;
+      border-radius: 12px;
+      background: #fbf9fe;
+    }
+
+    .roadmap-biz-title {
+      margin: 0;
+      font-size: 1.12rem;
+      font-weight: 800;
+      color: #4a3a6b;
+      letter-spacing: -0.02em;
+    }
+
+    .roadmap-biz-help {
+      margin: 0.48rem 0 0.85rem;
+      font-size: 0.93rem;
+      color: #5a5270;
+      line-height: 1.5;
+    }
+
+    .roadmap-biz-controls {
+      display: grid;
+      grid-template-columns: 1.3fr 2fr auto auto;
+      gap: 0.52rem;
+      align-items: end;
+    }
+
+    .roadmap-biz-results-head,
+    .roadmap-biz-results-item {
+      grid-template-columns: 1.1fr 1.4fr 110px;
+    }
+
+    .roadmap-biz-results-item {
+      cursor: pointer;
+    }
+
+    .roadmap-biz-results-item:hover,
+    .roadmap-biz-results-item.is-active {
+      background: #efe9f8;
+    }
+
+    @media (max-width: 920px) {
+      .roadmap-biz-controls {
+        grid-template-columns: 1fr;
+      }
+
+      .roadmap-biz-controls .roadmap-ksic-search-wrap {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.52rem;
+      }
+    }
   </style>
 </head>
 <body data-platform-slug="minwon-roadmap">
@@ -330,6 +386,48 @@
             메인의 <a href="index.html">업무 안내·게시</a>와 함께 참고하실 수 있도록 내용을 보강해 나갑니다.
           </p>
         </div>
+        <section class="roadmap-biz-panel" aria-labelledby="roadmap-biz-heading">
+          <h2 id="roadmap-biz-heading" class="roadmap-biz-title">
+            (1) 사업자등록증 주종목 및 코드 검색
+          </h2>
+          <p class="roadmap-biz-help">
+            국세청 2025년 귀속 업종코드(기준단순경비율) 자료입니다. 검색어 또는 코드로 <strong>주업태·주종목·주업종코드</strong>를 찾을 수 있습니다.
+          </p>
+          <form id="roadmap-biz-search-form" class="roadmap-biz-controls" role="search" action="#" method="get">
+            <div class="roadmap-ksic-field">
+              <label for="roadmap-biz-type">업태(선택)</label>
+              <select id="roadmap-biz-type" autocomplete="off">
+                <option value="">전체 업태</option>
+              </select>
+            </div>
+            <div class="roadmap-ksic-field">
+              <label for="roadmap-biz-query">검색어 (주종목·사업내용·코드)</label>
+              <input id="roadmap-biz-query" type="search" maxlength="120" placeholder="예: 국제물류주선업, 카페, 630902" autocomplete="off" />
+            </div>
+            <div class="roadmap-ksic-search-wrap">
+              <button id="roadmap-biz-search-btn" class="roadmap-ksic-search-btn" type="submit">검색</button>
+              <button id="roadmap-biz-reset-btn" class="roadmap-ksic-reset-btn" type="button">초기화</button>
+            </div>
+          </form>
+          <p id="roadmap-biz-search-status" class="roadmap-ksic-search-status" role="status"></p>
+          <div id="roadmap-biz-results" class="roadmap-ksic-results" hidden>
+            <div class="roadmap-ksic-results-head roadmap-biz-results-head">
+              <span>주업태</span>
+              <span>주종목</span>
+              <span>주업종코드</span>
+            </div>
+            <ul id="roadmap-biz-results-list" class="roadmap-ksic-results-list" aria-label="사업자등록 업종코드 검색 결과"></ul>
+          </div>
+          <section id="roadmap-biz-detail" class="roadmap-ksic-detail" hidden aria-label="선택한 업종 상세">
+            <dl class="roadmap-ksic-detail-grid">
+              <dt>주업태</dt><dd id="roadmap-biz-detail-type"></dd>
+              <dt>주종목</dt><dd id="roadmap-biz-detail-name"></dd>
+              <dt>주업종코드</dt><dd id="roadmap-biz-detail-code"></dd>
+              <dt>적용범위</dt><dd id="roadmap-biz-detail-scope"></dd>
+            </dl>
+          </section>
+        </section>
+
         <section class="roadmap-ksic-panel" aria-labelledby="roadmap-ksic-heading">
           <h2 id="roadmap-ksic-heading" class="roadmap-ksic-title">
             (2) 한국표준산업분류 코드 검색
@@ -433,6 +531,299 @@
     if (typeof window.SUPABASE_ANON_KEY === "undefined") window.SUPABASE_ANON_KEY = "";
   </script>
   <script>
+    (function () {
+      function hideLegacyBizPlaceholder() {
+        var body = document.getElementById("platform-sub-body");
+        if (!body) return;
+        var nodes = Array.prototype.slice.call(body.children);
+        var start = -1;
+        var end = nodes.length;
+        nodes.forEach(function (el, i) {
+          var t = String(el.textContent || "").replace(/\s+/g, " ").trim();
+          if (
+            start < 0 &&
+            (t.indexOf("자동생성기DB") !== -1 ||
+              t.indexOf("구축진행") !== -1 ||
+              t.indexOf("구축중") !== -1 ||
+              t.indexOf("(1) 사업자등록증 주종목") !== -1)
+          ) {
+            start = i;
+          }
+          if (start >= 0 && /^\(2\)/.test(t)) end = i;
+        });
+        if (start >= 0) {
+          nodes.slice(start, end).forEach(function (el) {
+            el.remove();
+          });
+        }
+      }
+      hideLegacyBizPlaceholder();
+      var bodyEl = document.getElementById("platform-sub-body");
+      if (bodyEl && window.MutationObserver) {
+        var mo = new MutationObserver(function () {
+          hideLegacyBizPlaceholder();
+        });
+        mo.observe(bodyEl, { childList: true, subtree: true });
+      }
+    })();
+
+    (function () {
+      var form = document.getElementById("roadmap-biz-search-form");
+      var status = document.getElementById("roadmap-biz-search-status");
+      if (!form || !status) return;
+
+      var typeSel = document.getElementById("roadmap-biz-type");
+      var queryInput = document.getElementById("roadmap-biz-query");
+      var resultsWrap = document.getElementById("roadmap-biz-results");
+      var resultsList = document.getElementById("roadmap-biz-results-list");
+      var searchBtn = document.getElementById("roadmap-biz-search-btn");
+      var resetBtn = document.getElementById("roadmap-biz-reset-btn");
+      var detailBox = document.getElementById("roadmap-biz-detail");
+      var detailType = document.getElementById("roadmap-biz-detail-type");
+      var detailName = document.getElementById("roadmap-biz-detail-name");
+      var detailCode = document.getElementById("roadmap-biz-detail-code");
+      var detailScope = document.getElementById("roadmap-biz-detail-scope");
+      var cache = null;
+      var lastRows = [];
+
+      function compact(v) {
+        return String(v || "").trim();
+      }
+
+      function norm(v) {
+        return String(v || "")
+          .normalize("NFKC")
+          .toLowerCase()
+          .replace(/[\s·ㆍ,，.()（）\-\/]/g, "");
+      }
+
+      function escapeHtml(v) {
+        return String(v || "")
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/\"/g, "&quot;");
+      }
+
+      function displayName(q, row) {
+        if (!row) return "";
+        if (row.code === "630902") {
+          var nq = norm(q);
+          if (
+            nq.indexOf("통관") === -1 &&
+            ["국제물류", "포워딩", "운송주선", "물류주선", "운송중개", "운송대리", "해운대리"].some(function (t) {
+              return nq.indexOf(t) !== -1;
+            })
+          ) {
+            return "화물 운송 중개·대리 및 관련 서비스업";
+          }
+          if (
+            nq.indexOf("통관") !== -1 &&
+            ["물류", "주선", "운송"].every(function (t) {
+              return nq.indexOf(t) === -1;
+            })
+          ) {
+            return "통관 대리 및 관련서비스업";
+          }
+        }
+        return row.name || "";
+      }
+
+      async function ensureBizItems() {
+        if (cache) return cache;
+        var res = await fetch("data/nts-biz-codes-2025.json", { cache: "no-cache" });
+        if (!res.ok) throw new Error("업종코드 데이터를 불러오지 못했습니다.");
+        var data = await res.json();
+        var items = Array.isArray(data && data.items) ? data.items : [];
+        var aliases = (data && data.aliases) || {};
+        var types = [];
+        var seen = {};
+        items.forEach(function (row) {
+          var t = compact(row.type);
+          if (t && !seen[t]) {
+            seen[t] = true;
+            types.push(t);
+          }
+        });
+        cache = {
+          items: items,
+          aliases: aliases,
+          types: types,
+          index: items.map(function (row) {
+            return {
+              r: row,
+              title: norm(row.name),
+              text: norm(
+                [row.name, row.group, row.middle, row.scope, aliases[row.code] || ""].join(" ")
+              )
+            };
+          })
+        };
+        if (typeSel && typeSel.options.length <= 1) {
+          types.forEach(function (t) {
+            var opt = document.createElement("option");
+            opt.value = t;
+            opt.textContent = t;
+            typeSel.appendChild(opt);
+          });
+        }
+        return cache;
+      }
+
+      function renderResults(rows, q) {
+        lastRows = rows || [];
+        if (!resultsWrap || !resultsList) return;
+        if (!lastRows.length) {
+          resultsList.innerHTML = "";
+          resultsWrap.hidden = true;
+          return;
+        }
+        resultsWrap.hidden = false;
+        resultsList.innerHTML = lastRows
+          .slice(0, 80)
+          .map(function (row, idx) {
+            return (
+              '<li class="roadmap-ksic-results-item roadmap-biz-results-item" data-idx="' +
+              idx +
+              '">' +
+              '<span class="roadmap-ksic-col-category">' +
+              escapeHtml(row.type || "") +
+              "</span>" +
+              '<span class="roadmap-ksic-col-name">' +
+              escapeHtml(displayName(q, row)) +
+              "</span>" +
+              '<span class="roadmap-ksic-col-code">' +
+              escapeHtml(row.code || "") +
+              "</span>" +
+              "</li>"
+            );
+          })
+          .join("");
+      }
+
+      function showDetail(row, q) {
+        if (!detailBox) return;
+        if (!row) {
+          detailBox.hidden = true;
+          return;
+        }
+        detailType.textContent = row.type || "";
+        detailName.textContent = displayName(q, row);
+        detailCode.textContent = row.code || "";
+        detailScope.textContent = row.scope || "";
+        detailBox.hidden = false;
+      }
+
+      function searchRecords(type, q) {
+        var db = cache;
+        if (!db) return [];
+        var needle = norm(q);
+        var tokens = compact(q)
+          .split(/[\s,，/]+/)
+          .filter(Boolean)
+          .map(norm);
+        return db.index
+          .filter(function (x) {
+            return !type || x.r.type === type;
+          })
+          .map(function (x) {
+            if (!needle) return { r: x.r, score: 1 };
+            var score = 0;
+            if (x.r.code === needle) score = 2000;
+            else if (x.r.code.indexOf(needle) === 0 && /^\d+$/.test(needle)) score = 1500;
+            else if (x.title === needle) score = 1000;
+            else if (x.title.indexOf(needle) !== -1) score = 800;
+            else if (x.text.indexOf(needle) !== -1) score = 400;
+            else if (
+              tokens.length &&
+              tokens.every(function (t) {
+                return x.text.indexOf(t) !== -1;
+              })
+            ) {
+              score = 200;
+            }
+            return { r: x.r, score: score };
+          })
+          .filter(function (x) {
+            return !needle || x.score > 0;
+          })
+          .sort(function (a, b) {
+            if (b.score !== a.score) return b.score - a.score;
+            return String(a.r.code).localeCompare(String(b.r.code));
+          })
+          .map(function (x) {
+            return x.r;
+          });
+      }
+
+      async function executeBizSearch() {
+        var typeVal = compact(typeSel && typeSel.value);
+        var qVal = compact(queryInput && queryInput.value);
+        if (!typeVal && !qVal) {
+          status.textContent = "업태를 선택하거나 검색어·코드를 입력해 주세요.";
+          renderResults([]);
+          showDetail(null);
+          if (queryInput) queryInput.focus();
+          return;
+        }
+        try {
+          if (searchBtn) searchBtn.disabled = true;
+          status.textContent = "국세청 2025년 귀속 업종코드 기준으로 검색 중입니다...";
+          await ensureBizItems();
+          var rows = searchRecords(typeVal, qVal);
+          renderResults(rows, qVal);
+          showDetail(rows[0] || null, qVal);
+          if (!rows.length) {
+            status.textContent = "일치하는 업종코드가 없습니다. 짧은 단어로 다시 검색해 보세요.";
+          } else {
+            status.textContent =
+              rows.length +
+              "건을 찾았습니다." +
+              (rows.length > 80 ? " 상위 80건을 표시합니다." : "");
+          }
+        } catch (err) {
+          status.textContent = err && err.message ? err.message : "검색에 실패했습니다.";
+          renderResults([]);
+          showDetail(null);
+        } finally {
+          if (searchBtn) searchBtn.disabled = false;
+        }
+      }
+
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+        executeBizSearch();
+      });
+
+      if (resetBtn) {
+        resetBtn.addEventListener("click", function () {
+          if (typeSel) typeSel.value = "";
+          if (queryInput) queryInput.value = "";
+          renderResults([]);
+          showDetail(null);
+          status.textContent = "";
+          if (queryInput) queryInput.focus();
+        });
+      }
+
+      if (resultsList) {
+        resultsList.addEventListener("click", function (e) {
+          var li = e.target && e.target.closest ? e.target.closest("[data-idx]") : null;
+          if (!li) return;
+          var idx = Number(li.getAttribute("data-idx"));
+          var row = lastRows[idx];
+          if (!row) return;
+          Array.prototype.forEach.call(resultsList.querySelectorAll(".is-active"), function (el) {
+            el.classList.remove("is-active");
+          });
+          li.classList.add("is-active");
+          showDetail(row, compact(queryInput && queryInput.value));
+        });
+      }
+
+      ensureBizItems().catch(function () {});
+    })();
+
     (function () {
       var form = document.getElementById("roadmap-ksic-search-form");
       var status = document.getElementById("roadmap-ksic-search-status");

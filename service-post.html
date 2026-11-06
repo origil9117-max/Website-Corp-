@@ -388,6 +388,32 @@
       margin: 0.35em 0;
       vertical-align: middle;
     }
+    .body video,
+    .post-editor video,
+    .post-video video {
+      width: 100%;
+      max-width: 720px;
+      height: auto;
+      display: block;
+      margin: 0.45em 0 0.2em;
+      background: #111;
+      border-radius: 4px;
+    }
+    .post-video {
+      margin: 0.55em 0;
+      max-width: 720px;
+    }
+    .post-video-remove {
+      margin-top: 0.25rem;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--ink);
+      border-radius: 2px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 0.28rem 0.55rem;
+      cursor: pointer;
+    }
     .post-editor img.editor-inline-img {
       cursor: pointer;
       border-radius: 2px;
@@ -670,6 +696,9 @@
         </p>
         <div style="height:0.55rem"></div>
         <input id="post-images-input" type="file" accept="image/*,.pdf,application/pdf" multiple />
+        <div style="height:0.45rem"></div>
+        <label for="post-video-input">영상 올리기 (약 1분)</label>
+        <input id="post-video-input" type="file" accept="video/mp4,video/webm,video/quicktime,.mp4,.webm,.mov" />
         <input
           id="post-image-click-link"
           type="text"
@@ -677,7 +706,7 @@
           disabled
           style="margin-top:0.5rem;"
         />
-        <p class="file-help">파일 첨부·클립보드 이미지 붙여넣기 시 본문에 삽입됩니다(이미지는 그림, PDF는 클릭 링크). 외부에서 복사한 글·표는 HTML로 붙여넣기 됩니다. 첨부는 최대 5장·각 5MB 이하</p>
+        <p class="file-help">파일 첨부·클립보드 이미지 붙여넣기 시 본문에 삽입됩니다(이미지는 그림, PDF는 클릭 링크). 영상은 mp4·webm으로 약 1분(최대 90초), 40MB 이하이며 글과 함께 페이지에서 재생됩니다. 그림·PDF는 최대 5개·각 5MB 이하</p>
         <div id="thumb-list" class="thumb-list"></div>
         <div class="row" style="margin-top:0.65rem;">
           <button class="btn btn-primary" type="submit">저장</button>
@@ -807,6 +836,7 @@
       var imageAlignDragSession = null;
       var cloudWarning = document.getElementById("cloud-warning");
       var postImagesInput = document.getElementById("post-images-input");
+      var postVideoInput = document.getElementById("post-video-input");
       var thumbList = document.getElementById("thumb-list");
       var btnReset = document.getElementById("btn-reset");
       var btnSaveNotice = document.getElementById("btn-save-notice");
@@ -828,6 +858,8 @@
       var WEEK_AGO_POST_DAYS = 14;
       var MAX_IMAGES = 5;
       var MAX_IMAGE_BYTES = 5 * 1024 * 1024;
+      var MAX_VIDEO_BYTES = 40 * 1024 * 1024;
+      var MAX_VIDEO_SECONDS = 90;
       var client = null;
       var cloudEnabled = false;
       var cloudDiag = "";
@@ -1105,6 +1137,23 @@
           if (node.nodeType !== 1) return "";
           var tag = String(node.tagName || "").toUpperCase();
           var children = Array.prototype.slice.call(node.childNodes).map(clean).join("");
+          if (tag === "DIV" && /\bpost-video\b/.test(String(node.className || ""))) {
+            var nestedVideo = node.querySelector("video");
+            return nestedVideo ? clean(nestedVideo) : "";
+          }
+          if (tag === "VIDEO") {
+            var videoSrc = sanitizeLinkHref(node.getAttribute("src") || "");
+            if (!videoSrc) {
+              var sourceNode = node.querySelector("source");
+              videoSrc = sourceNode ? sanitizeLinkHref(sourceNode.getAttribute("src") || "") : "";
+            }
+            if (!videoSrc || !/^https?:\/\//i.test(videoSrc)) return "";
+            return (
+              '<video controls playsinline preload="metadata" src="' +
+              escapeAttr(videoSrc) +
+              '" style="width:100%;max-width:720px;height:auto;display:block;margin:0.45em 0;background:#111;"></video>'
+            );
+          }
           if (tag === "IMG") {
             var src = resolveImgNodeSrc(node);
             if (!isSafeImgSrc(src)) return "";
@@ -1220,6 +1269,23 @@
           linkifyStandaloneUrlsInEditor(postBodyEditor);
           tidyPostEditorDom(postBodyEditor);
         }, 0);
+      }
+
+      function decorateEditorVideos(root) {
+        if (!root) return;
+        Array.prototype.forEach.call(root.querySelectorAll("video"), function (video) {
+          if (video.closest(".post-video")) return;
+          var wrap = document.createElement("div");
+          wrap.className = "post-video";
+          wrap.contentEditable = "false";
+          video.parentNode.insertBefore(wrap, video);
+          wrap.appendChild(video);
+          var removeBtn = document.createElement("button");
+          removeBtn.type = "button";
+          removeBtn.className = "post-video-remove";
+          removeBtn.textContent = "영상 삭제";
+          wrap.appendChild(removeBtn);
+        });
       }
 
       function normalizeEditorImages(root) {
@@ -1844,6 +1910,110 @@
         return /\.pdf$/i.test(n);
       }
 
+      function isLikelyVideoFile(file) {
+        if (!file) return false;
+        if (file.type && /^video\/(mp4|webm|quicktime)$/i.test(file.type)) return true;
+        var n = (file.name || "").toLowerCase();
+        return /\.(mp4|webm|mov)$/i.test(n);
+      }
+
+      function readVideoDurationSeconds(file) {
+        return new Promise(function (resolve, reject) {
+          var url = URL.createObjectURL(file);
+          var probe = document.createElement("video");
+          probe.preload = "metadata";
+          probe.onloadedmetadata = function () {
+            var seconds = probe.duration;
+            URL.revokeObjectURL(url);
+            if (!isFinite(seconds) || seconds <= 0) reject(new Error("duration"));
+            else resolve(seconds);
+          };
+          probe.onerror = function () {
+            URL.revokeObjectURL(url);
+            reject(new Error("duration"));
+          };
+          probe.src = url;
+        });
+      }
+
+      function makeSafeVideoStoragePath(name) {
+        var filename = String(name || "clip.mp4");
+        var ext = ".mp4";
+        var idx = filename.lastIndexOf(".");
+        if (idx > -1) {
+          var cand = filename.slice(idx).toLowerCase();
+          if (/^\.(mp4|webm|mov)$/.test(cand)) ext = cand;
+        }
+        return (
+          "service-posts/" +
+          encodeURIComponent(service || "common") +
+          "/video-" +
+          Date.now() +
+          "-" +
+          Math.random().toString(36).slice(2, 8) +
+          ext
+        );
+      }
+
+      async function insertInlineVideoFile(file) {
+        if (!file || !isLikelyVideoFile(file)) return;
+        if (!cloudEnabled || !client || !client.storage) {
+          formStatus.textContent = "영상은 공용 저장(Supabase)이 연결된 상태에서만 올릴 수 있습니다.";
+          return;
+        }
+        if (file.size > MAX_VIDEO_BYTES) {
+          formStatus.textContent = "영상은 40MB 이하만 올릴 수 있습니다. 약 1분 분량으로 줄여 주세요.";
+          return;
+        }
+        var seconds = 0;
+        try {
+          seconds = await readVideoDurationSeconds(file);
+        } catch (err) {
+          formStatus.textContent = "영상 길이를 확인하지 못했습니다. mp4 또는 webm으로 다시 올려 주세요.";
+          return;
+        }
+        if (seconds > MAX_VIDEO_SECONDS) {
+          formStatus.textContent =
+            "영상은 약 1분(최대 90초)까지 올릴 수 있습니다. 현재 " + Math.round(seconds) + "초입니다.";
+          return;
+        }
+        if (postBodyEditor && postBodyEditor.querySelector("video")) {
+          formStatus.textContent = "영상은 글당 1개입니다. 기존 영상의 [영상 삭제]를 누른 뒤 다시 올려 주세요.";
+          return;
+        }
+        formStatus.textContent = "영상을 올리는 중입니다…";
+        try {
+          var path = makeSafeVideoStoragePath(file.name);
+          var contentType = file.type && /^video\//i.test(file.type) ? file.type : "video/mp4";
+          var up = await client.storage.from(SERVICE_POST_FILE_BUCKET).upload(path, file, {
+            upsert: true,
+            contentType: contentType
+          });
+          if (up.error) {
+            formStatus.textContent = "영상 업로드 실패: " + up.error.message;
+            return;
+          }
+          var pub = client.storage.from(SERVICE_POST_FILE_BUCKET).getPublicUrl(path);
+          var src = sanitizeLinkHref(pub && pub.data ? pub.data.publicUrl : "");
+          if (!src) {
+            formStatus.textContent = "영상 주소를 만들지 못했습니다.";
+            return;
+          }
+          var html =
+            '<div class="post-video" contenteditable="false">' +
+            '<video controls playsinline preload="metadata" src="' +
+            escapeAttr(src) +
+            '"></video>' +
+            '<button type="button" class="post-video-remove">영상 삭제</button>' +
+            "</div>";
+          insertHtmlIntoEditor(html);
+          formStatus.textContent = "영상을 본문에 넣었습니다. 저장하면 방문자도 재생할 수 있습니다.";
+        } catch (err) {
+          formStatus.textContent =
+            "영상 업로드 중 오류: " + (err && err.message ? String(err.message) : String(err));
+        }
+      }
+
       function makeSafePdfStoragePath(name) {
         var filename = String(name || "attached.pdf");
         var ext = ".pdf";
@@ -2003,6 +2173,10 @@
         var imgs = postBodyEditor.querySelectorAll("img");
         for (var i = 0; i < imgs.length; i++) {
           if (String(imgs[i].getAttribute("src") || "").trim()) return true;
+        }
+        var clips = postBodyEditor.querySelectorAll("video");
+        for (var v = 0; v < clips.length; v++) {
+          if (String(clips[v].getAttribute("src") || "").trim()) return true;
         }
         return false;
       }
@@ -2779,6 +2953,10 @@
         for (var i = 0; i < files.length; i++) {
           var file = files[i];
           if (!file) continue;
+          if (isLikelyVideoFile(file)) {
+            await insertInlineVideoFile(file);
+            continue;
+          }
           if (!isLikelyImageFile(file) && !isLikelyPdfFile(file)) continue;
           if (postBodyEditor && postBodyEditor.querySelectorAll("img").length >= MAX_IMAGES) {
             formStatus.textContent = "본문 첨부는 최대 " + MAX_IMAGES + "개까지 넣을 수 있습니다.";
@@ -2982,6 +3160,28 @@
           promoteAfterSave = true;
           if (typeof postForm.requestSubmit === "function") postForm.requestSubmit();
           else postForm.dispatchEvent(new Event("submit", { cancelable: true, bubbles: true }));
+        });
+      }
+
+      if (postBodyEditor) {
+        postBodyEditor.addEventListener("click", function (e) {
+          var btn = e.target && e.target.closest ? e.target.closest(".post-video-remove") : null;
+          if (!btn || !postBodyEditor.contains(btn)) return;
+          var wrap = btn.closest(".post-video");
+          if (wrap) wrap.remove();
+          else btn.remove();
+          formStatus.textContent = "영상을 본문에서 뺐습니다. 저장해야 반영됩니다.";
+        });
+      }
+
+      if (postVideoInput) {
+        postVideoInput.addEventListener("click", function () {
+          postVideoInput.value = "";
+        });
+        postVideoInput.addEventListener("change", function () {
+          var file = postVideoInput.files && postVideoInput.files[0];
+          if (!file) return;
+          void insertInlineVideoFile(file);
         });
       }
 
@@ -3582,6 +3782,7 @@
               postBodyEditor.textContent = rawBody;
             }
             normalizeEditorImages(postBodyEditor);
+            decorateEditorVideos(postBodyEditor);
           }
           clearEditorImageSelection();
           savedEditorRange = null;

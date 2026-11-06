@@ -489,11 +489,21 @@
 
     @media (min-width: 768px) {
       .hero-aside-col {
-        flex-direction: row;
+        flex-direction: column;
         align-items: stretch;
-        justify-content: flex-end;
+        justify-content: flex-start;
         gap: 0.55rem;
         align-self: start;
+      }
+
+      .hero-promo-slot {
+        flex: none;
+        width: 100%;
+        align-items: stretch;
+      }
+
+      .hero-promo-video {
+        max-height: none;
       }
     }
 
@@ -508,7 +518,8 @@
 
     @media (min-width: 768px) {
       .hero-promo-slot {
-        flex: 0 0 clamp(11.25rem, 32vw, 16.75rem);
+        flex: none;
+        width: 100%;
         align-items: stretch;
       }
     }
@@ -552,6 +563,47 @@
       height: auto;
       object-fit: contain;
       animation: heroPromoImgFlash 12s ease-in-out infinite;
+    }
+
+    .hero-promo-frame--video {
+      -webkit-mask-image: none;
+      mask-image: none;
+      width: 100%;
+      background: #111820;
+    }
+
+    .hero-promo-video {
+      display: block;
+      width: 100%;
+      height: auto;
+      aspect-ratio: 16 / 9;
+      max-height: none;
+      border-radius: 12px;
+      background: #111820;
+      object-fit: contain;
+    }
+
+    .hero-promo-consult {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 0.45rem;
+      padding: 0.28rem 0.7rem;
+      border-radius: 999px;
+      border: 1px solid rgba(90, 53, 64, 0.35);
+      background: #fff;
+      color: #5a3540;
+      font-size: 0.74rem;
+      font-weight: 700;
+      line-height: 1.3;
+      text-decoration: none;
+    }
+
+    .hero-promo-consult:hover,
+    .hero-promo-consult:focus-visible {
+      background: #5a3540;
+      color: #fff;
+      opacity: 1;
     }
 
     @keyframes heroPromoImgFlash {
@@ -629,6 +681,30 @@
       text-decoration: none;
     }
 
+    a.hero-promo-consult {
+      display: inline-flex;
+      flex: 0 0 auto;
+      width: auto;
+      align-self: center;
+      line-height: 1.3;
+      margin-top: 0.45rem;
+      padding: 0.28rem 0.7rem;
+      border-radius: 999px;
+      border: 1px solid rgba(90, 53, 64, 0.35);
+      background: #fff;
+      color: #5a3540;
+      font-size: 0.74rem;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    a.hero-promo-consult:hover,
+    a.hero-promo-consult:focus-visible {
+      background: #5a3540;
+      color: #fff;
+      opacity: 1;
+    }
+
     @keyframes heroPromoHintBlink {
       0%,
       100% {
@@ -699,6 +775,10 @@
       .hero-promo-frame .hero-promo-img {
         max-height: clamp(5.25rem, 42vw, 8.25rem);
         margin-inline: auto;
+      }
+
+      .hero-promo-video {
+        max-height: none;
       }
     }
 
@@ -879,12 +959,14 @@
         align-items: center;
         text-align: center;
         margin: 0;
-        flex: 1 1 auto;
+        flex: none;
+        width: 100%;
         min-width: 0;
-        max-width: 380px;
-        padding: 0.62rem 0.98rem;
+        max-width: none;
+        padding: 0.55rem 0.7rem;
         justify-content: flex-start;
       }
+    }
     }
 
     .hero-aside-head {
@@ -925,6 +1007,12 @@
       gap: 0.42rem;
       width: 100%;
       max-width: 22rem;
+    }
+
+    @media (min-width: 768px) {
+      .hero-mini {
+        max-width: none;
+      }
     }
 
     @media (max-width: 380px) {
@@ -3122,25 +3210,28 @@
           </div>
         </div>
         <div class="hero-aside-col">
-          <div class="hero-promo-slot" aria-label="사무소 홍보">
-            <a
-              class="hero-promo-link"
-              href="#consult-form"
-              aria-label="상담요청 폼으로 이동합니다. 클릭하면 상담요청 하실 수 있습니다."
-            >
-              <div class="hero-promo-frame">
-                <img
-                  class="hero-promo-img"
-                  src="images/hero-promo-banner-v4.jpg"
-                  alt=""
-                  width="1024"
-                  height="768"
-                  decoding="async"
-                  loading="lazy"
+          <div class="hero-promo-slot" aria-label="사무소 홍보영상">
+            <div class="hero-promo-frame hero-promo-frame--video">
+              <video
+                class="hero-promo-video"
+                controls
+                playsinline
+                preload="metadata"
+                poster="images/hero-promo-banner-v4.jpg"
+                width="1920"
+                height="1080"
+              >
+                <source src="media/promo-office-61s.mp4" type="video/mp4" />
+                <track
+                  kind="subtitles"
+                  src="media/promo-office-61s.vtt"
+                  srclang="ko"
+                  label="한국어"
+                  default
                 />
-              </div>
-            </a>
-            <p class="hero-promo-hover-hint" aria-hidden="true">클릭하면 상담요청 하실 수 있습니다.</p>
+              </video>
+            </div>
+            <a class="hero-promo-link hero-promo-consult" href="#consult-form">상담요청</a>
           </div>
           <aside class="hero-aside" aria-label="업무 분야 바로가기">
             <div class="hero-aside-head">
@@ -3902,7 +3993,20 @@
       } else {
         focusConsultNameIfHash();
       }
-      var heroConsult = document.querySelector('a.hero-promo-link[href="#consult-form"]');
+      var heroVideo = document.querySelector(".hero-promo-video");
+      if (heroVideo) {
+        function showPromoCaptions() {
+          var tracks = heroVideo.textTracks;
+          if (!tracks || !tracks.length) return;
+          for (var i = 0; i < tracks.length; i++) {
+            tracks[i].mode = i === 0 ? "showing" : "disabled";
+          }
+        }
+        heroVideo.addEventListener("loadedmetadata", showPromoCaptions);
+        heroVideo.addEventListener("play", showPromoCaptions);
+      }
+
+      var heroConsult = document.querySelector('a.hero-promo-consult[href="#consult-form"]');
       if (heroConsult) {
         heroConsult.addEventListener("click", function () {
           shouldActivateConsultNameRing = true;

@@ -166,6 +166,18 @@
       font-size: 1rem;
       line-height: 1.4;
     }
+    .item h2 a {
+      color: inherit;
+      text-decoration: none;
+    }
+    .item h2 a:hover {
+      text-decoration: underline;
+    }
+    .body a {
+      color: var(--maroon);
+      font-weight: 700;
+      text-decoration: underline;
+    }
 
     .meta {
       margin: 0.35rem 0 0;
@@ -281,6 +293,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabase-config.js"></script>
+  <script src="notice-promote.js"></script>
   <script>
     (async function () {
       var LOCAL_NOTICE_KEY = "websiteCorpNotices";
@@ -429,10 +442,30 @@
         return base + "float:none;margin:0.35em auto;";
       }
 
+      function isSafeNoticeHref(href) {
+        var u = String(href || "").trim();
+        if (!u) return false;
+        if (/^(javascript|vbscript|data):/i.test(u)) return false;
+        if (/^(https?:\/\/|mailto:)/i.test(u)) return true;
+        if (/^[a-z0-9][\w.-]*\.html(?:[?#].*)?$/i.test(u)) return true;
+        if (u.charAt(0) === "/" && u.charAt(1) !== "/") return true;
+        return false;
+      }
+
+      function extractNoticeHref(content) {
+        if (window.WebsiteCorpNotice && typeof window.WebsiteCorpNotice.extractHref === "function") {
+          return window.WebsiteCorpNotice.extractHref(content);
+        }
+        var html = String(content || "");
+        var m = html.match(/href\s*=\s*["']([^"']+)["']/i);
+        if (!m || !m[1]) return "";
+        return m[1].replace(/&amp;/gi, "&");
+      }
+
       function sanitizeNoticeHtml(rawHtml) {
         var allowed = {
           B: true, STRONG: true, I: true, EM: true, U: true, BR: true,
-          P: true, DIV: true, UL: true, OL: true, LI: true, SPAN: true, IMG: true
+          P: true, DIV: true, UL: true, OL: true, LI: true, SPAN: true, IMG: true, A: true
         };
         var doc = new DOMParser().parseFromString(String(rawHtml || ""), "text/html");
 
@@ -441,6 +474,11 @@
           if (node.nodeType !== 1) return "";
           var tag = String(node.tagName || "").toUpperCase();
           var children = Array.prototype.slice.call(node.childNodes).map(clean).join("");
+          if (tag === "A") {
+            var href = String(node.getAttribute("href") || "").trim();
+            if (!isSafeNoticeHref(href)) return children;
+            return '<a href="' + escapeAttr(href) + '">' + children + "</a>";
+          }
           if (tag === "IMG") {
             var src = resolveImgNodeSrc(node);
             if (!isSafeImgSrc(src)) return "";
@@ -498,10 +536,15 @@
           var content = sanitizeNoticeHtml(item.content || "");
           var created = escapeHtml(String(item.created_at || item.createdText || "").slice(0, 10));
           var pin = item.pinned ? '<span class="pin">고정</span>' : "";
+          var href = extractNoticeHref(item.content || "");
+          var titleHtml = title;
+          if (href && isSafeNoticeHref(href)) {
+            titleHtml = '<a href="' + escapeAttr(href) + '">' + title + "</a>";
+          }
 
           return (
             '<article class="item">' +
-            "<h2>" + pin + title + "</h2>" +
+            "<h2>" + pin + titleHtml + "</h2>" +
             '<p class="meta">등록일: ' + created + "</p>" +
             '<div class="body">' + content + "</div>" +
             "</article>"

@@ -2808,7 +2808,7 @@
 
       function noticeAreaLine(item) {
         var svc = (item && item.service) || service;
-        var tpc = item && typeof item.topic === "string" ? item.topic : topic;
+        var tpc = (item && item.topic) || topic;
         var svcName = SERVICE_MAP[svc] || "";
         var topicMap = SERVICE_TOPIC_MAP[svc] || {};
         var tpcName = tpc && topicMap[tpc] ? topicMap[tpc] : "";
@@ -2817,7 +2817,7 @@
 
       function noticeHref(item) {
         var svc = (item && item.service) || service;
-        var tpc = item && typeof item.topic === "string" ? item.topic : topic;
+        var tpc = (item && item.topic) || topic;
         var href = "service-post.html?service=" + encodeURIComponent(svc);
         if (tpc) href += "&topic=" + encodeURIComponent(tpc);
         return href;

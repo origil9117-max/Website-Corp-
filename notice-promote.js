@@ -39,6 +39,26 @@
       .replace(/"/g, "&quot;");
   }
 
+  function extractHref(content) {
+    var html = String(content || "");
+    try {
+      var doc = new DOMParser().parseFromString(html, "text/html");
+      var a = doc.querySelector("a[href]");
+      if (a) {
+        var parsed = String(a.getAttribute("href") || "").trim();
+        if (parsed) return parsed;
+      }
+    } catch (e) {}
+    var m = html.match(/href\s*=\s*["']([^"']+)["']/i);
+    if (!m || !m[1]) return "";
+    return m[1]
+      .replace(/&amp;/gi, "&")
+      .replace(/&quot;/gi, '"')
+      .replace(/&#39;/g, "'")
+      .replace(/&lt;/gi, "<")
+      .replace(/&gt;/gi, ">");
+  }
+
   function buildContent(areaLine, href, linkLabel) {
     var parts = [];
     if (areaLine) parts.push("<p>" + escapeHtml(areaLine) + "</p>");
@@ -107,6 +127,7 @@
   global.WebsiteCorpNotice = {
     promote: promote,
     buildContent: buildContent,
+    extractHref: extractHref,
     escapeHtml: escapeHtml
   };
 })(window);

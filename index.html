@@ -3484,6 +3484,7 @@
   </footer>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabase-config.js"></script>
+  <script src="notice-promote.js"></script>
   <script>
     (async function () {
       var NEW_POST_DAYS = 7;
@@ -3718,9 +3719,13 @@
       }
 
       function extractNoticeHref(content) {
+        if (window.WebsiteCorpNotice && typeof window.WebsiteCorpNotice.extractHref === "function") {
+          return window.WebsiteCorpNotice.extractHref(content);
+        }
         var html = String(content || "");
         var m = html.match(/href\s*=\s*["']([^"']+)["']/i);
-        return m && m[1] ? m[1] : "";
+        if (!m || !m[1]) return "";
+        return m[1].replace(/&amp;/gi, "&").replace(/&quot;/gi, '"');
       }
 
       if (top && topTitle) {

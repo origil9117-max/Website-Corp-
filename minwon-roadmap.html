@@ -255,9 +255,23 @@
 
     .roadmap-biz-controls {
       display: grid;
-      grid-template-columns: 1.3fr 2fr auto auto;
+      grid-template-columns: 1.1fr 1.4fr 1.4fr auto auto;
       gap: 0.52rem;
       align-items: end;
+    }
+
+    .roadmap-biz-split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.7rem;
+      margin-top: 0.55rem;
+    }
+
+    .roadmap-biz-col h3 {
+      margin: 0 0 0.4rem;
+      font-size: 0.92rem;
+      font-weight: 800;
+      color: #4a3a6b;
     }
 
     .roadmap-biz-results-head,
@@ -274,8 +288,50 @@
       background: #efe9f8;
     }
 
+    .roadmap-biz-summary {
+      margin-top: 0.7rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.7rem;
+    }
+
+    .roadmap-biz-summary-card {
+      border: 1px solid #d7d0e4;
+      border-radius: 8px;
+      background: #fff;
+      padding: 0.7rem 0.8rem;
+    }
+
+    .roadmap-biz-summary-card h3 {
+      margin: 0 0 0.45rem;
+      font-size: 0.9rem;
+      font-weight: 800;
+      color: #4a3a6b;
+    }
+
+    .roadmap-biz-summary-card dl {
+      display: grid;
+      grid-template-columns: 6.2rem 1fr;
+      gap: 0.28rem 0.5rem;
+      margin: 0;
+      font-size: 0.88rem;
+    }
+
+    .roadmap-biz-summary-card dt {
+      margin: 0;
+      color: #5a5270;
+      font-weight: 700;
+    }
+
+    .roadmap-biz-summary-card dd {
+      margin: 0;
+      color: #2b2440;
+    }
+
     @media (max-width: 920px) {
-      .roadmap-biz-controls {
+      .roadmap-biz-controls,
+      .roadmap-biz-split,
+      .roadmap-biz-summary {
         grid-template-columns: 1fr;
       }
 
@@ -391,7 +447,7 @@
             (1) 사업자등록증 주종목 및 코드 검색
           </h2>
           <p class="roadmap-biz-help">
-            국세청 2025년 귀속 업종코드(기준단순경비율) 자료입니다. 검색어 또는 코드로 <strong>주업태·주종목·주업종코드</strong>를 찾을 수 있습니다.
+            국세청 2025년 귀속 업종코드(기준단순경비율) 자료입니다. 주종목·부종목 검색어를 각각 입력하면 <strong>주업태·주종목·주종목코드</strong>와 <strong>부업태·부종목·부종목코드</strong>로 구분됩니다.
           </p>
           <form id="roadmap-biz-search-form" class="roadmap-biz-controls" role="search" action="#" method="get">
             <div class="roadmap-ksic-field">
@@ -401,8 +457,12 @@
               </select>
             </div>
             <div class="roadmap-ksic-field">
-              <label for="roadmap-biz-query">검색어 (주종목·사업내용·코드)</label>
-              <input id="roadmap-biz-query" type="search" maxlength="120" placeholder="예: 국제물류주선업, 카페, 630902" autocomplete="off" />
+              <label for="roadmap-biz-query-main">주종목 검색어</label>
+              <input id="roadmap-biz-query-main" type="search" maxlength="120" placeholder="예: 카페, 음식점" autocomplete="off" />
+            </div>
+            <div class="roadmap-ksic-field">
+              <label for="roadmap-biz-query-sub">부종목 검색어</label>
+              <input id="roadmap-biz-query-sub" type="search" maxlength="120" placeholder="예: 통신판매, 도매" autocomplete="off" />
             </div>
             <div class="roadmap-ksic-search-wrap">
               <button id="roadmap-biz-search-btn" class="roadmap-ksic-search-btn" type="submit">검색</button>
@@ -410,19 +470,51 @@
             </div>
           </form>
           <p id="roadmap-biz-search-status" class="roadmap-ksic-search-status" role="status"></p>
-          <div id="roadmap-biz-results" class="roadmap-ksic-results" hidden>
-            <div class="roadmap-ksic-results-head roadmap-biz-results-head">
-              <span>주업태</span>
-              <span>주종목</span>
-              <span>주업종코드</span>
+          <div class="roadmap-biz-split">
+            <div class="roadmap-biz-col">
+              <h3>주업종</h3>
+              <div id="roadmap-biz-results-main" class="roadmap-ksic-results" hidden>
+                <div class="roadmap-ksic-results-head roadmap-biz-results-head">
+                  <span>주업태</span>
+                  <span>주종목</span>
+                  <span>주종목코드</span>
+                </div>
+                <ul id="roadmap-biz-results-main-list" class="roadmap-ksic-results-list" aria-label="주업종 검색 결과"></ul>
+              </div>
             </div>
-            <ul id="roadmap-biz-results-list" class="roadmap-ksic-results-list" aria-label="사업자등록 업종코드 검색 결과"></ul>
+            <div class="roadmap-biz-col">
+              <h3>부업종</h3>
+              <div id="roadmap-biz-results-sub" class="roadmap-ksic-results" hidden>
+                <div class="roadmap-ksic-results-head roadmap-biz-results-head">
+                  <span>부업태</span>
+                  <span>부종목</span>
+                  <span>부종목코드</span>
+                </div>
+                <ul id="roadmap-biz-results-sub-list" class="roadmap-ksic-results-list" aria-label="부업종 검색 결과"></ul>
+              </div>
+            </div>
+          </div>
+          <div id="roadmap-biz-summary" class="roadmap-biz-summary" hidden>
+            <section class="roadmap-biz-summary-card" aria-label="선택한 주업종">
+              <h3>주업종</h3>
+              <dl>
+                <dt>주업태</dt><dd id="roadmap-biz-main-type"></dd>
+                <dt>주종목</dt><dd id="roadmap-biz-main-name"></dd>
+                <dt>주종목코드</dt><dd id="roadmap-biz-main-code"></dd>
+              </dl>
+            </section>
+            <section class="roadmap-biz-summary-card" aria-label="선택한 부업종">
+              <h3>부업종</h3>
+              <dl>
+                <dt>부업태</dt><dd id="roadmap-biz-sub-type"></dd>
+                <dt>부종목</dt><dd id="roadmap-biz-sub-name"></dd>
+                <dt>부종목코드</dt><dd id="roadmap-biz-sub-code"></dd>
+              </dl>
+            </section>
           </div>
           <section id="roadmap-biz-detail" class="roadmap-ksic-detail" hidden aria-label="선택한 업종 상세">
             <dl class="roadmap-ksic-detail-grid">
-              <dt>주업태</dt><dd id="roadmap-biz-detail-type"></dd>
-              <dt>주종목</dt><dd id="roadmap-biz-detail-name"></dd>
-              <dt>주업종코드</dt><dd id="roadmap-biz-detail-code"></dd>
+              <dt>구분</dt><dd id="roadmap-biz-detail-role"></dd>
               <dt>적용범위</dt><dd id="roadmap-biz-detail-scope"></dd>
             </dl>
           </section>
@@ -573,18 +665,31 @@
       if (!form || !status) return;
 
       var typeSel = document.getElementById("roadmap-biz-type");
-      var queryInput = document.getElementById("roadmap-biz-query");
-      var resultsWrap = document.getElementById("roadmap-biz-results");
-      var resultsList = document.getElementById("roadmap-biz-results-list");
+      var queryMain = document.getElementById("roadmap-biz-query-main");
+      var querySub = document.getElementById("roadmap-biz-query-sub");
       var searchBtn = document.getElementById("roadmap-biz-search-btn");
       var resetBtn = document.getElementById("roadmap-biz-reset-btn");
+      var resultsMainWrap = document.getElementById("roadmap-biz-results-main");
+      var resultsMainList = document.getElementById("roadmap-biz-results-main-list");
+      var resultsSubWrap = document.getElementById("roadmap-biz-results-sub");
+      var resultsSubList = document.getElementById("roadmap-biz-results-sub-list");
+      var summaryBox = document.getElementById("roadmap-biz-summary");
+      var mainTypeEl = document.getElementById("roadmap-biz-main-type");
+      var mainNameEl = document.getElementById("roadmap-biz-main-name");
+      var mainCodeEl = document.getElementById("roadmap-biz-main-code");
+      var subTypeEl = document.getElementById("roadmap-biz-sub-type");
+      var subNameEl = document.getElementById("roadmap-biz-sub-name");
+      var subCodeEl = document.getElementById("roadmap-biz-sub-code");
       var detailBox = document.getElementById("roadmap-biz-detail");
-      var detailType = document.getElementById("roadmap-biz-detail-type");
-      var detailName = document.getElementById("roadmap-biz-detail-name");
-      var detailCode = document.getElementById("roadmap-biz-detail-code");
+      var detailRole = document.getElementById("roadmap-biz-detail-role");
       var detailScope = document.getElementById("roadmap-biz-detail-scope");
       var cache = null;
-      var lastRows = [];
+      var lastMainRows = [];
+      var lastSubRows = [];
+      var selectedMain = null;
+      var selectedSub = null;
+      var selectedMainQ = "";
+      var selectedSubQ = "";
 
       function compact(v) {
         return String(v || "").trim();
@@ -670,20 +775,31 @@
         return cache;
       }
 
-      function renderResults(rows, q) {
-        lastRows = rows || [];
-        if (!resultsWrap || !resultsList) return;
-        if (!lastRows.length) {
-          resultsList.innerHTML = "";
-          resultsWrap.hidden = true;
+      function renderList(kind, rows, q) {
+        var isMain = kind === "main";
+        var wrap = isMain ? resultsMainWrap : resultsSubWrap;
+        var list = isMain ? resultsMainList : resultsSubList;
+        if (isMain) lastMainRows = rows || [];
+        else lastSubRows = rows || [];
+        var data = isMain ? lastMainRows : lastSubRows;
+        if (!wrap || !list) return;
+        if (!data.length) {
+          list.innerHTML = "";
+          wrap.hidden = true;
           return;
         }
-        resultsWrap.hidden = false;
-        resultsList.innerHTML = lastRows
+        wrap.hidden = false;
+        var selected = isMain ? selectedMain : selectedSub;
+        list.innerHTML = data
           .slice(0, 80)
           .map(function (row, idx) {
+            var active = selected && selected.code === row.code ? " is-active" : "";
             return (
-              '<li class="roadmap-ksic-results-item roadmap-biz-results-item" data-idx="' +
+              '<li class="roadmap-ksic-results-item roadmap-biz-results-item' +
+              active +
+              '" data-kind="' +
+              kind +
+              '" data-idx="' +
               idx +
               '">' +
               '<span class="roadmap-ksic-col-category">' +
@@ -701,17 +817,42 @@
           .join("");
       }
 
-      function showDetail(row, q) {
+      function fillDash(el, v) {
+        if (el) el.textContent = v || "-";
+      }
+
+      function updateSummary() {
+        var hasAny = !!(selectedMain || selectedSub);
+        if (summaryBox) summaryBox.hidden = !hasAny;
+        fillDash(mainTypeEl, selectedMain && selectedMain.type);
+        fillDash(mainNameEl, selectedMain && displayName(selectedMainQ, selectedMain));
+        fillDash(mainCodeEl, selectedMain && selectedMain.code);
+        fillDash(subTypeEl, selectedSub && selectedSub.type);
+        fillDash(subNameEl, selectedSub && displayName(selectedSubQ, selectedSub));
+        fillDash(subCodeEl, selectedSub && selectedSub.code);
+      }
+
+      function showDetail(kind, row, q) {
         if (!detailBox) return;
         if (!row) {
           detailBox.hidden = true;
           return;
         }
-        detailType.textContent = row.type || "";
-        detailName.textContent = displayName(q, row);
-        detailCode.textContent = row.code || "";
-        detailScope.textContent = row.scope || "";
+        if (detailRole) detailRole.textContent = kind === "main" ? "주업종" : "부업종";
+        if (detailScope) detailScope.textContent = row.scope || "";
         detailBox.hidden = false;
+      }
+
+      function selectRow(kind, row, q) {
+        if (kind === "main") {
+          selectedMain = row;
+          selectedMainQ = q;
+        } else {
+          selectedSub = row;
+          selectedSubQ = q;
+        }
+        updateSummary();
+        showDetail(kind, row, q);
       }
 
       function searchRecords(type, q) {
@@ -758,33 +899,50 @@
 
       async function executeBizSearch() {
         var typeVal = compact(typeSel && typeSel.value);
-        var qVal = compact(queryInput && queryInput.value);
-        if (!typeVal && !qVal) {
-          status.textContent = "업태를 선택하거나 검색어·코드를 입력해 주세요.";
-          renderResults([]);
-          showDetail(null);
-          if (queryInput) queryInput.focus();
+        var mainQ = compact(queryMain && queryMain.value);
+        var subQ = compact(querySub && querySub.value);
+        if (!typeVal && !mainQ && !subQ) {
+          status.textContent = "주종목 또는 부종목 검색어를 입력해 주세요.";
+          renderList("main", [], "");
+          renderList("sub", [], "");
+          selectedMain = null;
+          selectedSub = null;
+          updateSummary();
+          showDetail("main", null, "");
+          if (queryMain) queryMain.focus();
           return;
         }
         try {
           if (searchBtn) searchBtn.disabled = true;
           status.textContent = "국세청 2025년 귀속 업종코드 기준으로 검색 중입니다...";
           await ensureBizItems();
-          var rows = searchRecords(typeVal, qVal);
-          renderResults(rows, qVal);
-          showDetail(rows[0] || null, qVal);
-          if (!rows.length) {
-            status.textContent = "일치하는 업종코드가 없습니다. 짧은 단어로 다시 검색해 보세요.";
-          } else {
-            status.textContent =
-              rows.length +
-              "건을 찾았습니다." +
-              (rows.length > 80 ? " 상위 80건을 표시합니다." : "");
+          var mainRows = mainQ || (typeVal && !subQ) ? searchRecords(typeVal, mainQ) : [];
+          var subRows = subQ ? searchRecords(typeVal, subQ) : [];
+          if (mainQ) selectRow("main", mainRows[0] || null, mainQ);
+          else {
+            selectedMain = null;
+            selectedMainQ = "";
+          }
+          if (subQ) selectRow("sub", subRows[0] || null, subQ);
+          else {
+            selectedSub = null;
+            selectedSubQ = "";
+          }
+          renderList("main", mainRows, mainQ);
+          renderList("sub", subRows, subQ);
+          updateSummary();
+          var msgs = [];
+          if (mainQ) msgs.push("주업종 " + mainRows.length + "건");
+          if (subQ) msgs.push("부업종 " + subRows.length + "건");
+          if (!msgs.length && typeVal) msgs.push("주업종 " + mainRows.length + "건");
+          status.textContent = msgs.join(" · ") + "을 찾았습니다. 목록을 누르면 선택할 수 있습니다.";
+          if ((mainQ && !mainRows.length) || (subQ && !subRows.length)) {
+            status.textContent += " 일부 검색어는 일치 항목이 없습니다.";
           }
         } catch (err) {
           status.textContent = err && err.message ? err.message : "검색에 실패했습니다.";
-          renderResults([]);
-          showDetail(null);
+          renderList("main", [], "");
+          renderList("sub", [], "");
         } finally {
           if (searchBtn) searchBtn.disabled = false;
         }
@@ -798,28 +956,38 @@
       if (resetBtn) {
         resetBtn.addEventListener("click", function () {
           if (typeSel) typeSel.value = "";
-          if (queryInput) queryInput.value = "";
-          renderResults([]);
-          showDetail(null);
+          if (queryMain) queryMain.value = "";
+          if (querySub) querySub.value = "";
+          selectedMain = null;
+          selectedSub = null;
+          selectedMainQ = "";
+          selectedSubQ = "";
+          renderList("main", [], "");
+          renderList("sub", [], "");
+          updateSummary();
+          showDetail("main", null, "");
           status.textContent = "";
-          if (queryInput) queryInput.focus();
+          if (queryMain) queryMain.focus();
         });
       }
 
-      if (resultsList) {
-        resultsList.addEventListener("click", function (e) {
+      function bindList(listEl) {
+        if (!listEl) return;
+        listEl.addEventListener("click", function (e) {
           var li = e.target && e.target.closest ? e.target.closest("[data-idx]") : null;
           if (!li) return;
+          var kind = li.getAttribute("data-kind");
           var idx = Number(li.getAttribute("data-idx"));
-          var row = lastRows[idx];
+          var rows = kind === "main" ? lastMainRows : lastSubRows;
+          var q = kind === "main" ? compact(queryMain && queryMain.value) : compact(querySub && querySub.value);
+          var row = rows[idx];
           if (!row) return;
-          Array.prototype.forEach.call(resultsList.querySelectorAll(".is-active"), function (el) {
-            el.classList.remove("is-active");
-          });
-          li.classList.add("is-active");
-          showDetail(row, compact(queryInput && queryInput.value));
+          selectRow(kind, row, q);
+          renderList(kind, rows, q);
         });
       }
+      bindList(resultsMainList);
+      bindList(resultsSubList);
 
       ensureBizItems().catch(function () {});
     })();

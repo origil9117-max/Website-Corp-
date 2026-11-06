@@ -500,11 +500,20 @@
         flex: 0 0 calc(50% - 0.28rem);
         width: auto;
         max-width: none;
-        align-self: start;
+        align-self: stretch;
+      }
+
+      .hero-promo-frame--video {
+        flex: 1 1 auto;
+        min-height: 0;
       }
 
       .hero-promo-video {
+        aspect-ratio: auto;
+        height: 100%;
+        min-height: 14.5rem;
         max-height: none;
+        object-fit: cover;
       }
     }
 
@@ -522,7 +531,7 @@
         flex: 0 0 calc(50% - 0.28rem);
         width: auto;
         max-width: none;
-        align-self: start;
+        align-self: stretch;
       }
     }
 

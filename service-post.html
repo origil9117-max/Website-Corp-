@@ -262,6 +262,7 @@
     }
     .btn-primary { color: #fff; background: linear-gradient(180deg, var(--maroon) 0%, var(--maroon-dark) 100%); }
     .btn-ghost { background: #fff; color: var(--ink); border-color: var(--line); }
+    .btn-notice { color: var(--maroon); border-color: rgba(122, 31, 46, 0.35); background: #fff8f8; }
     .post-list { display: grid; gap: 0.7rem; }
     .post-pagination {
       margin-top: 0.9rem;
@@ -680,6 +681,7 @@
         <div id="thumb-list" class="thumb-list"></div>
         <div class="row" style="margin-top:0.65rem;">
           <button class="btn btn-primary" type="submit">저장</button>
+          <button class="btn btn-ghost btn-notice" type="button" id="btn-save-notice">저장 후 공지로 올리기</button>
           <button class="btn btn-ghost" type="button" id="btn-reset">입력 초기화</button>
         </div>
       </form>
@@ -695,6 +697,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabase-config.js"></script>
+  <script src="notice-promote.js"></script>
   <script>
     (async function () {
       var SERVICE_MAP = {
@@ -806,7 +809,9 @@
       var postImagesInput = document.getElementById("post-images-input");
       var thumbList = document.getElementById("thumb-list");
       var btnReset = document.getElementById("btn-reset");
+      var btnSaveNotice = document.getElementById("btn-save-notice");
       var formStatus = document.getElementById("form-status");
+      var promoteAfterSave = false;
       var postList = document.getElementById("post-list");
       var postPagination = document.getElementById("post-pagination");
 
@@ -2686,6 +2691,7 @@
           var actions = adminOn
             ? '<div class="row" style="margin-top:0.55rem;">' +
               '<button class="btn btn-ghost" type="button" data-act="edit" data-id="' + item.id + '">수정</button>' +
+              '<button class="btn btn-ghost btn-notice" type="button" data-act="notice" data-id="' + item.id + '">공지로 올리기</button>' +
               '<button class="btn btn-ghost" type="button" data-act="del" data-id="' + item.id + '">삭제</button>' +
               '</div>'
             : "";
@@ -2798,6 +2804,41 @@
           pendingImages.push({ name: "외부 이미지", url: safe });
           renderThumbs();
         }
+      }
+
+      function noticeAreaLine(item) {
+        var svc = (item && item.service) || service;
+        var tpc = item && typeof item.topic === "string" ? item.topic : topic;
+        var svcName = SERVICE_MAP[svc] || "";
+        var topicMap = SERVICE_TOPIC_MAP[svc] || {};
+        var tpcName = tpc && topicMap[tpc] ? topicMap[tpc] : "";
+        return [svcName, tpcName].filter(Boolean).join(" · ");
+      }
+
+      function noticeHref(item) {
+        var svc = (item && item.service) || service;
+        var tpc = item && typeof item.topic === "string" ? item.topic : topic;
+        var href = "service-post.html?service=" + encodeURIComponent(svc);
+        if (tpc) href += "&topic=" + encodeURIComponent(tpc);
+        return href;
+      }
+
+      async function promotePostToNotice(item, skipConfirm) {
+        if (!window.WebsiteCorpNotice || !window.WebsiteCorpNotice.promote) {
+          return { ok: false, message: "공지 모듈을 불러오지 못했습니다." };
+        }
+        var noticeTitle = String((item && item.title) || "").trim() || "업무 안내";
+        var content = window.WebsiteCorpNotice.buildContent(
+          noticeAreaLine(item),
+          noticeHref(item),
+          "게시글 보기"
+        );
+        return window.WebsiteCorpNotice.promote({
+          client: cloudEnabled ? client : null,
+          title: noticeTitle,
+          content: content,
+          skipConfirm: !!skipConfirm
+        });
       }
 
       async function savePostCloud(id, title, body, images) {
@@ -2930,6 +2971,19 @@
         resetForm();
         formStatus.textContent = "";
       });
+
+      if (btnSaveNotice) {
+        btnSaveNotice.addEventListener("click", function () {
+          if (!adminOn) {
+            formStatus.textContent = "먼저 위에서 관리자 모드를 켜 주세요.";
+            return;
+          }
+          if (!confirm("이 글을 저장한 뒤 홈 상단 공지로 올리겠습니까?\n기존 고정 공지는 해제됩니다.")) return;
+          promoteAfterSave = true;
+          if (typeof postForm.requestSubmit === "function") postForm.requestSubmit();
+          else postForm.dispatchEvent(new Event("submit", { cancelable: true, bubbles: true }));
+        });
+      }
 
       if (postImagesInput) {
         postImagesInput.addEventListener("click", function () {
@@ -3481,7 +3535,24 @@
           currentPage = 1;
           currentPosts = await loadPosts();
           renderPosts();
+          if (promoteAfterSave) {
+            promoteAfterSave = false;
+            var savedItem = null;
+            if (id) {
+              savedItem = currentPosts.find(function (item) { return String(item.id) === String(id); });
+            }
+            if (!savedItem) {
+              savedItem = currentPosts.find(function (item) { return String(item.title || "") === title; }) || currentPosts[0];
+            }
+            if (savedItem) {
+              var noticeRes = await promotePostToNotice(savedItem, true);
+              if (noticeRes && noticeRes.message) formStatus.textContent = noticeRes.message;
+            } else {
+              formStatus.textContent = "글은 저장됐지만 공지로 올릴 글을 찾지 못했습니다. 목록의 [공지로 올리기]를 사용해 주세요.";
+            }
+          }
         } catch (err) {
+          promoteAfterSave = false;
           formStatus.textContent =
             "저장 중 오류: " + (err && err.message ? String(err.message) : String(err));
         }
@@ -3519,6 +3590,13 @@
           formStatus.textContent = "수정 모드입니다.";
           postTitle.focus();
           editorPanel.scrollIntoView({ behavior: "smooth", block: "start" });
+          return;
+        }
+
+        if (act === "notice") {
+          var noticeRes = await promotePostToNotice(one, false);
+          if (noticeRes && noticeRes.cancelled) return;
+          formStatus.textContent = (noticeRes && noticeRes.message) || "공지 처리가 완료되었습니다.";
           return;
         }
 

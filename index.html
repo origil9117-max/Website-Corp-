@@ -3629,6 +3629,7 @@
       var topLabel = document.getElementById("top-notice-label");
       var navNoticeLink = document.getElementById("nav-notice-link");
       var topBodyLegacy = document.getElementById("top-notice-body");
+      var topLink = document.querySelector(".top-notice-link");
       if (!topTitle || !topLabel) return;
       function renderTopTitleWithHighlight(titleText) {
         var text = String(titleText || "").trim();
@@ -3690,7 +3691,9 @@
         });
       }
 
-      renderTopTitleWithHighlight("대한민국행정사사무소 오시는 길");
+      var FALLBACK_NOTICE_TITLE = "대한민국행정사사무소 오시는 길";
+      var FALLBACK_NOTICE_HREF = "visit-maps.html";
+      renderTopTitleWithHighlight(FALLBACK_NOTICE_TITLE);
       topTitle.style.fontWeight = "";
       topLabel.classList.add("is-live");
 
@@ -3712,6 +3715,30 @@
           .limit(1);
 
         if (!res.error && res.data && res.data.length > 0) top = res.data[0];
+      }
+
+      function extractNoticeHref(content) {
+        var html = String(content || "");
+        var m = html.match(/href\s*=\s*["']([^"']+)["']/i);
+        return m && m[1] ? m[1] : "";
+      }
+
+      if (top && topTitle) {
+        var noticeTitle = String(top.title || "").trim() || FALLBACK_NOTICE_TITLE;
+        renderTopTitleWithHighlight(noticeTitle);
+        if (topLink) {
+          var href = extractNoticeHref(top.content) || "notice.html";
+          topLink.setAttribute("href", href);
+          if (/^https?:\/\//i.test(href) || /visit-maps\.html/i.test(href)) {
+            topLink.setAttribute("target", "_blank");
+            topLink.setAttribute("rel", "noopener noreferrer");
+          } else {
+            topLink.removeAttribute("target");
+            topLink.removeAttribute("rel");
+          }
+          topLink.setAttribute("aria-label", noticeTitle);
+        }
+        topLabel.classList.add("is-live");
       }
 
       if (navNoticeLink) {

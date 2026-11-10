@@ -1887,38 +1887,52 @@
       align-items: stretch;
     }
 
+    #contact .phone-duo {
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+      min-width: 0;
+    }
+
+    #contact .phone-duo .consult-form-wrap {
+      transition: transform 0.5s ease;
+    }
+
+    #contact .phone-duo.is-folded .consult-form-wrap {
+      transform: scaleX(0.14);
+    }
+
+    #contact .phone-fold-trigger {
+      cursor: pointer;
+    }
+
     @media (min-width: 900px) {
       #contact .contact-layout {
-        grid-template-columns: minmax(0, 1fr) 248px 248px;
+        grid-template-columns: minmax(0, 1fr) auto;
         gap: 0.85rem;
-        align-items: end;
+        align-items: stretch;
+      }
+
+      #contact .phone-duo {
+        flex-direction: row;
+        align-items: stretch;
         perspective: 1400px;
       }
 
-      #contact .kakao-consult-wrap,
-      #contact .consult-form-wrap:not(.kakao-consult-wrap) {
-        transform-style: preserve-3d;
-      }
-
-      #contact .kakao-consult-wrap {
-        justify-self: end;
-        margin-right: -0.2rem;
+      #contact .phone-duo.is-folded .kakao-consult-wrap {
         transform-origin: right center;
-        transform: rotateY(18deg);
-        z-index: 2;
-        box-shadow:
-          8px 0 0 0 #0c0e12,
-          0 22px 34px rgba(26, 43, 74, 0.18);
+        transform: rotateY(74deg);
       }
 
-      #contact .consult-form-wrap:not(.kakao-consult-wrap) {
-        justify-self: start;
-        margin-left: -0.2rem;
+      #contact .phone-duo.is-folded .consult-form-wrap:not(.kakao-consult-wrap) {
         transform-origin: left center;
-        transform: rotateY(-18deg);
-        box-shadow:
-          -8px 0 0 0 #0c0e12,
-          0 22px 34px rgba(26, 43, 74, 0.18);
+        transform: rotateY(-74deg);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      #contact .phone-duo .consult-form-wrap {
+        transition: none;
       }
     }
 
@@ -1964,9 +1978,9 @@
       height: 100%;
       background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
       border: 1px solid #d7e6ff;
-      border-radius: 36px;
+      border-radius: 26px;
       box-shadow:
-        0 18px 28px rgba(26, 43, 74, 0.16),
+        0 14px 30px rgba(26, 43, 74, 0.1),
         inset 0 1px 0 rgba(255, 255, 255, 0.9);
       outline: 6px solid #171a20;
       outline-offset: 0;
@@ -1994,7 +2008,7 @@
       content: "";
       position: absolute;
       inset: 0;
-      border-radius: 36px;
+      border-radius: 26px;
       box-shadow:
         inset 0 0 0 1px rgba(255, 255, 255, 0.35),
         inset 0 10px 18px rgba(255, 255, 255, 0.25);
@@ -3593,6 +3607,7 @@
           </div>
         </div>
 
+        <div class="phone-duo">
         <aside class="consult-form-wrap kakao-consult-wrap" aria-labelledby="kakao-consult-title">
           <h3 id="kakao-consult-title">카카오톡 상담</h3>
           <div class="kakao-consult-body">
@@ -3628,6 +3643,7 @@
             <button type="submit" class="btn-send">보내기</button>
           </form>
         </aside>
+        </div>
       </div>
     </section>
   </main>
@@ -4110,8 +4126,38 @@
           shouldActivateConsultNameRing = true;
           setConsultNameRingActive(true);
           window.setTimeout(focusConsultNameInput, 280);
+          playPhoneFold();
         });
       }
+
+      var phoneDuo = document.querySelector("#contact .phone-duo");
+      var phoneFoldTimer = 0;
+      function playPhoneFold() {
+        if (!phoneDuo) return;
+        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+        phoneDuo.classList.remove("is-folded");
+        void phoneDuo.offsetWidth;
+        phoneDuo.classList.add("is-folded");
+        window.clearTimeout(phoneFoldTimer);
+        phoneFoldTimer = window.setTimeout(function () {
+          phoneDuo.classList.remove("is-folded");
+        }, 520);
+      }
+      ["kakao-consult-title", "consult-form-title"].forEach(function (id) {
+        var title = document.getElementById(id);
+        if (!title) return;
+        title.classList.add("phone-fold-trigger");
+        title.setAttribute("role", "button");
+        title.tabIndex = 0;
+        title.addEventListener("click", playPhoneFold);
+        title.addEventListener("keydown", function (e) {
+          if (e.key !== "Enter" && e.key !== " ") return;
+          e.preventDefault();
+          playPhoneFold();
+        });
+      });
+      var kakaoConsultBtn = document.querySelector("#contact .kakao-consult-btn");
+      if (kakaoConsultBtn) kakaoConsultBtn.addEventListener("click", playPhoneFold);
 
       var consultNameInput = document.getElementById("consult-name");
       if (consultNameInput) {

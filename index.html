@@ -4126,7 +4126,6 @@
           shouldActivateConsultNameRing = true;
           setConsultNameRingActive(true);
           window.setTimeout(focusConsultNameInput, 280);
-          focusPhone("consult");
         });
       }
 
@@ -4136,10 +4135,18 @@
         phoneDuo.classList.toggle("focus-kakao", side === "kakao");
         phoneDuo.classList.toggle("focus-consult", side === "consult");
       }
+      function clearPhoneFocus() {
+        if (!phoneDuo) return;
+        phoneDuo.classList.remove("focus-kakao", "focus-consult");
+      }
       var kakaoWrap = document.querySelector("#contact .kakao-consult-wrap");
       var consultWrap = document.querySelector("#contact .consult-form-wrap:not(.kakao-consult-wrap)");
-      if (kakaoWrap) kakaoWrap.addEventListener("click", function () { focusPhone("kakao"); });
-      if (consultWrap) consultWrap.addEventListener("click", function () { focusPhone("consult"); });
+      if (kakaoWrap) kakaoWrap.addEventListener("mouseenter", function () { focusPhone("kakao"); });
+      if (consultWrap) consultWrap.addEventListener("mouseenter", function () { focusPhone("consult"); });
+      document.addEventListener("click", function (e) {
+        if (!phoneDuo || phoneDuo.contains(e.target)) return;
+        clearPhoneFocus();
+      });
       [
         ["kakao-consult-title", "kakao"],
         ["consult-form-title", "consult"]

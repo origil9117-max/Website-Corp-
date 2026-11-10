@@ -1895,15 +1895,26 @@
     }
 
     #contact .phone-duo .consult-form-wrap {
-      transition: transform 0.5s ease;
-    }
-
-    #contact .phone-duo.is-folded .consult-form-wrap {
-      transform: scaleX(0.14);
+      transition: filter 0.4s ease;
     }
 
     #contact .phone-fold-trigger {
       cursor: pointer;
+    }
+
+    #contact .phone-duo.focus-kakao .consult-form-wrap:not(.kakao-consult-wrap),
+    #contact .phone-duo.focus-consult .kakao-consult-wrap {
+      filter: blur(3px);
+    }
+
+    #contact .phone-duo.focus-kakao .consult-form-wrap:not(.kakao-consult-wrap)::after,
+    #contact .phone-duo.focus-consult .kakao-consult-wrap::after {
+      background: linear-gradient(
+        165deg,
+        rgba(255, 255, 255, 0.62) 0%,
+        rgba(126, 108, 196, 0.34) 52%,
+        rgba(255, 255, 255, 0.5) 100%
+      );
     }
 
     @media (min-width: 900px) {
@@ -1916,17 +1927,6 @@
       #contact .phone-duo {
         flex-direction: row;
         align-items: stretch;
-        perspective: 1400px;
-      }
-
-      #contact .phone-duo.is-folded .kakao-consult-wrap {
-        transform-origin: right center;
-        transform: rotateY(74deg);
-      }
-
-      #contact .phone-duo.is-folded .consult-form-wrap:not(.kakao-consult-wrap) {
-        transform-origin: left center;
-        transform: rotateY(-74deg);
       }
     }
 
@@ -4126,38 +4126,35 @@
           shouldActivateConsultNameRing = true;
           setConsultNameRingActive(true);
           window.setTimeout(focusConsultNameInput, 280);
-          playPhoneFold();
+          focusPhone("consult");
         });
       }
 
       var phoneDuo = document.querySelector("#contact .phone-duo");
-      var phoneFoldTimer = 0;
-      function playPhoneFold() {
+      function focusPhone(side) {
         if (!phoneDuo) return;
-        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-        phoneDuo.classList.remove("is-folded");
-        void phoneDuo.offsetWidth;
-        phoneDuo.classList.add("is-folded");
-        window.clearTimeout(phoneFoldTimer);
-        phoneFoldTimer = window.setTimeout(function () {
-          phoneDuo.classList.remove("is-folded");
-        }, 520);
+        phoneDuo.classList.toggle("focus-kakao", side === "kakao");
+        phoneDuo.classList.toggle("focus-consult", side === "consult");
       }
-      ["kakao-consult-title", "consult-form-title"].forEach(function (id) {
-        var title = document.getElementById(id);
+      var kakaoWrap = document.querySelector("#contact .kakao-consult-wrap");
+      var consultWrap = document.querySelector("#contact .consult-form-wrap:not(.kakao-consult-wrap)");
+      if (kakaoWrap) kakaoWrap.addEventListener("click", function () { focusPhone("kakao"); });
+      if (consultWrap) consultWrap.addEventListener("click", function () { focusPhone("consult"); });
+      [
+        ["kakao-consult-title", "kakao"],
+        ["consult-form-title", "consult"]
+      ].forEach(function (pair) {
+        var title = document.getElementById(pair[0]);
         if (!title) return;
         title.classList.add("phone-fold-trigger");
         title.setAttribute("role", "button");
         title.tabIndex = 0;
-        title.addEventListener("click", playPhoneFold);
         title.addEventListener("keydown", function (e) {
           if (e.key !== "Enter" && e.key !== " ") return;
           e.preventDefault();
-          playPhoneFold();
+          focusPhone(pair[1]);
         });
       });
-      var kakaoConsultBtn = document.querySelector("#contact .kakao-consult-btn");
-      if (kakaoConsultBtn) kakaoConsultBtn.addEventListener("click", playPhoneFold);
 
       var consultNameInput = document.getElementById("consult-name");
       if (consultNameInput) {

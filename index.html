@@ -1917,6 +1917,72 @@
       );
     }
 
+    @property --phone-ring-angle {
+      syntax: "<angle>";
+      inherits: false;
+      initial-value: 0deg;
+    }
+
+    #contact .phone-shell {
+      position: relative;
+      display: flex;
+      min-width: 0;
+      width: 100%;
+    }
+
+    #contact .phone-rainbow-ring {
+      position: absolute;
+      inset: -6px;
+      border-radius: 32px;
+      padding: 6px;
+      background: conic-gradient(
+        from var(--phone-ring-angle),
+        rgba(255, 255, 255, 0) 0deg 18deg,
+        #ff4b4b 42deg,
+        #ff9a1f 92deg,
+        #ffe14a 132deg,
+        #39bf66 178deg,
+        #2f8cff 228deg,
+        #7a5cff 274deg,
+        #ff4fa3 318deg,
+        rgba(255, 255, 255, 0) 344deg 360deg
+      );
+      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      opacity: 0;
+      pointer-events: none;
+      z-index: 4;
+    }
+
+    #contact .phone-duo.focus-kakao .phone-shell:has(.kakao-consult-wrap) .consult-form-wrap,
+    #contact .phone-duo.focus-consult .phone-shell:has(.consult-form-wrap:not(.kakao-consult-wrap)) .consult-form-wrap {
+      outline-color: transparent;
+    }
+
+    #contact .phone-duo.focus-kakao .phone-shell:has(.kakao-consult-wrap) .phone-rainbow-ring,
+    #contact .phone-duo.focus-consult .phone-shell:has(.consult-form-wrap:not(.kakao-consult-wrap)) .phone-rainbow-ring {
+      opacity: 1;
+      animation: phoneRingSpin 1.35s linear infinite, phoneRingSpark 0.7s ease-in-out infinite;
+    }
+
+    @keyframes phoneRingSpin {
+      to {
+        --phone-ring-angle: 360deg;
+      }
+    }
+
+    @keyframes phoneRingSpark {
+      0%,
+      100% {
+        filter: brightness(1) drop-shadow(0 0 1px rgba(255, 255, 255, 0.25));
+      }
+      50% {
+        filter: brightness(1.55) drop-shadow(0 0 7px rgba(255, 214, 92, 0.95));
+      }
+    }
+
     @media (min-width: 900px) {
       #contact .contact-layout {
         grid-template-columns: minmax(0, 1fr) auto;
@@ -1928,11 +1994,21 @@
         flex-direction: row;
         align-items: stretch;
       }
+
+      #contact .phone-shell {
+        width: 248px;
+        max-width: 248px;
+        flex: 0 0 248px;
+      }
     }
 
     @media (prefers-reduced-motion: reduce) {
       #contact .phone-duo .consult-form-wrap {
         transition: none;
+      }
+
+      #contact .phone-rainbow-ring {
+        animation: none;
       }
     }
 
@@ -3608,6 +3684,7 @@
         </div>
 
         <div class="phone-duo">
+        <div class="phone-shell">
         <aside class="consult-form-wrap kakao-consult-wrap" aria-labelledby="kakao-consult-title">
           <h3 id="kakao-consult-title">카카오톡 상담</h3>
           <div class="kakao-consult-body">
@@ -3626,7 +3703,10 @@
           </div>
           <a class="btn-send kakao-consult-btn" href="https://open.kakao.com/o/skTYPyac" target="_blank" rel="noopener noreferrer">카카오톡 상담</a>
         </aside>
+        <span class="phone-rainbow-ring" aria-hidden="true"></span>
+        </div>
 
+        <div class="phone-shell">
         <aside class="consult-form-wrap" aria-labelledby="consult-form-title">
           <h3 id="consult-form-title">상담요청</h3>
           <form class="consult-form" id="consult-form" action="#" method="post" novalidate>
@@ -3643,6 +3723,8 @@
             <button type="submit" class="btn-send">보내기</button>
           </form>
         </aside>
+        <span class="phone-rainbow-ring" aria-hidden="true"></span>
+        </div>
         </div>
       </div>
     </section>

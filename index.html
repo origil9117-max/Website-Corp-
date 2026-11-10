@@ -1912,26 +1912,26 @@
       z-index: 3;
       pointer-events: none;
       opacity: 1;
-      backdrop-filter: blur(calc(var(--phone-blur-step) * 3px));
-      -webkit-backdrop-filter: blur(calc(var(--phone-blur-step) * 3px));
+      backdrop-filter: blur(calc(var(--phone-blur-step) * 0.9px));
+      -webkit-backdrop-filter: blur(calc(var(--phone-blur-step) * 0.9px));
       transition: --phone-blur-step 2s steps(10, end);
     }
 
     #contact .phone-shell:has(.kakao-consult-wrap) .phone-blur-veil {
       background: linear-gradient(
         270deg,
-        rgba(255, 255, 255, calc(var(--phone-blur-step) * 0.055)) 0%,
-        rgba(236, 232, 255, calc(var(--phone-blur-step) * 0.07)) 48%,
-        rgba(126, 108, 196, calc(var(--phone-blur-step) * 0.06)) 100%
+        rgba(255, 255, 255, calc(var(--phone-blur-step) * 0.0165)) 0%,
+        rgba(236, 232, 255, calc(var(--phone-blur-step) * 0.021)) 48%,
+        rgba(126, 108, 196, calc(var(--phone-blur-step) * 0.018)) 100%
       );
     }
 
     #contact .phone-shell:not(:has(.kakao-consult-wrap)) .phone-blur-veil {
       background: linear-gradient(
         90deg,
-        rgba(255, 255, 255, calc(var(--phone-blur-step) * 0.055)) 0%,
-        rgba(236, 232, 255, calc(var(--phone-blur-step) * 0.07)) 48%,
-        rgba(126, 108, 196, calc(var(--phone-blur-step) * 0.06)) 100%
+        rgba(255, 255, 255, calc(var(--phone-blur-step) * 0.0165)) 0%,
+        rgba(236, 232, 255, calc(var(--phone-blur-step) * 0.021)) 48%,
+        rgba(126, 108, 196, calc(var(--phone-blur-step) * 0.018)) 100%
       );
     }
 
@@ -2029,18 +2029,18 @@
       #contact .phone-shell:has(.kakao-consult-wrap) .phone-blur-veil {
         background: linear-gradient(
           0deg,
-          rgba(255, 255, 255, calc(var(--phone-blur-step) * 0.055)) 0%,
-          rgba(236, 232, 255, calc(var(--phone-blur-step) * 0.07)) 48%,
-          rgba(126, 108, 196, calc(var(--phone-blur-step) * 0.06)) 100%
+          rgba(255, 255, 255, calc(var(--phone-blur-step) * 0.0165)) 0%,
+          rgba(236, 232, 255, calc(var(--phone-blur-step) * 0.021)) 48%,
+          rgba(126, 108, 196, calc(var(--phone-blur-step) * 0.018)) 100%
         );
       }
 
       #contact .phone-shell:not(:has(.kakao-consult-wrap)) .phone-blur-veil {
         background: linear-gradient(
           180deg,
-          rgba(255, 255, 255, calc(var(--phone-blur-step) * 0.055)) 0%,
-          rgba(236, 232, 255, calc(var(--phone-blur-step) * 0.07)) 48%,
-          rgba(126, 108, 196, calc(var(--phone-blur-step) * 0.06)) 100%
+          rgba(255, 255, 255, calc(var(--phone-blur-step) * 0.0165)) 0%,
+          rgba(236, 232, 255, calc(var(--phone-blur-step) * 0.021)) 48%,
+          rgba(126, 108, 196, calc(var(--phone-blur-step) * 0.018)) 100%
         );
       }
     }

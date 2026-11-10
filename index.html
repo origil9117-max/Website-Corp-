@@ -3477,7 +3477,7 @@
               <dt>이메일</dt>
               <dd class="contact-email-split-dd">
                 <div class="contact-email-mail">
-                  <a href="mailto:lkc@daum.net">lkc@daum.net</a>
+                  <a href="mailto:busanbiz@daum.net">busanbiz@daum.net</a>
                 </div>
                 <div class="contact-email-kakao">
                   <a
@@ -3865,7 +3865,7 @@
           "\n\n메시지:\n" +
           (msg || "");
         return (
-          "mailto:lkc@daum.net?subject=" +
+          "mailto:busanbiz@daum.net?subject=" +
           encodeURIComponent(subject) +
           "&body=" +
           encodeURIComponent(body)
@@ -3889,7 +3889,7 @@
         var btn = form.querySelector(".btn-send");
         btn.disabled = true;
 
-        fetch("https://formsubmit.co/ajax/lkc@daum.net", {
+        fetch("https://formsubmit.co/ajax/busanbiz@daum.net", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -3931,7 +3931,7 @@
                 "FormSubmit이 요청을 거절했습니다.";
               if (/activate|activation|활성/i.test(detail)) {
                 detail =
-                  "FormSubmit에서 lkc@daum.net 으로 보낸 '폼 활성화(Activate Form)' 메일의 링크를 먼저 눌러 주세요. " +
+                  "FormSubmit에서 busanbiz@daum.net 으로 보낸 '폼 활성화(Activate Form)' 메일의 링크를 먼저 눌러 주세요. " +
                   "활성화 전에는 메일이 전달되지 않습니다.";
               }
               if (/web server|HTML files/i.test(detail)) {

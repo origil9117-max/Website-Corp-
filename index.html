@@ -3901,7 +3901,7 @@
             phone: phone,
             message: msg,
             _subject: "[상담요청] 대한민국행정사사무소 — " + name,
-            _captcha: false,
+            _captcha: "false",
             _url: window.location.href,
           }),
         })
@@ -3931,8 +3931,8 @@
                 "FormSubmit이 요청을 거절했습니다.";
               if (/activate|activation|활성/i.test(detail)) {
                 detail =
-                  "FormSubmit에서 busanbiz@daum.net 으로 보낸 '폼 활성화(Activate Form)' 메일의 링크를 먼저 눌러 주세요. " +
-                  "활성화 전에는 메일이 전달되지 않습니다.";
+                  "상담 내용은 보관되어 있습니다. busanbiz@daum.net 받은편지함과 스팸함에서 FormSubmit이 보낸 'Activate Form' 메일을 열어 링크를 한 번만 눌러 주세요. " +
+                  "그 링크를 누르면 이번 내용과 이후 상담요청이 메일로 도착합니다.";
               }
               if (/web server|HTML files/i.test(detail)) {
                 detail =
@@ -3950,7 +3950,9 @@
             statusEl.classList.add("err");
             var m = err && err.message ? String(err.message) : "";
             var line = "전송에 실패했습니다. ";
-            if (/web server|FormSubmit will not work|file/i.test(m)) {
+            if (/Activate Form|보관되어 있습니다/.test(m)) {
+              line = m + " ";
+            } else if (/web server|FormSubmit will not work|file/i.test(m)) {
               line +=
                 "HTML을 탐색기에서만 연 경우 전송되지 않습니다. 호스팅에 올린 뒤 다시 시도해 주세요.";
             } else if (m) {

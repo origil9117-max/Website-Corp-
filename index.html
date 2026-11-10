@@ -1898,24 +1898,31 @@
       cursor: pointer;
     }
 
+    @property --phone-blur-step {
+      syntax: "<integer>";
+      inherits: false;
+      initial-value: 0;
+    }
+
     #contact .phone-blur-veil {
+      --phone-blur-step: 0;
       position: absolute;
       inset: -6px;
       border-radius: 32px;
       z-index: 3;
       pointer-events: none;
-      opacity: 0;
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      transition: opacity 1.35s ease;
+      opacity: 1;
+      backdrop-filter: blur(calc(var(--phone-blur-step) * 1px));
+      -webkit-backdrop-filter: blur(calc(var(--phone-blur-step) * 1px));
+      transition: --phone-blur-step 2s steps(10, end);
     }
 
     #contact .phone-shell:has(.kakao-consult-wrap) .phone-blur-veil {
       background: linear-gradient(
         270deg,
-        rgba(255, 255, 255, 0.12) 0%,
-        rgba(255, 255, 255, 0.46) 46%,
-        rgba(126, 108, 196, 0.4) 100%
+        rgba(255, 255, 255, calc(var(--phone-blur-step) * 0.012)) 0%,
+        rgba(255, 255, 255, calc(var(--phone-blur-step) * 0.046)) 46%,
+        rgba(126, 108, 196, calc(var(--phone-blur-step) * 0.04)) 100%
       );
       -webkit-mask-image: linear-gradient(270deg, rgba(0, 0, 0, 0.42) 0%, rgba(0, 0, 0, 0.72) 42%, #000 100%);
       mask-image: linear-gradient(270deg, rgba(0, 0, 0, 0.42) 0%, rgba(0, 0, 0, 0.72) 42%, #000 100%);
@@ -1924,9 +1931,9 @@
     #contact .phone-shell:not(:has(.kakao-consult-wrap)) .phone-blur-veil {
       background: linear-gradient(
         90deg,
-        rgba(255, 255, 255, 0.12) 0%,
-        rgba(255, 255, 255, 0.46) 46%,
-        rgba(126, 108, 196, 0.4) 100%
+        rgba(255, 255, 255, calc(var(--phone-blur-step) * 0.012)) 0%,
+        rgba(255, 255, 255, calc(var(--phone-blur-step) * 0.046)) 46%,
+        rgba(126, 108, 196, calc(var(--phone-blur-step) * 0.04)) 100%
       );
       -webkit-mask-image: linear-gradient(90deg, rgba(0, 0, 0, 0.42) 0%, rgba(0, 0, 0, 0.72) 42%, #000 100%);
       mask-image: linear-gradient(90deg, rgba(0, 0, 0, 0.42) 0%, rgba(0, 0, 0, 0.72) 42%, #000 100%);
@@ -1934,7 +1941,7 @@
 
     #contact .phone-duo.focus-consult .phone-shell:has(.kakao-consult-wrap) .phone-blur-veil,
     #contact .phone-duo.focus-kakao .phone-shell:not(:has(.kakao-consult-wrap)) .phone-blur-veil {
-      opacity: 1;
+      --phone-blur-step: 10;
     }
 
     @property --phone-ring-angle {
@@ -2026,9 +2033,9 @@
       #contact .phone-shell:has(.kakao-consult-wrap) .phone-blur-veil {
         background: linear-gradient(
           0deg,
-          rgba(255, 255, 255, 0.12) 0%,
-          rgba(255, 255, 255, 0.46) 46%,
-          rgba(126, 108, 196, 0.4) 100%
+          rgba(255, 255, 255, calc(var(--phone-blur-step) * 0.012)) 0%,
+          rgba(255, 255, 255, calc(var(--phone-blur-step) * 0.046)) 46%,
+          rgba(126, 108, 196, calc(var(--phone-blur-step) * 0.04)) 100%
         );
         -webkit-mask-image: linear-gradient(0deg, rgba(0, 0, 0, 0.42) 0%, rgba(0, 0, 0, 0.72) 42%, #000 100%);
         mask-image: linear-gradient(0deg, rgba(0, 0, 0, 0.42) 0%, rgba(0, 0, 0, 0.72) 42%, #000 100%);
@@ -2037,9 +2044,9 @@
       #contact .phone-shell:not(:has(.kakao-consult-wrap)) .phone-blur-veil {
         background: linear-gradient(
           180deg,
-          rgba(255, 255, 255, 0.12) 0%,
-          rgba(255, 255, 255, 0.46) 46%,
-          rgba(126, 108, 196, 0.4) 100%
+          rgba(255, 255, 255, calc(var(--phone-blur-step) * 0.012)) 0%,
+          rgba(255, 255, 255, calc(var(--phone-blur-step) * 0.046)) 46%,
+          rgba(126, 108, 196, calc(var(--phone-blur-step) * 0.04)) 100%
         );
         -webkit-mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.42) 0%, rgba(0, 0, 0, 0.72) 42%, #000 100%);
         mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.42) 0%, rgba(0, 0, 0, 0.72) 42%, #000 100%);
@@ -2051,6 +2058,11 @@
       #contact .phone-rainbow-ring {
         transition: none;
         animation: none;
+      }
+
+      #contact .phone-duo.focus-consult .phone-shell:has(.kakao-consult-wrap) .phone-blur-veil,
+      #contact .phone-duo.focus-kakao .phone-shell:not(:has(.kakao-consult-wrap)) .phone-blur-veil {
+        --phone-blur-step: 10;
       }
     }
 

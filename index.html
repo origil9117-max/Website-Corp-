@@ -2783,6 +2783,11 @@
       font-weight: 700;
     }
 
+    .consult-form label .consult-label-note {
+      font-size: 0.5em;
+      font-weight: 600;
+    }
+
     .consult-form input,
     .consult-form textarea {
       width: 100%;
@@ -3528,7 +3533,7 @@
             <label for="consult-phone">연락처</label>
             <input type="tel" id="consult-phone" name="phone" autocomplete="tel" required placeholder="전화번호" />
 
-            <label for="consult-msg">메시지</label>
+            <label for="consult-msg">메시지<span class="consult-label-note">(휴대폰 번호도 남겨주세요)</span></label>
             <textarea id="consult-msg" name="message" required placeholder="상담 내용을 간단히 적어 주세요"></textarea>
 
             <button type="submit" class="btn-send">보내기</button>

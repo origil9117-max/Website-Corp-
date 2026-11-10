@@ -1894,27 +1894,47 @@
       min-width: 0;
     }
 
-    #contact .phone-duo .consult-form-wrap {
-      transition: filter 0.4s ease;
-    }
-
     #contact .phone-fold-trigger {
       cursor: pointer;
     }
 
-    #contact .phone-duo.focus-kakao .consult-form-wrap:not(.kakao-consult-wrap),
-    #contact .phone-duo.focus-consult .kakao-consult-wrap {
-      filter: blur(3px);
+    #contact .phone-blur-veil {
+      position: absolute;
+      inset: -6px;
+      border-radius: 32px;
+      z-index: 3;
+      pointer-events: none;
+      opacity: 0;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      transition: opacity 1.35s ease;
     }
 
-    #contact .phone-duo.focus-kakao .consult-form-wrap:not(.kakao-consult-wrap)::after,
-    #contact .phone-duo.focus-consult .kakao-consult-wrap::after {
+    #contact .phone-shell:has(.kakao-consult-wrap) .phone-blur-veil {
       background: linear-gradient(
-        165deg,
-        rgba(255, 255, 255, 0.62) 0%,
-        rgba(126, 108, 196, 0.34) 52%,
-        rgba(255, 255, 255, 0.5) 100%
+        270deg,
+        rgba(255, 255, 255, 0.12) 0%,
+        rgba(255, 255, 255, 0.46) 46%,
+        rgba(126, 108, 196, 0.4) 100%
       );
+      -webkit-mask-image: linear-gradient(270deg, rgba(0, 0, 0, 0.42) 0%, rgba(0, 0, 0, 0.72) 42%, #000 100%);
+      mask-image: linear-gradient(270deg, rgba(0, 0, 0, 0.42) 0%, rgba(0, 0, 0, 0.72) 42%, #000 100%);
+    }
+
+    #contact .phone-shell:not(:has(.kakao-consult-wrap)) .phone-blur-veil {
+      background: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0.12) 0%,
+        rgba(255, 255, 255, 0.46) 46%,
+        rgba(126, 108, 196, 0.4) 100%
+      );
+      -webkit-mask-image: linear-gradient(90deg, rgba(0, 0, 0, 0.42) 0%, rgba(0, 0, 0, 0.72) 42%, #000 100%);
+      mask-image: linear-gradient(90deg, rgba(0, 0, 0, 0.42) 0%, rgba(0, 0, 0, 0.72) 42%, #000 100%);
+    }
+
+    #contact .phone-duo.focus-consult .phone-shell:has(.kakao-consult-wrap) .phone-blur-veil,
+    #contact .phone-duo.focus-kakao .phone-shell:not(:has(.kakao-consult-wrap)) .phone-blur-veil {
+      opacity: 1;
     }
 
     @property --phone-ring-angle {
@@ -2002,12 +2022,34 @@
       }
     }
 
-    @media (prefers-reduced-motion: reduce) {
-      #contact .phone-duo .consult-form-wrap {
-        transition: none;
+    @media (max-width: 899px) {
+      #contact .phone-shell:has(.kakao-consult-wrap) .phone-blur-veil {
+        background: linear-gradient(
+          0deg,
+          rgba(255, 255, 255, 0.12) 0%,
+          rgba(255, 255, 255, 0.46) 46%,
+          rgba(126, 108, 196, 0.4) 100%
+        );
+        -webkit-mask-image: linear-gradient(0deg, rgba(0, 0, 0, 0.42) 0%, rgba(0, 0, 0, 0.72) 42%, #000 100%);
+        mask-image: linear-gradient(0deg, rgba(0, 0, 0, 0.42) 0%, rgba(0, 0, 0, 0.72) 42%, #000 100%);
       }
 
+      #contact .phone-shell:not(:has(.kakao-consult-wrap)) .phone-blur-veil {
+        background: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.12) 0%,
+          rgba(255, 255, 255, 0.46) 46%,
+          rgba(126, 108, 196, 0.4) 100%
+        );
+        -webkit-mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.42) 0%, rgba(0, 0, 0, 0.72) 42%, #000 100%);
+        mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.42) 0%, rgba(0, 0, 0, 0.72) 42%, #000 100%);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      #contact .phone-blur-veil,
       #contact .phone-rainbow-ring {
+        transition: none;
         animation: none;
       }
     }
@@ -3703,6 +3745,7 @@
           </div>
           <a class="btn-send kakao-consult-btn" href="https://open.kakao.com/o/skTYPyac" target="_blank" rel="noopener noreferrer">카카오톡 상담</a>
         </aside>
+        <span class="phone-blur-veil" aria-hidden="true"></span>
         <span class="phone-rainbow-ring" aria-hidden="true"></span>
         </div>
 
@@ -3723,6 +3766,7 @@
             <button type="submit" class="btn-send">보내기</button>
           </form>
         </aside>
+        <span class="phone-blur-veil" aria-hidden="true"></span>
         <span class="phone-rainbow-ring" aria-hidden="true"></span>
         </div>
         </div>

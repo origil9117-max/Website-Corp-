@@ -1912,26 +1912,28 @@
       z-index: 3;
       pointer-events: none;
       opacity: 1;
-      backdrop-filter: blur(calc(var(--phone-blur-step) * 0.22px));
-      -webkit-backdrop-filter: blur(calc(var(--phone-blur-step) * 0.22px));
+      backdrop-filter: blur(calc(var(--phone-blur-step) * 0.198px));
+      -webkit-backdrop-filter: blur(calc(var(--phone-blur-step) * 0.198px));
+      -webkit-mask-image: linear-gradient(90deg, rgba(0, 0, 0, 0.28) 0%, rgba(0, 0, 0, 0.62) 46%, #000 100%);
+      mask-image: linear-gradient(90deg, rgba(0, 0, 0, 0.28) 0%, rgba(0, 0, 0, 0.62) 46%, #000 100%);
       transition: --phone-blur-step 1.05s steps(10, end);
     }
 
     #contact .phone-shell:has(.kakao-consult-wrap) .phone-blur-veil {
       background: linear-gradient(
-        270deg,
-        rgba(255, 255, 255, calc(var(--phone-blur-step) * 0.0032)) 0%,
-        rgba(236, 232, 255, calc(var(--phone-blur-step) * 0.004)) 48%,
-        rgba(126, 108, 196, calc(var(--phone-blur-step) * 0.0034)) 100%
+        90deg,
+        rgba(255, 255, 255, calc(var(--phone-blur-step) * 0.00288)) 0%,
+        rgba(236, 232, 255, calc(var(--phone-blur-step) * 0.0036)) 48%,
+        rgba(126, 108, 196, calc(var(--phone-blur-step) * 0.00306)) 100%
       );
     }
 
     #contact .phone-shell:not(:has(.kakao-consult-wrap)) .phone-blur-veil {
       background: linear-gradient(
         90deg,
-        rgba(255, 255, 255, calc(var(--phone-blur-step) * 0.0032)) 0%,
-        rgba(236, 232, 255, calc(var(--phone-blur-step) * 0.004)) 48%,
-        rgba(126, 108, 196, calc(var(--phone-blur-step) * 0.0034)) 100%
+        rgba(255, 255, 255, calc(var(--phone-blur-step) * 0.00288)) 0%,
+        rgba(236, 232, 255, calc(var(--phone-blur-step) * 0.0036)) 48%,
+        rgba(126, 108, 196, calc(var(--phone-blur-step) * 0.00306)) 100%
       );
     }
 
@@ -2028,19 +2030,19 @@
     @media (max-width: 899px) {
       #contact .phone-shell:has(.kakao-consult-wrap) .phone-blur-veil {
         background: linear-gradient(
-          0deg,
-          rgba(255, 255, 255, calc(var(--phone-blur-step) * 0.0032)) 0%,
-          rgba(236, 232, 255, calc(var(--phone-blur-step) * 0.004)) 48%,
-          rgba(126, 108, 196, calc(var(--phone-blur-step) * 0.0034)) 100%
+          90deg,
+          rgba(255, 255, 255, calc(var(--phone-blur-step) * 0.00288)) 0%,
+          rgba(236, 232, 255, calc(var(--phone-blur-step) * 0.0036)) 48%,
+          rgba(126, 108, 196, calc(var(--phone-blur-step) * 0.00306)) 100%
         );
       }
 
       #contact .phone-shell:not(:has(.kakao-consult-wrap)) .phone-blur-veil {
         background: linear-gradient(
-          180deg,
-          rgba(255, 255, 255, calc(var(--phone-blur-step) * 0.0032)) 0%,
-          rgba(236, 232, 255, calc(var(--phone-blur-step) * 0.004)) 48%,
-          rgba(126, 108, 196, calc(var(--phone-blur-step) * 0.0034)) 100%
+          90deg,
+          rgba(255, 255, 255, calc(var(--phone-blur-step) * 0.00288)) 0%,
+          rgba(236, 232, 255, calc(var(--phone-blur-step) * 0.0036)) 48%,
+          rgba(126, 108, 196, calc(var(--phone-blur-step) * 0.00306)) 100%
         );
       }
     }

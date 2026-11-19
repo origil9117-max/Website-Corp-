@@ -2804,6 +2804,21 @@
       transform: translateY(-1px);
     }
 
+    .blog-cta a.review-cta,
+    .blog-cta a.review-cta:hover {
+      color: #3b2a08;
+      background: #ffe14a;
+      animation: none;
+      min-height: 52px;
+      box-sizing: border-box;
+      box-shadow: 0 2px 8px rgba(184, 140, 18, 0.28);
+    }
+
+    .blog-cta a.review-cta:hover {
+      background: #ffd21a;
+      box-shadow: 0 3px 12px rgba(184, 140, 18, 0.4);
+    }
+
     @media (prefers-reduced-motion: reduce) {
       .blog-cta a {
         animation: none;
@@ -3700,6 +3715,7 @@
                     <img src="images/naver-blog-badge.png" alt="" width="32" height="32" decoding="async" />
                   </span>
                 </a>
+                <a class="review-cta" href="https://place.map.kakao.com/537404670#review" target="_blank" rel="noopener noreferrer">고객후기 보기</a>
                 <span class="blog-cta-hint">클릭하면 블러그로 이동하여 많은 정보를 만날수 있습니다.</span>
               </p>
             </div>

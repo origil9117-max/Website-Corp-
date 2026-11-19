@@ -1267,14 +1267,16 @@
       align-items: center;
       justify-content: flex-start;
       font-family: "Noto Sans KR", sans-serif;
-      font-size: 0.71rem;
-      letter-spacing: 0.03em;
+      font-size: calc(var(--hero-title-size) * 0.325);
+      letter-spacing: -0.03em;
       text-align: left;
       color: #5a496f;
       border: 1px solid rgba(124, 93, 147, 0.35);
       background: rgba(255, 255, 255, 0.64);
-      padding: 0.24rem 0.48rem;
-      width: fit-content;
+      padding: 0.2rem 0.42rem;
+      flex: 1 1 auto;
+      width: auto;
+      min-width: 0;
       max-width: 100%;
       border-radius: 999px;
       white-space: nowrap;
@@ -1298,6 +1300,7 @@
       flex: none;
       display: block;
       object-fit: contain;
+      margin-left: calc((var(--hero-title-size) - var(--hero-mark-size)) / 2);
     }
 
     .hero h1 {
@@ -1313,6 +1316,36 @@
       max-width: var(--hero-title-block-width);
       color: var(--ink);
       text-shadow: none;
+    }
+
+    .hero-nameblock {
+      display: inline-grid;
+      margin-left: 0.5cm;
+      max-width: calc(100% - 0.5cm);
+    }
+
+    .hero-nameblock .hero-mark-row {
+      justify-self: stretch;
+      width: 0;
+      min-width: 100%;
+      max-width: none;
+      margin: 0 0 0.36rem;
+    }
+
+    .hero-nameblock h1 {
+      justify-self: start;
+      margin-left: 0;
+      width: max-content;
+      max-width: 100%;
+    }
+
+    @media (max-width: 767px) {
+      .hero-badge {
+        white-space: normal;
+        font-size: 0.68rem;
+        line-height: 1.35;
+        letter-spacing: -0.02em;
+      }
     }
 
     .hero-sub {
@@ -3435,11 +3468,13 @@
       <div class="hero-vignette" aria-hidden="true"></div>
       <div class="hero-inner">
         <div class="hero-copy">
-          <div class="hero-mark-row">
-            <img class="hero-mark" src="images/firm-mark.png" alt="" aria-hidden="true" width="280" height="242" />
-            <p class="hero-badge">법무부 출입국민원대행기관 등록 · 정부행정전문가</p>
+          <div class="hero-nameblock">
+            <div class="hero-mark-row">
+              <img class="hero-mark" src="images/firm-mark.png" alt="" aria-hidden="true" width="280" height="242" />
+              <p class="hero-badge">법무부 출입국민원대행기관 등록 · 정부행정전문가</p>
+            </div>
+            <h1 id="hero-title">대한민국행정사사무소</h1>
           </div>
-          <h1 id="hero-title">대한민국행정사사무소</h1>
           <p class="hero-lead">
             출입국·법인·보훈·인허가·행정심판까지, 절차와 서류를 한곳에서 지원합니다.
           </p>

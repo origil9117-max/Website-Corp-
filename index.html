@@ -872,6 +872,7 @@
     .hero-copy {
       max-width: 38rem;
       --hero-title-block-width: 19.8rem;
+      --hero-mark-size: clamp(1.16rem, 2.93vw, 1.58rem);
       display: flex;
       flex-direction: column;
       align-items: flex-start;
@@ -1277,8 +1278,8 @@
       border-radius: 999px;
       white-space: nowrap;
       box-sizing: border-box;
-      /* 아래 h1과 동일한 좌측 들여쓰기(0.5cm)로 줄 맞춤 */
-      margin: 0 0 0.32rem 0.5cm;
+      /* 상호 첫 글자 위 문양 너비만큼 오른쪽으로 */
+      margin: 0 0 0.32rem calc(0.5cm + var(--hero-mark-size));
       text-shadow: none;
     }
 
@@ -1291,10 +1292,27 @@
       text-align: left;
       margin: 0 0 0.06rem;
       margin-left: 0.5cm;
+      padding-top: calc(var(--hero-mark-size) + 0.42rem);
       width: var(--hero-title-block-width);
       max-width: var(--hero-title-block-width);
       color: var(--ink);
       text-shadow: none;
+    }
+
+    .hero-title-mark {
+      position: relative;
+      display: inline-block;
+    }
+
+    .hero-title-mark img {
+      position: absolute;
+      left: 50%;
+      bottom: calc(100% + 0.4rem);
+      width: var(--hero-mark-size);
+      height: var(--hero-mark-size);
+      transform: translateX(-50%);
+      object-fit: contain;
+      pointer-events: none;
     }
 
     .hero-sub {
@@ -3418,7 +3436,7 @@
       <div class="hero-inner">
         <div class="hero-copy">
           <p class="hero-badge">법무부 출입국민원대행기관 등록 · 정부행정전문가</p>
-          <h1 id="hero-title">대한민국행정사사무소</h1>
+          <h1 id="hero-title"><span class="hero-title-mark"><img src="images/firm-mark.png" alt="" aria-hidden="true" width="280" height="242" />대</span>한민국행정사사무소</h1>
           <p class="hero-lead">
             출입국·법인·보훈·인허가·행정심판까지, 절차와 서류를 한곳에서 지원합니다.
           </p>

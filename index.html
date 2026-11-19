@@ -873,7 +873,7 @@
       max-width: 38rem;
       --hero-title-block-width: 19.8rem;
       --hero-title-size: clamp(1.16rem, 2.93vw, 1.58rem);
-      --hero-mark-size: clamp(1.61rem, 4.025vw, 2.185rem);
+      --hero-mark-size: clamp(1.723rem, 4.307vw, 2.338rem);
       display: flex;
       flex-direction: column;
       align-items: flex-start;
@@ -1281,14 +1281,15 @@
       border-radius: 999px;
       white-space: nowrap;
       box-sizing: border-box;
-      margin: 0;
+      margin: 0 0 -0.08rem;
+      align-self: flex-end;
       text-shadow: none;
     }
 
     .hero-mark-row {
       display: flex;
       align-items: center;
-      gap: 0.22rem;
+      gap: 0.04rem;
       margin: 0 0 0.36rem calc(0.5cm + (var(--hero-title-size) - var(--hero-mark-size)) / 2);
       max-width: calc(100% - 0.5cm);
       min-width: 0;
@@ -1301,6 +1302,7 @@
       display: block;
       object-fit: contain;
       margin-left: calc((var(--hero-title-size) - var(--hero-mark-size)) / 2);
+      margin-right: calc(var(--hero-mark-size) * -0.06);
     }
 
     .hero h1 {

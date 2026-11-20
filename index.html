@@ -3499,7 +3499,6 @@
                   poster="images/firm-mark.png"
                   autoplay
                   muted
-                  loop
                   playsinline
                   preload="metadata"
                   aria-hidden="true"
@@ -4360,6 +4359,21 @@
         }
         heroVideo.addEventListener("loadedmetadata", showPromoCaptions);
         heroVideo.addEventListener("play", showPromoCaptions);
+      }
+
+      var markVideo = document.querySelector(".hero-mark");
+      if (markVideo) {
+        var markPlays = 0;
+        markVideo.addEventListener("ended", function () {
+          markPlays += 1;
+          if (markPlays >= 3) {
+            markVideo.pause();
+            return;
+          }
+          markVideo.currentTime = 0;
+          var again = markVideo.play();
+          if (again && again.catch) again.catch(function () {});
+        });
       }
 
       var heroConsult = document.querySelector('a.hero-cta-consult[href="#consult-form"]');

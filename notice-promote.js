@@ -124,8 +124,81 @@
     }
   }
 
+  async function listPinned(client) {
+    if (client) {
+      var res = await client
+        .from("notices")
+        .select("id, title, content, pinned, created_at")
+        .eq("pinned", true);
+      if (!res.error) {
+        return { items: res.data || [], local: false };
+      }
+      return {
+        items: loadLocalNotices().filter(function (n) { return !!n.pinned; }),
+        local: true,
+        message: res.error.message
+      };
+    }
+    return {
+      items: loadLocalNotices().filter(function (n) { return !!n.pinned; }),
+      local: true
+    };
+  }
+
+  async function clearPinned(opts) {
+    opts = opts || {};
+    var client = opts.client || null;
+    var title = String(opts.title || "").trim();
+    var all = !!opts.all || !title;
+    var skipConfirm = !!opts.skipConfirm;
+
+    function matches(n) {
+      if (!n || !n.pinned) return false;
+      if (all) return true;
+      return String(n.title || "").trim() === title;
+    }
+
+    var listed = await listPinned(client);
+    var targets = (listed.items || []).filter(matches);
+    if (!targets.length) {
+      return {
+        ok: false,
+        none: true,
+        message: all ? "해제할 고정 공지가 없습니다." : "이 글은 현재 홈 상단 공지가 아닙니다."
+      };
+    }
+    if (!skipConfirm) {
+      var names = targets
+        .map(function (n) { return String(n.title || "").trim(); })
+        .filter(Boolean)
+        .join(", ");
+      var ask = all
+        ? "현재 홈 상단 공지를 해제할까요?\n" + names
+        : "「" + title + "」 홈 상단 공지를 해제할까요?";
+      if (!confirm(ask)) return { ok: false, cancelled: true };
+    }
+
+    if (client && !listed.local) {
+      var query = client.from("notices").update({ pinned: false }).eq("pinned", true);
+      if (!all) query = query.eq("title", title);
+      var res = await query;
+      if (res.error) {
+        return { ok: false, message: "공지 해제 실패: " + res.error.message };
+      }
+    }
+
+    var items = loadLocalNotices().map(function (n) {
+      if (matches(n)) n.pinned = false;
+      return n;
+    });
+    saveLocalNotices(items);
+    return { ok: true, message: "홈 상단 공지를 해제했습니다." };
+  }
+
   global.WebsiteCorpNotice = {
     promote: promote,
+    clearPinned: clearPinned,
+    listPinned: listPinned,
     buildContent: buildContent,
     extractHref: extractHref,
     escapeHtml: escapeHtml

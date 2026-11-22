@@ -142,6 +142,10 @@
     }
 
     nav a[href="notice.html"] {
+      animation: none;
+    }
+
+    nav a[href="notice.html"].is-live {
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -150,24 +154,16 @@
       font-size: 0.7rem;
       font-weight: 700;
       letter-spacing: 0.06em;
-      color: #2a3856;
-      background: #fff;
-      border: 1px solid rgba(163, 176, 203, 0.82);
-      box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.45), 0 1px 4px rgba(38, 56, 92, 0.18);
-      text-shadow: none;
-      animation: none;
-    }
-
-    nav a[href="notice.html"].is-live {
       color: #fff;
       background: linear-gradient(180deg, #0b7bff 0%, #0052d6 100%);
       border: 1px solid rgba(0, 55, 160, 0.55);
       box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.42), 0 2px 8px rgba(0, 82, 214, 0.42);
+      text-shadow: none;
       animation: noticeTitleBlink 1.1s ease-in-out infinite;
     }
 
-    nav a[href="notice.html"]:hover,
-    nav a[href="notice.html"]:focus-visible {
+    nav a[href="notice.html"].is-live:hover,
+    nav a[href="notice.html"].is-live:focus-visible {
       color: #fff;
       text-decoration: none;
       border-color: rgba(0, 55, 160, 0.6);
@@ -305,6 +301,10 @@
     }
     .hero-cta a.tel-tooltip[data-tooltip]::before {
       content: none !important;
+      display: none !important;
+    }
+
+    .top-notice[hidden] {
       display: none !important;
     }
 
@@ -3452,7 +3452,7 @@
   </header>
 
   <main id="top">
-    <section class="top-notice" aria-label="최신 공지">
+    <section class="top-notice" aria-label="최신 공지" hidden>
       <div class="top-notice-inner">
         <a class="top-notice-link" href="visit-maps.html" target="_blank" rel="noopener noreferrer" aria-label="오시는 길 안내 새 창에서 열기">
           <span class="top-notice-label" id="top-notice-label">공지</span>
@@ -4045,12 +4045,16 @@
 
     (async function () {
       var LOCAL_NOTICE_KEY = "websiteCorpNotices";
+      var topNotice = document.querySelector(".top-notice");
       var topTitle = document.getElementById("top-notice-title");
       var topLabel = document.getElementById("top-notice-label");
       var navNoticeLink = document.getElementById("nav-notice-link");
       var topBodyLegacy = document.getElementById("top-notice-body");
       var topLink = document.querySelector(".top-notice-link");
       if (!topTitle || !topLabel) return;
+      if (topNotice) topNotice.hidden = true;
+      topLabel.classList.remove("is-live");
+      if (navNoticeLink) navNoticeLink.classList.remove("is-live");
       function renderTopTitleWithHighlight(titleText) {
         var text = String(titleText || "").trim();
         if (!text) {
@@ -4111,11 +4115,8 @@
         });
       }
 
-      var FALLBACK_NOTICE_TITLE = "대한민국행정사사무소 오시는 길";
-      var FALLBACK_NOTICE_HREF = "visit-maps.html";
-      renderTopTitleWithHighlight(FALLBACK_NOTICE_TITLE);
+      var FALLBACK_NOTICE_TITLE = "공지사항";
       topTitle.style.fontWeight = "";
-      topLabel.classList.add("is-live");
 
       var top = null;
       if (!window.supabase || !window.SUPABASE_URL || !window.SUPABASE_ANON_KEY) {
@@ -4163,11 +4164,8 @@
           topLink.setAttribute("aria-label", noticeTitle);
         }
         topLabel.classList.add("is-live");
-      }
-
-      if (navNoticeLink) {
-        if (top) navNoticeLink.classList.add("is-live");
-        else navNoticeLink.classList.remove("is-live");
+        if (topNotice) topNotice.hidden = false;
+        if (navNoticeLink) navNoticeLink.classList.add("is-live");
       }
     })();
 

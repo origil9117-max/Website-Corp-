@@ -3308,7 +3308,7 @@
       }
 
       if (btnSaveNotice) {
-        btnSaveNotice.addEventListener("click", function () {
+        btnSaveNotice.addEventListener("click", async function () {
           if (!adminOn) {
             formStatus.textContent = "먼저 위에서 관리자 모드를 켜 주세요.";
             return;
@@ -3316,6 +3316,28 @@
           var periodLine = window.WebsiteCorpNotice && window.WebsiteCorpNotice.periodPhrase
             ? window.WebsiteCorpNotice.periodPhrase(noticeDays())
             : "공지 기간은 1주일입니다.";
+          var draftTitle = (postTitle.value || "").trim();
+          var draftBody = editorHasContent();
+          if ((draftTitle && !draftBody) || (!draftTitle && draftBody)) {
+            promoteAfterSave = false;
+            formStatus.textContent = "제목과 내용을 모두 입력해 주세요.";
+            return;
+          }
+          if (!draftTitle && !draftBody) {
+            promoteAfterSave = false;
+            var candidate = currentPosts && currentPosts[0];
+            if (!candidate) {
+              formStatus.textContent = "공지로 올릴 게시글이 없습니다. 제목과 내용을 입력한 뒤 다시 눌러 주세요.";
+              return;
+            }
+            var existingTitle = String(candidate.title || "게시글").trim();
+            if (!confirm("작성 중인 글이 없습니다. 목록의 「" + existingTitle + "」을 홈 상단 공지로 올릴까요?\n" + periodLine + "\n기존 고정 공지는 해제됩니다.")) return;
+            var existingRes = await promotePostToNotice(candidate, true);
+            await refreshPinnedNotices();
+            renderPosts();
+            formStatus.textContent = (existingRes && existingRes.message) || "공지 처리가 완료되었습니다.";
+            return;
+          }
           if (!confirm("이 글을 저장한 뒤 홈 상단 공지로 올리겠습니까?\n" + periodLine + "\n기존 고정 공지는 해제됩니다.")) return;
           promoteAfterSave = true;
           if (typeof postForm.requestSubmit === "function") postForm.requestSubmit();
@@ -3818,6 +3840,7 @@
 
         var title = (postTitle.value || "").trim();
         if (!title || !editorHasContent()) {
+          promoteAfterSave = false;
           formStatus.textContent = "제목과 내용을 모두 입력해 주세요.";
           return;
         }

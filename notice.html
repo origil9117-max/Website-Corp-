@@ -518,12 +518,18 @@
           var client = window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY);
           var res = await client
             .from("notices")
-            .select("title, content, pinned, created_at")
+            .select("id, title, content, pinned, created_at")
             .order("pinned", { ascending: false })
             .order("created_at", { ascending: false });
 
           if (!res.error) items = res.data || [];
           else items = [];
+        }
+        if (window.WebsiteCorpNotice && window.WebsiteCorpNotice.activePinned) {
+          var noticeClient = (window.supabase && window.SUPABASE_URL && window.SUPABASE_ANON_KEY)
+            ? window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY)
+            : null;
+          await window.WebsiteCorpNotice.activePinned(noticeClient, items);
         }
         items = sortNotices(items);
         if (items.length === 0) {
@@ -535,7 +541,12 @@
           var title = escapeHtml(item.title || "");
           var content = sanitizeNoticeHtml(item.content || "");
           var created = escapeHtml(String(item.created_at || item.createdText || "").slice(0, 10));
-          var pin = item.pinned ? '<span class="pin">고정</span>' : "";
+          var noticeApi = window.WebsiteCorpNotice;
+          var untilText = noticeApi && noticeApi.readUntil ? noticeApi.formatUntil(noticeApi.readUntil(item)) : "";
+          var stillLive = item.pinned && (!noticeApi || !noticeApi.isActive || noticeApi.isActive(item));
+          var pin = stillLive
+            ? '<span class="pin">공지' + (untilText ? " · " + untilText + "까지" : "") + "</span>"
+            : "";
           var href = extractNoticeHref(item.content || "");
           var titleHtml = title;
           if (href && isSafeNoticeHref(href)) {

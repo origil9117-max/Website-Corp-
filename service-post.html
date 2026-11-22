@@ -290,6 +290,19 @@
     }
     .notice-clear-bar[hidden] { display: none !important; }
     .notice-clear-bar p { margin: 0; font-size: 0.84rem; line-height: 1.45; }
+    .notice-days-field {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      margin-top: 0.75rem;
+      font-size: 0.84rem;
+      font-weight: 700;
+    }
+    .notice-days-field input {
+      width: 4.2rem;
+      font: inherit;
+      font-weight: 600;
+    }
     .post-list { display: grid; gap: 0.7rem; }
     .post-pagination {
       margin-top: 0.9rem;
@@ -735,6 +748,11 @@
         />
         <p class="file-help">파일 첨부·클립보드 이미지 붙여넣기 시 본문에 삽입됩니다(이미지는 그림, PDF는 클릭 링크). 영상은 mp4·webm으로 약 1분(최대 90초), 40MB 이하이며 글과 함께 페이지에서 재생됩니다. 그림·PDF는 최대 5개·각 5MB 이하</p>
         <div id="thumb-list" class="thumb-list"></div>
+        <label for="notice-days" class="notice-days-field">공지 기간
+          <input id="notice-days" type="number" min="1" step="1" value="7" />
+          일
+        </label>
+        <p class="file-help" id="notice-days-hint">기본은 1주일입니다. 더 오래 공지하려면 일수를 7보다 크게 입력하세요. 기간은 올리는 시점부터 계산됩니다.</p>
         <div class="row" style="margin-top:0.65rem;">
           <button class="btn btn-primary" type="submit">저장</button>
           <button class="btn btn-ghost btn-notice" type="button" id="btn-save-notice">저장 후 공지로 올리기</button>
@@ -2946,7 +2964,15 @@
         }
         noticeClearBar.hidden = false;
         var names = pinnedNoticeList
-          .map(function (n) { return String(n.title || "").trim(); })
+          .map(function (n) {
+            var title = String(n.title || "").trim();
+            var until = "";
+            if (title && window.WebsiteCorpNotice && window.WebsiteCorpNotice.readUntil) {
+              until = window.WebsiteCorpNotice.formatUntil(window.WebsiteCorpNotice.readUntil(n));
+            }
+            if (!title) return "";
+            return until ? title + " (" + until + "까지)" : title;
+          })
           .filter(Boolean);
         if (noticeClearText) {
           noticeClearText.textContent = names.length
@@ -3083,6 +3109,22 @@
         return href;
       }
 
+      function noticeDays() {
+        var input = document.getElementById("notice-days");
+        var n = input ? Number(input.value) : 7;
+        if (window.WebsiteCorpNotice && window.WebsiteCorpNotice.clampDays) {
+          return window.WebsiteCorpNotice.clampDays(n);
+        }
+        if (!isFinite(n) || n < 1) return 7;
+        return Math.round(n);
+      }
+
+      function refreshNoticeDaysHint() {
+        var hint = document.getElementById("notice-days-hint");
+        if (!hint || !window.WebsiteCorpNotice || !window.WebsiteCorpNotice.periodPhrase) return;
+        hint.textContent = window.WebsiteCorpNotice.periodPhrase(noticeDays()) + " 더 오래 공지하려면 일수를 7보다 크게 입력하세요.";
+      }
+
       async function promotePostToNotice(item, skipConfirm) {
         if (!window.WebsiteCorpNotice || !window.WebsiteCorpNotice.promote) {
           return { ok: false, message: "공지 모듈을 불러오지 못했습니다." };
@@ -3097,6 +3139,7 @@
           client: cloudEnabled ? client : null,
           title: noticeTitle,
           content: content,
+          days: noticeDays(),
           skipConfirm: !!skipConfirm
         });
       }
@@ -3258,13 +3301,22 @@
         });
       }
 
+      var noticeDaysInput = document.getElementById("notice-days");
+      if (noticeDaysInput) {
+        noticeDaysInput.addEventListener("input", refreshNoticeDaysHint);
+        refreshNoticeDaysHint();
+      }
+
       if (btnSaveNotice) {
         btnSaveNotice.addEventListener("click", function () {
           if (!adminOn) {
             formStatus.textContent = "먼저 위에서 관리자 모드를 켜 주세요.";
             return;
           }
-          if (!confirm("이 글을 저장한 뒤 홈 상단 공지로 올리겠습니까?\n기존 고정 공지는 해제됩니다.")) return;
+          var periodLine = window.WebsiteCorpNotice && window.WebsiteCorpNotice.periodPhrase
+            ? window.WebsiteCorpNotice.periodPhrase(noticeDays())
+            : "공지 기간은 1주일입니다.";
+          if (!confirm("이 글을 저장한 뒤 홈 상단 공지로 올리겠습니까?\n" + periodLine + "\n기존 고정 공지는 해제됩니다.")) return;
           promoteAfterSave = true;
           if (typeof postForm.requestSubmit === "function") postForm.requestSubmit();
           else postForm.dispatchEvent(new Event("submit", { cancelable: true, bubbles: true }));

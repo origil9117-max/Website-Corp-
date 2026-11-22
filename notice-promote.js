@@ -1,5 +1,72 @@
 (function (global) {
   var LOCAL_NOTICE_KEY = "websiteCorpNotices";
+  var DEFAULT_NOTICE_DAYS = 7;
+  var UNTIL_RE = /<!--\s*notice-until:([^>]+?)\s*-->/i;
+
+  function clampDays(days) {
+    var n = Number(days);
+    if (!isFinite(n) || n < 1) return DEFAULT_NOTICE_DAYS;
+    return Math.round(n);
+  }
+
+  function pad2(n) {
+    return (n < 10 ? "0" : "") + n;
+  }
+
+  function untilFromDays(days, from) {
+    var start = from ? new Date(from) : new Date();
+    if (isNaN(start.getTime())) start = new Date();
+    return new Date(start.getTime() + clampDays(days) * 24 * 60 * 60 * 1000).toISOString();
+  }
+
+  function formatUntil(iso) {
+    var d = new Date(iso);
+    if (isNaN(d.getTime())) return "";
+    return d.getFullYear() + "-" + pad2(d.getMonth() + 1) + "-" + pad2(d.getDate());
+  }
+
+  function stampContent(content, untilIso) {
+    var html = String(content || "").replace(UNTIL_RE, "").trim();
+    return "<!--notice-until:" + untilIso + "-->" + html;
+  }
+
+  function readUntil(notice) {
+    var html = String((notice && notice.content) || "");
+    var marked = html.match(UNTIL_RE);
+    if (marked && marked[1]) {
+      var stamped = new Date(String(marked[1]).trim());
+      if (!isNaN(stamped.getTime())) return stamped.toISOString();
+    }
+    var created = new Date(String((notice && (notice.created_at || notice.createdText)) || ""));
+    if (!isNaN(created.getTime())) {
+      return new Date(created.getTime() + DEFAULT_NOTICE_DAYS * 24 * 60 * 60 * 1000).toISOString();
+    }
+    return "";
+  }
+
+  function isActive(notice, nowMs) {
+    if (!notice || !notice.pinned) return false;
+    var until = readUntil(notice);
+    if (!until) return false;
+    var now = nowMs == null ? Date.now() : nowMs;
+    return new Date(until).getTime() > now;
+  }
+
+  function periodPhrase(days) {
+    var n = clampDays(days);
+    var label = formatUntil(untilFromDays(n));
+    if (n === DEFAULT_NOTICE_DAYS) return "공지 기간은 1주일(" + label + "까지)입니다.";
+    return "공지 기간은 " + n + "일(" + label + "까지)입니다.";
+  }
+
+  function storedDays(notice) {
+    var until = readUntil(notice);
+    var start = new Date(String((notice && (notice.created_at || notice.createdText)) || ""));
+    if (!until || isNaN(start.getTime())) return DEFAULT_NOTICE_DAYS;
+    var days = Math.round((new Date(until).getTime() - start.getTime()) / (24 * 60 * 60 * 1000));
+    if (!isFinite(days) || days < 1) return DEFAULT_NOTICE_DAYS;
+    return days;
+  }
 
   function loadLocalNotices() {
     try {
@@ -77,12 +144,16 @@
     var content = String((opts && opts.content) || "").trim();
     var client = opts && opts.client;
     var skipConfirm = !!(opts && opts.skipConfirm);
+    var days = clampDays(opts && opts.days);
+    var untilIso = untilFromDays(days);
+    var periodLine = periodPhrase(days);
     if (!content) {
       return { ok: false, message: "공지 내용이 비어 있습니다." };
     }
+    content = stampContent(content, untilIso);
     if (
       !skipConfirm &&
-      !confirm("이 글을 홈 상단 공지로 올리겠습니까?\n기존 고정 공지는 해제됩니다.")
+      !confirm("이 글을 홈 상단 공지로 올리겠습니까?\n" + periodLine + "\n기존 고정 공지는 해제됩니다.")
     ) {
       return { ok: false, cancelled: true };
     }
@@ -108,10 +179,10 @@
             message: "공지를 올렸습니다. 기존 고정 해제에 실패했을 수 있습니다: " + unpinRes.error.message
           };
         }
-        return { ok: true, message: "홈 상단 공지로 올렸습니다. (기존 고정 공지는 해제)" };
+        return { ok: true, message: "홈 상단 공지로 올렸습니다. " + periodLine };
       }
       saveNoticeLocal(title, content);
-      return { ok: true, local: true, message: "홈 상단 공지로 올렸습니다. (이 PC 로컬 저장)" };
+      return { ok: true, local: true, message: "홈 상단 공지로 올렸습니다. " + periodLine + " (이 PC 로컬 저장)" };
     } catch (err) {
       saveNoticeLocal(title, content);
       return {
@@ -124,6 +195,39 @@
     }
   }
 
+  async function activePinned(client, items) {
+    var list = Array.isArray(items) ? items : [];
+    var expired = [];
+    var active = [];
+    list.forEach(function (n) {
+      if (!n || !n.pinned) return;
+      if (isActive(n)) active.push(n);
+      else expired.push(n);
+    });
+    if (!expired.length) return active;
+    expired.forEach(function (n) { n.pinned = false; });
+    if (client) {
+      var ids = expired
+        .map(function (n) { return n.id; })
+        .filter(function (id) { return id != null && id !== ""; });
+      if (ids.length) {
+        try {
+          await client.from("notices").update({ pinned: false }).in("id", ids);
+        } catch (e) {}
+      }
+    }
+    var local = loadLocalNotices();
+    var changed = false;
+    local.forEach(function (n) {
+      if (n && n.pinned && !isActive(n)) {
+        n.pinned = false;
+        changed = true;
+      }
+    });
+    if (changed) saveLocalNotices(local);
+    return active;
+  }
+
   async function listPinned(client) {
     if (client) {
       var res = await client
@@ -131,16 +235,16 @@
         .select("id, title, content, pinned, created_at")
         .eq("pinned", true);
       if (!res.error) {
-        return { items: res.data || [], local: false };
+        return { items: await activePinned(client, res.data || []), local: false };
       }
       return {
-        items: loadLocalNotices().filter(function (n) { return !!n.pinned; }),
+        items: await activePinned(null, loadLocalNotices().filter(function (n) { return !!n.pinned; })),
         local: true,
         message: res.error.message
       };
     }
     return {
-      items: loadLocalNotices().filter(function (n) { return !!n.pinned; }),
+      items: await activePinned(null, loadLocalNotices().filter(function (n) { return !!n.pinned; })),
       local: true
     };
   }
@@ -199,8 +303,18 @@
     promote: promote,
     clearPinned: clearPinned,
     listPinned: listPinned,
+    activePinned: activePinned,
     buildContent: buildContent,
     extractHref: extractHref,
-    escapeHtml: escapeHtml
+    escapeHtml: escapeHtml,
+    stampContent: stampContent,
+    readUntil: readUntil,
+    isActive: isActive,
+    formatUntil: formatUntil,
+    periodPhrase: periodPhrase,
+    storedDays: storedDays,
+    clampDays: clampDays,
+    untilFromDays: untilFromDays,
+    DEFAULT_NOTICE_DAYS: DEFAULT_NOTICE_DAYS
   };
 })(window);

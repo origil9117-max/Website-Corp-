@@ -691,6 +691,11 @@
           <span>기존 첨부파일 삭제</span>
         </label>
 
+        <label for="notice-days" style="display:flex;align-items:center;gap:0.35rem;margin-top:0.75rem;font-size:0.84rem;font-weight:700;">공지 기간
+          <input id="notice-days" type="number" min="1" step="1" value="7" style="width:4.2rem;font:inherit;" />
+          일
+        </label>
+        <p class="meta" id="notice-days-hint">기본은 1주일입니다. 더 오래 공지하려면 일수를 7보다 크게 입력하세요.</p>
         <div class="row" style="margin-top:0.8rem;">
           <button id="btn-save-resource" type="submit" class="btn btn-primary">저장</button>
           <button id="btn-save-notice" type="button" class="btn btn-ghost btn-notice">저장 후 공지로 올리기</button>
@@ -1175,10 +1180,13 @@
         var noticeTitle = String((item && item.title) || "").trim() || "자료실 안내";
         var area = service && serviceMap[service] ? serviceMap[service] + " · 자료실" : "자료실";
         var content = window.WebsiteCorpNotice.buildContent(area, resourceNoticeHref(), "자료 보기");
+        var daysInput = document.getElementById("notice-days");
+        var days = daysInput ? Number(daysInput.value) : 7;
         return window.WebsiteCorpNotice.promote({
           client: client,
           title: noticeTitle,
           content: content,
+          days: days,
           skipConfirm: !!skipConfirm
         });
       }
@@ -1511,7 +1519,12 @@
             setStatus(formStatus, "err", "관리자만 공지로 올릴 수 있습니다.");
             return;
           }
-          if (!confirm("이 자료를 저장한 뒤 홈 상단 공지로 올리겠습니까?\n기존 고정 공지는 해제됩니다.")) return;
+          var daysInput = document.getElementById("notice-days");
+          var days = daysInput ? Number(daysInput.value) : 7;
+          var periodLine = window.WebsiteCorpNotice && window.WebsiteCorpNotice.periodPhrase
+            ? window.WebsiteCorpNotice.periodPhrase(days)
+            : "공지 기간은 1주일입니다.";
+          if (!confirm("이 자료를 저장한 뒤 홈 상단 공지로 올리겠습니까?\n" + periodLine + "\n기존 고정 공지는 해제됩니다.")) return;
           promoteAfterSave = true;
           if (typeof form.requestSubmit === "function") form.requestSubmit();
           else form.dispatchEvent(new Event("submit", { cancelable: true, bubbles: true }));

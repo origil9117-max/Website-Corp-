@@ -615,6 +615,11 @@
             <input id="notice-pinned" type="checkbox" />
             <span>상단 고정 공지</span>
           </label>
+          <label for="notice-days" id="notice-days-field" class="row" hidden>공지 기간
+            <input id="notice-days" type="number" min="1" step="1" value="7" style="width:4.2rem;" />
+            <span>일</span>
+          </label>
+          <p id="notice-days-hint" class="meta" hidden>기본은 1주일입니다. 더 오래 공지하려면 일수를 7보다 크게 입력하세요. 기간은 저장 시점부터 계산됩니다.</p>
 
           <div class="row">
             <button class="btn btn-primary" type="submit">저장</button>
@@ -633,6 +638,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabase-config.js"></script>
+  <script src="notice-promote.js"></script>
   <script>
     (async function () {
       var LOCAL_NOTICE_KEY = "websiteCorpNotices";
@@ -1599,7 +1605,29 @@
           noticeListPanel.style.maxWidth = "";
         }
         document.body.classList.remove("notice-editing");
+        syncNoticeDaysField();
       }
+
+      function syncNoticeDaysField() {
+        var pinBox = document.getElementById("notice-pinned");
+        var field = document.getElementById("notice-days-field");
+        var hint = document.getElementById("notice-days-hint");
+        var daysInput = document.getElementById("notice-days");
+        var on = !!(pinBox && pinBox.checked);
+        if (field) field.hidden = !on;
+        if (hint) {
+          hint.hidden = !on;
+          if (on && window.WebsiteCorpNotice && window.WebsiteCorpNotice.periodPhrase) {
+            hint.textContent = window.WebsiteCorpNotice.periodPhrase(daysInput ? daysInput.value : 7) + " 더 오래 공지하려면 일수를 7보다 크게 입력하세요.";
+          }
+        }
+      }
+
+      var noticePinnedInput = document.getElementById("notice-pinned");
+      var noticeDaysInput = document.getElementById("notice-days");
+      if (noticePinnedInput) noticePinnedInput.addEventListener("change", syncNoticeDaysField);
+      if (noticeDaysInput) noticeDaysInput.addEventListener("input", syncNoticeDaysField);
+      syncNoticeDaysField();
 
       function applyComposeZoom() {
         if (btnComposeZoom) {
@@ -1752,7 +1780,10 @@
 
         var adminOn = isAdmin();
         noticeList.innerHTML = items.map(function (item) {
-          var pinTag = item.pinned ? " · 상단고정" : "";
+          var pinUntil = window.WebsiteCorpNotice && item.pinned && window.WebsiteCorpNotice.isActive(item)
+            ? window.WebsiteCorpNotice.formatUntil(window.WebsiteCorpNotice.readUntil(item))
+            : "";
+          var pinTag = pinUntil ? " · 상단고정 " + pinUntil + "까지" : "";
           var created = String(item.created_at || item.createdText || "").slice(0, 16).replace("T", " ");
           var editingCls = String(editingNoticeId) === String(item.id) ? " is-editing" : "";
           var editBtnCls = String(editingNoticeId) === String(item.id) ? " is-active-edit" : "";
@@ -2128,6 +2159,16 @@
         }
 
         var contentHtml = sanitizeNoticeHtml((noticeContentEditor && noticeContentEditor.innerHTML) || "");
+        contentHtml = contentHtml.replace(/<!--\s*notice-until:[^>]*-->/gi, "");
+        if (pinned && window.WebsiteCorpNotice && window.WebsiteCorpNotice.stampContent) {
+          var noticeDays = window.WebsiteCorpNotice.clampDays(
+            (document.getElementById("notice-days") || {}).value
+          );
+          contentHtml = window.WebsiteCorpNotice.stampContent(
+            contentHtml,
+            window.WebsiteCorpNotice.untilFromDays(noticeDays)
+          );
+        }
         document.getElementById("notice-content").value = contentHtml;
 
         var res;
@@ -2198,6 +2239,10 @@
               normalizeNoticeEditorImages(noticeContentEditor);
             }
             document.getElementById("notice-pinned").checked = !!one.data.pinned;
+            if (document.getElementById("notice-days") && window.WebsiteCorpNotice) {
+              document.getElementById("notice-days").value = String(window.WebsiteCorpNotice.storedDays(one.data));
+            }
+            syncNoticeDaysField();
           } else {
             var oneLocal = loadLocalNotices().find(function (x) { return String(x.id) === String(id); });
             if (!oneLocal) return;
@@ -2208,6 +2253,10 @@
               normalizeNoticeEditorImages(noticeContentEditor);
             }
             document.getElementById("notice-pinned").checked = !!oneLocal.pinned;
+            if (document.getElementById("notice-days") && window.WebsiteCorpNotice) {
+              document.getElementById("notice-days").value = String(window.WebsiteCorpNotice.storedDays(oneLocal));
+            }
+            syncNoticeDaysField();
           }
           setStatus(formStatus, "", "수정 모드입니다. 내용을 변경 후 저장해 주세요.");
           if (noticeContentEditor) {

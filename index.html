@@ -4125,17 +4125,27 @@
             return !!x && !!x.pinned;
           })
         );
-        if (localOnly.length > 0) top = localOnly[0];
+        if (localOnly.length > 0) {
+          var activeLocal = window.WebsiteCorpNotice && window.WebsiteCorpNotice.activePinned
+            ? await window.WebsiteCorpNotice.activePinned(null, localOnly)
+            : localOnly;
+          if (activeLocal.length > 0) top = activeLocal[0];
+        }
       } else {
         var client = window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY);
         var res = await client
           .from("notices")
-          .select("title, content, pinned, created_at")
+          .select("id, title, content, pinned, created_at")
           .eq("pinned", true)
           .order("created_at", { ascending: false })
-          .limit(1);
+          .limit(10);
 
-        if (!res.error && res.data && res.data.length > 0) top = res.data[0];
+        if (!res.error && res.data && res.data.length > 0) {
+          var activeRows = window.WebsiteCorpNotice && window.WebsiteCorpNotice.activePinned
+            ? await window.WebsiteCorpNotice.activePinned(client, res.data)
+            : res.data;
+          if (activeRows.length > 0) top = activeRows[0];
+        }
       }
 
       function extractNoticeHref(content) {
